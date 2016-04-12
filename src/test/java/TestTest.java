@@ -1,5 +1,5 @@
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 /**
  * Created by Niels Bokmans on 12-4-2016.
