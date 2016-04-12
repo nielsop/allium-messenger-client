@@ -1,4 +1,4 @@
-package nl.han.onionmessenger.clientcommons;
+package nl.han.onionmessenger.commonclient;
 
 /**
  * Created by Niels Bokmans on 12-4-2016.
