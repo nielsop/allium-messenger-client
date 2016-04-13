@@ -1,0 +1,231 @@
+syntax = "proto2";
+option java_package = "nl.han.onionmessenger.commonclient";
+option java_outer_classname = "HanRoutingProtocol";
+
+//
+// Get graph
+//
+
+
+// Heeft als response GraphUpdate, doel is het ophalen van de updates aan de graph
+message GraphUpdateRequest {
+	required int32 currentVersion = 1;
+}
+
+// Response op de GraphUpdateRequest, geeft updates van graph of heel de graph als currentVersion te oud is
+message GraphUpdateResponse {
+	required int32 newVersion = 1; // Versie van de nieuwe graph, kan gelijk zijn aan currentVersion van GraphUpdateRequest
+	required bool isFullGraph = 2;
+	repeated Node addedNodes = 3;
+	repeated Node updatedNodes = 4;
+	repeated Node deletedNodes = 5;
+}
+
+message Node {
+	required string id = 1;
+	required string IPaddress = 2;
+	required int32 port = 3;
+	required string publicKey = 4;
+	repeated Edge edge = 5;
+}
+
+message Edge {
+	required string targetNodeId = 1;
+	required float weight = 2;
+}
+
+
+//
+// Node registration
+//
+
+message NodeRegisterRequest {
+	required string IPaddress = 1;
+	required int32 port = 2;
+	required string publicKey = 3;
+}
+
+message NodeRegisterResponse {
+	// Mogelijke statussen die bij deze response kunnen voorkomen
+	// SUCCES: Request succesvol verwerkt.
+	// FAILED: Request niet succesvol verwerkt.
+	// ALREADY_EXISTS: Node is al geregistreerd bij de Master.
+	enum Status {SUCCES = 1; FAILED = 2; ALREADY_EXISTS = 3; }
+
+	required Status status = 1; // Bijvoorbeeld geaccepteerd, al geregistreerd, ongeldige data
+	optional string id = 2;
+	optional string secretHash = 3; // Hash waarmee Node zich kan authenticeren bij de master
+}
+
+message NodeUpdateRequest {
+	required string id = 1;
+	required string secretHash = 2;
+	optional string IPaddress = 3;
+	optional int32 port = 4;
+	optional string publicKey = 5;
+}
+
+message NodeUpdateResponse {
+	// Mogelijke statussen die bij deze response kunnen voorkomen
+	// SUCCES: Request succesvol verwerkt.
+	// FAILED: Request niet succesvol verwerkt.
+	enum Status {SUCCES = 1; FAILED = 2;}
+
+	required Status status = 1;
+}
+
+message NodeDeleteRequest {
+	required string id = 1;
+	required string secretHash = 2;
+}
+
+message NodeDeleteResponse {
+	// Mogelijke statussen die bij deze response kunnen voorkomen
+	// SUCCES: Request succesvol verwerkt.
+	// FAILED: Request niet succesvol verwerkt.
+	enum Status {SUCCES = 1; FAILED = 2;}
+
+	required Status status = 1;
+}
+
+
+//
+// Get all clients
+//
+
+message ClientRequest {
+	optional int32 clientGroup = 1;
+}
+
+message ClientResponse {
+	repeated Client clients = 1;
+}
+
+message Client {
+	required string username = 1; // is uniek
+	required string publicKey = 2;
+	repeated Node connectedNodes = 3;
+}
+
+
+
+//
+// Client heartbeat
+//
+
+message ClientHeartbeat {
+	required string username = 1;
+	required string secretHash = 2;
+}
+
+
+//
+// Node heartbeat
+//
+
+message NodeHeartbeat {
+	required string id = 1;
+	required string secretHash = 2;
+}
+
+
+//
+// Client register
+//
+
+message ClientRegisterRequest {
+	required string username = 1;
+	required string password = 2;
+}
+
+message ClientRegisterResponse {
+	// Mogelijke statussen die bij deze response kunnen voorkomen
+	// SUCCES: Request succesvol verwerkt.
+	// FAILED: Request niet succesvol verwerkt.
+	// TAKEN_USERNAME: Gebruikersnaam is al in gebruik.
+	enum Status {SUCCES = 1; FAILED = 2; TAKEN_USERNAME = 3;}
+
+	required int32 status = 1;
+}
+
+
+//
+// Client login
+//
+
+message ClientLoginRequest {
+	required string username = 1;
+	required string password = 2;
+	required string publicKey = 3;
+}
+
+message ClientLoginResponse {
+	// Mogelijke statussen die bij deze response kunnen voorkomen
+	// SUCCES: Request succesvol verwerkt.
+	// FAILED: Request niet succesvol verwerkt.
+	// INVALID_COMBINATION: Combinatie van username en password is incorrect.
+	enum Status {SUCCES = 1; FAILED = 2; INVALID_COMBINATION = 3; }
+
+	required int32 status = 1;
+	required string secretHash = 2;
+	repeated Node connectedNodes = 3;
+}
+
+
+//
+// Client logout
+//
+
+message ClientLogoutRequest {
+	required string username = 1;
+	required string secretHash = 2;
+}
+
+message ClientLogoutResponse {
+	// Mogelijke statussen die bij deze response kunnen voorkomen
+	// SUCCES: Request succesvol verwerkt.
+	// FAILED: Request niet succesvol verwerkt.
+	enum Status {SUCCES = 1; FAILED = 2;}
+
+	required Status status = 1;
+}
+
+
+//
+// Send message
+//
+
+message EncryptedMessage {
+	optional string IPaddress = 1;
+	optional int32 port = 2;
+	optional string username = 3;
+	required bytes encryptedData = 4; // Na decryptie bevat dit een nieuwe EncryptedMessage of een Message/MessageConfirmation
+}
+
+message Message {
+	required string id = 1; // Uniek gegenereerd door client
+	required string text = 2;
+	required string sender = 3;
+}
+
+message MessageConfirmation {
+	required string confirmationId = 1;
+}
+
+//
+// Connectie tussen Client en Node opzetten
+// Als client stuur je jouw username naar de nodes waarmee je moet verbinden zodat zij vervolgens berichten naar jou kunnen sturen
+//
+
+message ClientNodeConnection {
+	required string username = 1;
+}
+
+//
+// Encryptie wrapper voor communicatie met master
+//
+
+message EncryptedWrapper {
+	required string publicKey = 1;
+	required bytes data = 2;
+}
