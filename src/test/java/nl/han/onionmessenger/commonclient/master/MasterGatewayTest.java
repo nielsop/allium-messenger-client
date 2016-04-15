@@ -1,7 +1,7 @@
 package nl.han.onionmessenger.commonclient.master;
 
 import com.xebialabs.overcast.host.CloudHost;
-import nl.han.onionmessenger.commonclient.HanRoutingProtocol;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,7 +21,8 @@ public class MasterGatewayTest {
 
     @Test
     public void registerClientTest() {
-        HanRoutingProtocol.ClientRegisterResponse response = masterGateway.testRegisterClient();
+
+        HanRoutingProtocol.ClientRegisterResponse response = masterGateway.testRegisterClient("banaan", "Koen", "abcde12345");
 
         HanRoutingProtocol.ClientRegisterResponse.Builder builder = HanRoutingProtocol.ClientRegisterResponse.newBuilder();
         builder.setStatus(1);
@@ -111,7 +112,7 @@ public class MasterGatewayTest {
 //            e.printStackTrace();
 //        }
 
-        masterGateway = new MasterGateway("localhost", 1337);
+        masterGateway = new MasterGateway("10.182.5.216", 1337);
     }
 
     @After

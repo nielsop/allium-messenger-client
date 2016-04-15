@@ -1,6 +1,7 @@
 package nl.han.onionmessenger.commonclient.master;
 
-import nl.han.onionmessenger.commonclient.HanRoutingProtocol;
+import com.google.protobuf.ByteString;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 import nl.han.onionmessenger.commonclient.cryptography.IEncrypt;
 import nl.han.onionmessenger.commonclient.utility.RequestWrapper;
 import nl.han.onionmessenger.commonclient.utility.ResponseWrapper;
@@ -59,10 +60,13 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat 
         return in.readLine();
     }
 
-    public HanRoutingProtocol.ClientRegisterResponse testRegisterClient() {
-        HanRoutingProtocol.ClientRegisterRequest.Builder builder = HanRoutingProtocol.ClientRegisterRequest.newBuilder();
-        builder.setPassword("banaan");
-        builder.setUsername("Koen");
+    public HanRoutingProtocol.ClientRegisterResponse testRegisterClient(String password, String username, String key) {
+        HanRoutingProtocol.ClientRegisterRequest.Builder requestBuilder = HanRoutingProtocol.ClientRegisterRequest.newBuilder();
+        requestBuilder.setPassword(password).setUsername(username);
+        ByteString data = requestBuilder.build().toByteString();
+
+        HanRoutingProtocol.EncryptedWrapper.Builder builder = HanRoutingProtocol.EncryptedWrapper.newBuilder();
+        builder.setType(HanRoutingProtocol.EncryptedWrapper.Type.CLIENTREGISTERREQUEST).setPublicKey(key).setData(data);
 
         try {
             builder.build().writeDelimitedTo(socket.getOutputStream());
@@ -70,11 +74,10 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat 
             e.printStackTrace();
         }
 
-        HanRoutingProtocol.ClientRegisterResponse registerResponse;
         try {
-            while ((registerResponse = HanRoutingProtocol.ClientRegisterResponse.parseFrom(socket.getInputStream())) != null) {
-                return registerResponse;
-                //return response;
+            HanRoutingProtocol.EncryptedWrapper registerResponse;
+            while ((registerResponse = HanRoutingProtocol.EncryptedWrapper.parseFrom(socket.getInputStream())) != null) {
+                return HanRoutingProtocol.ClientRegisterResponse.parseFrom(registerResponse.getData());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -95,9 +98,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat 
         }
 
         try {
-            HanRoutingProtocol.NodeRegisterResponse registerResponse;
-            while ((registerResponse = HanRoutingProtocol.NodeRegisterResponse.parseFrom(socket.getInputStream())) != null) {
-                return registerResponse;
+            HanRoutingProtocol.EncryptedWrapper registerResponse;
+            while ((registerResponse = HanRoutingProtocol.EncryptedWrapper.parseFrom(socket.getInputStream())) != null) {
+                return HanRoutingProtocol.NodeRegisterResponse.parseFrom(registerResponse.getData());
             }
         } catch (IOException e) {
             e.printStackTrace();
