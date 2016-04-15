@@ -1,6 +1,6 @@
 package nl.han.asd.project.client.commonclient.heartbeat;
 
-import unit.commonclient.master.IHeartbeat;
+import nl.han.asd.project.client.commonclient.master.IHeartbeat;
 
 public class HeartbeatService {
 

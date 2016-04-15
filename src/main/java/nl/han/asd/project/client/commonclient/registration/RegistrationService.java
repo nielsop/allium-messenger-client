@@ -8,4 +8,8 @@ public class RegistrationService implements IRegistration {
     //MasterGateway masterGateway = new MasterGateway();
     IAuthentication iAuthentication;
 
+    @Override
+    public void sendRegistrationMessage(String username, String password) {
+
+    }
 }

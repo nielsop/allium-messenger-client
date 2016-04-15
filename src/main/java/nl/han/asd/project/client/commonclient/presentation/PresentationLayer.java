@@ -1,7 +1,6 @@
 package nl.han.asd.project.client.commonclient.presentation;
 
-
-import unit.commonclient.master.MasterGateway;
+import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.store.IContact;
 

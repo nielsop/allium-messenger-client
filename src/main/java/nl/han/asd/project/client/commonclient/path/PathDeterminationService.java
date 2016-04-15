@@ -1,7 +1,7 @@
 package nl.han.asd.project.client.commonclient.path;
 
-import unit.commonclient.master.IGetClients;
-import unit.commonclient.master.IGetUpdatedGraph;
+import nl.han.asd.project.client.commonclient.master.IGetClients;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 
 public class PathDeterminationService implements IGetPath {
     public IGetUpdatedGraph updatedGraph;
