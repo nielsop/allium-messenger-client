@@ -1,8 +1,10 @@
 package nl.han.asd.project.client.commonclient.master;
 
+import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
 import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,17 +20,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat 
     private PrintWriter out;
     private BufferedReader in;
     public Socket socket;
-
-    public MasterGateway(String host, int port) {
-        try {
-            socket = new Socket(host, port);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private String address ;
     private int port;
@@ -107,7 +98,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat 
         int newByteArrayLength = ... depends on the encrypted string that is received
         */
 
-        byte[] registrationData = new byte[];
+        byte[] registrationData = new byte[4];
         try {
             sendMessage(registrationData);
         }catch(IOException ioException){
@@ -136,6 +127,8 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat 
         final ResponseWrapper response = new ResponseWrapper(ResponseWrapper.ResponseType.CLIENT_LOGIN, socket);
         return (HanRoutingProtocol.ClientLoginResponse) response.read();
     }
+
+    /* ^ Bovenstaand zijn volgens nieuwe wrappers voor response/requeset */
 
     public void write(String data) {
         out.println(data);
@@ -304,5 +297,4 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat 
         return null;
     }
 
->>>>>>> origin/develop
 }
