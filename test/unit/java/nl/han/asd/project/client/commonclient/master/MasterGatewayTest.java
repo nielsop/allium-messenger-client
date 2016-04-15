@@ -1,6 +1,5 @@
-package unit.commonclient.master;
+package nl.han.asd.project.client.commonclient.master;
 
-import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;

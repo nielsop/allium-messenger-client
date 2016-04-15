@@ -1,3 +1,5 @@
+package nl.han.asd.project.client.commonclient;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

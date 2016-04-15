@@ -1,6 +1,5 @@
-package unit.commonclient.registration;
+package nl.han.asd.project.client.commonclient.registration;
 
-import nl.han.asd.project.client.commonclient.registration.RegistrationService;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import org.junit.Test;
 import org.junit.runner.RunWith;
