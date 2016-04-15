@@ -6,6 +6,7 @@ import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.store.IMessage;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 
+
 public class MessageBuilderService implements IConfirmationMessageBuilder, IMessageBuilder {
     public IGetPath getPath;
     public ISendMessage sendMessage;
