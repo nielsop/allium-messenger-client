@@ -1,9 +1,10 @@
 package nl.han.asd.project.client.commonclient.master;
 
+import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
 import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
-import nl.han.onionmessenger.commonclient.HanRoutingProtocol;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.BufferedReader;
 import java.io.IOException;
