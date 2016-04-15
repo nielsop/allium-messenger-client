@@ -80,14 +80,16 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat,
     }
 
     public void sendRegistrationMessage(String username, String password) {
-        /*//iets doen mt protocol
-        //iets doen met excryption -> byte[] erin en byte[] eruit
-        //int newByteArrayLength = ... depends on the encrypted string that is received
+        /*iets doen met protocol
+        iets doen met excryption -> byte[] erin en byte[] eruit
+        int newByteArrayLength = ... depends on the encrypted string that is received
+        */
+
         byte[] registrationData = new byte[];
         try {
             sendMessage(registrationData);
         }catch(IOException ioException){
             ioException.printStackTrace();
-        }*/
+        }
     }
 }
