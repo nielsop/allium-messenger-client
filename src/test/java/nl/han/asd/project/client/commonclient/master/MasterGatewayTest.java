@@ -1,11 +1,13 @@
 package nl.han.asd.project.client.commonclient.master;
 
 import com.xebialabs.overcast.host.CloudHost;
+import nl.han.asd.project.client.commonclient.utility.IntegrationTest;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.net.UnknownHostException;
 
@@ -20,6 +22,7 @@ public class MasterGatewayTest {
     private MasterGateway masterGateway;
 
     @Test
+    @Category(IntegrationTest.class)
     public void registerClientTest() {
 
         HanRoutingProtocol.ClientRegisterResponse response = masterGateway.testRegisterClient("banaan", "Koen", "abcde12345");
@@ -33,6 +36,7 @@ public class MasterGatewayTest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void updateGraphTest() {
         HanRoutingProtocol.GraphUpdateResponse response = masterGateway.testGraphUpdate();
 
@@ -44,6 +48,7 @@ public class MasterGatewayTest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void registerNodeTest() {
         HanRoutingProtocol.NodeRegisterResponse response = masterGateway.testRegisterNode();
 
@@ -58,6 +63,7 @@ public class MasterGatewayTest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void updateNodeTest() {
         HanRoutingProtocol.NodeUpdateResponse response = masterGateway.testUpdateNode();
 
@@ -70,6 +76,7 @@ public class MasterGatewayTest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void deleteNodeTest() {
         HanRoutingProtocol.NodeDeleteResponse response = masterGateway.testDeleteNode();
 
@@ -82,6 +89,7 @@ public class MasterGatewayTest {
     }
 
     @Test
+    @Category(IntegrationTest.class)
     public void getClients() {
         HanRoutingProtocol.ClientResponse response = masterGateway.testGetClients();
 
