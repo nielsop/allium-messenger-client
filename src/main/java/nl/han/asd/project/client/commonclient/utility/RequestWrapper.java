@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.utility;
 
+
 import com.google.protobuf.GeneratedMessage;
 
 import java.io.IOException;
