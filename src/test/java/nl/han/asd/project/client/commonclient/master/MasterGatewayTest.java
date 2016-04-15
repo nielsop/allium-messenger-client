@@ -123,7 +123,7 @@ public class MasterGatewayTest {
 
         HanRoutingProtocol.ClientResponse.Builder expectedResponse = HanRoutingProtocol.ClientResponse.newBuilder();
 
-        for(HanRoutingProtocol.Client client: clients)
+        for (HanRoutingProtocol.Client client : clients)
             expectedResponse.addClients(client);
 
         Assert.assertEquals(response, expectedResponse.build());
@@ -142,7 +142,7 @@ public class MasterGatewayTest {
         builder.setPort(port);
         builder.setPublicKey(key);
 
-        for(HanRoutingProtocol.Edge edge: edges) {
+        for (HanRoutingProtocol.Edge edge : edges) {
             builder.addEdge(edge);
         }
 
@@ -155,7 +155,7 @@ public class MasterGatewayTest {
         builder.setUsername(username);
         builder.setPublicKey(key);
 
-        for(HanRoutingProtocol.Node connectedNode: connectedNodes) {
+        for (HanRoutingProtocol.Node connectedNode : connectedNodes) {
             builder.addConnectedNodes(connectedNode);
         }
 

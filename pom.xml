@@ -88,7 +88,7 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <groups>nl.han.asd.project.client.commonclient.utility.IntegrationTest</groups>
                 </configuration>
@@ -152,6 +152,11 @@
     </reporting>
 
     <dependencies>
+        <dependency>
+            <groupId>nl.han.asd.project</groupId>
+            <artifactId>protocol</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.xebialabs.cloud</groupId>
             <artifactId>overcast</artifactId>
