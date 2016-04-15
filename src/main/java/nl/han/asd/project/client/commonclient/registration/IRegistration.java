@@ -5,5 +5,5 @@ package nl.han.asd.project.client.commonclient.registration;
  */
 public interface IRegistration {
 
-    public void sendRegistrationMessage(String username, String password);
+    public void register(String username, String password);
 }

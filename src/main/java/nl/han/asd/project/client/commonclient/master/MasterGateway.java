@@ -92,20 +92,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat 
         }
     }
 
-    public void sendRegistrationMessage(String username, String password) {
-        /*iets doen met protocol
-        iets doen met excryption -> byte[] erin en byte[] eruit
-        int newByteArrayLength = ... depends on the encrypted string that is received
-        */
-
-        byte[] registrationData = new byte[4];
-        try {
-            sendMessage(registrationData);
-        }catch(IOException ioException){
-            ioException.printStackTrace();
-        }
-    }
-
     public HanRoutingProtocol.ClientRegisterResponse register(String username, String password) {
         HanRoutingProtocol.ClientRegisterRequest.Builder request = HanRoutingProtocol.ClientRegisterRequest.newBuilder();
         request.setUsername(username).setPassword(password);
@@ -128,7 +114,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat 
         return (HanRoutingProtocol.ClientLoginResponse) response.read();
     }
 
-    /* ^ Bovenstaand zijn volgens nieuwe wrappers voor response/requeset */
+    /* ^ Bovenstaand zijn volgens nieuwe wrappers voor response/request */
 
     public void write(String data) {
         out.println(data);

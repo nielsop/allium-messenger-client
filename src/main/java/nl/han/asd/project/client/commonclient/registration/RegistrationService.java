@@ -9,7 +9,7 @@ public class RegistrationService implements IRegistration {
     IAuthentication iAuthentication;
 
     @Override
-    public void sendRegistrationMessage(String username, String password) {
+    public void register(String username, String password) {
 
     }
 }
