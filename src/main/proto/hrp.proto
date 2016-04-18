@@ -41,7 +41,7 @@ message Edge {
 }
 
 //
-// Node registration
+// Node login
 //
 message NodeRegisterRequest {
 	required string IPaddress = 1;
