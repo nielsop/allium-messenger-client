@@ -32,17 +32,17 @@ public class LoginTest {
         assertEquals(1, 1);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testLoginWithEmptyUsername() {
         assertEquals(1, 1);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testLoginWithEmptyPassword() {
         assertEquals(1, 1);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testLoginWithEmptyUsernamAndPassword() {
         assertEquals(1, 1);
     }
