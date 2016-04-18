@@ -1,11 +1,15 @@
 package nl.han.asd.project.client.commonclient.utility;
 
 import com.google.protobuf.GeneratedMessage;
-//import nl.han.onionmessenger.commonclient.HanRoutingProtocol;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.apache.log4j.spi.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+
+//import nl.han.onionmessenger.commonclient.HanRoutingProtocol;
 
 /**
  * @author Niels Bokmans
@@ -14,10 +18,11 @@ import java.net.Socket;
  */
 public class ResponseWrapper {
 
-    private ResponseType responseType;
+    private static final Logger log = new LoggerFactory().makeNewLoggerInstance("ProtoBufResponse")
+    private HanRoutingProtocol.EncryptedWrapper.Type responseType;
     public Socket socket;
 
-    public ResponseWrapper(final ResponseType responseType, final Socket socket) {
+    public ResponseWrapper(final HanRoutingProtocol.EncryptedWrapper.Type responseType, final Socket socket) {
         this.responseType = responseType;
         this.socket = socket;
     }
@@ -30,18 +35,22 @@ public class ResponseWrapper {
             ioe.printStackTrace();
         }
         if (is != null) {
-            switch (responseType) {
-                case CLIENT_LOGIN:
-                    return null;//HanRoutingProtocol.ClientLoginResponse.parseDelimitedFrom(is);
-                case CLIENT_REGISTRATION:
-                    return null;//HanRoutingProtocol.ClientRegisterResponse.parseDelimitedFrom(is);
+            try {
+                switch (responseType) {
+                    case CLIENTRESPONSE:
+                        break;
+                    case CLIENTLOGOUTRESPONSE:
+                        break;
+                    case CLIENTLOGINRESPONSE:
+                        return HanRoutingProtocol.ClientLoginResponse.parseDelimitedFrom(is);
+                    case CLIENTREGISTERRESPONSE:
+                        return HanRoutingProtocol.ClientRegisterResponse.parseDelimitedFrom(is);
+                }
+            } catch (IOException ioe) {
+
             }
         }
         return null;
     }
 
-    public enum ResponseType {
-        CLIENT_LOGIN,
-        CLIENT_REGISTRATION
-    }
 }
