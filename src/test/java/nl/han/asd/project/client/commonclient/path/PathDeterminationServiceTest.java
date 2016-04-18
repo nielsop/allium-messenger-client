@@ -6,6 +6,9 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.ArrayList;
 
 /**
  * Created by Julius on 15/04/16.
@@ -29,9 +32,9 @@ public class PathDeterminationServiceTest {
         //Node[] selfMadePath = {new Node(),new Node(),new Node()};
 
         int minimunNodes = 3;
-        Node[] generatePath = pathDeterminationService.getPath(3, contact);
+        ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
 
-        Assert.assertEquals(minimunNodes, generatePath.length);
+        Assert.assertEquals(minimunNodes, generatePath.size());
     }
 
     /*
@@ -41,10 +44,10 @@ Checking if generatedPath contains Node objects
     public void checkIfGeneratedPathContainsNodes() {
         Node[] selfMadePath = {new Node(),new Node(),new Node()};
 
-        Node[] generatePath = pathDeterminationService.getPath(3, contact);
+        ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
 
         for(int i = 0; i < selfMadePath.length; i++){
-            Assert.assertEquals(selfMadePath[i], generatePath[i]);
+            Assert.assertEquals(selfMadePath[i],generatePath.get(i));
         }
     }
 
@@ -53,7 +56,7 @@ Checking if error is trown when miniumHops is negative number
 */
     @Test(expected = IllegalArgumentException.class)
     public void whenMinimunHopsIsNegativeThrowError() {
-        Node[] generatePath = pathDeterminationService.getPath(-1, contact);
+        ArrayList<Node> generatePath = pathDeterminationService.getPath(-1, contact);
     }
 
     /*
@@ -61,14 +64,14 @@ Checking if error is trown when miniumHops is negative number
      */
     @Test
     public void firstNodeInPathIsAConnectedNodeFromHostClient(){
-        Node[] generatePath = pathDeterminationService.getPath(3,contact);
+        ArrayList<Node> generatePath = pathDeterminationService.getPath(3,contact);
         Node[] contactConnectedNodes = contact.getConnectedNodes();
-        Assert.assertTrue(inArray(generatePath[0], contactConnectedNodes));
+        Assert.assertTrue(inArray(generatePath.get(0), contactConnectedNodes));
     }
 
     @Test
     public void clientHostConnectedNodesAreUpdatedIfLastUpdateIsExpired(){
-
+        throw new NotImplementedException();
     }
 
     private boolean inArray(Node needle, Node[] haystack) {

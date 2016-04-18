@@ -1,8 +1,11 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by Julius on 15/04/16.
@@ -17,13 +20,15 @@ public class MessageBuilderServiceTest {
         messageBuilderService = new MessageBuilderService(pathDeterminationService);
     }
 
-//    @Test
-//    public void buildMessage(){
-//        Contact contactOntvanger = new Contact("julius");
-//        EncryptedMessage enMessage = messageBuilderService.buildMessage("hallo 124",contactOntvanger);
-//
-//        Assert.assertEquals(enMessage.getUsername(),contactOntvanger.getUsername());
-//    }
+    @Test
+    public void buildMessage(){
+        Contact contactOntvanger = new Contact("julius");
+        EncryptedMessage enMessage = messageBuilderService.buildMessage("hallo 124",contactOntvanger);
+
+        Assert.assertEquals(enMessage.getUsername(),contactOntvanger.getUsername());
+    }
+
+
     @After
     public void tearDown() throws Exception {
 
