@@ -18,7 +18,7 @@ import java.net.Socket;
  */
 public class ResponseWrapper {
 
-    private static final Logger log = new LoggerFactory().makeNewLoggerInstance("ProtoBufResponse")
+//    private static final Logger log = new LoggerFactory().makeNewLoggerInstance("ProtoBufResponse")
     private HanRoutingProtocol.EncryptedWrapper.Type responseType;
     public Socket socket;
 

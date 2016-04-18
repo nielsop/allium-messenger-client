@@ -271,6 +271,7 @@ message EncryptedWrapper {
     }
 
     required Type type = 1;
+
 	required string publicKey = 2;
 	required bytes data = 3;
 }
