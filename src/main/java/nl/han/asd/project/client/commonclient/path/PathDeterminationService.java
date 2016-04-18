@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class PathDeterminationService implements IGetPath {
     public IGetUpdatedGraph updatedGraph;
-    
+
     @Override
     public Node[] getPath(int minHops, Contact contactOntvanger) {
         if(minHops < 1){
