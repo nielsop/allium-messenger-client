@@ -1,7 +1,7 @@
 package nl.han.asd.project.client.commonclient.utility;
 
 import com.google.protobuf.GeneratedMessage;
-import nl.han.onionmessenger.commonclient.HanRoutingProtocol;
+//import nl.han.onionmessenger.commonclient.HanRoutingProtocol;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,15 +30,11 @@ public class ResponseWrapper {
             ioe.printStackTrace();
         }
         if (is != null) {
-            try {
-                switch (responseType) {
-                    case CLIENT_LOGIN:
-                        return HanRoutingProtocol.ClientLoginResponse.parseDelimitedFrom(is);
-                    case CLIENT_REGISTRATION:
-                        return HanRoutingProtocol.ClientRegisterResponse.parseDelimitedFrom(is);
-                }
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
+            switch (responseType) {
+                case CLIENT_LOGIN:
+                    return null;//HanRoutingProtocol.ClientLoginResponse.parseDelimitedFrom(is);
+                case CLIENT_REGISTRATION:
+                    return null;//HanRoutingProtocol.ClientRegisterResponse.parseDelimitedFrom(is);
             }
         }
         return null;

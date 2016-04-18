@@ -154,7 +154,7 @@ message ClientRegisterResponse {
 		TAKEN_USERNAME = 3;
 	}
 
-	required int32 status = 1;
+	required Status status = 1;
 }
 
 //
@@ -177,7 +177,7 @@ message ClientLoginResponse {
 		INVALID_COMBINATION = 3;
 	}
 
-	required int32 status = 1;
+	required Status status = 1;
 	required string secretHash = 2;
 	repeated Node connectedNodes = 3;
 }
