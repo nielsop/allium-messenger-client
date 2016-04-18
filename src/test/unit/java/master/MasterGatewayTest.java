@@ -1,5 +1,6 @@
-package nl.han.asd.project.client.master;
+package master;
 
+import nl.han.asd.project.client.master.MasterGateway;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;

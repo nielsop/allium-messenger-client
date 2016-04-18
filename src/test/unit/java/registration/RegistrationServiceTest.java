@@ -1,6 +1,7 @@
-package nl.han.asd.project.client.registration;
+package registration;
 
 import nl.han.asd.project.client.master.MasterGateway;
+import nl.han.asd.project.client.registration.RegistrationService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
