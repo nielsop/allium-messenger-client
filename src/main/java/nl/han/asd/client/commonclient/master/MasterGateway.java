@@ -21,21 +21,21 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat,
     public Socket socket;
     private PrintWriter out;
     private BufferedReader in;
-    private String address;
-    private int port;
+    private String serverAddress;
+    private int serverPort;
 
     /**
-     * @param address IPv4 address
-     * @param port    port to set up for the connection to the master
+     * @param serverAddress IPv4 address
+     * @param serverPort    serverPort to set up for the connection to the master
      */
-    public MasterGateway(String address, int port) {
-        validateAddress(address);
-        validatePort(port);
+    public MasterGateway(String serverAddress, int serverPort) {
+        validateAddress(serverAddress);
+        validatePort(serverPort);
 
-        this.address = address;
-        this.port = port;
+        this.serverAddress = serverAddress;
+        this.serverPort = serverPort;
         try {
-            socket = new Socket(address, port);
+            socket = new Socket(serverAddress, serverPort);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(
                     new InputStreamReader(socket.getInputStream()));
@@ -45,14 +45,14 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat,
     }
 
     /**
-     * @param port Port must be in range 1024 - 65535
+     * @param serverPort Port must be in range 1024 - 65535
      *             You can create a server on ports 1 through 65535.
-     *             Port numbers less than 256 are reserved for well-known services (like HTTP on port 80) and port numbers less than 1024 require root access on UNIX systems.
-     *             Specifying a port of 0 in the ServerSocket constructor results in the server listening on a random, unused port, usually >= 1024.
+     *             Port numbers less than 256 are reserved for well-known services (like HTTP on serverPort 80) and serverPort numbers less than 1024 require root access on UNIX systems.
+     *             Specifying a serverPort of 0 in the ServerSocket constructor results in the server listening on a random, unused serverPort, usually >= 1024.
      *             http://www.jguru.com/faq/view.jsp?EID=17521
      */
-    private void validatePort(int port) {
-        if (!(port >= 0 && port <= 65535))
+    private void validatePort(int serverPort) {
+        if (!(serverPort >= 0 && serverPort <= 65535))
             throw new IllegalArgumentException("Port should be in range of 1024 - 65535.");
     }
 
