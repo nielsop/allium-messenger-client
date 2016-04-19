@@ -37,7 +37,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat 
         final RequestWrapper req = new RequestWrapper(request.build(), socket);
         req.writeToSocket();
 
-        final ResponseWrapper response = new ResponseWrapper(ResponseWrapper.ResponseType.CLIENT_REGISTRATION, socket);
+        final ResponseWrapper response = new ResponseWrapper(HanRoutingProtocol.EncryptedWrapper.Type.CLIENTREGISTERREQUEST, socket);
         return (HanRoutingProtocol.ClientRegisterResponse) response.read();
     }
 
@@ -48,7 +48,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat 
         final RequestWrapper req = new RequestWrapper(request.build(), socket);
         req.writeToSocket();
 
-        final ResponseWrapper response = new ResponseWrapper(ResponseWrapper.ResponseType.CLIENT_LOGIN, socket);
+        final ResponseWrapper response = new ResponseWrapper(HanRoutingProtocol.EncryptedWrapper.Type.CLIENTLOGINREQUEST, socket);
         return (HanRoutingProtocol.ClientLoginResponse) response.read();
     }
 

@@ -2,7 +2,6 @@ package nl.han.asd.project.client.commonclient.utility;
 
 import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.apache.log4j.spi.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -18,7 +17,7 @@ import java.net.Socket;
  */
 public class ResponseWrapper {
 
-    private static final Logger log = new LoggerFactory().makeNewLoggerInstance("ProtoBufResponse")
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ResponseWrapper.class);
     private HanRoutingProtocol.EncryptedWrapper.Type responseType;
     public Socket socket;
 

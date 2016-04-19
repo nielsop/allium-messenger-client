@@ -1,6 +1,4 @@
-package nl.han.asd.client.commonclient.connection;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+package nl.han.asd.project.client.commonclient.connection;
 
 import java.io.IOException;
 import java.util.Observable;

@@ -1,6 +1,6 @@
 import LocalServer.Server;
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.client.commonclient.connection.ConnectionService;
+import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import org.junit.*;
 
 import java.io.IOException;

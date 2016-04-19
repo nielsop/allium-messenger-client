@@ -1,5 +1,5 @@
-import nl.han.asd.client.commonclient.message.EncryptedMessage;
-import nl.han.asd.client.commonclient.message.MessageProcessingService;
+import nl.han.asd.project.client.commonclient.message.EncryptedMessage;
+import nl.han.asd.project.client.commonclient.message.MessageProcessingService;
 import org.junit.Assert;
 import org.junit.Test;
 
