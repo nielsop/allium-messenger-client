@@ -1,8 +1,7 @@
 package master;
 
-import nl.han.asd.project.client.commonclient.master.MasterGateway;
-import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
-import org.junit.Assert;
+import nl.han.asd.client.commonclient.master.MasterGateway;
+import nl.han.asd.client.commonclient.utility.ResponseWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +12,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
