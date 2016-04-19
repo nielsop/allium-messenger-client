@@ -1,6 +1,6 @@
-package nl.han.asd.project.client.commonclient.node;
+package nl.han.asd.client.commonclient.node;
 
-import nl.han.asd.project.client.commonclient.message.IReceiveMessage;
+import nl.han.asd.client.commonclient.message.IReceiveMessage;
 
 public class NodeGateway implements ISendMessage {
     //TODO: missing: INodeGateway

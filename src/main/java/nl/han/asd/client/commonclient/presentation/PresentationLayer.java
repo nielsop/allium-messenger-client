@@ -1,8 +1,8 @@
-package nl.han.asd.project.client.commonclient.presentation;
+package nl.han.asd.client.commonclient.presentation;
 
 
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
-import nl.han.asd.project.client.commonclient.store.IContact;
+import nl.han.asd.client.commonclient.message.IMessageBuilder;
+import nl.han.asd.client.commonclient.store.IContact;
 
 /**
  * Android/Desktop application

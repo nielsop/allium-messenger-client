@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.database;
+package nl.han.asd.client.commonclient.database;
 
 /**
  * Created by Niels Bokmans on 12-4-2016.
