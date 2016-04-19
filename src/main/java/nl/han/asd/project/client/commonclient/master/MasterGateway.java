@@ -15,7 +15,8 @@ import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat, IRegistration {
+public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat, IRegistration
+{
     //TODO: missing: IWebService from Master
     public IEncrypt encrypt;
     public Socket socket;
@@ -28,7 +29,42 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat,
      * @param address IPv4 address
      * @param port    port to set up for the connection to the master
      */
-    public MasterGateway(String address, int port) {
+    public MasterGateway(String address, int port)
+    {
+        validateAddress(address);
+        validatePort(port);
+
+
+        this.address = address;
+        this.port = port;
+        try
+        {
+            socket = new Socket(address, port);
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @param port
+     * Port must be in range 1024 - 65535
+     * You can create a server on ports 1 through 65535.
+     * Port numbers less than 256 are reserved for well-known services (like HTTP on port 80) and port numbers less than 1024 require root access on UNIX systems.
+     * Specifying a port of 0 in the ServerSocket constructor results in the server listening on a random, unused port, usually >= 1024.
+     * http://www.jguru.com/faq/view.jsp?EID=17521
+     */
+    private void validatePort(int port)
+    {
+        if(!(port >= 0 && port <= 65535 ))
+            throw new IllegalArgumentException("Port should be in range of 1024 - 65535.");
+    }
+
+    private void validateAddress(String address)
+    {
         //Address may not be null
         if (address == null)
             throw new NullPointerException("Invalid adress; adress may not be null.");
@@ -41,39 +77,24 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat,
         Matcher m = r.matcher(address);
         //Check if match is found
         if (m.find()) {
-            for (int i = 1; i < 5; i++) {
+            for (int i = 1; i < 5; i++)
+            {
                 //Parse every group to int
                 int ipGroup = Integer.parseInt(m.group(i));
                 //Check if first value is not 0.
-                if (i == 1) {
-                    if (ipGroup == 0) {
-                        throw new IllegalArgumentException("First value may not be 0.");
-                    }
-                }
+                if (i == 1 && ipGroup == 0)
+                    throw new IllegalArgumentException("First value may not be 0.");
                 //Check if at least one group is greater than 254
-                if (ipGroup > 254) {
+                if (ipGroup > 254)
                     throw new IllegalArgumentException("One of the IP-values is greater than 254.");
-                }
                 //If all values are correct, put the values in an array => [xxx, xxx, xxx, xxx]
-                else {
+                else
                     addressAsArray[i - 1] = ipGroup;
-                }
             }
         }
         //No match found
         else {
             throw new IllegalArgumentException("IP format is not valid. Must be xxx.xxx.xxx.xxx");
-        }
-
-        this.address = address;
-        this.port = port;
-        try {
-            socket = new Socket(address, port);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
