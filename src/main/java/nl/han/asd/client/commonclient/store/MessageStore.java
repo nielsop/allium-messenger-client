@@ -1,10 +1,14 @@
 package nl.han.asd.client.commonclient.store;
 
 import nl.han.asd.client.commonclient.persistence.IPersistence;
-import nl.han.asd.client.commonclient.presentation.IMessageObserver;
 
+import javax.inject.Inject;
 
-public class MessageStore implements IMessage {
+public class MessageStore implements IMessageStore, IMessageObserver {
     public IPersistence persistence;
-    public IMessageObserver messageObserver;
+
+    @Inject
+    public MessageStore(IPersistence persistence) {
+        this.persistence = persistence;
+    }
 }

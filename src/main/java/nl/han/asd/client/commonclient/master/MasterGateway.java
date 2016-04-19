@@ -1,12 +1,11 @@
 package nl.han.asd.client.commonclient.master;
 
 import com.google.protobuf.ByteString;
-import nl.han.asd.client.commonclient.registration.IRegistration;
 import nl.han.asd.client.commonclient.utility.RequestWrapper;
 import nl.han.asd.client.commonclient.utility.ResponseWrapper;
-import nl.han.asd.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
+import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,16 +14,18 @@ import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat, IRegistration {
+public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
     //TODO: missing: IWebService from Master
-    public IEncrypt encrypt;
     public Socket socket;
     private PrintWriter out;
     private BufferedReader in;
     private String serverAddress;
     private int serverPort;
 
-    /**
+    @Inject
+    public MasterGateway() {}
+
+        /**
      * @param serverAddress IPv4 address
      * @param serverPort    serverPort to set up for the connection to the master
      */

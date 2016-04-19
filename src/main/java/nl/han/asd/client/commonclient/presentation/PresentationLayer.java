@@ -1,10 +1,14 @@
 package nl.han.asd.client.commonclient.presentation;
 
 
+import nl.han.asd.client.commonclient.login.ILogin;
 import nl.han.asd.client.commonclient.message.IMessageBuilder;
-import nl.han.asd.client.commonclient.registration.IRegistration;
+import nl.han.asd.client.commonclient.master.IRegistration;
 import nl.han.asd.client.commonclient.store.IContact;
+import nl.han.asd.client.commonclient.store.IMessageObserver;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+
+import javax.inject.Inject;
 
 /**
  * Android/Desktop application
@@ -17,7 +21,7 @@ public class PresentationLayer {
     public IMessageBuilder messageBuilder;
     public IMessageObserver messageObserver;
     public IRegistration registration;
-    //public ILogin login; //There is no ILogin yet.
+    public ILogin login;
 
     /**
      * Constructs a presentation layer, using one given gateway.
@@ -27,8 +31,17 @@ public class PresentationLayer {
         this.registration = registration;
     }
 
+    @Inject
+    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
+        this.contact = contact;
+        this.messageBuilder = messageBuilder;
+        this.messageObserver = messageObserver;
+        this.registration = registration;
+        this.login = login;
+    }
+
     /**
-     * Register a user on the master application with the given credentials.
+     * PaneRegister a user on the master application with the given credentials.
      * Use the MasterGateway to register a user.
      * @param username username given by user.
      * @param password password given by user.

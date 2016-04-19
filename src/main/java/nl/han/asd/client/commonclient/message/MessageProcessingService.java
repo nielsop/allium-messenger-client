@@ -1,10 +1,13 @@
 package nl.han.asd.client.commonclient.message;
 
-import nl.han.asd.client.commonclient.cryptography.IDecrypt;
-import nl.han.asd.client.commonclient.store.IMessage;
+import com.google.inject.Inject;
+import nl.han.asd.client.commonclient.store.IMessageStore;
 
 public class MessageProcessingService implements IReceiveMessage {
-    public IConfirmationMessageBuilder confirmationMessageBuilder;
-    public IDecrypt decrypt;
-    public IMessage message;
+    public IMessageStore messageStore;
+
+    @Inject
+    public MessageProcessingService(IMessageStore messageStore) {
+        this.messageStore = messageStore;
+    }
 }

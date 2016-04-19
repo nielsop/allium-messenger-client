@@ -1,11 +1,14 @@
 package nl.han.asd.client.commonclient.persistence;
 
-import nl.han.asd.client.commonclient.cryptography.IDecrypt;
 import nl.han.asd.client.commonclient.database.IDatabase;
-import nl.han.asd.client.commonclient.cryptography.IEncrypt;
+
+import javax.inject.Inject;
 
 public class PersistenceService implements IPersistence {
     public IDatabase database;
-    public IEncrypt encrypt;
-    public IDecrypt decrypt;
+
+    @Inject
+    public PersistenceService(IDatabase database) {
+        this.database = database;
+    }
 }

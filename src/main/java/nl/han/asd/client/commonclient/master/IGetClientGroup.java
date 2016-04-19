@@ -1,4 +1,4 @@
 package nl.han.asd.client.commonclient.master;
 
-public interface IGetClients {
+public interface IGetClientGroup {
 }

@@ -1,7 +1,7 @@
 package presentation;
 
 import nl.han.asd.client.commonclient.presentation.PresentationLayer;
-import nl.han.asd.client.commonclient.registration.IRegistration;
+import nl.han.asd.client.commonclient.master.IRegistration;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
