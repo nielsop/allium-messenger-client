@@ -8,7 +8,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClients, IHeartbeat,
     public IEncrypt encrypt;
 
     @Override
-    public HanRoutingProtocol.ClientLoginResponse authUser(String username, String password, String publicKey) {
+    public HanRoutingProtocol.ClientLoginResponse authenticateUser(String username, String password, String publicKey) {
         return null;
     }
 }

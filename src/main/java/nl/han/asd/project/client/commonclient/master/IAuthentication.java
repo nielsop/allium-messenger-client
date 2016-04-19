@@ -6,5 +6,5 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
  * Created by DDulos on 18-Apr-16.
  */
 public interface IAuthentication {
-    public HanRoutingProtocol.ClientLoginResponse authUser(String username, String password, String publicKey);
+    public HanRoutingProtocol.ClientLoginResponse authenticateUser(String username, String password, String publicKey);
 }

@@ -1,17 +1,13 @@
 package nl.han.asd.project.client.commonclient.master;
 
 import com.xebialabs.overcast.host.CloudHost;
-import nl.han.asd.project.client.commonclient.utility.IntegrationTest;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 /**
  * @author Niels Bokmans
@@ -43,10 +39,10 @@ public class MasterGatewayTest {
 
     @Test
     public void testAuthUserCorrectCredentials() {
-        MasterGateway gateway = Mockito.mock(MasterGateway.class);
+        MasterGateway mockGateway = Mockito.mock(MasterGateway.class);
         HanRoutingProtocol.ClientLoginResponse successResponse = HanRoutingProtocol.ClientLoginResponse.newBuilder().setSecretHash("secretHash").setStatus(HanRoutingProtocol.ClientLoginResponse.Status.SUCCES).build();
-        Mockito.when(gateway.authUser("correctUser", "correctPassword", "correctPublicKey")).thenReturn(successResponse);
-        Assert.assertEquals(gateway.authUser("correctUser", "correctPassword", "correctPublicKey"), successResponse);
+        Mockito.when(mockGateway.authenticateUser("correctUser", "correctPassword", "correctPublicKey")).thenReturn(successResponse);
+        Assert.assertEquals(mockGateway.authenticateUser("correctUser", "correctPassword", "correctPublicKey"), successResponse);
     }
 //
 //    @Test
