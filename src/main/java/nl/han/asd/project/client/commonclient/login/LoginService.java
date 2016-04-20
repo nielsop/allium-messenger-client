@@ -38,6 +38,7 @@ public class LoginService implements ILogin {
     }
 
     public boolean login(String username, String password, String publicKey) {
+        //TODO: Initialize setConnectedNodes upon successful authentication
         return validateLoginData(username, password, publicKey) &&
                 masterGateway.authenticateUser(username, password, publicKey).getStatus() ==
                         HanRoutingProtocol.ClientLoginResponse.Status.SUCCES;
