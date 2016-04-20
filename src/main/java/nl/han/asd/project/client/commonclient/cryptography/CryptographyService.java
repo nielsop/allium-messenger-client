@@ -5,4 +5,8 @@ package nl.han.asd.project.client.commonclient.cryptography;
  */
 public class CryptographyService implements IEncrypt, IDecrypt {
 
+    @Override
+    public String encryptData(String data, String publicKey) {
+        return data;
+    }
 }

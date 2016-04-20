@@ -1,33 +1,36 @@
 package nl.han.asd.project.client.commonclient.message;
 
+import com.google.protobuf.ByteString;
+
 /**
- * Created by BILLPOORTS on 13-4-2016.
+ * Created by Julius on 15/04/16.
  */
 public class EncryptedMessage {
-    private String ipaddress = "128.0.0.1";
-    private int port = 81;
-    private String username = "ikzelf";
-    private byte[] encryptedData = new byte[] { 0x10, 0x11, 0x12 };
+    private String username;
+    private String IP;
+    private int port;
+    private ByteString encryptedData;
 
-    public static EncryptedMessage parseFrom(Object input)
-    {
-        return new EncryptedMessage();
-    }
-
-
-    public String getIpaddress() {
-        return ipaddress;
-    }
-
-    public int getPort() {
-        return port;
+    public EncryptedMessage(String username, String IP,int port,ByteString encryptedData){
+        this.username = username;
+        this.IP = IP;
+        this.port = port;
+        this.encryptedData = encryptedData;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public byte[] getEncryptedData() {
+    public int getPort() {
+        return port;
+    }
+
+    public String getIP() {
+        return IP;
+    }
+
+    public ByteString getEncryptedData() {
         return encryptedData;
     }
 }
