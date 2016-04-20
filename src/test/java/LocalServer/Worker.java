@@ -34,8 +34,9 @@ public class Worker implements Runnable {
             byte[] data = null;
             try {
                 int bytesRead = input.read(buffer);
-                data = Arrays.copyOf(buffer, bytesRead);
                 if (bytesRead > 0) {
+                    data = Arrays.copyOf(buffer, bytesRead);
+
                     try {
                         ClientLoginRequest clResponse = ClientLoginRequest.parseFrom(data);
                         ClientLoginResponse.Builder builder = ClientLoginResponse.newBuilder();
