@@ -30,6 +30,7 @@
         <slf4j.version>1.7.21</slf4j.version>
         <slf4j-log4j12.version>1.7.21</slf4j-log4j12.version>
         <protocol.version>0.0.1-SNAPSHOT</protocol.version>
+        <commonservices.version>0.0.1-SNAPSHOT</commonservices.version>
 
         <!-- unit test dependencies -->
         <junit.version>4.12</junit.version>
@@ -160,6 +161,11 @@
             <groupId>nl.han.asd.project</groupId>
             <artifactId>protocol</artifactId>
             <version>${protocol.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.han.asd.project</groupId>
+            <artifactId>commonservices</artifactId>
+            <version>${commonservices.version}</version>
         </dependency>
 
         <!-- unit test dependencies -->
