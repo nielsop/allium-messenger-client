@@ -8,9 +8,11 @@ import nl.han.asd.project.client.commonclient.node.Node;
 public class Contact {
     private String username;
     private Node[] connectedNodes;
+    private String publicKey;
 
-    public Contact(String username) {
+    public Contact(String username,String publicKey) {
         this.username = username;
+        this.publicKey = publicKey;
     }
 
     public String getUsername() {
@@ -22,5 +24,9 @@ public class Contact {
     }
     public void setConnectedNodes(Node[] connectedNodes){
         this.connectedNodes = connectedNodes;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
     }
 }
