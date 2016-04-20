@@ -1,11 +1,7 @@
 package nl.han.asd.project.client.commonclient.message;
 
-import nl.han.asd.client.commonclient.message.EncryptedMessage;
-import nl.han.asd.client.commonclient.message.MessageBuilderService;
-import nl.han.asd.client.commonclient.path.PathDeterminationService;
-import nl.han.asd.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

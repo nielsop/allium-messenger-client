@@ -1,8 +1,6 @@
 package nl.han.asd.project.client.commonclient.cryptography;
 
-import nl.han.asd.client.commonclient.cryptography.CryptographyService;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
