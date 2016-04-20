@@ -1,16 +1,11 @@
 package nl.han.asd.project.client.commonclient.master;
 
-import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
 import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
-import javax.inject.Inject;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -99,6 +94,32 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         }
     }
 
+	 public IEncrypt encrypt;
+
+    @Override
+    public HanRoutingProtocol.ClientLoginResponse authenticateUser(final String username, final String password,
+                                                                   final String publicKey) {
+        /* Code to prevent merge conflicts until we get dependency injection */
+        Socket socket = null;
+        try {
+            socket = new Socket("localhost", 1234);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+        if (socket != null) {
+            final HanRoutingProtocol.ClientLoginRequest.Builder loginRequestBuilder = HanRoutingProtocol.ClientLoginRequest.
+                    newBuilder();
+            loginRequestBuilder.setUsername(username).setPassword(password).setPublicKey(publicKey);
+
+            final RequestWrapper loginRequest = new RequestWrapper(loginRequestBuilder.build(), socket);
+            loginRequest.writeToSocket();
+
+            final ResponseWrapper loginResponse = new ResponseWrapper(HanRoutingProtocol.EncryptedWrapper.Type.CLIENTLOGINRESPONSE, socket);
+            return (HanRoutingProtocol.ClientLoginResponse) loginResponse.read();
+        }
+        return null;
+    }
+	
     public HanRoutingProtocol.ClientRegisterResponse register(String username, String password) {
         HanRoutingProtocol.ClientRegisterRequest.Builder request = HanRoutingProtocol.ClientRegisterRequest.newBuilder();
         request.setUsername(username).setPassword(password);
@@ -287,7 +308,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        return null;
-    }
+		}
+	}
 }

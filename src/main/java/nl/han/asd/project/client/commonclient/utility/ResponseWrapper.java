@@ -18,6 +18,7 @@ import java.net.Socket;
 public class ResponseWrapper {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ResponseWrapper.class);
+
     private HanRoutingProtocol.EncryptedWrapper.Type responseType;
     public Socket socket;
 

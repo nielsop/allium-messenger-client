@@ -9,6 +9,7 @@ import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import javax.inject.Inject;
 
 
+
 public class MessageBuilderService implements IMessageBuilder {
     public IGetPath getPath;
     public ISendMessage sendMessage;

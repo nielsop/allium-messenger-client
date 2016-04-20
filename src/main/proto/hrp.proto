@@ -41,7 +41,7 @@ message Edge {
 }
 
 //
-// Node registration
+// Node login
 //
 message NodeRegisterRequest {
 	required string IPaddress = 1;
@@ -271,6 +271,7 @@ message EncryptedWrapper {
     }
 
     required Type type = 1;
+
 	required string publicKey = 2;
 	required bytes data = 3;
 }

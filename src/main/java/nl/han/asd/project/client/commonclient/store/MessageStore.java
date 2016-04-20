@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.store;
 
+
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 
 import javax.inject.Inject;

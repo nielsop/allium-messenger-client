@@ -1,8 +1,7 @@
 package nl.han.asd.project.client.commonclient.master;
 
-/**
- * Created by Kenny on 13-4-2016.
- */
-public interface IAuthentication {
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
+public interface IAuthentication {
+    HanRoutingProtocol.ClientLoginResponse authenticateUser(String username, String password, String publicKey);
 }
