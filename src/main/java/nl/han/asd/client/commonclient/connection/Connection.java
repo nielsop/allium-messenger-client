@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.connection;
+package nl.han.asd.client.commonclient.connection;
 
 import java.io.*;
 import java.net.Socket;
@@ -8,7 +8,7 @@ import java.util.Observer;
 /**
  * Created by Jevgeni on 15-4-2016.
  */
-class Connection {
+public class Connection {
     private boolean isRunning = false;
 
     private Socket socket = null;

@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.message;
+package nl.han.asd.client.commonclient.message;
 
 import com.google.protobuf.ByteString;
 
@@ -11,7 +11,7 @@ public class EncryptedMessage {
     private int port;
     private ByteString encryptedData;
 
-    public EncryptedMessage(String username, String IP,int port,ByteString encryptedData){
+    public EncryptedMessage(String username, String IP, int port, ByteString encryptedData){
         this.username = username;
         this.IP = IP;
         this.port = port;

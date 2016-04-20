@@ -102,7 +102,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         final RequestWrapper req = new RequestWrapper(request.build(), socket);
         req.writeToSocket();
 
-        final ResponseWrapper response = new ResponseWrapper(ResponseWrapper.ResponseType.CLIENT_REGISTRATION, socket);
+        final ResponseWrapper response = new ResponseWrapper(HanRoutingProtocol.EncryptedWrapper.Type.CLIENTLOGINRESPONSE, socket);
         try {
             return (HanRoutingProtocol.ClientRegisterResponse) response.read();
         } catch (IOException e) {

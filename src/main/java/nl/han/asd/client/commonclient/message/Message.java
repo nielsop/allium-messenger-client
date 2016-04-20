@@ -1,6 +1,6 @@
-package nl.han.asd.project.client.commonclient.message;
+package nl.han.asd.client.commonclient.message;
 
-import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.client.commonclient.store.Contact;
 
 /**
  * Created by Julius on 18/04/16.

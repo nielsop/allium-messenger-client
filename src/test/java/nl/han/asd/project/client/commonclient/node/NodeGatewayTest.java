@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.node;
 
+import nl.han.asd.client.commonclient.node.NodeGateway;
 import nl.han.asd.project.client.commonclient.utility.IntegrationTest;
 import org.junit.After;
 import org.junit.Before;

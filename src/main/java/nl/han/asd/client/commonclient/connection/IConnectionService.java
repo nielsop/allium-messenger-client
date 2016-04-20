@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.connection;
+package nl.han.asd.client.commonclient.connection;
 
 /**
  * Created by BILLPOORTS on 18-4-2016.

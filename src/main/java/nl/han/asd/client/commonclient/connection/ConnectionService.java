@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.connection;
+package nl.han.asd.client.commonclient.connection;
 
 import java.io.IOException;
 import java.util.Observable;

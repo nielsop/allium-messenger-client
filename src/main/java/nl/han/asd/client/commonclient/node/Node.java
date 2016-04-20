@@ -1,16 +1,18 @@
-package nl.han.asd.project.client.commonclient.node;
+package nl.han.asd.client.commonclient.node;
+
 
 /**
- * Created by Julius on 15/04/16.
+ * @author Niels Bokmans
+ * @version 1.0
+ * @since 20-4-2016
  */
 public class Node {
-
     private String IP;
     private int port;
 
     @Override
-    public boolean equals(Object anotherObj){
-        if (!(anotherObj instanceof Node)) return false;
+    public boolean equals(Object anotherObj) {
+        if (!(anotherObj instanceof NodeGateway)) return false;
         return true;
     }
 
@@ -21,4 +23,5 @@ public class Node {
     public int getPort() {
         return port;
     }
+
 }

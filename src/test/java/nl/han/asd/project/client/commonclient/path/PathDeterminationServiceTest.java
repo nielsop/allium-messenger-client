@@ -1,7 +1,8 @@
 package nl.han.asd.project.client.commonclient.path;
 
-import nl.han.asd.project.client.commonclient.node.Node;
-import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.client.commonclient.node.Node;
+import nl.han.asd.client.commonclient.path.PathDeterminationService;
+import nl.han.asd.client.commonclient.store.Contact;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,8 +19,8 @@ public class PathDeterminationServiceTest {
     private Contact contact;
     @Before
     public void setUp() throws Exception {
-        pathDeterminationService = new PathDeterminationService();
-        contact = new Contact("Username");
+       // pathDeterminationService = new PathDeterminationService();
+        //contact = new Contact("Username");
         contact.setConnectedNodes(new Node[]{new Node(),new Node(),new Node(),new Node(),new Node()});
     }
 

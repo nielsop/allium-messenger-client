@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.cryptography;
+package nl.han.asd.client.commonclient.cryptography;
 
 import com.google.protobuf.ByteString;
 
