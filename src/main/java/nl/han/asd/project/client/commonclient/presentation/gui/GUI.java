@@ -52,8 +52,9 @@ public class GUI extends Application {
         stage.show();
     }
 
-    @Inject
+    //TODO: fix dependency injection
+    /*@Inject
     public void setPresentationLayer(PresentationLayer pLayer) {
         this.pLayer = pLayer;
-    }
+    }*/
 }
