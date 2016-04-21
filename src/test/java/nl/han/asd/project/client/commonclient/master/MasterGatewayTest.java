@@ -2,16 +2,10 @@ package nl.han.asd.project.client.commonclient.master;
 
 import com.xebialabs.overcast.host.CloudHost;
 import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -20,7 +14,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
 import static org.junit.Assert.assertEquals;
