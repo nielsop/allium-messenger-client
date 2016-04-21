@@ -1,9 +1,11 @@
+package nl.han.asd.project.client.commonclient.message;
+
 import org.junit.Test;
 
 /**
- * Created by BILLPOORTS on 13-4-2016.
+ * Created by Jevgeni on 13-4-2016.
  */
-public class BerichtOntvangenTest {
+public class ReceiveMessageTest {
     //public final MessageProcessingService mpService = new MessageProcessingService();
 
     @Test

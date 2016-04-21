@@ -1,26 +1,39 @@
 package nl.han.asd.project.client.commonclient.connection;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Arrays;
-import java.util.Observable;
 
 /**
  * Provides basic socket operations used solely by the ConnectionService.
  */
-class Connection extends Observable {
-    private volatile boolean isRunning = false;
+class Connection {
+    private volatile boolean isRunning;
 
-    private Socket socket = null;
-    private OutputStream outputStream = null;
-    private InputStream inputStream = null;
+    private Socket socket;
+    private OutputStream outputStream;
+    private InputStream inputStream;
+    private IConnectionService connectionService;
 
     private int sleepTime = 25; // default
 
-    public Connection() { }
+    public Connection()
+    {
+        setConnectionService(null);
+        inputStream = null;
+        outputStream = null;
+        socket = null;
+        isRunning = false;
+    }
 
+    /**
+     * Opens a socket to a hostname and port combination.
+     * @param hostName Internet protocol address.
+     * @param portNumber Port number to connect to.
+     * @throws IllegalArgumentException A parameter has an invalid value.
+     * @throws SocketException Connection or streams failed.
+     */
     public void open(String hostName, int portNumber) throws IllegalArgumentException, SocketException {
         if (hostName == null || hostName.length() < 7)
             throw new IllegalArgumentException("hostname");
@@ -43,7 +56,13 @@ class Connection extends Observable {
         }
     }
 
-    public void write(byte[] data) throws SocketException {
+    /**
+     * Writes data to the output stream.
+     * @param data Data to write to the stream.
+     * @throws SocketException Writing to stream failed.
+     * @throws IllegalAccessException A parameter has an invalid value.
+     */
+    public void write(byte[] data) throws IllegalArgumentException, SocketException {
         if (data == null)
             throw new IllegalArgumentException("data");
 
@@ -54,6 +73,11 @@ class Connection extends Observable {
         }
     }
 
+    /**
+     * Reads data from the input stream.
+     * @return A byte array containing the data and null if no data was read and no exception occurred.
+     * @throws SocketException Connection or streams failed.
+     */
     public byte[] read() throws SocketException {
         byte[] buffer = new byte[1024];
         byte[] data = null;
@@ -93,6 +117,10 @@ class Connection extends Observable {
         return data;
     }
 
+    /**
+     * Reads from the input stream on an asynchronous way.
+     * <b>Note that this method requires this class to be instantiated using any instance implementing IConnectionService. </b>
+     */
     public void readAsync() {
         // There cannot be multiple instances of the async reader on one socket.
         if (!isRunning) {
@@ -106,8 +134,7 @@ class Connection extends Observable {
                         data = read();
 
                         // Notify ConnectionService that new data is available.
-                        setChanged();
-                        notifyObservers(data);
+                        connectionService.onReceiveRead(data);
 
                         try {
                             // Sleep for a number of seconds.
@@ -131,11 +158,18 @@ class Connection extends Observable {
         }
     }
 
+    /**
+     * Stops reading data asynchronously.
+     */
     public void stopReadAsync() {
         if (!isRunning)
             isRunning = false;
     }
 
+    /**
+     * Closes the sockets and their streams.
+     * @throws IOException Either the sockets or streams had trouble closing down.
+     */
     public void close() throws IOException {
         isRunning = false;
 
@@ -149,10 +183,21 @@ class Connection extends Observable {
             socket.close();
     }
 
+    /**
+     * Returns the current sleep time. Sleep time represents the amount of milliseconds the asynchronous thread
+     * will sleep in between its process of reading data from the input stream.
+     * @return Current sleep time.
+     */
     public int getSleepTime() {
         return sleepTime;
     }
 
+    /**
+     * Sets sleep time. Sleep time represents the amount of milliseconds the asynchronous thread
+     * will sleep in between its process of reading data from the input stream.
+     * @param sleepTime Amount of milliseconds needed to wait.
+     * @throws IllegalArgumentException A parameter has an invalid value.
+     */
     public void setSleepTime(int sleepTime) throws IllegalArgumentException {
         if (sleepTime < 0)
             throw new IllegalArgumentException("Must be at least 1.");
@@ -160,6 +205,10 @@ class Connection extends Observable {
         this.sleepTime = sleepTime;
     }
 
+    /**
+     * Checks if the socket connection is still available.
+     * @return False if closed, True if open.
+     */
     public boolean isConnected()
     {
         if (socket == null) return false;
@@ -167,4 +216,11 @@ class Connection extends Observable {
         return socket.isConnected() && !socket.isClosed();
     }
 
+    /**
+     * Sets the IConnectionService instance.
+     * @param connectionService A instance implementing IConnectionService. Can be null.
+     */
+    public void setConnectionService(IConnectionService connectionService) {
+        this.connectionService = connectionService;
+    }
 }
