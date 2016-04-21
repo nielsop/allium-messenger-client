@@ -13,7 +13,7 @@ import java.io.IOException;
  */
 public class LoginService implements ILogin {
 
-    private static final MasterGateway masterGateway = new MasterGateway();
+    private static final MasterGateway masterGateway = new MasterGateway("localhost", 1234);
     private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]";
     private static final String REGEX_ALPHANUMERICSPECIAL = "^(?=(?:\\D*?\\d){8,32}(?!.*?\\d))[a-zA-Z0-9@\\#$%&*()_+\\]\\[';:?.,!^-]+$";
 	
@@ -25,6 +25,10 @@ public class LoginService implements ILogin {
         this.setConnectedNodes = setConnectedNodes;
         this.authentication = authentication;
 	}
+
+    public LoginService() {
+
+    }
 
     public boolean validateLoginData(String username, String password, String publicKey) {
         if (username == null || password == null || publicKey == null)
@@ -55,6 +59,6 @@ public class LoginService implements ILogin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
-    //TODO: Missing return statement (return null probably)
 }

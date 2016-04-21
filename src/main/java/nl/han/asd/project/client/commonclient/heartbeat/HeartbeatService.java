@@ -31,13 +31,8 @@ public class HeartbeatService implements IConnectionService {
             while (isRunning == true) {
                 try {
                     connectionService.write(payload);
-                } catch (SocketException e) {
-                    e.printStackTrace();
-                }
-
-                try {
                     Thread.sleep(25);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | SocketException e) {
                     e.printStackTrace();
                 }
             }

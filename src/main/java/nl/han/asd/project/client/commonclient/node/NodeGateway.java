@@ -12,10 +12,11 @@ public class NodeGateway implements ISendMessage {
 
     private INodeGateway nodeGateway;
 
-    @Inject
+    //TODO: Fix Dependency Injection
+    /*@Inject
     public NodeGateway(INodeGateway nodeGateway) {
         this.nodeGateway = nodeGateway;
-    }
+    }*/
 
     @Override
     public void sendMessage(EncryptedMessage message) {

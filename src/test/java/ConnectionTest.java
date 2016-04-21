@@ -35,7 +35,7 @@ public class ConnectionTest implements IConnectionService {
 
     @Before
     public void InitConnectionService() throws IOException {
-        connectionService = new ConnectionService();
+        connectionService = new ConnectionService(this);
         connectionService.open("127.0.0.1", 10002);
     }
 
