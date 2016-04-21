@@ -35,11 +35,11 @@ public class Worker implements Runnable {
             try {
                 int bytesRead = input.read(buffer);
                 if (bytesRead > 0) {
+                    data = Arrays.copyOf(buffer, bytesRead);
                     try {
-                        data = Arrays.copyOf(buffer, bytesRead);
-                        ClientLoginRequest clResponse = ClientLoginRequest.parseFrom(data);
+                        ClientLoginRequest request = ClientLoginRequest.parseFrom(data);
                         ClientLoginResponse.Builder builder = ClientLoginResponse.newBuilder();
-                        builder.setSecretHash(String.format("%s:%s", clResponse.getUsername(), clResponse.getPassword()));
+                        builder.setSecretHash(String.format("%s:%s", request.getUsername(), request.getPassword()));
                         builder.setStatus(ClientLoginResponse.Status.valueOf(ClientLogoutResponse.Status.SUCCES_VALUE));
 
                         System.out.println("Request processed as 'protocol' request.");

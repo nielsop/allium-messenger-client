@@ -5,7 +5,9 @@ import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
 import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
+import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import sun.java2d.pipe.ValidatePipe;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,8 +36,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
      * @param serverPort    serverPort to set up for the connection to the master
      */
     public MasterGateway(String serverAddress, int serverPort) {
-        validateAddress(serverAddress);
-        validatePort(serverPort);
+        final Validation validation = new Validation();
+        validation.validateAddress(serverAddress);
+        validation.validatePort(serverPort);
 
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
@@ -46,56 +49,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
                     new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * @param serverPort Port must be in range 1024 - 65535
-     *             You can create a server on ports 1 through 65535.
-     *             Port numbers less than 256 are reserved for well-known services (like HTTP on serverPort 80) and serverPort numbers less than 1024 require root access on UNIX systems.
-     *             Specifying a serverPort of 0 in the ServerSocket constructor results in the server listening on a random, unused serverPort, usually >= 1024.
-     *             http://www.jguru.com/faq/view.jsp?EID=17521
-     */
-    private void validatePort(int serverPort) {
-        if (!(serverPort >= 0 && serverPort <= 65535))
-            throw new IllegalArgumentException("Port should be in range of 1024 - 65535.");
-    }
-
-    /**
-     * Validates the given IP4 address.
-     * When the IP4 isn't valid this funtion will throw an error.
-     * @param address Address to validate.
-     */
-    private void validateAddress(String address) {
-        //Address may not be null
-        if (address == null)
-            throw new NullPointerException("Invalid adress; adress may not be null.");
-        //IP regular expression
-        String ipPattern = "^([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$";
-        //Create pattern object
-        int[] addressAsArray = new int[4];
-        Pattern r = Pattern.compile(ipPattern);
-        //Create matcher object
-        Matcher m = r.matcher(address);
-        //Check if match is found
-        if (m.find()) {
-            for (int i = 1; i < 5; i++) {
-                //Parse every group to int
-                int ipGroup = Integer.parseInt(m.group(i));
-                //Check if first value is not 0.
-                if (i == 1 && ipGroup == 0)
-                    throw new IllegalArgumentException("First value may not be 0.");
-                //Check if at least one group is greater than 254
-                if (ipGroup > 254)
-                    throw new IllegalArgumentException("One of the IP-values is greater than 254.");
-                    //If all values are correct, put the values in an array => [xxx, xxx, xxx, xxx]
-                else
-                    addressAsArray[i - 1] = ipGroup;
-            }
-        }
-        //No match found
-        else {
-            throw new IllegalArgumentException("IP format is not valid. Must be xxx.xxx.xxx.xxx");
         }
     }
 

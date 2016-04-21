@@ -1,5 +1,7 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+import nl.han.asd.project.client.commonclient.utility.Validation;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -35,10 +37,9 @@ class Connection {
      * @throws SocketException Connection or streams failed.
      */
     public void open(String hostName, int portNumber) throws IllegalArgumentException, SocketException {
-        if (hostName == null || hostName.length() < 7)
-            throw new IllegalArgumentException("hostname");
-        if (portNumber <= 10)
-            throw new IllegalArgumentException("portnumber");
+        final Validation validation = new Validation();
+        validation.validateAddress(hostName);
+        validation.validatePort(portNumber);
 
         try {
             // connect to the socket.
@@ -95,10 +96,11 @@ class Connection {
             }
         } catch (IOException e) {
             // something went wrong while reading the data from the stream.
-
+            // if the connection was ever / is connected, attempt to close it.
             if (isConnected() && bytesRead == -1)
             {
-                // if the connection was ever / is connected, attempt to close it.
+                // we cannot fully determine if the connection is still established so attempt to close it and ignore
+                // any exception.
                 try {
                     socket.close();
                 } catch (Exception anyException) { // catch any exception
