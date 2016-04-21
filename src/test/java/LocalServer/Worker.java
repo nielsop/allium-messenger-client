@@ -34,9 +34,9 @@ public class Worker implements Runnable {
             byte[] data = null;
             try {
                 int bytesRead = input.read(buffer);
-                data = Arrays.copyOf(buffer, bytesRead);
                 if (bytesRead > 0) {
                     try {
+                        data = Arrays.copyOf(buffer, bytesRead);
                         ClientLoginRequest clResponse = ClientLoginRequest.parseFrom(data);
                         ClientLoginResponse.Builder builder = ClientLoginResponse.newBuilder();
                         builder.setSecretHash(String.format("%s:%s", clResponse.getUsername(), clResponse.getPassword()));
