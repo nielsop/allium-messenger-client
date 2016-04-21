@@ -6,8 +6,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.SocketException;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Provides a connection service using sockets such as reading and writing data.
@@ -56,7 +54,8 @@ public final class ConnectionService {
 
     /**
      * Initializes this class.
-     * @param targetService
+     * @param targetService An instance that implements IConnectionService. This instance will be used as callback
+     *                      while reading asynchronous.
      * @throws IOException
      */
     public ConnectionService(IConnectionService targetService) throws IOException {
@@ -166,7 +165,7 @@ public final class ConnectionService {
 
     /**
      * Checks whether the connection is alive or not.
-     * @return
+     * @return True if connected, False if disconnected.
      */
     public boolean isConnected() {
         return connection.isConnected();

@@ -104,7 +104,18 @@ public class ConnectionTest implements IConnectionService {
         ConnectionService connection2 = new ConnectionService();
         connection2.stopReadAsync();
     }
-    // ...
+
+    @Test
+    public void TestGenerics() throws SocketException, InvalidProtocolBufferException {
+        ClientLoginRequest.Builder builder = ClientLoginRequest.newBuilder();
+        builder.setUsername("test");
+        builder.setPassword("test");
+        builder.setPublicKey("xxxx");
+        connectionService.writeGeneric(builder);
+
+        ClientLoginResponse response = connectionService.readGeneric(ClientLoginResponse.class);
+        assertEquals(ClientLoginResponse.Status.SUCCES, response.getStatus());
+    }
 
     @Test
     public void TestWriteAndRead() throws SocketException {
