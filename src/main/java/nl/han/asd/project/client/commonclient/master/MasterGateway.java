@@ -1,11 +1,16 @@
 package nl.han.asd.project.client.commonclient.master;
 
+import com.google.inject.Inject;
+import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
 import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +22,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     private BufferedReader in;
     private String serverAddress;
     private int serverPort;
-    private IEncrypt encrypt;
+    private IEncrypt encrypt; //TODO: Private of public? Stond verderop namelijk nog een keer, maar dan public.
 
     @Inject
     public MasterGateway(IEncrypt encrypt) {
@@ -94,11 +99,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         }
     }
 
-	 public IEncrypt encrypt;
-
     @Override
     public HanRoutingProtocol.ClientLoginResponse authenticateUser(final String username, final String password,
-                                                                   final String publicKey) {
+                                                                   final String publicKey) throws IOException {
         /* Code to prevent merge conflicts until we get dependency injection */
         Socket socket = null;
         try {
@@ -309,5 +312,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         } catch (IOException e) {
             e.printStackTrace();
 		}
+        return null;
 	}
 }
