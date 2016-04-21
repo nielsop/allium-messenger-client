@@ -7,6 +7,7 @@ import nl.han.asd.project.client.commonclient.master.IHeartbeat;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.IOException;
+import java.net.SocketException;
 
 public class HeartbeatService implements IConnectionService {
     protected volatile boolean isRunning = true;
@@ -16,7 +17,7 @@ public class HeartbeatService implements IConnectionService {
 
     public HeartbeatService(String hostName, int portNumber) throws IOException {
         connectionService = new ConnectionService(this);
-        connectionService.Start(hostName, portNumber);
+        connectionService.open(hostName, portNumber);
     }
 
     public void Start() {
@@ -28,7 +29,11 @@ public class HeartbeatService implements IConnectionService {
 
         Runnable heartbeatTask = () -> {
             while (isRunning == true) {
-                connectionService.Write(payload);
+                try {
+                    connectionService.write(payload);
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                }
 
                 try {
                     Thread.sleep(25);
@@ -44,11 +49,11 @@ public class HeartbeatService implements IConnectionService {
 
     public void Stop() throws IOException {
         isRunning = false;
-        connectionService.Close();
+        connectionService.close();
     }
 
     @Override
-    public void OnReceiveRead(byte[] buffer) {
+    public void onReceiveRead(byte[] buffer) {
         try {
             HanRoutingProtocol.ClientHeartbeat clientHeartbeat = HanRoutingProtocol.ClientHeartbeat.parseFrom(buffer);
         } catch (InvalidProtocolBufferException e) {
