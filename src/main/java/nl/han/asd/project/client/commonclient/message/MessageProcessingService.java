@@ -1,39 +1,22 @@
 package nl.han.asd.project.client.commonclient.message;
 
-import com.amazonaws.services.cloudfront.model.InvalidArgumentException;
+import com.google.inject.Inject;
 import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
-import nl.han.asd.project.client.commonclient.store.IMessage;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import nl.han.asd.project.client.commonclient.store.IMessageStore;
 
 public class MessageProcessingService implements IReceiveMessage {
-    public IConfirmationMessageBuilder confirmationMessageBuilder; // MessageBuilderService?
+    public IMessageStore messageStore;
     public IDecrypt decrypt;
-    public IMessage message;
+    //public IMessage message;
 
-    public MessageProcessingService(IConfirmationMessageBuilder confirmationMessageBuilder) {
-        this.confirmationMessageBuilder = confirmationMessageBuilder;
+    @Inject
+    public MessageProcessingService(IMessageStore messageStore, IDecrypt decrypt) {
+        this.messageStore = messageStore;
+        this.decrypt = decrypt;
     }
 
-    @Override
-    public void receiveMessage(EncryptedMessage message) {
-        if (message == null)
-            throw new InvalidArgumentException("message");
-
-        handleProcessing(message);
-    }
-
-    private void handleProcessing(EncryptedMessage encryptedMessage) {
-        HanRoutingProtocol.Message message = decrypt.decryptEncryptedMessage(encryptedMessage);
-
-        //if (message.getType() == Message)
-        //{
-            this.message.addMessageToStore(message);
-        //}
-        //else
-        //{
-        //    this.message.addFileChunkToStore(id?, message);
-        //}
-        confirmationMessageBuilder.sendConfirmationMessage(message.getId(), message.getSender() /* CONTACT? */);
-    }
-
+    //TODO
+    /*public nl.han.asd.project.client.commonclient.message.EncryptedMessage peelMessagePacket(Object messagePacket) {
+        return nl.han.asd.project.client.commonclient.message.EncryptedMessage.parseFrom(messagePacket);
+    }*/
 }

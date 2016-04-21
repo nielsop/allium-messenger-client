@@ -35,24 +35,23 @@ public class ConnectionTest implements IConnectionService {
 
     @Before
     public void InitConnectionService() throws IOException {
-        connectionService = new ConnectionService(this);
+        connectionService = new ConnectionService();
         connectionService.open("127.0.0.1", 10002);
     }
 
     @After
     public void CloseConnectionService() throws IOException {
-        if (connectionService.isConnected())
-            connectionService.close();
+        connectionService.close();
     }
 
     @Test
     public void TestConnection() throws IOException {
         String testString = "HelloDarknessMyOldFriend";
         byte[] data = (testString).getBytes();
-
         connectionService.write(data);
 
         byte[] buffer = connectionService.read();
+
         String receivedData = new String(buffer, "UTF-8");
         assertEquals(receivedData, testString);
     }
@@ -63,9 +62,12 @@ public class ConnectionTest implements IConnectionService {
         requestBuilder.setUsername("test");
         requestBuilder.setPassword("test");
         requestBuilder.setPublicKey("test");
-        connectionService.writeGeneric(requestBuilder);
 
-        ClientLoginResponse response = connectionService.readGeneric(ClientLoginResponse.class);
+        byte[] data = requestBuilder.build().toByteArray();
+        connectionService.write(data);
+
+        byte[] buffer = connectionService.read();
+        ClientLoginResponse response = ClientLoginResponse.parseFrom(buffer);
         assertEquals(response.getSecretHash(), String.format("%s:%s", requestBuilder.getUsername(), requestBuilder.getPassword()));
         assertEquals(response.getStatus(), ClientLoginResponse.Status.SUCCES);
 
@@ -100,12 +102,6 @@ public class ConnectionTest implements IConnectionService {
         ConnectionService connection2 = new ConnectionService();
         connection2.stopReadAsync();
     }
-
-    public void FixPushOnGit()
-    {}
-
-
-
     // ...
 
     @Test

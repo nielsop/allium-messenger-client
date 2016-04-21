@@ -1,7 +1,6 @@
 package nl.han.asd.project.client.commonclient.cryptography;
 
-import nl.han.asd.project.client.commonclient.message.EncryptedMessage;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import com.google.protobuf.ByteString;
 
 /**
  * Created by Niels Bokmans on 12-4-2016.
@@ -9,7 +8,7 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 public class CryptographyService implements IEncrypt, IDecrypt {
 
     @Override
-    public HanRoutingProtocol.Message decryptEncryptedMessage(EncryptedMessage encryptedMessage) {
+    public ByteString encryptData(String data, String publicKey) {
         return null;
     }
 }

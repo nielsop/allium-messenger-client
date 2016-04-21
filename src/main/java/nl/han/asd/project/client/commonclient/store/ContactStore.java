@@ -2,9 +2,13 @@ package nl.han.asd.project.client.commonclient.store;
 
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 
+import javax.inject.Inject;
+
 public class ContactStore implements IContact {
     public IPersistence persistence;
 
-    public static void main(String[] args) {
+    @Inject
+    public ContactStore(IPersistence persistence) {
+        this.persistence = persistence;
     }
 }
