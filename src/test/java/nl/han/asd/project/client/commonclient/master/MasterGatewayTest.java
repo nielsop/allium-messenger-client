@@ -1,6 +1,6 @@
 package nl.han.asd.project.client.commonclient.master;
 
-import com.xebialabs.overcast.host.CloudHost;
+//import com.xebialabs.overcast.host.CloudHost;
 import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 
 public class MasterGatewayTest {
 
-    private CloudHost itestHost;
+    //private CloudHost itestHost;
     private MasterGateway gateway;
 
     public static final String correctAddress = "10.182.5.162";
