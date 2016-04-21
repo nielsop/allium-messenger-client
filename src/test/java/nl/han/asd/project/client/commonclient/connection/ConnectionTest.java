@@ -1,3 +1,5 @@
+package nl.han.asd.project.client.commonclient.connection;
+
 import LocalServer.Server;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
@@ -111,6 +113,13 @@ public class ConnectionTest implements IConnectionService {
 
         connectionService.write(data);
         connectionService.readAsync();
+    }
+
+    @Test
+    public void TestConnectedState() throws IOException {
+        connectionService.close();
+
+        assertEquals(false, connectionService.isConnected());
     }
 
     @Override
