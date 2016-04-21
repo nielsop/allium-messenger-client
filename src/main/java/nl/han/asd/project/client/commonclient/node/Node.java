@@ -7,6 +7,7 @@ public class Node {
 
     private String IP;
     private int port;
+    private String publicKey;
 
     @Override
     public boolean equals(Object anotherObj){
@@ -20,5 +21,9 @@ public class Node {
 
     public int getPort() {
         return port;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
     }
 }

@@ -20,7 +20,12 @@ public class PathDeterminationService implements IGetPath {
     }
 
     private Node calculateUsableConnectedNode(Contact contact){
-        Node[] connectedNodes = contact.getConnectedNodes();
+        Node[] connectedNodes = new Node[0];
+        try {
+            connectedNodes = contact.getConnectedNodes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Random ran = new Random();
         int indexConnectedNode = ran.nextInt(connectedNodes.length);
 

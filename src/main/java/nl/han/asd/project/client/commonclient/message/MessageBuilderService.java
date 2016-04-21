@@ -21,29 +21,41 @@ public class MessageBuilderService implements IMessageBuilder {
         this.cryptographyService = cryptographyService;
     }
 
-    public void buildMessagePackage(String messageText, Contact contactReciever, Contact contactSender) {
-        ArrayList<Node> path = pathDeterminationService.getPath(MIN_HOPS,contactReciever);
-        //build protocol message
-        //encrypt protocol message
-        Message message = new Message(messageText,contactSender,contactReciever);
-        ByteString firstLayer = buildFirstMessagePackageLayer(path.get(0),message);
-        path.remove(0);
-        recursiveEncrypt(firstLayer,path);
+    public void sendMessage(String messageText, Contact contactReciever, Contact contactSender){
+        EncryptedMessage messageToSend = buildMessagePackage(messageText,contactReciever,contactSender);
+
+        HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
+
+        builder.setEncryptedData(messageToSend.getEncryptedData());
     }
 
-    private ByteString buildFirstMessagePackageLayer(Node node,Message message) {
+    private EncryptedMessage buildMessagePackage(String messageText, Contact contactReciever, Contact contactSender) {
+        ArrayList<Node> path = pathDeterminationService.getPath(MIN_HOPS,contactReciever);
+
+        Message message = new Message(messageText,contactSender,contactReciever);
+
+        ByteString firstLayer = buildFirstMessagePackageLayer(path.get(0),message);
+        path.remove(0);
+        return buildLastMessagePackageLayer(path.get(path.size()),recursiveEncrypt(firstLayer,path));
+    }
+
+    private ByteString buildFirstMessagePackageLayer(Node node, Message message) {
         HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
 
         builder.setUsername(message.getReciever().getUsername());
         builder.setIPaddress(node.getIP());
         builder.setPort(node.getPort());
-        builder.setEncryptedData(cryptographyService.encryptData(message.getText(),message.getReciever().getPublicKey()));
+        builder.setEncryptedData(ByteString.copyFromUtf8(message.getText()));
 
-        return builder.build().toByteString();
+        return cryptographyService.encryptData(builder.build().toString(), node.getPublicKey());
+    }
+
+    private EncryptedMessage buildLastMessagePackageLayer(Node node, ByteString data) {
+        return new EncryptedMessage(null,node.getIP(),node.getPort(),data);
     }
 
     private ByteString recursiveEncrypt(ByteString message, ArrayList<Node> path){
-        if (path.size() == 0) {
+        if (path.size() == 1) {
             return message;
         }
         HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
@@ -55,7 +67,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
         path.remove(0);
 
-        ByteString encryptedMessage = builder.build().toByteString();
+        ByteString encryptedMessage = cryptographyService.encryptData(builder.build().toString(),node.getPublicKey());
 
         return recursiveEncrypt(encryptedMessage, path);
     }

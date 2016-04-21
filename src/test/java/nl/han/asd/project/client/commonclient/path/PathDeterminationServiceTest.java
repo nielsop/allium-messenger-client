@@ -19,7 +19,7 @@ public class PathDeterminationServiceTest {
     @Before
     public void setUp() throws Exception {
         pathDeterminationService = new PathDeterminationService();
-        contact = new Contact("Username");
+        contact = new Contact("Username","1234");
         contact.setConnectedNodes(new Node[]{new Node(),new Node(),new Node(),new Node(),new Node()});
     }
 
@@ -65,7 +65,12 @@ Checking if error is trown when miniumHops is negative number
     @Test
     public void firstNodeInPathIsAConnectedNodeFromHostClient(){
         ArrayList<Node> generatePath = pathDeterminationService.getPath(3,contact);
-        Node[] contactConnectedNodes = contact.getConnectedNodes();
+        Node[] contactConnectedNodes = new Node[0];
+        try {
+            contactConnectedNodes = contact.getConnectedNodes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Assert.assertTrue(inArray(generatePath.get(0), contactConnectedNodes));
     }
 
