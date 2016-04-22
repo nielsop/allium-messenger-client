@@ -118,7 +118,7 @@ public class ConnectionServiceTest implements IConnectionService {
         assertEquals(ClientLoginResponse.Status.SUCCES, response.getStatus());
     }
 
-    @Test
+    @Test(expected = SocketException.class)
     public void TestInvalidGeneric() throws IOException {
         connectionService.close();
         ClientLoginResponse response = connectionService.readGeneric(ClientLoginResponse.class);

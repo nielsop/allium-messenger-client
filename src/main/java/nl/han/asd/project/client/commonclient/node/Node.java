@@ -9,11 +9,11 @@ package nl.han.asd.project.client.commonclient.node;
 public class Node {
     private String IP;
     private int port;
+    private String publicKey;
 
     @Override
     public boolean equals(Object anotherObj) {
-        if (!(anotherObj instanceof NodeGateway)) return false;
-        return true;
+        return anotherObj instanceof Node;
     }
 
     public String getIP() {
@@ -24,4 +24,7 @@ public class Node {
         return port;
     }
 
+    public String getPublicKey() {
+        return publicKey;
+    }
 }

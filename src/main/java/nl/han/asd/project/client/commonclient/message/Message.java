@@ -10,10 +10,10 @@ public class Message {
 
     private String text;
     private Contact sender;
-    private Contact reciever;
+    private Contact receiver;
 
-    public Contact getReciever() {
-        return reciever;
+    public Contact getReceiver() {
+        return receiver;
     }
     public Contact getSender() {
         return sender;
@@ -25,6 +25,6 @@ public class Message {
     public Message(String text, Contact sender, Contact reciever){
         this.text = text;
         this.sender = sender;
-        this.reciever = reciever;
+        this.receiver = reciever;
     }
 }

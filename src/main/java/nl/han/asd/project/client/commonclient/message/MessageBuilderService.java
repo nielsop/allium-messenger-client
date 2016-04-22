@@ -1,13 +1,17 @@
 package nl.han.asd.project.client.commonclient.message;
 
+import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
+import nl.han.asd.project.client.commonclient.node.Node;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
-
+import java.util.ArrayList;
 
 
 public class MessageBuilderService implements IMessageBuilder {
@@ -34,31 +38,41 @@ public class MessageBuilderService implements IMessageBuilder {
         this.cryptographyService = cryptographyService;
     }
 
-    /*
+    public void sendMessage(String messageText, Contact contactReciever, Contact contactSender){
+        EncryptedMessage messageToSend = buildMessagePackage(messageText,contactReciever,contactSender);
 
-    public void buildMessagePackage(String messageText, Contact contactReciever, Contact contactSender) {
-        ArrayList<Node> path = pathDeterminationService.getPath(MIN_HOPS,contactReciever);
-        //build protocol message
-        //encrypt protocol message
-        nl.han.asd.project.client.commonclient.message.Message message = new nl.han.asd.project.client.commonclient.message.Message(messageText,contactSender,contactReciever);
-        ByteString firstLayer = buildFirstMessagePackageLayer(path.get(0),message);
-        path.remove(0);
-        recursiveEncrypt(firstLayer,path);
-    }
-
-    private ByteString buildFirstMessagePackageLayer(Node node, nl.han.asd.project.client.commonclient.message.Message message) {
         HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
 
-        builder.setUsername(message.getService().getUsername());
+        builder.setEncryptedData(messageToSend.getEncryptedData());
+    }
+
+    private EncryptedMessage buildMessagePackage(String messageText, Contact contactReciever, Contact contactSender) {
+        ArrayList<Node> path = pathDeterminationService.getPath(MIN_HOPS,contactReciever);
+
+        Message message = new Message(messageText,contactSender,contactReciever);
+
+        ByteString firstLayer = buildFirstMessagePackageLayer(path.get(0),message);
+        path.remove(0);
+        return buildLastMessagePackageLayer(path.get(path.size()),recursiveEncrypt(firstLayer,path));
+    }
+
+    private ByteString buildFirstMessagePackageLayer(Node node, Message message) {
+        HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
+
+        builder.setUsername(message.getReceiver().getUsername());
         builder.setIPaddress(node.getIP());
         builder.setPort(node.getPort());
-        builder.setEncryptedData(cryptographyService.encryptData(message.getText(),message.getReciever().getPublicKey()));
+        builder.setEncryptedData(ByteString.copyFromUtf8(message.getText()));
 
-        return builder.build().toByteString();
+        return cryptographyService.encryptData(builder.build().toString(), node.getPublicKey());
+    }
+
+    private EncryptedMessage buildLastMessagePackageLayer(Node node, ByteString data) {
+        return new EncryptedMessage(null,node.getIP(),node.getPort(),data);
     }
 
     private ByteString recursiveEncrypt(ByteString message, ArrayList<Node> path){
-        if (path.size() == 0) {
+        if (path.size() == 1) {
             return message;
         }
         HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
@@ -70,8 +84,8 @@ public class MessageBuilderService implements IMessageBuilder {
 
         path.remove(0);
 
-        ByteString encryptedMessage = builder.build().toByteString();
+        ByteString encryptedMessage = cryptographyService.encryptData(builder.build().toString(),node.getPublicKey());
 
         return recursiveEncrypt(encryptedMessage, path);
-    }*/
+    }
 }

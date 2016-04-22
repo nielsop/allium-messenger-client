@@ -20,8 +20,12 @@ public class Contact {
         return username;
     }
 
-    public Node[] getConnectedNodes() {
+    public Node[] getConnectedNodes() throws Exception {
+        if(connectedNodes == null || connectedNodes.length <= 0 ){
+            throw new Exception("The conneted Nodes from the contact are not set");
+        }
         return connectedNodes;
+
     }
     public void setConnectedNodes(Node[] connectedNodes){
         this.connectedNodes = connectedNodes;

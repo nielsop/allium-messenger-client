@@ -1,11 +1,18 @@
 package nl.han.asd.project.client.commonclient.path;
 
+import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.node.Node;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
@@ -13,13 +20,19 @@ import java.util.ArrayList;
 /**
  * Created by Julius on 15/04/16.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class PathDeterminationServiceTest {
+    @InjectMocks
     private PathDeterminationService pathDeterminationService;
     private Contact contact;
+    @Mock
+    IGetUpdatedGraph updatedGraphMock;
+
+    @Mock
+    IGetClientGroup clientGroupMock;
     @Before
     public void setUp() throws Exception {
-       // pathDeterminationService = new PathDeterminationService();
-        //contact = new Contact("Username");
+        contact = new Contact("Username","1234");
         contact.setConnectedNodes(new Node[]{new Node(),new Node(),new Node(),new Node(),new Node()});
     }
 
@@ -65,7 +78,12 @@ Checking if error is trown when miniumHops is negative number
     @Test
     public void firstNodeInPathIsAConnectedNodeFromHostClient(){
         ArrayList<Node> generatePath = pathDeterminationService.getPath(3,contact);
-        Node[] contactConnectedNodes = contact.getConnectedNodes();
+        Node[] contactConnectedNodes = new Node[0];
+        try {
+            contactConnectedNodes = contact.getConnectedNodes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Assert.assertTrue(inArray(generatePath.get(0), contactConnectedNodes));
     }
 
