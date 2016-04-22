@@ -1,13 +1,17 @@
 package nl.han.asd.project.client.commonclient.message;
 
+import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
+import nl.han.asd.project.client.commonclient.node.Node;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
-
+import java.util.ArrayList;
 
 
 public class MessageBuilderService implements IMessageBuilder {
@@ -55,7 +59,7 @@ public class MessageBuilderService implements IMessageBuilder {
     private ByteString buildFirstMessagePackageLayer(Node node, Message message) {
         HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
 
-        builder.setUsername(message.getService().getUsername());
+        builder.setUsername(message.getReceiver().getUsername());
         builder.setIPaddress(node.getIP());
         builder.setPort(node.getPort());
         builder.setEncryptedData(ByteString.copyFromUtf8(message.getText()));
