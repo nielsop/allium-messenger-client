@@ -108,15 +108,17 @@ public final class ConnectionService {
      */
     public <T extends GeneratedMessage> T readGeneric(Class<T> classDescriptor) throws SocketException, InvalidProtocolBufferException {
         byte[] buffer = this.read();
-        try {
-            Field defaultInstanceField = classDescriptor.getDeclaredField("DEFAULT_INSTANCE");
-            defaultInstanceField.setAccessible(true);
-            T defaultInstance = (T)defaultInstanceField.get(null);
-            return (T)defaultInstance.getParserForType().parseFrom(buffer);
-        } catch (IllegalAccessException | InvalidProtocolBufferException e) {
-            // return null
-        } catch (NoSuchFieldException e) {
-            throw new InvalidProtocolBufferException("Invalid class provided.");
+        if (buffer != null) {
+            try {
+                Field defaultInstanceField = classDescriptor.getDeclaredField("DEFAULT_INSTANCE");
+                defaultInstanceField.setAccessible(true);
+                T defaultInstance = (T) defaultInstanceField.get(null);
+                return (T) defaultInstance.getParserForType().parseFrom(buffer);
+            } catch (IllegalAccessException | InvalidProtocolBufferException e) {
+                // return null
+            } catch (NoSuchFieldException e) {
+                throw new InvalidProtocolBufferException("Invalid class provided.");
+            }
         }
         return null;
     }
