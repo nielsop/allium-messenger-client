@@ -120,7 +120,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
         HanRoutingProtocol.EncryptedWrapper.Builder request = HanRoutingProtocol.EncryptedWrapper.newBuilder();
         request.setType(HanRoutingProtocol.EncryptedWrapper.Type.CLIENTREGISTERREQUEST).setPublicKey(key).setData(data);
-
+        System.out.println(request.build());
         final RequestWrapper req = new RequestWrapper(request.build(), socket);
         req.writeToSocket();
 

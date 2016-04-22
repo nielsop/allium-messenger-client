@@ -10,7 +10,7 @@ import java.util.Arrays;
 /**
  * Provides basic socket operations used solely by the ConnectionService.
  */
-class Connection {
+public class Connection {
     private volatile boolean isRunning;
 
     private Socket socket;
