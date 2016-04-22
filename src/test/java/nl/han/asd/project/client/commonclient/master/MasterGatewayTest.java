@@ -1,46 +1,146 @@
 package nl.han.asd.project.client.commonclient.master;
 
+//import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHost;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.junit.Assert;
+import com.xebialabs.overcast.host.CloudHostFactory;
+import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.net.UnknownHostException;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.Socket;
 
-/**
- * @author Niels Bokmans
- * @version 1.0
- * @since 13-4-2016
- */
+import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
+import static org.junit.Assert.assertEquals;
+
+@RunWith(PowerMockRunner.class)
+//@RunWith(MockitoJUnitRunner.class)
+@PrepareForTest(MasterGateway.class)
+
 public class MasterGatewayTest {
 
-    private CloudHost itestHost;
-    private MasterGateway masterGateway;
+    public static final String correctAddress = "10.182.5.139";
+    public static final byte[] correctData = new byte[]{1, 2, 3, 4};
+    public static final int port = 1024;
+    public static final String username = "username";
+    public static final String password = "password";
+
+    //private CloudHost itestHost;
+    private MasterGateway gateway;
 
     @Before
-    public void before() throws UnknownHostException {
-//        itestHost = CloudHostFactory.getCloudHost("server");
-//        itestHost.setup();
-//
-//        String host = itestHost.getHostName();
-//        int port = itestHost.getPort(31337);
-//
-//        System.out.println(host + ", " + port);
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+    public void setup() throws Exception {
+        /*itestHost = CloudHostFactory.getCloudHost("server");
+        itestHost.setup();
 
-        masterGateway = new MasterGateway("localhost", 1234);
+        String host = itestHost.getHostName();
+        int port = itestHost.getPort(31337);
+
+        System.out.println(host + ", " + port);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+
+        //Mock Socket with its outputStream and inputStream
+        Socket s = Mockito.mock(Socket.class);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        InputStream in = Mockito.mock(InputStream.class);
+
+        PowerMockito.whenNew(Socket.class).withArguments(correctAddress, port).thenReturn(s);
+        Mockito.when(s.getOutputStream()).thenReturn(bos);
+        Mockito.when(s.getInputStream()).thenReturn(in);
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testRegisterAddressNull() throws Exception {
+        gateway = new MasterGateway(null, port);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRegisterPortTooLow() throws Exception {
+        gateway = new MasterGateway(correctAddress, -1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRegisterPortTooHigh() throws Exception {
+        gateway = new MasterGateway(correctAddress, 65536);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testRegisterUsernameNull() throws Exception {
+        gateway = new MasterGateway(correctAddress, port);
+        gateway.register(null, password);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testRegisterPasswordNull() throws Exception {
+        gateway = new MasterGateway(correctAddress, port);
+        gateway.register(username, null);
+    }
+
+    @Test
+    public void testRegisterFailed() throws Exception {
+        ResponseWrapper wrapper = getMockedResponseWrapper();
+        gateway = new MasterGateway(correctAddress, port);
+        PowerMockito.when(wrapper.read()).thenReturn(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).build());
+        assertEquals(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).build(), gateway.register(username, password));
+    }
+
+    @Test
+    public void testRegisterSuccess() throws Exception {
+        ResponseWrapper wrapper = getMockedResponseWrapper();
+        gateway = new MasterGateway(correctAddress, port);
+        PowerMockito.when(wrapper.read()).thenReturn(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).build());
+        assertEquals(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).build(), gateway.register(username, password));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGatewayInvalidAddressValueTooHigh() throws Exception {
+        new MasterGateway("101.202.303.404", port);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGatewayInvalidAddressTooManyGroups() throws Exception {
+        new MasterGateway("192.168.121.222.121", port);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGatewayInvalidAddressAllZero() throws Exception {
+        new MasterGateway("0.0.0.0", port);
+    }
+
+    @Test
+    public void testGatewayValidAddress() {
+        Exception ex = null;
+        try {
+            new MasterGateway(correctAddress, port);
+        } catch (Exception e) {
+            ex = e;
+        }
+        assertEquals(null, ex);
+    }
+
+    /*@Test
+    public void testDependenciesNotNull() throws Exception {
+        gateway = new MasterGateway(correctAdress, port);
+        assertNotNull(gateway);
+    }*/
+
+
 
     @Test
     public void testAuthUserCorrectCredentials() {
         MasterGateway mockGateway = Mockito.mock(MasterGateway.class);
-        HanRoutingProtocol.ClientLoginResponse successResponse = HanRoutingProtocol.ClientLoginResponse.newBuilder().setSecretHash("secretHash").setStatus(HanRoutingProtocol.ClientLoginResponse.Status.SUCCES).build();
+        ClientLoginResponse successResponse = ClientLoginResponse.newBuilder().setSecretHash("secretHash").setStatus(ClientLoginResponse.Status.SUCCES).build();
        //TODO: deze test verbeteren
         //Mockito.when(mockGateway.authenticateUser("correctUser", "correctPassword", "correctPublicKey")).thenReturn(successResponse);
         //Assert.assertEquals(mockGateway.authenticateUser("correctUser", "correctPassword", "correctPublicKey"), successResponse);
@@ -176,4 +276,9 @@ public class MasterGatewayTest {
 //
 //        return builder.build();
 //    }
+        private ResponseWrapper getMockedResponseWrapper() throws Exception {
+            ResponseWrapper wrapper = Mockito.mock(ResponseWrapper.class);
+            PowerMockito.whenNew(ResponseWrapper.class).withAnyArguments().thenReturn(wrapper);
+            return wrapper;
+}
 }
