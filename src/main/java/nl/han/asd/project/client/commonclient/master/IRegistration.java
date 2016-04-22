@@ -9,5 +9,5 @@ package nl.han.asd.project.client.commonclient.master;
  */
 public interface IRegistration {
 
-    boolean register(String username, String password);
+    RegisterResponseWrapper register(String username, String password);
 }

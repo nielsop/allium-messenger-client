@@ -42,14 +42,14 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     }
 
     @Override
-    public boolean register(String username, String password) {
+    public RegisterResponseWrapper register(String username, String password) {
         HanRoutingProtocol.ClientLoginRequest registerRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
                 .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
 
         HanRoutingProtocol.ClientRegisterResponse registerResponse = writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class,
                 registerRequest.toByteArray());
-        return registerResponse != null && registerResponse.getStatus() ==
-                HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES;
+        if (registerResponse == null) return null;
+        return new RegisterResponseWrapper(registerResponse.getStatus());
     }
 
     /**

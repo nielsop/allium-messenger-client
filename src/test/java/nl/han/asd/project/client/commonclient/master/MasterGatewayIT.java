@@ -34,7 +34,16 @@ public class MasterGatewayIT {
 
     @Test
     public void testRegisterClientSuccessful() {
-        Assert.assertTrue(gateway.register(VALID_USERNAME, VALID_PASSWORD));
+        Assert.assertEquals(gateway.register(VALID_USERNAME, VALID_PASSWORD).status,
+                HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES);
+    }
+
+    @Test
+    public void testRegisterClientUsernameTaken() {
+        gateway.register(VALID_USERNAME, VALID_PASSWORD);
+
+        Assert.assertEquals(gateway.register(VALID_USERNAME, VALID_PASSWORD).status,
+                HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME);
     }
 
     @Test

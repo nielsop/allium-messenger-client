@@ -7,7 +7,9 @@ import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 /**
- * Created by DDulos on 13-Apr-16.
+ * @author Niels Bokmans
+ * @version 1.0
+ * @since 18-4-2016
  */
 public class LoginService implements ILogin {
 
