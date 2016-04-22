@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.cryptography;
 
+import com.google.protobuf.ByteString;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class CryptographyServiceTest {
     public void testEncryptData() throws Exception {
         String dataToEncrypt = "Encrypt this";
         String publicKey = "12345678";
-       // String encryptedData = cryptographyService.encryptData(dataToEncrypt,publicKey);
+        ByteString encryptedData = cryptographyService.encryptData(dataToEncrypt,publicKey);
 
        // Assert.assertEquals(encryptedData,dataToEncrypt);
     }

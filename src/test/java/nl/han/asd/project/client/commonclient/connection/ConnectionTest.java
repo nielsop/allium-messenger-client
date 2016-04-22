@@ -70,6 +70,7 @@ public class ConnectionTest implements IConnectionService {
 
         byte[] buffer = connectionService.read();
         ClientLoginResponse response = ClientLoginResponse.parseFrom(buffer);
+        System.out.println(response.getSecretHash());
         assertEquals(response.getSecretHash(), String.format("%s:%s", requestBuilder.getUsername(), requestBuilder.getPassword()));
         assertEquals(response.getStatus(), ClientLoginResponse.Status.SUCCES);
 
