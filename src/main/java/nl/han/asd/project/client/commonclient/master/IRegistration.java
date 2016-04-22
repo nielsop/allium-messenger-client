@@ -1,11 +1,13 @@
 package nl.han.asd.project.client.commonclient.master;
 
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-
 /**
- * Created by Kenny on 13-4-2016.
+ * @author Niels Bokmans
+ * @version 1.0
+ * @since 20-4-2016
+ * <p>
+ * Provides methods to register a new user.
  */
 public interface IRegistration {
 
-    HanRoutingProtocol.ClientRegisterResponse register(String username, String password);
+    boolean register(String username, String password);
 }

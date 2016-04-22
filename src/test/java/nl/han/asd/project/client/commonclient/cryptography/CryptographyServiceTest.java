@@ -10,6 +10,7 @@ import org.junit.Test;
  */
 public class CryptographyServiceTest {
     private CryptographyService cryptographyService;
+
     @Before
     public void setUp() throws Exception {
         cryptographyService = new CryptographyService();
@@ -24,8 +25,8 @@ public class CryptographyServiceTest {
     public void testEncryptData() throws Exception {
         String dataToEncrypt = "Encrypt this";
         String publicKey = "12345678";
-        ByteString encryptedData = cryptographyService.encryptData(dataToEncrypt,publicKey);
+        ByteString encryptedData = cryptographyService.encryptData(dataToEncrypt, publicKey);
 
-       // Assert.assertEquals(encryptedData,dataToEncrypt);
+        // Assert.assertEquals(encryptedData,dataToEncrypt);
     }
 }

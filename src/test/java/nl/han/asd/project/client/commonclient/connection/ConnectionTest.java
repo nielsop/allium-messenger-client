@@ -1,15 +1,14 @@
 package nl.han.asd.project.client.commonclient.connection;
 
-import LocalServer.Server;
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.connection.ConnectionService;
-import nl.han.asd.project.client.commonclient.connection.IConnectionService;
 import org.junit.*;
+import server.Server;
 
 import java.io.IOException;
 import java.net.SocketException;
 
-import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -20,7 +19,7 @@ public class ConnectionTest implements IConnectionService {
     private static final Server server = new Server();
     private ConnectionService connectionService = null;
 
-    public  ConnectionTest() {
+    public ConnectionTest() {
     }
 
     @BeforeClass
@@ -77,19 +76,18 @@ public class ConnectionTest implements IConnectionService {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void TestSleepTime()
-    {
+    public void TestSleepTime() {
         ConnectionService connection2 = new ConnectionService(-20);
     }
 
-    @Test(expected =  IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void TestHost() throws IOException {
         ConnectionService connection2 = new ConnectionService(20, this);
         connection2.open("127.0.", 10);
     }
 
     @Test(expected = IllegalArgumentException.class)
-     public void TestPort() throws IOException {
+    public void TestPort() throws IOException {
         ConnectionService connection2 = new ConnectionService();
         connection2.open("127.0.0.1", -20);
     }

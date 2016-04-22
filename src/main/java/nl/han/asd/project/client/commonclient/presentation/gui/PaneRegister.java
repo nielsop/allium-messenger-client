@@ -44,13 +44,15 @@ public class PaneRegister extends Pane {
             public void handle(ActionEvent e) {
                 if (userTextField.getText().length() < 3) actionTarget.setText("Username is too short!");
                 else if (pwBox.getText().length() < 3) actionTarget.setText("Password is too short!");
-                else if (!pwBox.getText().equals(pwBox2.getText())) actionTarget.setText("The passwords are not the same!");
+                else if (!pwBox.getText().equals(pwBox2.getText()))
+                    actionTarget.setText("The passwords are not the same!");
                 else {
                     try {
                         HanRoutingProtocol.ClientRegisterResponse.Status status = gui.pLayer.register(userTextField.getText(), pwBox.getText());
                         if (status == status.SUCCES) actionTarget.setText("Registration successful!");
                         else if (status == status.FAILED) actionTarget.setText("Error!");
-                        else if (status == status.TAKEN_USERNAME) actionTarget.setText("Error! Chose another username.");
+                        else if (status == status.TAKEN_USERNAME)
+                            actionTarget.setText("Error! Chose another username.");
                     } catch (Exception ex) {
                         actionTarget.setText("Something went terribly wrong!");
                     }

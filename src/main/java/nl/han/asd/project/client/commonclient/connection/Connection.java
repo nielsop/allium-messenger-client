@@ -2,7 +2,9 @@ package nl.han.asd.project.client.commonclient.connection;
 
 import nl.han.asd.project.client.commonclient.utility.Validation;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Arrays;
@@ -20,8 +22,7 @@ public class Connection {
 
     private int sleepTime = 25; // default
 
-    public Connection()
-    {
+    public Connection() {
         setConnectionService(null);
         inputStream = null;
         outputStream = null;
@@ -31,10 +32,11 @@ public class Connection {
 
     /**
      * Opens a socket to a hostname and port combination.
-     * @param hostName Internet protocol address.
+     *
+     * @param hostName   Internet protocol address.
      * @param portNumber Port number to connect to.
      * @throws IllegalArgumentException A parameter has an invalid value.
-     * @throws SocketException Connection or streams failed.
+     * @throws SocketException          Connection or streams failed.
      */
     public void open(String hostName, int portNumber) throws IllegalArgumentException, SocketException {
         final Validation validation = new Validation();
@@ -59,8 +61,9 @@ public class Connection {
 
     /**
      * Writes data to the output stream.
+     *
      * @param data Data to write to the stream.
-     * @throws SocketException Writing to stream failed.
+     * @throws SocketException        Writing to stream failed.
      * @throws IllegalAccessException A parameter has an invalid value.
      */
     public void write(byte[] data) throws IllegalArgumentException, SocketException {
@@ -76,6 +79,7 @@ public class Connection {
 
     /**
      * Reads data from the input stream.
+     *
      * @return A byte array containing the data and null if no data was read and no exception occurred.
      * @throws SocketException Connection or streams failed.
      */
@@ -97,8 +101,7 @@ public class Connection {
         } catch (IOException e) {
             // something went wrong while reading the data from the stream.
             // if the connection was ever / is connected, attempt to close it.
-            if (isConnected() && bytesRead == -1)
-            {
+            if (isConnected() && bytesRead == -1) {
                 // we cannot fully determine if the connection is still established so attempt to close it and ignore
                 // any exception.
                 try {
@@ -170,6 +173,7 @@ public class Connection {
 
     /**
      * Closes the sockets and their streams.
+     *
      * @throws IOException Either the sockets or streams had trouble closing down.
      */
     public void close() throws IOException {
@@ -188,6 +192,7 @@ public class Connection {
     /**
      * Returns the current sleep time. Sleep time represents the amount of milliseconds the asynchronous thread
      * will sleep in between its process of reading data from the input stream.
+     *
      * @return Current sleep time.
      */
     public int getSleepTime() {
@@ -197,6 +202,7 @@ public class Connection {
     /**
      * Sets sleep time. Sleep time represents the amount of milliseconds the asynchronous thread
      * will sleep in between its process of reading data from the input stream.
+     *
      * @param sleepTime Amount of milliseconds needed to wait.
      * @throws IllegalArgumentException A parameter has an invalid value.
      */
@@ -209,10 +215,10 @@ public class Connection {
 
     /**
      * Checks if the socket connection is still available.
+     *
      * @return False if closed, True if open.
      */
-    public boolean isConnected()
-    {
+    public boolean isConnected() {
         if (socket == null) return false;
 
         return socket.isConnected() && !socket.isClosed();
@@ -220,6 +226,7 @@ public class Connection {
 
     /**
      * Sets the IConnectionService instance.
+     *
      * @param connectionService A instance implementing IConnectionService. Can be null.
      */
     public void setConnectionService(IConnectionService connectionService) {

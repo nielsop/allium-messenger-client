@@ -1,4 +1,4 @@
-package LocalServer;
+package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -19,7 +19,7 @@ public class Server {
         final ServerSocket serverSocket = new ServerSocket(port);
         Runnable runnable = () -> {
             try {
-                while(isRunning) {
+                while (isRunning) {
                     Socket socket = serverSocket.accept();
                     i++;
                     log(String.format("New connection: %d", i));
@@ -34,13 +34,12 @@ public class Server {
         thread.start();
     }
 
-    public void Stop()
-    {
+    public void Stop() {
         isRunning = false;
     }
 
 
-    public void log(Object o){
+    public void log(Object o) {
         System.out.println(o.toString());
     }
 }

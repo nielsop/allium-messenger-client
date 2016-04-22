@@ -10,10 +10,9 @@ import java.io.IOException;
 import java.net.SocketException;
 
 public class HeartbeatService implements IConnectionService {
-    protected volatile boolean isRunning = true;
-
-    protected ConnectionService connectionService = null;
     public IHeartbeat heartbeat;
+    protected volatile boolean isRunning = true;
+    protected ConnectionService connectionService = null;
 
     public HeartbeatService(String hostName, int portNumber) throws IOException {
         connectionService = new ConnectionService(this);
