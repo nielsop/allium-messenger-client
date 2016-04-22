@@ -13,8 +13,7 @@ public class Node {
 
     @Override
     public boolean equals(Object anotherObj) {
-        if (!(anotherObj instanceof NodeGateway)) return false;
-        return true;
+        return anotherObj instanceof Node;
     }
 
     public String getIP() {

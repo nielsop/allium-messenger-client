@@ -17,32 +17,34 @@ public class Validation {
         //Address may not be null
         if (address == null)
             throw new NullPointerException("Invalid adress; adress may not be null.");
-        //IP regular expression
-        String ipPattern = "^([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$";
-        //Create pattern object
-        int[] addressAsArray = new int[4];
-        Pattern r = Pattern.compile(ipPattern);
-        //Create matcher object
-        Matcher m = r.matcher(address);
-        //Check if match is found
-        if (m.find()) {
-            for (int i = 1; i < 5; i++) {
-                //Parse every group to int
-                int ipGroup = Integer.parseInt(m.group(i));
-                //Check if first value is not 0.
-                if (i == 1 && ipGroup == 0)
-                    throw new IllegalArgumentException("First value may not be 0.");
-                //Check if at least one group is greater than 254
-                if (ipGroup > 254)
-                    throw new IllegalArgumentException("One of the IP-values is greater than 254.");
-                    //If all values are correct, put the values in an array => [xxx, xxx, xxx, xxx]
-                else
-                    addressAsArray[i - 1] = ipGroup;
+        if (!address.equalsIgnoreCase("localhost")) {
+            //IP regular expression
+            String ipPattern = "^([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$";
+            //Create pattern object
+            int[] addressAsArray = new int[4];
+            Pattern r = Pattern.compile(ipPattern);
+            //Create matcher object
+            Matcher m = r.matcher(address);
+            //Check if match is found
+            if (m.find()) {
+                for (int i = 1; i < 5; i++) {
+                    //Parse every group to int
+                    int ipGroup = Integer.parseInt(m.group(i));
+                    //Check if first value is not 0.
+                    if (i == 1 && ipGroup == 0)
+                        throw new IllegalArgumentException("First value may not be 0.");
+                    //Check if at least one group is greater than 254
+                    if (ipGroup > 254)
+                        throw new IllegalArgumentException("One of the IP-values is greater than 254.");
+                        //If all values are correct, put the values in an array => [xxx, xxx, xxx, xxx]
+                    else
+                        addressAsArray[i - 1] = ipGroup;
+                }
             }
-        }
-        //No match found
-        else {
-            throw new IllegalArgumentException("IP format is not valid. Must be xxx.xxx.xxx.xxx");
+            //No match found
+            else {
+                throw new IllegalArgumentException("IP format is not valid. Must be xxx.xxx.xxx.xxx");
+            }
         }
     }
 
