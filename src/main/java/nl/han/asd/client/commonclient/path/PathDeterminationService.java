@@ -14,7 +14,7 @@ public class PathDeterminationService implements IGetPath {
     public IGetClientGroup clientGroup;
 
     @Inject
-    public PathDeterminationService(IGetUpdatedGraph updatedGraph, IGetClientGroup clientGroup) {
+    public PathDeterminationService() {
         this.updatedGraph = updatedGraph;
         this.clientGroup = clientGroup;
     }

@@ -4,6 +4,7 @@ import com.google.protobuf.ByteString;
 import nl.han.asd.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.client.commonclient.node.Node;
 import nl.han.asd.client.commonclient.path.IGetPath;
+import nl.han.asd.client.commonclient.path.PathDeterminationService;
 import nl.han.asd.client.commonclient.store.Contact;
 import nl.han.asd.client.commonclient.store.IMessageStore;
 import nl.han.asd.client.commonclient.node.ISendMessage;
@@ -25,6 +26,10 @@ public class MessageBuilderService implements IMessageBuilder {
         this.getPath = getPath;
         this.sendMessage = sendMessage;
         this.messageStore = messageStore;
+    }
+
+    public MessageBuilderService(CryptographyService cryptographyService) {
+        this.cryptographyService = cryptographyService;
     }
 
     public void sendMessage(String messageText, Contact contactReciever, Contact contactSender) {
