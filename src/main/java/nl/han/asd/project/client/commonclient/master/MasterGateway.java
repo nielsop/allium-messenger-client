@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
@@ -68,6 +69,16 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
                 graphUpdateResponse.getUpdatedNodesList(), graphUpdateResponse.getDeletedNodesList());
         setCurrentGraphVersion(updatedGraph.newVersion);
         return updatedGraph;
+    }
+
+    @Override
+    public ClientGroupResponseWrapper getClientGroup() {
+        HanRoutingProtocol.ClientRequest clientRequest = HanRoutingProtocol.ClientRequest.newBuilder().build();
+
+        HanRoutingProtocol.ClientResponse clientResponse = writeAndRead(HanRoutingProtocol.ClientResponse.class,
+                clientRequest.toByteArray());
+        if (clientResponse == null) return null;
+        return new ClientGroupResponseWrapper(clientResponse.getClientsList());
     }
 
     /**
@@ -167,5 +178,4 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         }
         return null;
     }
-
 }
