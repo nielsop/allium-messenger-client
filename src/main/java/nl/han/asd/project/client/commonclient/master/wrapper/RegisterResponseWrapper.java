@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.master;
+package nl.han.asd.project.client.commonclient.master.wrapper;
 
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 

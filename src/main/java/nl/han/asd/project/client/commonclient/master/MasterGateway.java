@@ -5,6 +5,8 @@ import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
+import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
+import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
@@ -16,6 +18,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
     //TODO: missing: IWebService from Master
 
+    private static int currentGraphVersion = -1;
     private String hostname;
     private int port;
     private ConnectionService connectionService;
@@ -50,6 +53,39 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
                 registerRequest.toByteArray());
         if (registerResponse == null) return null;
         return new RegisterResponseWrapper(registerResponse.getStatus());
+    }
+
+    @Override
+    public UpdatedGraphResponseWrapper getUpdatedGraph() {
+        HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder()
+                .setCurrentVersion(getCurrentGraphVersion()).build();
+
+        HanRoutingProtocol.GraphUpdateResponse graphUpdateResponse = writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class,
+                graphUpdateRequest.toByteArray());
+        if (graphUpdateResponse == null) return null;
+        UpdatedGraphResponseWrapper updatedGraph = new UpdatedGraphResponseWrapper(graphUpdateResponse.getNewVersion(),
+                graphUpdateResponse.getIsFullGraph(), graphUpdateResponse.getAddedNodesList(),
+                graphUpdateResponse.getUpdatedNodesList(), graphUpdateResponse.getDeletedNodesList());
+        setCurrentGraphVersion(updatedGraph.newVersion);
+        return updatedGraph;
+    }
+
+    /**
+     * Returns the current graph version.
+     *
+     * @return The current graph version.
+     */
+    public int getCurrentGraphVersion() {
+        return currentGraphVersion;
+    }
+
+    /**
+     * Sets the current graph version.
+     *
+     * @param newVersion The new graph version.
+     */
+    private void setCurrentGraphVersion(int newVersion) {
+        currentGraphVersion = newVersion;
     }
 
     /**

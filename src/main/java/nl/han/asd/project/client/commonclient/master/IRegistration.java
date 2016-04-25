@@ -1,5 +1,7 @@
 package nl.han.asd.project.client.commonclient.master;
 
+import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
+
 /**
  * @author Niels Bokmans
  * @version 1.0

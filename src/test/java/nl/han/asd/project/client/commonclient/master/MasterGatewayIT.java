@@ -2,6 +2,7 @@ package nl.han.asd.project.client.commonclient.master;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -9,6 +10,8 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 /**
  * @author Niels Bokmans
@@ -32,6 +35,7 @@ public class MasterGatewayIT {
         gateway.close();
     }
 
+    /* Registration of clients on master server */
     @Test
     public void testRegisterClientSuccessful() {
         Assert.assertEquals(gateway.register(VALID_USERNAME, VALID_PASSWORD).status,
@@ -46,9 +50,22 @@ public class MasterGatewayIT {
                 HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME);
     }
 
+    /* Login of clients on master server */
+
     @Test
     public void testLoginSuccessful() {
         Assert.assertTrue(gateway.authenticate(VALID_USERNAME, VALID_PASSWORD).status ==
                 HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
     }
+
+    /* Get updated graph from master server */
+
+    @Test
+    public void testGetUpdatedGraphSuccessful() {
+        Assert.assertTrue(gateway.getUpdatedGraph().newVersion >= gateway.getCurrentGraphVersion());
+    }
+
+    /* Get active client group from master server */
+
+    /* */
 }
