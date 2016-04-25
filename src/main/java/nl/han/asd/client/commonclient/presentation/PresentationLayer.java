@@ -2,6 +2,7 @@ package nl.han.asd.client.commonclient.presentation;
 
 
 import nl.han.asd.client.commonclient.login.ILogin;
+import nl.han.asd.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.client.commonclient.master.IRegistration;
 import nl.han.asd.client.commonclient.store.IContact;
@@ -48,7 +49,7 @@ public class PresentationLayer {
      */
     public HanRoutingProtocol.ClientRegisterResponse.Status register(String username, String password) {
         //Get registering response
-        HanRoutingProtocol.ClientRegisterResponse registerResponse = registration.register(username, password);
+        RegisterResponseWrapper registerResponse = registration.register(username, password);
         //In every other case, do something.
         switch(registerResponse.getStatus()) {
             case SUCCES:

@@ -1,291 +1,139 @@
 package nl.han.asd.client.commonclient.master;
 
-import com.google.protobuf.ByteString;
-import nl.han.asd.client.commonclient.utility.RequestWrapper;
-import nl.han.asd.client.commonclient.utility.ResponseWrapper;
+import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.client.commonclient.connection.ConnectionService;
+import nl.han.asd.client.commonclient.master.wrapper.LoginResponseWrapper;
+import nl.han.asd.client.commonclient.master.wrapper.RegisterResponseWrapper;
+import nl.han.asd.client.commonclient.utility.Validation;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.net.SocketException;
+import java.util.Base64;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
+
     //TODO: missing: IWebService from Master
-    public Socket socket;
-    private PrintWriter out;
-    private BufferedReader in;
-    private String serverAddress;
-    private int serverPort;
+
+    private String hostname;
+    private int port;
+    private ConnectionService connectionService;
+
+    private IEncryptionService encryptionService;
 
     @Inject
-    public MasterGateway() {}
+    public MasterGateway(IEncryptionService encryptionService) {
+        this.encryptionService = encryptionService;
+    }
 
-        /**
-     * @param serverAddress IPv4 address
-     * @param serverPort    serverPort to set up for the connection to the master
+    public MasterGateway(String hostname, int port) {
+        Validation.validateAddress(hostname);
+        Validation.validatePort(port);
+        this.hostname = hostname;
+        this.port = port;
+    }
+
+    @Override
+    public LoginResponseWrapper authenticate(String username, String password) {
+        HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
+                .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
+
+        HanRoutingProtocol.ClientLoginResponse loginResponse = writeAndRead(HanRoutingProtocol.ClientLoginResponse.class,
+                loginRequest.toByteArray());
+        if (loginResponse == null) return null;
+        return new LoginResponseWrapper(loginResponse.getConnectedNodesList(), loginResponse.getSecretHash(),
+                loginResponse.getStatus());
+    }
+
+    @Override
+    public RegisterResponseWrapper register(String username, String password) {
+        HanRoutingProtocol.ClientLoginRequest registerRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
+                .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
+
+        HanRoutingProtocol.ClientRegisterResponse registerResponse = writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class,
+                registerRequest.toByteArray());
+        if (registerResponse == null) return null;
+        return new RegisterResponseWrapper(registerResponse.getStatus());
+    }
+
+    /**
+     * Returns the public key.
+     *
+     * @return The public key.
      */
-    public MasterGateway(String serverAddress, int serverPort) {
-        validateAddress(serverAddress);
-        validatePort(serverPort);
+    private String getPublicKey() {
+        return Base64.getEncoder().encodeToString(encryptionService.getPublicKey().getEncoded());
+    }
 
-        this.serverAddress = serverAddress;
-        this.serverPort = serverPort;
+
+    /**
+     * Returns the connection.
+     *
+     * @return The connection
+     */
+    private ConnectionService getConnection() {
+        if (isConnectionOpen()) {
+            return connectionService;
+        }
+        startConnection();
+        return connectionService;
+    }
+
+    /**
+     * Starts the connection.
+     */
+    private void startConnection() {
+        if (isConnectionOpen()) return;
+        if (connectionService == null) {
+            connectionService = new ConnectionService();
+        }
         try {
-            socket = new Socket(serverAddress, serverPort);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
+            connectionService.open(hostname, port);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
     }
 
     /**
-     * @param serverPort Port must be in range 1024 - 65535
-     *             You can create a server on ports 1 through 65535.
-     *             Port numbers less than 256 are reserved for well-known services (like HTTP on serverPort 80) and serverPort numbers less than 1024 require root access on UNIX systems.
-     *             Specifying a serverPort of 0 in the ServerSocket constructor results in the server listening on a random, unused serverPort, usually >= 1024.
-     *             http://www.jguru.com/faq/view.jsp?EID=17521
+     * Checks if the connection is open.
+     *
+     * @return <tt>true</tt> if the connection is open, <tt>false</tt> if the connection is not.
      */
-    private void validatePort(int serverPort) {
-        if (!(serverPort >= 0 && serverPort <= 65535))
-            throw new IllegalArgumentException("Port should be in range of 1024 - 65535.");
+    private boolean isConnectionOpen() {
+        return connectionService != null && connectionService.isConnected();
     }
 
     /**
-     * Validates the given IP4 address.
-     * When the IP4 isn't valid this funtion will throw an error.
-     * @param address Address to validate.
+     * Closes the connection service.
      */
-    private void validateAddress(String address) {
-        //Address may not be null
-        if (address == null)
-            throw new NullPointerException("Invalid adress; adress may not be null.");
-        //IP regular expression
-        String ipPattern = "^([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$";
-        //Create pattern object
-        int[] addressAsArray = new int[4];
-        Pattern r = Pattern.compile(ipPattern);
-        //Create matcher object
-        Matcher m = r.matcher(address);
-        //Check if match is found
-        if (m.find()) {
-            for (int i = 1; i < 5; i++) {
-                //Parse every group to int
-                int ipGroup = Integer.parseInt(m.group(i));
-                //Check if first value is not 0.
-                if (i == 1 && ipGroup == 0)
-                    throw new IllegalArgumentException("First value may not be 0.");
-                //Check if at least one group is greater than 254
-                if (ipGroup > 254)
-                    throw new IllegalArgumentException("One of the IP-values is greater than 254.");
-                    //If all values are correct, put the values in an array => [xxx, xxx, xxx, xxx]
-                else
-                    addressAsArray[i - 1] = ipGroup;
+    public void close() {
+        if (isConnectionOpen()) {
+            try {
+                connectionService.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        //No match found
-        else {
-            throw new IllegalArgumentException("IP format is not valid. Must be xxx.xxx.xxx.xxx");
-        }
     }
 
-    public HanRoutingProtocol.ClientRegisterResponse register(String username, String password) {
-        HanRoutingProtocol.ClientRegisterRequest.Builder request = HanRoutingProtocol.ClientRegisterRequest.newBuilder();
-        request.setUsername(username).setPassword(password);
 
-        final RequestWrapper req = new RequestWrapper(request.build(), socket);
-        req.writeToSocket();
-
-        final ResponseWrapper response = new ResponseWrapper(ResponseWrapper.ResponseType.CLIENT_REGISTRATION, socket);
+    /**
+     * Writes a byte array to the connection and parses the response.
+     *
+     * @param classDescriptor The class to parse the response to.
+     * @param data            The byte array with data.
+     * @param <T>             Type of the class to parse the response to.
+     * @return A parsed response.
+     */
+    private <T extends GeneratedMessage> T writeAndRead(Class<T> classDescriptor, byte[] data) {
+        final ConnectionService connection = getConnection();
         try {
-            return (HanRoutingProtocol.ClientRegisterResponse) response.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public HanRoutingProtocol.ClientLoginResponse login(String username, String password, String publicKey) throws IOException {
-        HanRoutingProtocol.ClientLoginRequest.Builder request = HanRoutingProtocol.ClientLoginRequest.newBuilder();
-        request.setUsername(username).setPassword(password).setPublicKey(publicKey);
-
-        final RequestWrapper req = new RequestWrapper(request.build(), socket);
-        req.writeToSocket();
-
-        final ResponseWrapper response = new ResponseWrapper(ResponseWrapper.ResponseType.CLIENT_LOGIN, socket);
-        return (HanRoutingProtocol.ClientLoginResponse) response.read();
-    }
-
-    /* ^ Bovenstaand zijn volgens nieuwe wrappers voor response/request */
-
-    public void write(String data) {
-        out.println(data);
-    }
-
-    public String readLine() throws IOException {
-        return in.readLine();
-    }
-
-    public HanRoutingProtocol.ClientRegisterResponse testRegisterClient(String password, String username, String key) {
-        HanRoutingProtocol.ClientRegisterRequest.Builder requestBuilder = HanRoutingProtocol.ClientRegisterRequest.newBuilder();
-        requestBuilder.setPassword(password).setUsername(username);
-        ByteString data = requestBuilder.build().toByteString();
-
-        HanRoutingProtocol.EncryptedWrapper.Builder builder = HanRoutingProtocol.EncryptedWrapper.newBuilder();
-        builder.setType(HanRoutingProtocol.EncryptedWrapper.Type.CLIENTREGISTERREQUEST).setPublicKey(key).setData(data);
-
-        try {
-            builder.build().writeDelimitedTo(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            HanRoutingProtocol.EncryptedWrapper registerResponse;
-            while ((registerResponse = HanRoutingProtocol.EncryptedWrapper.parseFrom(socket.getInputStream())) != null) {
-                return HanRoutingProtocol.ClientRegisterResponse.parseFrom(registerResponse.getData());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public HanRoutingProtocol.NodeRegisterResponse testRegisterNode() {
-        HanRoutingProtocol.NodeRegisterRequest.Builder builder = HanRoutingProtocol.NodeRegisterRequest.newBuilder();
-        builder.setIPaddress("192.168.0.0");
-        builder.setPort(80);
-        builder.setPublicKey("12345abcde");
-
-        try {
-            builder.build().writeDelimitedTo(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            HanRoutingProtocol.EncryptedWrapper registerResponse;
-            while ((registerResponse = HanRoutingProtocol.EncryptedWrapper.parseFrom(socket.getInputStream())) != null) {
-                return HanRoutingProtocol.NodeRegisterResponse.parseFrom(registerResponse.getData());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public HanRoutingProtocol.NodeUpdateResponse testUpdateNode() {
-        HanRoutingProtocol.NodeUpdateRequest.Builder builder = HanRoutingProtocol.NodeUpdateRequest.newBuilder();
-        builder.setId("2");
-        builder.setSecretHash("56857cfc709d3996f057252c16ec4656f5292802");
-        builder.setIPaddress("192.170.0.1");
-        builder.setPort(90);
-
-        try {
-            builder.build().writeDelimitedTo(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            HanRoutingProtocol.NodeUpdateResponse updateResponse;
-            while ((updateResponse = HanRoutingProtocol.NodeUpdateResponse.parseFrom(socket.getInputStream())) != null) {
-                return updateResponse;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public HanRoutingProtocol.NodeDeleteResponse testDeleteNode() {
-        HanRoutingProtocol.NodeDeleteRequest.Builder builder = HanRoutingProtocol.NodeDeleteRequest.newBuilder();
-        builder.setId("2");
-        builder.setSecretHash("56857cfc709d3996f057252c16ec4656f5292802");
-
-        try {
-            builder.build().writeDelimitedTo(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            HanRoutingProtocol.NodeDeleteResponse deleteResponse;
-            while ((deleteResponse = HanRoutingProtocol.NodeDeleteResponse.parseFrom(socket.getInputStream())) != null) {
-                return deleteResponse;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public HanRoutingProtocol.ClientResponse testGetClients() {
-        HanRoutingProtocol.ClientRequest.Builder builder = HanRoutingProtocol.ClientRequest.newBuilder();
-        builder.setClientGroup(10);
-
-        try {
-            builder.build().writeDelimitedTo(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            HanRoutingProtocol.ClientResponse clientResponse;
-            while ((clientResponse = HanRoutingProtocol.ClientResponse.parseFrom(socket.getInputStream())) != null) {
-                return clientResponse;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public HanRoutingProtocol.GraphUpdateResponse testGraphUpdate() {
-        HanRoutingProtocol.GraphUpdateRequest.Builder builder = HanRoutingProtocol.GraphUpdateRequest.newBuilder();
-        builder.setCurrentVersion(10);
-
-        try {
-            builder.build().writeDelimitedTo(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            HanRoutingProtocol.GraphUpdateResponse graphUpdateResponse;
-            while ((graphUpdateResponse = HanRoutingProtocol.GraphUpdateResponse.parseFrom(socket.getInputStream())) != null) {
-                return graphUpdateResponse;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public HanRoutingProtocol.Message test() {
-        HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
-        builder.setId("1235ab");
-        builder.setSender("Raoul");
-        builder.setText("Dit is de tekst! Goeie shit, goeie shit.");
-
-        try {
-            builder.build().writeDelimitedTo(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            HanRoutingProtocol.Message message;
-            while ((message = HanRoutingProtocol.Message.parseFrom(socket.getInputStream())) != null) {
-                return message;
-            }
-        } catch (IOException e) {
+            connection.write(data);
+            return connectionService.readGeneric(classDescriptor);
+        } catch (SocketException | InvalidProtocolBufferException e) {
             e.printStackTrace();
         }
         return null;

@@ -1,5 +1,6 @@
 package presentation;
 
+import nl.han.asd.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.client.commonclient.presentation.PresentationLayer;
 import nl.han.asd.client.commonclient.master.IRegistration;
 import org.junit.Before;
@@ -24,25 +25,25 @@ public class PresentationLayerTest {
 
     @Test
     public void testRegisterStatusSuccess() throws Exception {
-        ClientRegisterResponse registerStatus = ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).build();
-        Mockito.when(registration.register("username", "password")).thenReturn(registerStatus);
+        RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).getStatus());
+        Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
-        assertEquals(registerStatus.getStatus(), pLayer.register("username", "password"));
+        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
     }
 
     @Test
     public void testRegisterStatusFailed() throws Exception {
-        ClientRegisterResponse registerStatus = ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).build();
-        Mockito.when(registration.register("username", "password")).thenReturn(registerStatus);
+        RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).getStatus());
+        Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
-        assertEquals(registerStatus.getStatus(), pLayer.register("username", "password"));
+        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
     }
 
     @Test
     public void testRegisterStatusUsernameTaken() throws Exception {
-        ClientRegisterResponse registerStatus = ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.TAKEN_USERNAME).build();
-        Mockito.when(registration.register("username", "password")).thenReturn(registerStatus);
+        RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.TAKEN_USERNAME).getStatus());
+        Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
-        assertEquals(registerStatus.getStatus(), pLayer.register("username", "password"));
+        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
     }
 }

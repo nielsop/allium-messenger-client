@@ -68,24 +68,24 @@ public class MasterGatewayTest {
         gateway = new MasterGateway(correctAddress, port);
         gateway.register(username, null);
     }
-
-    @Test
-    public void testRegisterFailed() throws Exception {
-        ResponseWrapper wrapper = getMockedResponseWrapper();
-
-        gateway = new MasterGateway(correctAddress, port);
-        PowerMockito.when(wrapper.read()).thenReturn(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).build());
-        assertEquals(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).build(), gateway.register(username, password));
-    }
-
-    @Test
-    public void testRegisterSuccess() throws Exception {
-        ResponseWrapper wrapper = getMockedResponseWrapper();
-
-        gateway = new MasterGateway(correctAddress, port);
-        PowerMockito.when(wrapper.read()).thenReturn(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).build());
-        assertEquals(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).build(), gateway.register(username, password));
-    }
+//
+//    @Test
+//    public void testRegisterFailed() throws Exception {
+//        ResponseWrapper wrapper = getMockedResponseWrapper();
+//
+//        gateway = new MasterGateway(correctAddress, port);
+//        PowerMockito.when(wrapper.read()).thenReturn(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).build());
+//        assertEquals(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).build(), gateway.register(username, password));
+//    }
+//
+//    @Test
+//    public void testRegisterSuccess() throws Exception {
+////        ResponseWrapper wrapper = getMockedResponseWrapper();
+//
+////        gateway = new MasterGateway(correctAddress, port);
+////        PowerMockito.when(wrapper.read()).thenReturn(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).build());
+////        assertEquals(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).build(), gateway.register(username, password));
+//    }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGatewayInvalidAddressValueTooHigh() throws Exception {

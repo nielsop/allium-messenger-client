@@ -2,6 +2,7 @@ package nl.han.asd.client.commonclient.utility;
 
 import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
 //import nl.han.onionmessenger.commonclient.HanRoutingProtocol;
 
 import java.io.IOException;
@@ -15,10 +16,11 @@ import java.net.Socket;
  */
 public class ResponseWrapper {
 
-    private ResponseType responseType;
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ResponseWrapper.class);
     public Socket socket;
+    private HanRoutingProtocol.EncryptedWrapper.Type responseType;
 
-    public ResponseWrapper(final ResponseType responseType, final Socket socket) {
+    public ResponseWrapper(final HanRoutingProtocol.EncryptedWrapper.Type responseType, final Socket socket) {
         this.responseType = responseType;
         this.socket = socket;
     }
@@ -31,18 +33,22 @@ public class ResponseWrapper {
             ioe.printStackTrace();
         }
         if (is != null) {
-            switch (responseType) {
-                case CLIENT_LOGIN:
-                    return HanRoutingProtocol.ClientLoginResponse.parseDelimitedFrom(is);
-                case CLIENT_REGISTRATION:
-                    return HanRoutingProtocol.ClientRegisterResponse.parseDelimitedFrom(is);
+            try {
+                switch (responseType) {
+                    case CLIENTRESPONSE:
+                        break;
+                    case CLIENTLOGOUTRESPONSE:
+                        break;
+                    case CLIENTLOGINRESPONSE:
+                        return HanRoutingProtocol.ClientLoginResponse.parseDelimitedFrom(is);
+                    case CLIENTREGISTERRESPONSE:
+                        return HanRoutingProtocol.ClientRegisterResponse.parseDelimitedFrom(is);
+                }
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
             }
         }
         return null;
     }
 
-    public enum ResponseType {
-        CLIENT_LOGIN,
-        CLIENT_REGISTRATION
-    }
 }
