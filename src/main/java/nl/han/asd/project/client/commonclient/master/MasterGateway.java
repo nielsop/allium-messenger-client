@@ -49,9 +49,11 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     public RegisterResponseWrapper register(String username, String password) {
         HanRoutingProtocol.ClientLoginRequest registerRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
                 .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
+        HanRoutingProtocol.EncryptedWrapper encryptedRequest = HanRoutingProtocol.EncryptedWrapper.newBuilder()
+                .setData(registerRequest.toByteString()).build();
 
         HanRoutingProtocol.ClientRegisterResponse registerResponse = writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class,
-                registerRequest.toByteArray());
+                encryptedRequest.toByteArray());
         if (registerResponse == null) return null;
         return new RegisterResponseWrapper(registerResponse.getStatus());
     }
