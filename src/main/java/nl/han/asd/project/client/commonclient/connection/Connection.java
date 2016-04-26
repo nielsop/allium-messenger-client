@@ -16,13 +16,14 @@ class Connection {
     private Socket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
-    private IConnectionService connectionService;
+    private IConnectionPipe connectionService;
 
     private int sleepTime = 25; // default
 
-    public Connection()
+    public Connection(IConnectionPipe service)
     {
-        setConnectionService(null);
+        connectionService = service;
+
         inputStream = null;
         outputStream = null;
         socket = null;
@@ -216,13 +217,5 @@ class Connection {
         if (socket == null) return false;
 
         return socket.isConnected() && !socket.isClosed();
-    }
-
-    /**
-     * Sets the IConnectionService instance.
-     * @param connectionService A instance implementing IConnectionService. Can be null.
-     */
-    public void setConnectionService(IConnectionService connectionService) {
-        this.connectionService = connectionService;
     }
 }

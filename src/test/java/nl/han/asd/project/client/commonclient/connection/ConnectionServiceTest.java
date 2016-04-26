@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.connection;
 import LocalServer.Server;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.sun.deploy.util.SessionState;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.connection.IConnectionService;
 import org.junit.*;
@@ -38,7 +39,7 @@ public class ConnectionServiceTest implements IConnectionService {
 
     @Before
     public void InitConnectionService() throws IOException {
-        connectionService = new ConnectionService(this);
+        connectionService = new ConnectionService("publickey", this);
         connectionService.open("127.0.0.1", 10002);
     }
 
@@ -48,29 +49,16 @@ public class ConnectionServiceTest implements IConnectionService {
     }
 
     @Test
-    public void TestConnection() throws IOException {
-        String testString = "HelloDarknessMyOldFriend";
-        byte[] data = (testString).getBytes();
-        connectionService.write(data);
-
-        byte[] buffer = connectionService.read();
-
-        String receivedData = new String(buffer, "UTF-8");
-        assertEquals(receivedData, testString);
-    }
-
-    @Test
     public void TestProtocol() throws InvalidProtocolBufferException, SocketException {
         ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
         requestBuilder.setUsername("test");
         requestBuilder.setPassword("test");
         requestBuilder.setPublicKey("test");
 
-        byte[] data = requestBuilder.build().toByteArray();
-        connectionService.write(data);
+        connectionService.write(requestBuilder);
 
-        byte[] buffer = connectionService.read();
-        ClientLoginResponse response = ClientLoginResponse.parseFrom(buffer);
+        ParsedMessage message = connectionService.read();
+        ClientLoginResponse response = ClientLoginResponse.parseFrom(message.getData());
         assertEquals(response.getSecretHash(), String.format("%s:%s", requestBuilder.getUsername(), requestBuilder.getPassword()));
         assertEquals(response.getStatus(), ClientLoginResponse.Status.SUCCES);
 
@@ -79,30 +67,30 @@ public class ConnectionServiceTest implements IConnectionService {
     @Test(expected = IllegalArgumentException.class)
     public void TestSleepTime()
     {
-        ConnectionService connection2 = new ConnectionService(-20);
+        ConnectionService connection2 = new ConnectionService(-20, "publicKey");
     }
 
     @Test(expected =  IllegalArgumentException.class)
     public void TestHost() throws IOException {
-        ConnectionService connection2 = new ConnectionService(20, this);
+        ConnectionService connection2 = new ConnectionService(20, "publicKey", this);
         connection2.open("127.0.", 10);
     }
 
     @Test(expected = IllegalArgumentException.class)
      public void TestPort() throws IOException {
-        ConnectionService connection2 = new ConnectionService();
+        ConnectionService connection2 = new ConnectionService("publicKey");
         connection2.open("127.0.0.1", -20);
     }
 
     @Test(expected = SocketException.class)
     public void TestReadAsync() throws IOException {
-        ConnectionService connection2 = new ConnectionService();
+        ConnectionService connection2 = new ConnectionService("publicKey");
         connection2.readAsync();
     }
 
     @Test(expected = SocketException.class)
     public void TestStopReadyAsync() throws IOException {
-        ConnectionService connection2 = new ConnectionService();
+        ConnectionService connection2 = new ConnectionService("publicKey");
         connection2.stopReadAsync();
     }
 
@@ -112,7 +100,7 @@ public class ConnectionServiceTest implements IConnectionService {
         builder.setUsername("test");
         builder.setPassword("test");
         builder.setPublicKey("xxxx");
-        connectionService.writeGeneric(builder);
+        connectionService.write(builder);
 
         ClientLoginResponse response = connectionService.readGeneric(ClientLoginResponse.class);
         assertEquals(ClientLoginResponse.Status.SUCCES, response.getStatus());
@@ -128,28 +116,19 @@ public class ConnectionServiceTest implements IConnectionService {
     @Test(expected = SocketException.class)
     public void TestWriteInvalid() throws IOException {
         connectionService.close();
-        connectionService.write(new byte[] {0x00, 0x01 });
+        ClientLoginRequest.Builder builder = ClientLoginRequest.newBuilder();
+        connectionService.write(builder);
     }
 
     @Test(expected = SocketException.class)
     public void TestReadInvalid() throws IOException {
         connectionService.close();
-        byte[] buffer = connectionService.read();
+        ParsedMessage message = connectionService.read();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void TestInvalidConstructor() throws IOException {
         ConnectionService service = new ConnectionService(25, null);
-    }
-
-    @Test
-    public void TestWriteAndRead() throws SocketException {
-        String testString = "HelloDarknessMyOldFriend";
-        byte[] data = (testString).getBytes();
-
-        connectionService.write(data);
-        connectionService.readAsync();
-        connectionService.stopReadAsync();
     }
 
     @Test
@@ -160,7 +139,7 @@ public class ConnectionServiceTest implements IConnectionService {
     }
 
     @Override
-    public void onReceiveRead(byte[] buffer) {
+    public void onReceiveRead(ParsedMessage message) {
         try {
             connectionService.stopReadAsync();
         } catch (SocketException e) {

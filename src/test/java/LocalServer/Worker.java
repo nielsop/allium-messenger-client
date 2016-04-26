@@ -1,6 +1,8 @@
 package LocalServer;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.project.client.commonclient.connection.Packer;
+import nl.han.asd.project.client.commonclient.connection.ParsedMessage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +18,7 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
 public class Worker implements Runnable {
     protected Socket clientSocket = null;
 
+    private Packer packer = new Packer();
     public Worker(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
@@ -35,15 +38,17 @@ public class Worker implements Runnable {
             try {
                 int bytesRead = input.read(buffer);
                 if (bytesRead > 0) {
-                    data = Arrays.copyOf(buffer, bytesRead);
                     try {
-                        ClientLoginRequest request = ClientLoginRequest.parseFrom(data);
+                        data = Arrays.copyOf(buffer, bytesRead);
+                        ParsedMessage message = packer.unpack(data);
+
+                        ClientLoginRequest request = ClientLoginRequest.parseFrom(message.getData());
                         ClientLoginResponse.Builder builder = ClientLoginResponse.newBuilder();
                         builder.setSecretHash(String.format("%s:%s", request.getUsername(), request.getPassword()));
                         builder.setStatus(ClientLoginResponse.Status.valueOf(ClientLogoutResponse.Status.SUCCES_VALUE));
 
                         System.out.println("Request processed as 'protocol' request.");
-                        data = builder.build().toByteArray();
+                        data = packer.pack(builder, "publicKey");
                     }
                     catch (InvalidProtocolBufferException e){
                         System.out.println("Request processed as 'normal' request.");

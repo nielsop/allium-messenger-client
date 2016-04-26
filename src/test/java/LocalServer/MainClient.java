@@ -3,6 +3,7 @@ package LocalServer;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.connection.ParsedMessage;
 import nl.han.asd.project.client.commonclient.message.*;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
@@ -22,7 +23,7 @@ public class MainClient implements IConnectionService {
     private ConnectionService connectionService = null;
 
     public void run() throws IOException, InterruptedException {
-        connectionService = new ConnectionService(this);
+        connectionService = new ConnectionService("publicKey", this);
         connectionService.open("10.182.5.214", 4444);
 
         HanRoutingProtocol.EncryptedMessage.Builder encryptedMessageBuilder = HanRoutingProtocol.EncryptedMessage.newBuilder();
@@ -33,17 +34,17 @@ public class MainClient implements IConnectionService {
         //encryptedMessageBuilder.setEncryptedData(ByteString.copyFrom(new byte[] { 0x48, 0x6F, 0x69, 0x2C, 0x20, 0x69, 0x6B, 0x20, 0x62, 0x65, 0x6E, 0x20, 0x4A, 0x65, 0x76, 0x67, 0x65, 0x6E, 0x69 }, 0, 19));
         encryptedMessageBuilder.setEncryptedData(ByteString.copyFrom(new byte[]{0x4A, 0x75, 0x6C, 0x6C, 0x69, 0x65, 0x20, 0x68, 0x65, 0x62, 0x62, 0x65, 0x6E, 0x20, 0x61, 0x6C, 0x6C, 0x65, 0x6D, 0x61, 0x61, 0x6C, 0x20, 0x65, 0x65, 0x6E, 0x20, 0x6F, 0x6E, 0x76, 0x6F, 0x6C, 0x64, 0x6F, 0x65, 0x6E, 0x64, 0x65, 0x2E, }, 0, 39));
 
-        connectionService.writeGeneric(encryptedMessageBuilder);
+        connectionService.write(encryptedMessageBuilder);
 
-        byte[] payload = connectionService.read();
-        System.out.println(String.format("Result: %s,", new String(payload, "UTF-8")));
+        ParsedMessage message = connectionService.read();
+        System.out.println(String.format("Result: %s,", new String(message.getData(), "UTF-8")));
         connectionService.close();
     }
 
     @Override
-    public void onReceiveRead(byte[] buffer) {
+    public void onReceiveRead(ParsedMessage message) {
         try {
-            ClientLoginResponse response = ClientLoginResponse.parseFrom(buffer);
+            ClientLoginResponse response = ClientLoginResponse.parseFrom(message.getData());
             System.out.println(response.getSecretHash());
             connectionService.close();
         } catch (IOException e) {

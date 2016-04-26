@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.heartbeat;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.connection.ParsedMessage;
 import nl.han.asd.project.client.commonclient.master.IHeartbeat;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
@@ -16,7 +17,7 @@ public class HeartbeatService implements IConnectionService {
     public IHeartbeat heartbeat;
 
     public HeartbeatService(String hostName, int portNumber) throws IOException {
-        connectionService = new ConnectionService(this);
+        connectionService = new ConnectionService("publickey", this);
         connectionService.open(hostName, portNumber);
     }
 
@@ -25,12 +26,10 @@ public class HeartbeatService implements IConnectionService {
         builder.setUsername("test");
         builder.setSecretHash("x");
 
-        byte[] payload = builder.build().toByteArray();
-
         Runnable heartbeatTask = () -> {
             while (isRunning == true) {
                 try {
-                    connectionService.write(payload);
+                    connectionService.write(builder);
                     Thread.sleep(25);
                 } catch (InterruptedException | SocketException e) {
                     e.printStackTrace();
@@ -46,11 +45,12 @@ public class HeartbeatService implements IConnectionService {
         isRunning = false;
         connectionService.close();
     }
-
     @Override
-    public void onReceiveRead(byte[] buffer) {
+    public void onReceiveRead(ParsedMessage message) {
         try {
-            HanRoutingProtocol.ClientHeartbeat clientHeartbeat = HanRoutingProtocol.ClientHeartbeat.parseFrom(buffer);
+            HanRoutingProtocol.ClientHeartbeat clientHeartbeat = HanRoutingProtocol.ClientHeartbeat.parseFrom(message.getData());
+            // or:
+            //HanRoutingProtocol.ClientHeartbeat clientHeartbeat = message.getDataMessage().getParserForType().parseFrom(message.getData());
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
         }

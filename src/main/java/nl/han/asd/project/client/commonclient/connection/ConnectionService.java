@@ -4,15 +4,16 @@ import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.SocketException;
 
 /**
  * Provides a connection service using sockets such as reading and writing data.
  */
-public final class ConnectionService {
+public final class ConnectionService implements IConnectionPipe {
     private final static int DEFAULT_SLEEPTIME = 25; // 25ms
+    private final Packer packer = new Packer();
 
+    private String publicKey = null;
     private Connection connection = null;
     private IConnectionService service = null;
 
@@ -20,8 +21,13 @@ public final class ConnectionService {
      * Initializes this class.
      * @param sleepTime Amount of time the asynchronous thread sleeps in between reads from the socket.
      */
-    public ConnectionService(int sleepTime) {
-        connection = new Connection();
+    public ConnectionService(int sleepTime, String publicKey) {
+        connection = new Connection(this);
+
+        if (publicKey == null || publicKey.length() == 0)
+            throw new IllegalArgumentException("Publickey cannot be empty.");
+
+        this.publicKey = publicKey;
 
         if (connection.getSleepTime() != sleepTime) {
             connection.setSleepTime(sleepTime);
@@ -35,8 +41,8 @@ public final class ConnectionService {
      *                      while reading asynchronous.
      * @throws IOException
      */
-    public ConnectionService(int sleepTime, IConnectionService targetService) throws IOException {
-        this(sleepTime);
+    public ConnectionService(int sleepTime, String publicKey, IConnectionService targetService) throws IOException {
+        this(sleepTime, publicKey);
 
         if (targetService == null) {
             throw new IllegalArgumentException("You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
@@ -47,10 +53,14 @@ public final class ConnectionService {
 
     /**
      * Initializes this class.
+     * @param publicKey An instance that implements IConnectionService. This instance will be used as callback
+     *                      while reading asynchronous.
+     * @throws IOException
      */
-    public ConnectionService(){
-        this(DEFAULT_SLEEPTIME);
+    public ConnectionService(String publicKey) {
+        this(DEFAULT_SLEEPTIME, publicKey);
     }
+
 
     /**
      * Initializes this class.
@@ -58,10 +68,28 @@ public final class ConnectionService {
      *                      while reading asynchronous.
      * @throws IOException
      */
-    public ConnectionService(IConnectionService targetService) throws IOException {
-        this(DEFAULT_SLEEPTIME, targetService);
+    public ConnectionService(String publicKey, IConnectionService targetService) throws IOException {
+        this(DEFAULT_SLEEPTIME, publicKey, targetService);
     }
 
+    /**
+     * Reads data from the input stream.
+     * @return A byte array containing the received data from the input stream, or null if no data was read.
+     * @throws SocketException If there is no valid connection.
+     */
+    public ParsedMessage read() throws SocketException {
+        if (!connection.isConnected()) {
+            throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
+        }
+
+        byte[] payload = connection.read();
+        return packer.unpack(payload);
+    }
+
+    /**
+     * Start reading asynchronous from the input stream.
+     * @throws SocketException
+     */
     public void readAsync() throws SocketException {
         if (!connection.isConnected()) {
             throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
@@ -87,19 +115,6 @@ public final class ConnectionService {
     }
 
     /**
-     *
-     * @return A byte array containing the received data from the input stream, or null if no data was read.
-     * @throws SocketException If there is no valid connection.
-     */
-    public byte[] read() throws SocketException {
-        if (!connection.isConnected()) {
-            throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
-        }
-
-        return connection.read();
-    }
-
-    /**
      * Synchronously (blocking) read a the input stream. Then converts the results into an instance of @classDescriptor.
      * @param classDescriptor The class the data needs to be converted from.
      * @param <T> Protocol buffer class.
@@ -107,43 +122,26 @@ public final class ConnectionService {
      * @throws SocketException An exception occurred while reading data from the stream.
      */
     public <T extends GeneratedMessage> T readGeneric(Class<T> classDescriptor) throws SocketException, InvalidProtocolBufferException {
-        byte[] buffer = this.read();
-        if (buffer != null) {
-            try {
-                Field defaultInstanceField = classDescriptor.getDeclaredField("DEFAULT_INSTANCE");
-                defaultInstanceField.setAccessible(true);
-                T defaultInstance = (T) defaultInstanceField.get(null);
-                return (T) defaultInstance.getParserForType().parseFrom(buffer);
-            } catch (IllegalAccessException | InvalidProtocolBufferException e) {
-                // return null
-            } catch (NoSuchFieldException e) {
-                throw new InvalidProtocolBufferException("Invalid class provided.");
-            }
+        ParsedMessage parsedMessage = this.read();
+        if (parsedMessage.getDataMessage().getClass() == classDescriptor)
+        {
+            return (T)parsedMessage.getDataMessage().getParserForType().parseFrom(parsedMessage.getData());
         }
         return null;
     }
 
     /**
-     * Writes data to the connection using the output stream.
-     * @param data Data to write.
+     * Writes data from the builder to the connection using the input stream.
+     * @param instance Instance of the builder class of the protocol buffer.
      * @throws SocketException An exception occurred while writing the data.
      */
-    public void write(byte[] data) throws SocketException {
+    public <T extends GeneratedMessage.Builder> void write(T instance) throws SocketException {
         if (!connection.isConnected()) {
             throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
         }
 
-        connection.write(data);
-    }
-
-    /**
-     * Writes data from the builder to the connection using the input stream.
-     * @param instance Instance of the builder class of the protocol buffer.
-     * @param <T> Type that extends GeneratedMessage.Builder.
-     * @throws SocketException An exception occurred while writing the data.
-     */
-    public <T extends GeneratedMessage.Builder> void writeGeneric(T instance) throws SocketException {
-        this.write(instance.build().toByteArray());
+        byte[] buffer = packer.pack(instance, publicKey);
+        connection.write(buffer);
     }
 
     /**
@@ -154,7 +152,6 @@ public final class ConnectionService {
      */
     public void open(String hostName, int portNumber) throws IOException {
         connection.open(hostName, portNumber);
-        connection.setConnectionService(service);
     }
 
     /**
@@ -173,4 +170,11 @@ public final class ConnectionService {
         return connection.isConnected();
     }
 
+    @Override
+    public void onReceiveRead(byte[] buffer) {
+        if (service != null) {
+            ParsedMessage message = packer.unpack(buffer);
+            service.onReceiveRead(message);
+        }
+    }
 }

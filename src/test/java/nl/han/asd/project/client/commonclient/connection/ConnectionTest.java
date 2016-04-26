@@ -10,13 +10,13 @@ import java.net.SocketException;
 /**
  * Created by Jevgeni on 22-4-2016.
  */
-public class ConnectionTest {
+public class ConnectionTest implements IConnectionPipe {
 
     private Connection connection = null;
 
     @Before
     public void Init() {
-        connection = new Connection();
+        connection = new Connection(this);
     }
 
     @After
@@ -30,4 +30,8 @@ public class ConnectionTest {
         connection.read();
     }
 
+    @Override
+    public void onReceiveRead(byte[] buffer) {
+
+    }
 }
