@@ -7,7 +7,7 @@ import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 /**
  * Created by Marius on 25-04-16.
  */
-public class PaneConfirmation extends Pane {
+public class PaneConfirmation {
     GridPane pane = null;
 
     public PaneConfirmation(GUI gui) {

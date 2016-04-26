@@ -8,18 +8,20 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import javafx.application.Application;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.presentation.PresentationLayer;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.auth.PaneLogin;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.auth.PaneRegister;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneConfirmation;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboard;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneSettings;
+import nl.han.asd.project.client.commonclient.presentation.gui.view.auth.PaneLogin;
+import nl.han.asd.project.client.commonclient.presentation.gui.view.auth.PaneRegister;
 
 public class GUI extends Application {
     private Stage stage;
+    private Scene scene;
     public PresentationLayer pLayer;
 
     public enum Page {
@@ -37,6 +39,8 @@ public class GUI extends Application {
         try {
             stage = primaryStage;
             stage.setTitle("Ui Berichter");
+            stage.setMinWidth(360);
+            stage.setMinHeight(360);
             setStage(Page.LOGIN);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -44,30 +48,33 @@ public class GUI extends Application {
     }
 
     public void setStage(Page page) {
-        Scene scene = null;
-        switch(page) {
+        switch (page) {
             case LOGIN:
-                scene = new Scene(new PaneLogin(this).getGridPane(), 800, 600);
+                scene = buildScene(new PaneLogin(this).getGridPane());
                 break;
             case REGISTER:
-                scene = new Scene(new PaneRegister(this).getGridPane(), stage.getWidth(), stage.getHeight());
+                scene = buildScene(new PaneRegister(this).getGridPane());
                 break;
             case DASHBOARD:
-                scene = new Scene(new PaneDashboard(this).getBorderPane(), stage.getWidth(), stage.getHeight());
+                scene = buildScene(new PaneDashboard(this).getBorderPane());
                 break;
             case SETTINGS:
-                scene = new Scene(new PaneSettings(this).getPane(), stage.getWidth(), stage.getHeight());
+                scene = buildScene(new PaneSettings(this).getGridPane());
                 break;
             case CONFIRMATION:
-                scene = new Scene(new PaneConfirmation(this).getPane(), stage.getWidth(), stage.getHeight());
+                scene = buildScene(new PaneConfirmation(this).getPane());
+                break;
+            default:
+                scene = buildScene(new PaneLogin(this).getGridPane());
                 break;
         }
         stage.setScene(scene);
         stage.show();
     }
 
-    public Stage getStage() {
-        return stage;
+    private Scene buildScene(Parent pane) {
+        if (scene != null) return new Scene(pane, scene.getWidth(), scene.getHeight());
+        else return new Scene(pane);
     }
 
     @Inject

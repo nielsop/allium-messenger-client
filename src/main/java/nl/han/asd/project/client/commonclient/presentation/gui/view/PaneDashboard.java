@@ -5,15 +5,17 @@ import javafx.scene.layout.BorderPane;
 import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard.PaneChat;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard.PaneContacts;
+import nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard.PaneNav;
 
 /**
  * Created by Marius on 25-04-16.
  */
-public class PaneDashboard extends Pane {
+public class PaneDashboard {
     BorderPane borderPane = null;
 
     public PaneDashboard(GUI gui) {
-        borderPane = getBorderPane(new int[]{0, 0, 0, 0});
+        borderPane = Pane.getBorderPane(new int[]{0, 0, 0, 0});
+        borderPane.setTop(new PaneNav(gui).getBorderPane());
         borderPane.setLeft(new PaneContacts(gui).getScrollPane());
         borderPane.setCenter(new PaneChat(gui).getScrollPane());
     }
