@@ -1,4 +1,4 @@
-package LocalServer;
+package server;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -23,7 +23,7 @@ public class Worker implements Runnable {
 
     @Override
     public void run() {
-        InputStream input  = null;
+        InputStream input = null;
         OutputStream output = null;
 
         try {
@@ -44,8 +44,7 @@ public class Worker implements Runnable {
 
                         System.out.println("Request processed as 'protocol' request.");
                         data = builder.build().toByteArray();
-                    }
-                    catch (InvalidProtocolBufferException e){
+                    } catch (InvalidProtocolBufferException e) {
                         System.out.println("Request processed as 'normal' request.");
                     }
 

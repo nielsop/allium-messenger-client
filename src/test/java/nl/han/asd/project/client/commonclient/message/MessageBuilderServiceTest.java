@@ -17,35 +17,33 @@ import org.mockito.Mock;
  */
 public class MessageBuilderServiceTest {
 
-    private MessageBuilderService messageBuilderService;
-    private CryptographyService cryptographyService;
     @Mock
     IGetUpdatedGraph updatedGraphMock;
-
     @Mock
     IGetClientGroup clientGroupMock;
-
+    private MessageBuilderService messageBuilderService;
+    private CryptographyService cryptographyService;
     @InjectMocks
     private PathDeterminationService pathDeterminationService;
 
     @Before
     public void setUp() throws Exception {
-       // pathDeterminationService = new PathDeterminationService();
-     //   messageBuilderService = new MessageBuilderService(pathDeterminationService);
+        // pathDeterminationService = new PathDeterminationService();
+        //   messageBuilderService = new MessageBuilderService(pathDeterminationService);
     }
 
     @Test
-    public void buildMessage(){
+    public void buildMessage() {
         cryptographyService = new CryptographyService();
-        messageBuilderService = new MessageBuilderService(pathDeterminationService,cryptographyService);
+        messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
     }
 
     @Test
-    public void sendMessageTest(){
-        Contact contactReciever = new Contact("julius","1234");
-        Contact contactSender = new Contact("bram","123456");
-        contactSender.setConnectedNodes(new Node[]{new Node(),new Node(),new Node()});
-        messageBuilderService.sendMessage("hallo 124",contactReciever,contactSender);
+    public void sendMessageTest() {
+        Contact contactReciever = new Contact("julius", "1234");
+        Contact contactSender = new Contact("bram", "123456");
+        contactSender.setConnectedNodes(new Node[]{new Node(), new Node(), new Node()});
+        messageBuilderService.sendMessage("hallo 124", contactReciever, contactSender);
     }
 
 

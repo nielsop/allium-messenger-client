@@ -4,7 +4,6 @@ import nl.han.asd.project.client.commonclient.message.EncryptedMessage;
 import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.net.Socket;
 
