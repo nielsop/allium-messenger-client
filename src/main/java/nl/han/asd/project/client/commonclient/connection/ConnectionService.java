@@ -18,6 +18,7 @@ public final class ConnectionService {
 
     /**
      * Initializes this class.
+     *
      * @param sleepTime Amount of time the asynchronous thread sleeps in between reads from the socket.
      */
     public ConnectionService(int sleepTime) {
@@ -30,7 +31,8 @@ public final class ConnectionService {
 
     /**
      * Initializes this class.
-     * @param sleepTime Amount of time the asynchronous thread sleeps in between reads from the socket.
+     *
+     * @param sleepTime     Amount of time the asynchronous thread sleeps in between reads from the socket.
      * @param targetService An instance that implements IConnectionService. This instance will be used as callback
      *                      while reading asynchronous.
      * @throws IOException
@@ -48,12 +50,13 @@ public final class ConnectionService {
     /**
      * Initializes this class.
      */
-    public ConnectionService(){
+    public ConnectionService() {
         this(DEFAULT_SLEEPTIME);
     }
 
     /**
      * Initializes this class.
+     *
      * @param targetService An instance that implements IConnectionService. This instance will be used as callback
      *                      while reading asynchronous.
      * @throws IOException
@@ -76,6 +79,7 @@ public final class ConnectionService {
 
     /**
      * Stops reading asynchronously.
+     *
      * @throws SocketException If there is no valid connection.
      */
     public void stopReadAsync() throws SocketException {
@@ -87,7 +91,6 @@ public final class ConnectionService {
     }
 
     /**
-     *
      * @return A byte array containing the received data from the input stream, or null if no data was read.
      * @throws SocketException If there is no valid connection.
      */
@@ -101,28 +104,32 @@ public final class ConnectionService {
 
     /**
      * Synchronously (blocking) read a the input stream. Then converts the results into an instance of @classDescriptor.
+     *
      * @param classDescriptor The class the data needs to be converted from.
-     * @param <T> Protocol buffer class.
+     * @param <T>             Protocol buffer class.
      * @return A protocol buffer (T) instance.
      * @throws SocketException An exception occurred while reading data from the stream.
      */
     public <T extends GeneratedMessage> T readGeneric(Class<T> classDescriptor) throws SocketException, InvalidProtocolBufferException {
         byte[] buffer = this.read();
-        try {
-            Field defaultInstanceField = classDescriptor.getDeclaredField("DEFAULT_INSTANCE");
-            defaultInstanceField.setAccessible(true);
-            T defaultInstance = (T)defaultInstanceField.get(null);
-            return (T)defaultInstance.getParserForType().parseFrom(buffer);
-        } catch (IllegalAccessException | InvalidProtocolBufferException e) {
-            // return null g
-        } catch (NoSuchFieldException e) {
-            throw new InvalidProtocolBufferException("Invalid class provided.");
+        if (buffer != null) {
+            try {
+                Field defaultInstanceField = classDescriptor.getDeclaredField("DEFAULT_INSTANCE");
+                defaultInstanceField.setAccessible(true);
+                T defaultInstance = (T) defaultInstanceField.get(null);
+                return (T) defaultInstance.getParserForType().parseFrom(buffer);
+            } catch (IllegalAccessException | InvalidProtocolBufferException e) {
+                // return null
+            } catch (NoSuchFieldException e) {
+                throw new InvalidProtocolBufferException("Invalid class provided.");
+            }
         }
         return null;
     }
 
     /**
      * Writes data to the connection using the output stream.
+     *
      * @param data Data to write.
      * @throws SocketException An exception occurred while writing the data.
      */
@@ -136,8 +143,9 @@ public final class ConnectionService {
 
     /**
      * Writes data from the builder to the connection using the input stream.
+     *
      * @param instance Instance of the builder class of the protocol buffer.
-     * @param <T> Type that extends GeneratedMessage.Builder.
+     * @param <T>      Type that extends GeneratedMessage.Builder.
      * @throws SocketException An exception occurred while writing the data.
      */
     public <T extends GeneratedMessage.Builder> void writeGeneric(T instance) throws SocketException {
@@ -146,7 +154,8 @@ public final class ConnectionService {
 
     /**
      * Opens a connection to a hostname and port combination.
-     * @param hostName Internet protocol address.
+     *
+     * @param hostName   Internet protocol address.
      * @param portNumber Port number to connect to.
      * @throws IOException If we couldn't connect to the hostname.
      */
@@ -157,6 +166,7 @@ public final class ConnectionService {
 
     /**
      * Closes the existing connection.
+     *
      * @throws IOException
      */
     public void close() throws IOException {
@@ -165,6 +175,7 @@ public final class ConnectionService {
 
     /**
      * Checks whether the connection is alive or not.
+     *
      * @return True if connected, False if disconnected.
      */
     public boolean isConnected() {

@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.path;
 
 import com.google.protobuf.ByteString;
+
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
 import nl.han.asd.project.client.commonclient.graph.Node;
@@ -22,14 +23,14 @@ public class PathDeterminationService implements IGetPath {
 
     @Override
     public ArrayList<Node> getPath(int minHops, Contact contactOntvanger) {
-        if(minHops < 1){
+        if (minHops < 1) {
             throw new IllegalArgumentException("The minimum amount of Hops should be more than 0");
         }
 
-        return buildPath(calculateUsableConnectedNode(contactOntvanger),minHops);
+        return buildPath(calculateUsableConnectedNode(contactOntvanger), minHops);
     }
 
-    private Node calculateUsableConnectedNode(Contact contact){
+    private Node calculateUsableConnectedNode(Contact contact) {
         Node[] connectedNodes = new Node[0];
         try {
             connectedNodes = contact.getConnectedNodes();
@@ -42,7 +43,7 @@ public class PathDeterminationService implements IGetPath {
         return connectedNodes[indexConnectedNode];
     }
 
-    private ArrayList<Node> buildPath(Node hostConnectedNode, int minHops){
+    private ArrayList<Node> buildPath(Node hostConnectedNode, int minHops) {
         ArrayList<Node> path = new ArrayList<Node>();
         path.add(hostConnectedNode);
 

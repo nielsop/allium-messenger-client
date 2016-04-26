@@ -2,8 +2,8 @@ package nl.han.asd.project.client.commonclient.presentation;
 
 
 import nl.han.asd.project.client.commonclient.login.ILogin;
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.store.IContact;
 import nl.han.asd.project.client.commonclient.store.IMessageObserver;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -25,9 +25,10 @@ public class PresentationLayer {
 
     /**
      * Constructs a presentation layer, using one given gateway.
+     *
      * @param registration
      */
-    public PresentationLayer(IRegistration registration){
+    public PresentationLayer(IRegistration registration) {
         this.registration = registration;
     }
 
@@ -43,12 +44,13 @@ public class PresentationLayer {
     /**
      * PaneRegister a user on the master application with the given credentials.
      * Use the MasterGateway to register a user.
+     *
      * @param username username given by user.
      * @param password password given by user.
      */
     public HanRoutingProtocol.ClientRegisterResponse.Status register(String username, String password) {
         //Get registering response
-        HanRoutingProtocol.ClientRegisterResponse registerResponse = registration.register(username, password);
+       /* HanRoutingProtocol.ClientRegisterResponse registerResponse = registration.register(username, password);
         //In every other case, do something.
         switch(registerResponse.getStatus()) {
             case SUCCES:
@@ -62,6 +64,7 @@ public class PresentationLayer {
                 break;
         }
         //Return the status
-        return registerResponse.getStatus();
+        return registerResponse.getStatus();*/
+        return null;
     }
 }

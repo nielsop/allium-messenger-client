@@ -1,5 +1,9 @@
 package nl.han.asd.project.client.commonclient.master;
 
-public interface IGetGraphUpdates {
+import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
+
+public interface IGetUpdatedGraph {
+
+    UpdatedGraphResponseWrapper getUpdatedGraph();
 
 }

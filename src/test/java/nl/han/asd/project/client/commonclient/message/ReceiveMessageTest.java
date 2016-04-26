@@ -9,9 +9,8 @@ public class ReceiveMessageTest {
     //public final MessageProcessingService mpService = new MessageProcessingService();
 
     @Test
-    public void ProcessReceivedMessage()
-    {
+    public void ProcessReceivedMessage() {
         //EncryptedMessage encryptedMessage = mpService.peelMessagePacket(null);
-       // Assert.assertEquals(encryptedMessage.getUsername(), "ikzelf");
+        // Assert.assertEquals(encryptedMessage.getUsername(), "ikzelf");
     }
 }

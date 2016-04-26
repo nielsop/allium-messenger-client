@@ -18,9 +18,8 @@ import java.net.Socket;
 public class ResponseWrapper {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ResponseWrapper.class);
-
-    private HanRoutingProtocol.EncryptedWrapper.Type responseType;
     public Socket socket;
+    private HanRoutingProtocol.EncryptedWrapper.Type responseType;
 
     public ResponseWrapper(final HanRoutingProtocol.EncryptedWrapper.Type responseType, final Socket socket) {
         this.responseType = responseType;
@@ -47,7 +46,7 @@ public class ResponseWrapper {
                         return HanRoutingProtocol.ClientRegisterResponse.parseDelimitedFrom(is);
                 }
             } catch (IOException ioe) {
-				ioe.printStackTrace();
+                ioe.printStackTrace();
             }
         }
         return null;

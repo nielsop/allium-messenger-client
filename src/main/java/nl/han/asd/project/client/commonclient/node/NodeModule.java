@@ -10,7 +10,7 @@ public class NodeModule extends AbstractModule {
     protected void configure() {
         //IReceiveMessage receiveMessage, INodeConnection nodeConnection
 //        bind(INodeGateway.class).to(NodeGateway.class);
-      //  bind(INodeConnection.class).to(NodeConnectionService.class);
+        //  bind(INodeConnection.class).to(NodeConnectionService.class);
         //TODO: fix dependency injection
     }
 }

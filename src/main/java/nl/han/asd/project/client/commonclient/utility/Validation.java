@@ -11,6 +11,7 @@ public class Validation {
     /**
      * Validates the given IP4 address.
      * When the IP4 isn't valid this function will throw an error.
+     *
      * @param address Address to validate.
      */
     public void validateAddress(String address) {

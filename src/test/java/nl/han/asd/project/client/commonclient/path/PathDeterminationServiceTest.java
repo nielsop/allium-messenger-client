@@ -22,14 +22,15 @@ import java.util.ArrayList;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class PathDeterminationServiceTest {
-    @InjectMocks
-    private PathDeterminationService pathDeterminationService;
-    private Contact contact;
     @Mock
     IGetGraphUpdates updatedGraphMock;
 
     @Mock
     IGetClientGroup clientGroupMock;
+    @InjectMocks
+    private PathDeterminationService pathDeterminationService;
+    private Contact contact;
+
     @Before
     public void setUp() throws Exception {
         contact = new Contact("Username","1234");
@@ -59,8 +60,8 @@ Checking if generatedPath contains Node objects
 
         ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
 
-        for(int i = 0; i < selfMadePath.length; i++){
-            Assert.assertEquals(selfMadePath[i],generatePath.get(i));
+        for (int i = 0; i < selfMadePath.length; i++) {
+            Assert.assertEquals(selfMadePath[i], generatePath.get(i));
         }
     }
 
@@ -76,8 +77,8 @@ Checking if error is trown when miniumHops is negative number
     Check if the first Node in the generated path is a ConnectedNode from the host client.
      */
     @Test
-    public void firstNodeInPathIsAConnectedNodeFromHostClient(){
-        ArrayList<Node> generatePath = pathDeterminationService.getPath(3,contact);
+    public void firstNodeInPathIsAConnectedNodeFromHostClient() {
+        ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
         Node[] contactConnectedNodes = new Node[0];
         try {
             contactConnectedNodes = contact.getConnectedNodes();
@@ -88,7 +89,7 @@ Checking if error is trown when miniumHops is negative number
     }
 
     @Test
-    public void clientHostConnectedNodesAreUpdatedIfLastUpdateIsExpired(){
+    public void clientHostConnectedNodesAreUpdatedIfLastUpdateIsExpired() {
         throw new NotImplementedException();
     }
 

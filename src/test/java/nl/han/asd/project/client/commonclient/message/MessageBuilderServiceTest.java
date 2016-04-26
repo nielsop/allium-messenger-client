@@ -63,7 +63,7 @@ public class MessageBuilderServiceTest {
         Mockito.when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(path);
         Mockito.when(encrypt.encryptData(Mockito.any(ByteString.class),Mockito.any(ByteString.class))).thenReturn(ByteString.copyFromUtf8("data"));
         messageBuilderService.sendMessage("hallo 124",contactReciever,contactSender);
-    }
+	}
 
 
     @After
