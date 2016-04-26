@@ -72,8 +72,8 @@ public class Connection {
 
         try {
             outputStream.write(data);
-        } catch (IOException e) {
-            throw new SocketException("Error writing data to socket stream.");
+        } catch (IOException | NullPointerException e) {
+            throw new SocketException("An error occurred while trying to write data to the stream.");
         }
     }
 
@@ -98,7 +98,7 @@ public class Connection {
                 // >0: DATA
                 bytesRead = inputStream.read(buffer);
             }
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             // something went wrong while reading the data from the stream.
             // if the connection was ever / is connected, attempt to close it.
             if (isConnected() && bytesRead == -1) {

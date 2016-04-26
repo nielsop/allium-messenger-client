@@ -1,6 +1,10 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+import LocalServer.Server;
+import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import nl.han.asd.project.client.commonclient.connection.IConnectionService;
 import org.junit.*;
 
 import java.io.IOException;
@@ -8,39 +12,39 @@ import java.net.SocketException;
 
 import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
 import static org.junit.Assert.assertEquals;
-import static sun.net.www.protocol.http.AuthCacheValue.Type.Server;
 
 /**
  * Created by Jevgeni on 15-4-2016.
  */
-public class ConnectionTest implements IConnectionService {
+public class ConnectionServiceTest implements IConnectionService {
 
+    private static final Server server = new Server();
     private ConnectionService connectionService = null;
-    private Connection connection = null;
-    public  ConnectionTest() {
+
+    public ConnectionServiceTest() {
     }
 
     @BeforeClass
     public static void InitServer() throws IOException {
         // setup the local server for testing purposes only, executing should happen before the class is initialized.
+        server.Start(10002);
     }
 
     @AfterClass
     public static void StopServer() {
         // stop the local server after we ran all tests.
+        server.Stop();
     }
 
     @Before
     public void InitConnectionService() throws IOException {
         connectionService = new ConnectionService(this);
         connectionService.open("127.0.0.1", 10002);
-        connection = new Connection();
     }
 
     @After
     public void CloseConnectionService() throws IOException {
         connectionService.close();
-        connection.close();
     }
 
     @Test
@@ -67,7 +71,6 @@ public class ConnectionTest implements IConnectionService {
 
         byte[] buffer = connectionService.read();
         ClientLoginResponse response = ClientLoginResponse.parseFrom(buffer);
-        System.out.println(response.getSecretHash());
         assertEquals(response.getSecretHash(), String.format("%s:%s", requestBuilder.getUsername(), requestBuilder.getPassword()));
         assertEquals(response.getStatus(), ClientLoginResponse.Status.SUCCES);
 
@@ -98,12 +101,6 @@ public class ConnectionTest implements IConnectionService {
     }
 
     @Test(expected = SocketException.class)
-    public void TestClosedRead() throws IOException {
-        connection.close();
-        connection.read();
-    }
-
-    @Test(expected = SocketException.class)
     public void TestStopReadyAsync() throws IOException {
         ConnectionService connection2 = new ConnectionService();
         connection2.stopReadAsync();
@@ -121,6 +118,30 @@ public class ConnectionTest implements IConnectionService {
         assertEquals(ClientLoginResponse.Status.SUCCES, response.getStatus());
     }
 
+    @Test(expected = SocketException.class)
+    public void TestInvalidGeneric() throws IOException {
+        connectionService.close();
+        ClientLoginResponse response = connectionService.readGeneric(ClientLoginResponse.class);
+    }
+
+
+    @Test(expected = SocketException.class)
+    public void TestWriteInvalid() throws IOException {
+        connectionService.close();
+        connectionService.write(new byte[] {0x00, 0x01 });
+    }
+
+    @Test(expected = SocketException.class)
+    public void TestReadInvalid() throws IOException {
+        connectionService.close();
+        byte[] buffer = connectionService.read();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void TestInvalidConstructor() throws IOException {
+        ConnectionService service = new ConnectionService(25, null);
+    }
+
     @Test
     public void TestWriteAndRead() throws SocketException {
         String testString = "HelloDarknessMyOldFriend";
@@ -128,6 +149,7 @@ public class ConnectionTest implements IConnectionService {
 
         connectionService.write(data);
         connectionService.readAsync();
+        connectionService.stopReadAsync();
     }
 
     @Test
