@@ -24,6 +24,10 @@ public class GUI extends Application {
     private Scene scene;
     public PresentationLayer pLayer;
 
+    public Scene getScene() {
+        return scene;
+    }
+
     public enum Page {
         LOGIN, REGISTER, DASHBOARD, CONTACTS, CHAT, SETTINGS, CONFIRMATION
     }

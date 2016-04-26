@@ -12,6 +12,9 @@ import java.util.regex.Pattern;
  */
 public class Validation {
 
+    private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]";
+    private static final String REGEX_ALPHANUMERICSPECIAL = "^(?=(?:\\D*?\\d){8,32}(?!.*?\\d))[a-zA-Z0-9@\\#$%&*()_+\\]\\[';:?.,!^-]+$";
+
     /**
      * Validates the given IP4 address.
      * When the IP4 isn't valid this function will throw an error.
@@ -63,6 +66,27 @@ public class Validation {
     public static void validatePort(int port) {
         if (!(port >= 0 && port <= 65535))
             throw new IllegalArgumentException("Port should be in range of 1024 - 65535.");
+    }
+
+    public static boolean validateLoginData(String username, String password) {
+        if (username == null || password == null)
+            throw new IllegalArgumentException("De ingevoerde username en password mogen niet null zijn!");
+        if (username.isEmpty() || password.isEmpty())
+            throw new IllegalArgumentException("De ingevoerde username en password mogen niet leeg zijn!");
+        if (!username.matches(REGEX_ALPHANUMERIC))
+            throw new IllegalArgumentException("De ingevoerde username mag alleen letters" +
+                    " en cijfers bevatten!");
+        if (!password.matches(REGEX_ALPHANUMERICSPECIAL)) {
+            throw new IllegalArgumentException("De ingevoerde password mag alleen letters," +
+                    " cijfers en speciale tekens bevatten!");
+        }
+        if (username.length() < 3) throw new IllegalArgumentException("De username moet minstens 3 tekens bevatten!");
+        if (username.length() > 12) throw new IllegalArgumentException("De username mag maximaal 12 tekens bevatten!");
+        if (password.length() < 8)
+            throw new IllegalArgumentException("Het wachtwoord moet minstens 8 tekens bevatten!");
+        if (password.length() > 16)
+            throw new IllegalArgumentException("Het wachtwoord mag maximaal 16 tekens bevatten!");
+        return true;
     }
 
 }

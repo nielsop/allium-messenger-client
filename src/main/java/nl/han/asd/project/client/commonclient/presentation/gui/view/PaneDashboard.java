@@ -15,7 +15,7 @@ public class PaneDashboard {
 
     public PaneDashboard(GUI gui) {
         borderPane = Pane.getBorderPane(new int[]{0, 0, 0, 0});
-        borderPane.setTop(new PaneNav(gui).getBorderPane());
+        borderPane.setTop(new PaneNav(gui).gethBox());
         borderPane.setLeft(new PaneContacts(gui).getScrollPane());
         borderPane.setCenter(new PaneChat(gui).getScrollPane());
     }

@@ -2,6 +2,7 @@ package nl.han.asd.project.client.commonclient.master;
 
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
@@ -18,34 +19,29 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
     //TODO: missing: IWebService from Master
 
-    private String hostname;
-    private int port;
     private ConnectionService connectionService;
-
     private IEncryptionService encryptionService;
 
     @Inject
     public MasterGateway(IEncryptionService encryptionService) {
+        Validation.validateAddress(Configuration.HOSTNAME);
+        Validation.validatePort(Configuration.PORT);
         this.encryptionService = encryptionService;
-    }
-
-    public MasterGateway(String hostname, int port) {
-        Validation.validateAddress(hostname);
-        Validation.validatePort(port);
-        this.hostname = hostname;
-        this.port = port;
     }
 
     @Override
     public LoginResponseWrapper authenticate(String username, String password) {
-        HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
-                .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
+        if (Validation.validateLoginData(username, password)) {
+            HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
+                    .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
 
-        HanRoutingProtocol.ClientLoginResponse loginResponse = writeAndRead(HanRoutingProtocol.ClientLoginResponse.class,
-                loginRequest.toByteArray());
-        if (loginResponse == null) return null;
-        return new LoginResponseWrapper(loginResponse.getConnectedNodesList(), loginResponse.getSecretHash(),
-                loginResponse.getStatus());
+            HanRoutingProtocol.ClientLoginResponse loginResponse = writeAndRead(HanRoutingProtocol.ClientLoginResponse.class,
+                    loginRequest.toByteArray());
+            if (loginResponse == null) return null;
+            return new LoginResponseWrapper(loginResponse.getConnectedNodesList(), loginResponse.getSecretHash(),
+                    loginResponse.getStatus());
+        }
+        return null;
     }
 
     @Override
@@ -91,7 +87,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             connectionService = new ConnectionService();
         }
         try {
-            connectionService.open(hostname, port);
+            connectionService.open(Configuration.HOSTNAME, Configuration.PORT);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

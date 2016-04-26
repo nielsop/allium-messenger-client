@@ -2,8 +2,10 @@ package integration.master;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -23,8 +25,8 @@ public class MasterGatewayIT {
 
     @BeforeClass
     public static void setup() {
-        Injector injector = Guice.createInjector(new EncryptionModule());
-        gateway = new MasterGateway("195.169.194.234", 32886);
+        Injector injector = Guice.createInjector(new CommonclientModule());
+        gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
     }
 
     @AfterClass
