@@ -1,4 +1,4 @@
-package presentation;
+package unit.presentation;
 
 import nl.han.asd.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.client.commonclient.presentation.PresentationLayer;

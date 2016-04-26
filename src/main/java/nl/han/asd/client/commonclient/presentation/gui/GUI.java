@@ -12,13 +12,16 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.han.asd.client.commonclient.CommonclientModule;
 import nl.han.asd.client.commonclient.presentation.PresentationLayer;
+import nl.han.asd.client.commonclient.presentation.gui.view.*;
+import nl.han.asd.client.commonclient.presentation.gui.view.auth.PaneLogin;
+import nl.han.asd.client.commonclient.presentation.gui.view.auth.PaneRegister;
 
 public class GUI extends Application {
     private Stage stage;
     public PresentationLayer pLayer;
 
     public enum Page {
-        LOGIN, REGISTER
+        LOGIN, REGISTER, DASHBOARD, CONTACTS, CHAT, SETTINGS, CONFIRMATION
     }
 
     public static void main(String[] args) {
@@ -42,14 +45,27 @@ public class GUI extends Application {
         Scene scene = null;
         switch(page) {
             case LOGIN:
-                scene = new Scene(new PaneLogin(this).getGrid(), 400, 300);
+                scene = new Scene(new PaneLogin(this).getGridPane(), 400, 300);
                 break;
             case REGISTER:
-                scene = new Scene(new PaneRegister(this).getGrid(), 400, 300);
+                scene = new Scene(new PaneRegister(this).getGridPane(), 400, 300);
+                break;
+            case DASHBOARD:
+                scene = new Scene(new PaneDashboard(this).getBorderPane(), 800, 600);
+                break;
+            case SETTINGS:
+                scene = new Scene(new PaneSettings(this).getPane(), 800, 600);
+                break;
+            case CONFIRMATION:
+                scene = new Scene(new PaneConfirmation(this).getPane(), 400, 200);
                 break;
         }
         stage.setScene(scene);
         stage.show();
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 
     @Inject

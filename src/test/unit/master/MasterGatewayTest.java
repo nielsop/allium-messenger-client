@@ -1,4 +1,4 @@
-package master;
+package unit.master;
 
 import nl.han.asd.client.commonclient.master.MasterGateway;
 import nl.han.asd.client.commonclient.utility.ResponseWrapper;
