@@ -1,7 +1,7 @@
 package nl.han.asd.project.client.commonclient.store;
 
 
-import nl.han.asd.project.client.commonclient.node.Node;
+import nl.han.asd.project.client.commonclient.graph.Node;
 
 /**
  * Created by Julius on 15/04/16.

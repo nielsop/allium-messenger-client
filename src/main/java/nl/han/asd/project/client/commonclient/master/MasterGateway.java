@@ -7,17 +7,14 @@ import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
 import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
-import sun.java2d.pipe.ValidatePipe;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
+public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
     //TODO: missing: IWebService from Master
     public Socket socket;
     private PrintWriter out;
@@ -51,6 +48,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             e.printStackTrace();
         }
     }
+
 
     @Override
     public HanRoutingProtocol.ClientLoginResponse authenticateUser(final String username, final String password,

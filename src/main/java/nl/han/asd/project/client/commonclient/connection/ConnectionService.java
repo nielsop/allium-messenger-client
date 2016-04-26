@@ -114,7 +114,7 @@ public final class ConnectionService {
             T defaultInstance = (T)defaultInstanceField.get(null);
             return (T)defaultInstance.getParserForType().parseFrom(buffer);
         } catch (IllegalAccessException | InvalidProtocolBufferException e) {
-            // return null
+            // return null g
         } catch (NoSuchFieldException e) {
             throw new InvalidProtocolBufferException("Invalid class provided.");
         }

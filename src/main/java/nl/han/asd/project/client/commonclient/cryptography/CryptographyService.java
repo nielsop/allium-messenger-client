@@ -8,7 +8,7 @@ import com.google.protobuf.ByteString;
 public class CryptographyService implements IEncrypt, IDecrypt {
 
     @Override
-    public ByteString encryptData(String data, String publicKey) {
+    public ByteString encryptData(ByteString data, ByteString publicKey) {
         return null;
     }
 }
