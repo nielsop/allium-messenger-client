@@ -8,10 +8,12 @@ import javax.inject.Inject;
  * Created by Marius on 19-04-16.
  */
 public class NodeConnectionService implements ISetConnectedNodes {
-    private IReceiveMessage receiveMessage;
-
-    @Inject
-    public NodeConnectionService(IReceiveMessage receiveMessage) {
-        this.receiveMessage = receiveMessage;
-    }
+//    private IReceiveMessage receiveMessage;
+//    private INodeConnection nodeConnection;
+//
+//    @Inject
+//    public NodeConnectionService(IReceiveMessage receiveMessage, INodeConnection nodeConnection) {
+//        this.receiveMessage = receiveMessage;
+//        this.nodeConnection = nodeConnection;
+//    }
 }
