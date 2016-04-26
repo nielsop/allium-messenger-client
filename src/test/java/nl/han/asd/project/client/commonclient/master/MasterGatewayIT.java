@@ -2,7 +2,6 @@ package nl.han.asd.project.client.commonclient.master;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -10,8 +9,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.ArrayList;
 
 /**
  * @author Niels Bokmans
@@ -27,7 +24,7 @@ public class MasterGatewayIT {
     @BeforeClass
     public static void setup() {
         Injector injector = Guice.createInjector(new EncryptionModule());
-        gateway = new MasterGateway("195.169.194.234", 32886, injector.getInstance(IEncryptionService.class));
+        gateway = new MasterGateway("10.182.5.216", 1337, injector.getInstance(IEncryptionService.class));
     }
 
     @AfterClass
@@ -69,7 +66,7 @@ public class MasterGatewayIT {
 
     @Test
     public void testGetClientGroupSuccessful() {
-        Assert.assertTrue(gateway.getClientGroup().clientGroup.size() > 0);
+        Assert.assertTrue(gateway.getClientGroup().clientGroup.size() >= 0);
     }
     /* */
 }

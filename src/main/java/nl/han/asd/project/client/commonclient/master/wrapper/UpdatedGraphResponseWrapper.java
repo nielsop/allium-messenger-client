@@ -14,15 +14,13 @@ public class UpdatedGraphResponseWrapper {
     public int newVersion;
     public boolean isFullGraph;
     public List<HanRoutingProtocol.Node> addedNodes;
-    public List<HanRoutingProtocol.Node> updatedNodes;
     public List<HanRoutingProtocol.Node> deletedNodes;
 
-    public UpdatedGraphResponseWrapper(int newVersion, boolean isFullGraph, List<HanRoutingProtocol.Node> addedNodes, List<HanRoutingProtocol.Node> updatedNodes,
+    public UpdatedGraphResponseWrapper(int newVersion, boolean isFullGraph, List<HanRoutingProtocol.Node> addedNodes,
                                        List<HanRoutingProtocol.Node> deletedNodes) {
         this.newVersion = newVersion;
         this.isFullGraph = isFullGraph;
         this.addedNodes = addedNodes;
-        this.updatedNodes = updatedNodes;
         this.deletedNodes = deletedNodes;
     }
 

@@ -66,7 +66,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         if (graphUpdateResponse == null) return null;
         UpdatedGraphResponseWrapper updatedGraph = new UpdatedGraphResponseWrapper(graphUpdateResponse.getNewVersion(),
                 graphUpdateResponse.getIsFullGraph(), graphUpdateResponse.getAddedNodesList(),
-                graphUpdateResponse.getUpdatedNodesList(), graphUpdateResponse.getDeletedNodesList());
+                graphUpdateResponse.getDeletedNodesList());
         setCurrentGraphVersion(updatedGraph.newVersion);
         return updatedGraph;
     }
