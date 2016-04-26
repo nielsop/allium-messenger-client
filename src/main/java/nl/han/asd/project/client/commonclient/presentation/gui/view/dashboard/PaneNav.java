@@ -15,7 +15,7 @@ public class PaneNav {
     HBox hBox = null;
 
     public PaneNav(GUI gui) {
-        hBox = Pane.getHBox(10, new int[]{0, 0, 0, 0}, "");
+        hBox = Pane.getHBox(10, new int[]{5, 5, 5, 5}, "");
         Label logoutBtn = new Label("Uitloggen");
         logoutBtn.setTextFill(Paint.valueOf("#888"));
         Label settingsBtn = new Label("Instellingen");
@@ -23,25 +23,22 @@ public class PaneNav {
 
         hBox.getChildren().addAll(logoutBtn, settingsBtn);
 
-        logoutBtn.setOnMouseEntered(e -> {
-            logoutBtn.setTextFill(Paint.valueOf("#000"));
-            gui.getScene().setCursor(Cursor.HAND);
-        });
-        logoutBtn.setOnMouseExited(e -> {
-            logoutBtn.setTextFill(Paint.valueOf("#888"));
-            gui.getScene().setCursor(Cursor.DEFAULT);
-        });
+        fancyLabel(logoutBtn, gui);
         logoutBtn.setOnMouseClicked(e -> gui.setStage(GUI.Page.LOGIN));
 
-        settingsBtn.setOnMouseEntered(e -> {
-            settingsBtn.setTextFill(Paint.valueOf("#000"));
+        fancyLabel(settingsBtn, gui);
+        settingsBtn.setOnMouseClicked(e -> gui.setStage(GUI.Page.SETTINGS));
+    }
+
+    private void fancyLabel(Label label, GUI gui) {
+        label.setOnMouseEntered(e -> {
+            label.setTextFill(Paint.valueOf("#000"));
             gui.getScene().setCursor(Cursor.HAND);
         });
-        settingsBtn.setOnMouseExited(e -> {
-            settingsBtn.setTextFill(Paint.valueOf("#888"));
+        label.setOnMouseExited(e -> {
+            label.setTextFill(Paint.valueOf("#888"));
             gui.getScene().setCursor(Cursor.DEFAULT);
         });
-        settingsBtn.setOnMouseClicked(e -> gui.setStage(GUI.Page.SETTINGS));
     }
 
     public Node gethBox() {
