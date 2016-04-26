@@ -20,7 +20,7 @@ class Connection {
 
     private int sleepTime = 25; // default
 
-    public Connection(IConnectionPipe service)
+    public Connection(final IConnectionPipe service)
     {
         connectionService = service;
 
@@ -37,7 +37,7 @@ class Connection {
      * @throws IllegalArgumentException A parameter has an invalid value.
      * @throws SocketException Connection or streams failed.
      */
-    public void open(String hostName, int portNumber) throws IllegalArgumentException, SocketException {
+    public void open(final String hostName, final int portNumber) throws IllegalArgumentException, SocketException {
         final Validation validation = new Validation();
         validation.validateAddress(hostName);
         validation.validatePort(portNumber);
@@ -64,7 +64,7 @@ class Connection {
      * @throws SocketException Writing to stream failed.
      * @throws IllegalAccessException A parameter has an invalid value.
      */
-    public void write(byte[] data) throws IllegalArgumentException, SocketException {
+    public void write(final byte[] data) throws IllegalArgumentException, SocketException {
         if (data == null)
             throw new IllegalArgumentException("data");
 
@@ -201,7 +201,7 @@ class Connection {
      * @param sleepTime Amount of milliseconds needed to wait.
      * @throws IllegalArgumentException A parameter has an invalid value.
      */
-    public void setSleepTime(int sleepTime) throws IllegalArgumentException {
+    public void setSleepTime(final int sleepTime) throws IllegalArgumentException {
         if (sleepTime < 0)
             throw new IllegalArgumentException("Must be at least 1.");
 

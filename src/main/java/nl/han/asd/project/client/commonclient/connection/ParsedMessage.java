@@ -11,7 +11,7 @@ public class ParsedMessage {
     private GeneratedMessage dataMessage;
     private byte[] data;
 
-    public ParsedMessage(byte[] data, HanRoutingProtocol.EncryptedWrapper.Type type, GeneratedMessage message) {
+    public ParsedMessage(final byte[] data, final HanRoutingProtocol.EncryptedWrapper.Type type, final GeneratedMessage message) {
         this.data = data;
         this.dataType = type;
         this.dataMessage = message;

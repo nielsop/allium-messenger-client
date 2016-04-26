@@ -2,6 +2,8 @@ package nl.han.asd.project.client.commonclient.connection;
 
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
+import nl.han.asd.project.commonservices.encryption.EncryptionService;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -11,8 +13,8 @@ import java.net.SocketException;
  */
 public final class ConnectionService implements IConnectionPipe {
     private final static int DEFAULT_SLEEPTIME = 25; // 25ms
-    private final Packer packer = new Packer();
 
+    private Packer packer = null;
     private String publicKey = null;
     private Connection connection = null;
     private IConnectionService service = null;
@@ -21,8 +23,9 @@ public final class ConnectionService implements IConnectionPipe {
      * Initializes this class.
      * @param sleepTime Amount of time the asynchronous thread sleeps in between reads from the socket.
      */
-    public ConnectionService(int sleepTime, String publicKey) {
+    public ConnectionService(final int sleepTime, final String publicKey) {
         connection = new Connection(this);
+        packer = new Packer(null);
 
         if (publicKey == null || publicKey.length() == 0)
             throw new IllegalArgumentException("Publickey cannot be empty.");
@@ -41,7 +44,7 @@ public final class ConnectionService implements IConnectionPipe {
      *                      while reading asynchronous.
      * @throws IOException
      */
-    public ConnectionService(int sleepTime, String publicKey, IConnectionService targetService) throws IOException {
+    public ConnectionService(final int sleepTime, final String publicKey, final IConnectionService targetService) throws IOException {
         this(sleepTime, publicKey);
 
         if (targetService == null) {
@@ -57,7 +60,7 @@ public final class ConnectionService implements IConnectionPipe {
      *                      while reading asynchronous.
      * @throws IOException
      */
-    public ConnectionService(String publicKey) {
+    public ConnectionService(final String publicKey) {
         this(DEFAULT_SLEEPTIME, publicKey);
     }
 
@@ -68,7 +71,7 @@ public final class ConnectionService implements IConnectionPipe {
      *                      while reading asynchronous.
      * @throws IOException
      */
-    public ConnectionService(String publicKey, IConnectionService targetService) throws IOException {
+    public ConnectionService(final String publicKey, final IConnectionService targetService) throws IOException {
         this(DEFAULT_SLEEPTIME, publicKey, targetService);
     }
 
@@ -82,8 +85,8 @@ public final class ConnectionService implements IConnectionPipe {
             throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
         }
 
-        byte[] payload = connection.read();
-        return packer.unpack(payload);
+        byte[] buffer = connection.read();
+        return packer.unpack(buffer);
     }
 
     /**
@@ -121,7 +124,7 @@ public final class ConnectionService implements IConnectionPipe {
      * @return A protocol buffer (T) instance.
      * @throws SocketException An exception occurred while reading data from the stream.
      */
-    public <T extends GeneratedMessage> T readGeneric(Class<T> classDescriptor) throws SocketException, InvalidProtocolBufferException {
+    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor) throws SocketException, InvalidProtocolBufferException {
         ParsedMessage parsedMessage = this.read();
         if (parsedMessage.getDataMessage().getClass() == classDescriptor)
         {
@@ -135,7 +138,7 @@ public final class ConnectionService implements IConnectionPipe {
      * @param instance Instance of the builder class of the protocol buffer.
      * @throws SocketException An exception occurred while writing the data.
      */
-    public <T extends GeneratedMessage.Builder> void write(T instance) throws SocketException {
+    public <T extends GeneratedMessage.Builder> void write(final T instance) throws SocketException {
         if (!connection.isConnected()) {
             throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
         }
@@ -150,7 +153,7 @@ public final class ConnectionService implements IConnectionPipe {
      * @param portNumber Port number to connect to.
      * @throws IOException If we couldn't connect to the hostname.
      */
-    public void open(String hostName, int portNumber) throws IOException {
+    public void open(final String hostName, final int portNumber) throws IOException {
         connection.open(hostName, portNumber);
     }
 
@@ -171,7 +174,7 @@ public final class ConnectionService implements IConnectionPipe {
     }
 
     @Override
-    public void onReceiveRead(byte[] buffer) {
+    public void onReceiveRead(final byte[] buffer) {
         if (service != null) {
             ParsedMessage message = packer.unpack(buffer);
             service.onReceiveRead(message);
