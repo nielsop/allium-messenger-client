@@ -18,7 +18,7 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
 public class Worker implements Runnable {
     protected Socket clientSocket = null;
 
-    private Packer packer = new Packer();
+    private Packer packer = new Packer(null);
     public Worker(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
