@@ -7,7 +7,7 @@ import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 /**
  * Created by Niels Bokmans on 12-4-2016.
  */
-public class CryptographyService implements IEncrypt, IDecrypt {
+public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
     private IEncryptionService encryptionService;
 
     @Inject
@@ -23,6 +23,12 @@ public class CryptographyService implements IEncrypt, IDecrypt {
 
     @Override
     public ByteString encryptData(ByteString data, String publicKey) {
-        return null;
+            return null;
+//        return ByteString.copyFrom(encryptionService.encryptData(strPublicKey, data.toByteArray()));
+    }
+
+    @Override
+    public String getPublicKey() {
+        return encryptionService.getPublicKey().toString();
     }
 }

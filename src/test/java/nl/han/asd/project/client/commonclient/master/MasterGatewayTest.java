@@ -2,8 +2,6 @@ package nl.han.asd.project.client.commonclient.master;
 
 //import com.xebialabs.overcast.host.CloudHost;
 
-import nl.han.asd.project.client.commonclient.utility.IntegrationTest;
-import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.After;
 import org.junit.Assert;

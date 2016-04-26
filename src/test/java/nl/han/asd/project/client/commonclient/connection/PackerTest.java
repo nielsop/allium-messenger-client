@@ -1,8 +1,14 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
+import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +18,13 @@ import static org.junit.Assert.assertEquals;
  */
 public class PackerTest {
 
-    private final Packer packer = new Packer();
+    private Packer packer = null;
+
+    @Before
+    public void InitPacker() {
+        final Injector injector = Guice.createInjector(new EncryptionModule());
+        packer = new Packer(new CryptographyService(injector.getInstance(IEncryptionService.class)));
+    }
 
     @Test
     public void TestPacking() throws InvalidProtocolBufferException {

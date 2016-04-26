@@ -1,8 +1,13 @@
 package LocalServer;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.Packer;
 import nl.han.asd.project.client.commonclient.connection.ParsedMessage;
+import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
+import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,10 +22,11 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
  */
 public class Worker implements Runnable {
     protected Socket clientSocket = null;
+    private Packer packer = null;
 
-    private Packer packer = new Packer(null);
-    public Worker(Socket clientSocket) {
+    public Worker(Socket clientSocket, Packer packer) {
         this.clientSocket = clientSocket;
+        this.packer = packer;
     }
 
 
