@@ -1,16 +1,15 @@
-package connection;
+package unit.connection;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.client.commonclient.connection.ConnectionService;
-import nl.han.asd.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import nl.han.asd.project.client.commonclient.connection.IConnectionService;
 import org.junit.*;
-import server.Server;
+import unit.server.Server;
 
 import java.io.IOException;
 import java.net.SocketException;
 
-import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
-import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
 import static org.junit.Assert.assertEquals;
 
 /**

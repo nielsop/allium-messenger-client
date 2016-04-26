@@ -1,8 +1,8 @@
-package server;
+package unit.server;
 
 import com.google.protobuf.ByteString;
-import nl.han.asd.client.commonclient.connection.ConnectionService;
-import nl.han.asd.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import nl.han.asd.project.client.commonclient.connection.IConnectionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.IOException;

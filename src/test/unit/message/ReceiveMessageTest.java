@@ -1,4 +1,4 @@
-package message;
+package unit.message;
 
 import org.junit.Test;
 

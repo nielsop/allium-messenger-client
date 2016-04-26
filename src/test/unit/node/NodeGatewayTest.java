@@ -1,12 +1,9 @@
-package node;
+package unit.node;
 
-import nl.han.asd.client.commonclient.node.NodeGateway;
+import nl.han.asd.project.client.commonclient.node.NodeGateway;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import utility.IntegrationTest;
-
 /**
  * Created by Julius on 18/04/16.
  */
@@ -23,7 +20,6 @@ public class NodeGatewayTest {
     }
 
     @Test
-    @Category(IntegrationTest.class)
     public void sendMessageTest() {
     }
 

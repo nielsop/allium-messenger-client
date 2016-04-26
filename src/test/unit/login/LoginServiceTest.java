@@ -1,6 +1,6 @@
 package login;
 
-import nl.han.asd.client.commonclient.login.LoginService;
+import nl.han.asd.project.client.commonclient.login.LoginService;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,8 +1,8 @@
-package master;
+package integration.master;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import nl.han.asd.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.AfterClass;

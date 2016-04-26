@@ -1,14 +1,13 @@
-package message;
+package unit.message;
 
-import nl.han.asd.client.commonclient.cryptography.CryptographyService;
-import nl.han.asd.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.client.commonclient.master.IGetUpdatedGraph;
-import nl.han.asd.client.commonclient.message.MessageBuilderService;
-import nl.han.asd.client.commonclient.node.Node;
-import nl.han.asd.client.commonclient.path.PathDeterminationService;
-import nl.han.asd.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
+import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
+import nl.han.asd.project.client.commonclient.message.MessageBuilderService;
+import nl.han.asd.project.client.commonclient.node.Node;
+import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

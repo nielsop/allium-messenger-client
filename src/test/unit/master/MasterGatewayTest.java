@@ -1,7 +1,7 @@
 package unit.master;
 
-import nl.han.asd.client.commonclient.master.MasterGateway;
-import nl.han.asd.client.commonclient.utility.ResponseWrapper;
+import nl.han.asd.project.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.client.commonclient.utility.ResponseWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
