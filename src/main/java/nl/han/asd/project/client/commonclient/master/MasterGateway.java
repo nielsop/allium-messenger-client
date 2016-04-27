@@ -12,9 +12,6 @@ import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.net.SocketException;
 import java.util.Base64;
 
@@ -63,18 +60,21 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     }
 
     @Override
-    public UpdatedGraphResponseWrapper getUpdatedGraph() {
+    public UpdatedGraphResponseWrapper getUpdatedGraph(int currentVersion) {
         HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder()
-                .setCurrentVersion(getCurrentGraphVersion()).build();
+                .setCurrentVersion(currentVersion).build();
 
         HanRoutingProtocol.GraphUpdateResponse graphUpdateResponse = writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class,
                 graphUpdateRequest.toByteArray());
         if (graphUpdateResponse == null) return null;
-        UpdatedGraphResponseWrapper updatedGraph = new UpdatedGraphResponseWrapper(graphUpdateResponse.getNewVersion(),
-                graphUpdateResponse.getIsFullGraph(), graphUpdateResponse.getAddedNodesList(),
-                graphUpdateResponse.getDeletedNodesList());
-        setCurrentGraphVersion(updatedGraph.newVersion);
-        return updatedGraph;
+        if (graphUpdateResponse.getNewVersion() > currentVersion) {
+            UpdatedGraphResponseWrapper updatedGraph = new UpdatedGraphResponseWrapper(graphUpdateResponse.getNewVersion(),
+                    graphUpdateResponse.getIsFullGraph(), graphUpdateResponse.getAddedNodesList(),
+                    graphUpdateResponse.getDeletedNodesList());
+            setCurrentGraphVersion(updatedGraph.newVersion);
+            return updatedGraph;
+        }
+        return null;
     }
 
     @Override
@@ -85,15 +85,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
                 clientRequest.toByteArray());
         if (clientResponse == null) return null;
         return new ClientGroupResponseWrapper(clientResponse.getClientsList());
-    }
-
-    /**
-     * Returns the current graph version.
-     *
-     * @return The current graph version.
-     */
-    public int getCurrentGraphVersion() {
-        return currentGraphVersion;
     }
 
     /**

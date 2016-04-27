@@ -4,6 +4,6 @@ import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphRespons
 
 public interface IGetUpdatedGraph {
 
-    UpdatedGraphResponseWrapper getUpdatedGraph();
+    UpdatedGraphResponseWrapper getUpdatedGraph(int currentVersion);
 
 }

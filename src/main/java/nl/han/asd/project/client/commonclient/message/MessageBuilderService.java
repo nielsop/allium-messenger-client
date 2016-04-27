@@ -4,14 +4,15 @@ import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
+import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
-import nl.han.asd.project.client.commonclient.node.Node;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.util.ArrayList;
+
 
 public class MessageBuilderService implements IMessageBuilder {
     public IGetPath getPath;
