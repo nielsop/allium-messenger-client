@@ -24,7 +24,7 @@ public class CryptographyServiceTest {
     @Test
     public void testEncryptData() throws Exception {
         String dataToEncrypt = "Encrypt this";
-        ByteString publicKey = ByteString.copyFromUtf8("12345678");
+        byte[] publicKey = "12345678".getBytes();
         ByteString encryptedData = cryptographyService.encryptData(ByteString.copyFromUtf8(dataToEncrypt),publicKey);
 
         // Assert.assertEquals(encryptedData,dataToEncrypt);

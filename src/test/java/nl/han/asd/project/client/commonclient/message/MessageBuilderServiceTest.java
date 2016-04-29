@@ -4,7 +4,7 @@ import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
@@ -30,7 +30,7 @@ public class MessageBuilderServiceTest {
 
     private CryptographyService cryptographyService;
     @Mock
-    IGetGraphUpdates updatedGraphMock;
+    IGetUpdatedGraph updatedGraphMock;
 
     IGetPath pathDeterminationService = Mockito.mock(PathDeterminationService.class);
     @Mock
@@ -56,12 +56,12 @@ public class MessageBuilderServiceTest {
     public void sendMessageTest(){
         Contact contactReciever = new Contact("julius","1234");
         Contact contactSender = new Contact("bram","123456");
-        contactReciever.setConnectedNodes(new Node[]{new Node("NODE_ID_1","192.168.2.8",1234,ByteString.copyFromUtf8("123456789")),new Node("NODE_ID_2","192.168.2.9",1234,ByteString.copyFromUtf8("123456789")),new Node("NODE_ID_3","192.168.2.10",1234,ByteString.copyFromUtf8("123456789"))});
+        contactReciever.setConnectedNodes(new Node[]{new Node("NODE_ID_1","192.168.2.8",1234,"123456789".getBytes()),new Node("NODE_ID_2","192.168.2.9",1234,"123456789".getBytes()),new Node("NODE_ID_3","192.168.2.10",1234,"123456789".getBytes())});
 
-        ArrayList<Node> path = new ArrayList<Node>(Arrays.asList(new Node("NODE_ID_1","192.168.2.1",1234,ByteString.copyFromUtf8("123456789")), new Node("NODE_ID_2","192.168.2.2",1234,ByteString.copyFromUtf8("123456789")), new Node("NODE_ID_3","192.168.2.3",1234,ByteString.copyFromUtf8("123456789"))));
+        ArrayList<Node> path = new ArrayList<Node>(Arrays.asList(new Node("NODE_ID_1","192.168.2.1",1234,"123456789".getBytes()), new Node("NODE_ID_2","192.168.2.2",1234,"123456789".getBytes()), new Node("NODE_ID_3","192.168.2.3",1234,"123456789".getBytes())));
         Byte[] encryptedData = new Byte[]{0,1,0,1};
         Mockito.when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(path);
-        Mockito.when(encrypt.encryptData(Mockito.any(ByteString.class),Mockito.any(ByteString.class))).thenReturn(ByteString.copyFromUtf8("data"));
+        Mockito.when(encrypt.encryptData(Mockito.any(ByteString.class),Mockito.any(byte[].class))).thenReturn(ByteString.copyFromUtf8("data"));
         messageBuilderService.sendMessage("hallo 124",contactReciever,contactSender);
 	}
 

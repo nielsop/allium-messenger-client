@@ -1,8 +1,6 @@
 package nl.han.asd.project.client.commonclient.graph;
 
 
-import com.google.protobuf.ByteString;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,11 +13,11 @@ public class Node {
     private String ID;
     private String IP;
     private int port;
-    private ByteString publicKey;
+    private byte[] publicKey;
     List<Edge> adj;
 
 
-    public Node(String ID ,String IP, int port, ByteString publicKey){
+    public Node(String ID ,String IP, int port, byte[] publicKey){
         this.ID = ID;
         this.IP = IP;
         this.port = port;
@@ -40,7 +38,7 @@ public class Node {
         return port;
     }
 
-    public ByteString getPublicKey() {
+    public byte[] getPublicKey() {
         return publicKey;
     }
 

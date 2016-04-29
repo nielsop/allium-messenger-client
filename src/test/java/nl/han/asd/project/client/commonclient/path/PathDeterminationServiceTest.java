@@ -1,9 +1,8 @@
 package nl.han.asd.project.client.commonclient.path;
 
-import com.google.protobuf.ByteString;
-import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
 import nl.han.asd.project.client.commonclient.graph.Node;
+import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.After;
 import org.junit.Assert;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 @RunWith(MockitoJUnitRunner.class)
 public class PathDeterminationServiceTest {
     @Mock
-    IGetGraphUpdates updatedGraphMock;
+    IGetUpdatedGraph updatedGraphMock;
 
     @Mock
     IGetClientGroup clientGroupMock;
@@ -34,7 +33,7 @@ public class PathDeterminationServiceTest {
     @Before
     public void setUp() throws Exception {
         contact = new Contact("Username","1234");
-        contact.setConnectedNodes(new Node[]{new Node("NODE_ID_1","192.168.2.8",1234, ByteString.copyFromUtf8("123456789")),new Node("NODE_ID_2","192.168.2.9",1234,ByteString.copyFromUtf8("123456789")),new Node("NODE_ID_3","192.168.2.10",1234,ByteString.copyFromUtf8("123456789"))});
+        contact.setConnectedNodes(new Node[]{new Node("NODE_ID_1","192.168.2.8",1234, "123456789".getBytes()),new Node("NODE_ID_2","192.168.2.9",1234,"123456789".getBytes()),new Node("NODE_ID_3","192.168.2.10",1234,"123456789".getBytes())});
     }
 
 
@@ -56,7 +55,7 @@ Checking if generatedPath contains Node objects
  */
     @Test
     public void checkIfGeneratedPathContainsNodes() {
-        Node[] selfMadePath = {new Node("NODE_ID_1","192.168.2.8",1234,ByteString.copyFromUtf8("123456789")),new Node("NODE_ID_2","192.168.2.9",1234,ByteString.copyFromUtf8("123456789")),new Node("NODE_ID_3","192.168.2.10",1234,ByteString.copyFromUtf8("123456789"))};
+        Node[] selfMadePath = {new Node("NODE_ID_1","192.168.2.8",1234,"123456789".getBytes()),new Node("NODE_ID_2","192.168.2.9",1234,"123456789".getBytes()),new Node("NODE_ID_3","192.168.2.10",1234,"123456789".getBytes())};
 
         ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
 

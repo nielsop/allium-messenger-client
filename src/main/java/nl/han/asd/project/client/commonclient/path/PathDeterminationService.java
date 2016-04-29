@@ -1,10 +1,8 @@
 package nl.han.asd.project.client.commonclient.path;
 
-import com.google.protobuf.ByteString;
-
-import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
 import nl.han.asd.project.client.commonclient.graph.Node;
+import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
 import javax.inject.Inject;
@@ -12,11 +10,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class PathDeterminationService implements IGetPath {
-    public IGetGraphUpdates graphUpdates;
+    public IGetUpdatedGraph graphUpdates;
     public IGetClientGroup clientGroup;
 
     @Inject
-    public PathDeterminationService(IGetGraphUpdates graphUpdates, IGetClientGroup clientGroup) {
+    public PathDeterminationService(IGetUpdatedGraph graphUpdates, IGetClientGroup clientGroup) {
         this.graphUpdates = graphUpdates;
         this.clientGroup = clientGroup;
     }
@@ -48,7 +46,7 @@ public class PathDeterminationService implements IGetPath {
         path.add(hostConnectedNode);
 
         for(int i = 1; i < minHops; i++){
-            path.add(i,new Node("Node_ID1","192.168.2.empty",1234, ByteString.copyFromUtf8("123456789")));
+            path.add(i,new Node("Node_ID1","192.168.2.empty",1234, "123456789".getBytes()));
         }
 
         return path;

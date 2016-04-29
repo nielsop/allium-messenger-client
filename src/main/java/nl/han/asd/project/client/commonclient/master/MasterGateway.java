@@ -3,34 +3,41 @@ package nl.han.asd.project.client.commonclient.master;
 import com.google.inject.Inject;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
+import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.Base64;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
 
     //TODO: missing: IWebService from Master
 
     private static int currentGraphVersion = -1;
-    private String hostname;
-    private int port;
     private ConnectionService connectionService;
 
     private IEncryptionService encryptionService;
+    private String publicKey;
 
     @Inject
-    public MasterGateway(String hostname, int port, IEncryptionService encryptionService) {
-        this.hostname = hostname;
-        this.port = port;
+    public MasterGateway(IEncryptionService encryptionService) {
+        Validation.validateAddress(Configuration.HOSTNAME);
+        Validation.validatePort(Configuration.PORT);
         this.encryptionService = encryptionService;
+        connectionService = new ConnectionService();
+        try {
+            connectionService.open(Configuration.HOSTNAME,
+                    Configuration.PORT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -49,9 +56,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     @Override
     public RegisterResponseWrapper register(String username, String password) {
         HanRoutingProtocol.ClientLoginRequest registerRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
-                .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
+                .setUsername(username).setPassword(password).setPublicKey("ayy").build();
         HanRoutingProtocol.EncryptedWrapper encryptedRequest = HanRoutingProtocol.EncryptedWrapper.newBuilder()
-                .setData(registerRequest.toByteString()).build();
+                .setData(registerRequest.toByteString()).setType(HanRoutingProtocol.EncryptedWrapper.Type.CLIENTREGISTERREQUEST).build();
 
         HanRoutingProtocol.ClientRegisterResponse registerResponse = writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class,
                 encryptedRequest.toByteArray());
@@ -64,16 +71,12 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder()
                 .setCurrentVersion(currentVersion).build();
 
-        HanRoutingProtocol.GraphUpdateResponse graphUpdateResponse = writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class,
-                graphUpdateRequest.toByteArray());
-        if (graphUpdateResponse == null) return null;
-        if (graphUpdateResponse.getNewVersion() > currentVersion) {
-            UpdatedGraphResponseWrapper updatedGraph = new UpdatedGraphResponseWrapper(graphUpdateResponse.getNewVersion(),
-                    graphUpdateResponse.getIsFullGraph(), graphUpdateResponse.getAddedNodesList(),
-                    graphUpdateResponse.getDeletedNodesList());
-            setCurrentGraphVersion(updatedGraph.newVersion);
-            return updatedGraph;
-        }
+        HanRoutingProtocol.EncryptedWrapper encryptedRequest = HanRoutingProtocol.EncryptedWrapper.newBuilder()
+                .setData(graphUpdateRequest.toByteString()).setType(HanRoutingProtocol.EncryptedWrapper.Type.GRAPHUPDATEREQUEST).build();
+
+
+        HanRoutingProtocol.GraphUpdateResponse graphUpdate = writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class, encryptedRequest.toByteArray());
+        if (graphUpdate == null) return null;
         return null;
     }
 
@@ -101,9 +104,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
      *
      * @return The public key.
      */
-    private String getPublicKey() {
-        return Base64.getEncoder().encodeToString(encryptionService.getPublicKey().getEncoded());
-    }
+//    private String getPublicKey() {
+//        return Base64.getEncoder().encodeToString(encryptionService.getPublicKey().getEncoded());
+//    }
 
 
     /**
@@ -128,7 +131,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             connectionService = new ConnectionService();
         }
         try {
-            connectionService.open(hostname, port);
+            connectionService.open(Configuration.HOSTNAME, Configuration.PORT);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -174,5 +177,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
     }
 }

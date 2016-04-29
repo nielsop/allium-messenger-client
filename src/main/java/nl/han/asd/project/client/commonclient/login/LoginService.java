@@ -2,9 +2,7 @@ package nl.han.asd.project.client.commonclient.login;
 
 import com.google.inject.Inject;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
-import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 /**
  * @author Niels Bokmans
@@ -13,7 +11,7 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
  */
 public class LoginService implements ILogin {
 
-    private static final MasterGateway masterGateway = new MasterGateway("localhost", 1234, null);
+//    private static final MasterGateway masterGateway = new MasterGateway("localhost", 1234, null);
     private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]";
     private static final String REGEX_ALPHANUMERICSPECIAL = "^(?=(?:\\D*?\\d){8,32}(?!.*?\\d))[a-zA-Z0-9@\\#$%&*()_+\\]\\[';:?.,!^-]+$";
 
@@ -52,9 +50,10 @@ public class LoginService implements ILogin {
     }
 
     public boolean login(String username, String password) {
-        //TODO: Initialize setConnectedNodes upon successful authentication
-        return validateLoginData(username, password) &&
-                masterGateway.authenticate(username, password).status ==
-                        HanRoutingProtocol.ClientLoginResponse.Status.SUCCES;
+//        //TODO: Initialize setConnectedNodes upon successful authentication
+//        return validateLoginData(username, password) &&
+//                masterGateway.authenticate(username, password).status ==
+//                        HanRoutingProtocol.ClientLoginResponse.Status.SUCCES;
+        return false;
     }
 }

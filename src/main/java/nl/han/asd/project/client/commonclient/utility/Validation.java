@@ -14,7 +14,7 @@ public class Validation {
      *
      * @param address Address to validate.
      */
-    public void validateAddress(String address) {
+    public static void validateAddress(String address) {
         //Address may not be null
         if (address == null)
             throw new NullPointerException("Invalid adress; adress may not be null.");
@@ -56,7 +56,7 @@ public class Validation {
      *             Specifying a port of 0 in the ServerSocket constructor results in the server listening on a random, unused port, usually >= 1024.
      *             http://www.jguru.com/faq/view.jsp?EID=17521
      */
-    public void validatePort(int port) {
+    public static void validatePort(int port) {
         if (!(port >= 0 && port <= 65535))
             throw new IllegalArgumentException("Port should be in range of 1024 - 65535.");
     }

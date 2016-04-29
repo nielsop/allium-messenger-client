@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.master.wrapper;
 
+import com.google.protobuf.ByteString;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.util.List;
@@ -22,6 +23,10 @@ public class UpdatedGraphResponseWrapper {
         this.isFullGraph = isFullGraph;
         this.addedNodes = addedNodes;
         this.deletedNodes = deletedNodes;
+    }
+
+    public UpdatedGraphResponseWrapper(List<ByteString> graphUpdates) {
+
     }
 
 }
