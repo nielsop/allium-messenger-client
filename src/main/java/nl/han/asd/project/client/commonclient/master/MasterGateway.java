@@ -107,7 +107,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
      * @return The public key.
      */
     private String getPublicKey() {
-        return Base64.getEncoder().encodeToString(encryptionService.getPublicKey().getEncoded());
+        return Base64.getEncoder().encodeToString(encryptionService.getPublicKey());
     }
 
 
@@ -130,7 +130,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     private void startConnection() {
         if (isConnectionOpen()) return;
         if (connectionService == null) {
-            connectionService = new ConnectionService();
+            // new byte[] { 0x00 } = public key that belongs to the cryptography service of the receiver
+            //                          en/decryption is disabled for now, so initializing with an null-byte is sufficient.
+            connectionService = new ConnectionService(new byte[] { 0x00 } );
         }
         try {
             connectionService.open(hostname, port);
@@ -173,7 +175,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     private <T extends GeneratedMessage> T writeAndRead(Class<T> classDescriptor, byte[] data) {
         final ConnectionService connection = getConnection();
         try {
-            connection.write(data);
+            //connection.write(data);
             return connectionService.readGeneric(classDescriptor);
         } catch (SocketException | InvalidProtocolBufferException e) {
             e.printStackTrace();

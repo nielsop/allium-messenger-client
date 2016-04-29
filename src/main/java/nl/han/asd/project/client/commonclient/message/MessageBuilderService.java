@@ -62,7 +62,7 @@ public class MessageBuilderService implements IMessageBuilder {
         builder.setPort(node.getPort());
         builder.setEncryptedData(ByteString.copyFromUtf8(message.getText()));
 
-        return cryptographyService.encryptData(builder.build().toString(), node.getPublicKey());
+        return cryptographyService.encryptData(builder.build().toByteString(), node.getPublicKey());
     }
 
     private EncryptedMessage buildLastMessagePackageLayer(Node node, ByteString data) {
@@ -82,7 +82,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
         path.remove(0);
 
-        ByteString encryptedMessage = cryptographyService.encryptData(builder.build().toString(), node.getPublicKey());
+        ByteString encryptedMessage = cryptographyService.encryptData(builder.build().toByteString(),node.getPublicKey());
 
         return recursiveEncrypt(encryptedMessage, path);
     }

@@ -34,8 +34,8 @@ public class MessageBuilderServiceTest {
 
     @Test
     public void buildMessage() {
-        cryptographyService = new CryptographyService();
-        messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
+        //cryptographyService = new CryptographyService();
+        //messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
     }
 
     @Test
