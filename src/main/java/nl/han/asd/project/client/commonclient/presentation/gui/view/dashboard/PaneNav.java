@@ -20,6 +20,7 @@ public class PaneNav {
         this.paneDashboard = paneDashboard;
 
         hBox = Pane.getHBox(10, new int[]{5, 5, 5, 5}, "");
+        hBox.setStyle("-fx-background-color: #EEE; -fx-background: #EEE;");
         Label logoutBtn = new Label("Uitloggen");
         Label settingsBtn = new Label("Instellingen");
 
