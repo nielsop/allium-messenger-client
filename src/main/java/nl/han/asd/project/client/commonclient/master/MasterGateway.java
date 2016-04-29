@@ -63,7 +63,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder()
                 .setCurrentVersion(getCurrentGraphVersion()).build();
 
-        HanRoutingProtocol.GraphUpdateResponse graphUpdateResponse = writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class,
+        HanRoutingProtocol.GraphUpdate graphUpdateResponse = writeAndRead(HanRoutingProtocol.GraphUpdate.class,
                 graphUpdateRequest.toByteArray());
         if (graphUpdateResponse == null) return null;
         UpdatedGraphResponseWrapper updatedGraph = new UpdatedGraphResponseWrapper(graphUpdateResponse.getNewVersion(),
