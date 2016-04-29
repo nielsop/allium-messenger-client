@@ -13,7 +13,7 @@ public class Graph {
             new HashMap<String,Node>( );
 
 
-    private Node getNode( String nodeID )
+    public Node getNodeVertex( String nodeID )
     {
         Node vertex = vertexMap.get( nodeID );
         if( vertex == null )
@@ -23,12 +23,17 @@ public class Graph {
         return vertex;
     }
 
+    public int getVertexMapSize() {
+        return vertexMap.size();
+    }
+
     public void resetGraph(){
         vertexMap = new HashMap<String,Node>();
     }
+
     public void addNodeVertex(HanRoutingProtocol.Node vertex){
         Node node = new Node(vertex.getId(),vertex.getIPaddress(),vertex.getPort(),vertex.getPublicKeyBytes().toByteArray());
-        vertexMap.put(node.getID(),node);
+        vertexMap.putIfAbsent(node.getID(),node);
     }
 
     public void removeNodeVertex(HanRoutingProtocol.Node vertex){

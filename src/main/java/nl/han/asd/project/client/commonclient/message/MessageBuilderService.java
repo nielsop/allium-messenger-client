@@ -59,6 +59,12 @@ public class MessageBuilderService implements IMessageBuilder {
         return buildLastMessagePackageLayer(path.get(path.size()-1),buildMessagePackageLayer(firstLayer,path));
     }
 
+    /**
+     * Deepest layer in final message package
+     * @param node contains information about the next hop in path
+     * @param message contains information about the message typed by the client
+     * @return encrypted data from the first layer that is build
+     */
     private ByteString buildFirstMessagePackageLayer(Node node, Message message) {
         HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
 
@@ -70,6 +76,7 @@ public class MessageBuilderService implements IMessageBuilder {
         return encrypt.encryptData(builder.build().toByteString(), node.getPublicKey());
     }
 
+    
     private EncryptedMessage buildLastMessagePackageLayer(Node node, ByteString data) {
         return new EncryptedMessage(null, node.getIP(), node.getPort(), data);
     }

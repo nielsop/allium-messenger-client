@@ -6,7 +6,7 @@ import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphRespons
 
 public class GraphManagerService {
 
-    public int currentGraphVersion;
+    private int currentGraphVersion;
     private Graph graph;
     private MasterGateway gateway;
 
