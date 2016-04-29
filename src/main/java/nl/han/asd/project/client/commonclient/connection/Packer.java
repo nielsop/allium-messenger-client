@@ -1,12 +1,10 @@
 package nl.han.asd.project.client.commonclient.connection;
 
-import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.lang.reflect.Field;
@@ -19,28 +17,34 @@ import java.util.List;
 public class Packer {
     private CryptographyService cryptographyService = null;
 
-    public Packer(final CryptographyService cryptographyService)
-    {
+    public Packer(final CryptographyService cryptographyService) {
         this.cryptographyService = cryptographyService;
     }
 
+    public byte[] getMyPublicKey() {
+        return cryptographyService.getPublicKey();
+    }
+
     /**
-     * Packs a builder inside an EncrytpedWrapper message.
+     * Packs a builder inside an EncryptedWrapper message.
      * @param originalBuilder Any Builder from the protocol buffer class.
-     * @param publicKey The public key that should be included inside the EncryptedWrapper message.
+     * @param recieverPublicKey The public key that should be included inside the EncryptedWrapper message.
      * @return The byte array that represents the EncryptedWrapper.
      */
-    public byte[] pack(final GeneratedMessage.Builder originalBuilder, final String publicKey) {
-        HanRoutingProtocol.EncryptedWrapper.Builder builder = HanRoutingProtocol.EncryptedWrapper.newBuilder();
+    public byte[] pack(final GeneratedMessage.Builder originalBuilder, final byte[] recieverPublicKey) {
+        HanRoutingProtocol.EncryptedWrapper.Builder builder = HanRoutingProtocol.EncryptedWrapper
+                .newBuilder();
 
-        HanRoutingProtocol.EncryptedWrapper.Type type = protocolMessageDescriptorToWrapperType(originalBuilder.getDescriptorForType());
+        HanRoutingProtocol.EncryptedWrapper.Type type = protocolMessageDescriptorToWrapperType(
+                originalBuilder.getDescriptorForType());
         builder.setType(type);
-        builder.setPublicKey(publicKey);
+        builder.setPublicKey(""); // deprecated @ tba
         builder.setData(originalBuilder.build().toByteString());
 
         byte[] buffer = builder.build().toByteArray();
 
-        buffer = cryptographyService.encryptData(ByteString.copyFrom(buffer), publicKey).toByteArray();
+        buffer = cryptographyService
+                .encryptData(ByteString.copyFrom(buffer), recieverPublicKey).toByteArray();
         return buffer;
     }
 
@@ -49,28 +53,22 @@ public class Packer {
      * @param packed byte array that represents an EncryptedWrapper.
      * @return The unpacked version of the encrypted wrapper.
      */
-    public ParsedMessage unpack(final byte[] packed) {
+    public UnpackedMessage unpack(final byte[] packed)  {
         HanRoutingProtocol.EncryptedWrapper encryptedWrapper;
         try {
             byte[] buffer = cryptographyService.decryptData(ByteString.copyFrom(packed)).toByteArray();
             encryptedWrapper = HanRoutingProtocol.EncryptedWrapper.parseFrom(buffer);
         } catch (InvalidProtocolBufferException e) {
-            return null;
+            throw new PackerException(e);
         }
 
-        //String publicKey = encryptedWrapper.getPublicKey();
         HanRoutingProtocol.EncryptedWrapper.Type type = encryptedWrapper.getType();
         byte[] wrappedData = encryptedWrapper.getData().toByteArray();
 
-        ParsedMessage parsedMessage;
-        try {
-            GeneratedMessage message = wrapperTypeToProtocolMessage(type);
-            parsedMessage = new ParsedMessage(wrappedData, type, message);
-        } catch (UnknownObjectException e) {
-            return null;
-        }
+        GeneratedMessage message = wrapperTypeToProtocolMessage(type);
 
-        return parsedMessage;
+        return new UnpackedMessage(wrappedData, type,
+                message);
     }
 
     /**
@@ -80,22 +78,23 @@ public class Packer {
      * @return An class that extends from GeneratedMessage which can be used to decode the data inside an EncryptedWrapper.
      * @throws UnknownObjectException
      */
-    private <T extends GeneratedMessage> T wrapperTypeToProtocolMessage(final HanRoutingProtocol.EncryptedWrapper.Type type) throws UnknownObjectException {
+    private <T extends GeneratedMessage> T wrapperTypeToProtocolMessage(final HanRoutingProtocol.EncryptedWrapper.Type type) {
         String name = type.name();
 
         List<Descriptors.Descriptor> descriptorList = HanRoutingProtocol.getDescriptor().getMessageTypes();
-        for(Descriptors.Descriptor descriptor : descriptorList)
-        {
-            if (descriptor.getName().toUpperCase().equals((name)))
-            {
+        for (Descriptors.Descriptor descriptor : descriptorList) {
+            if (descriptor.getName().equalsIgnoreCase(name)) {
                 try {
                     //nl.han.asd.project.protocol.HanRoutingProtocol$ClientLoginRequest
-                    String internalName = String.format("%s$%s", HanRoutingProtocol.class.getCanonicalName(), descriptor.getName());
+                    String internalName = String.format("%s$%s",
+                            HanRoutingProtocol.class.getCanonicalName(),
+                            descriptor.getName());
                     Field defaultInstanceField = Class.forName(internalName).getDeclaredField("DEFAULT_INSTANCE");
                     defaultInstanceField.setAccessible(true);
-                    return (T) defaultInstanceField.get(null);
+                    Object defaultInstanceValue = defaultInstanceField.get(null);
+                    return (T) defaultInstanceValue;
                 } catch (NoSuchFieldException | ClassNotFoundException | IllegalAccessException e) {
-                    return null;
+                    throw new PackerException(e);
                 }
             }
         }
@@ -107,12 +106,10 @@ public class Packer {
      * @param classDescriptor The descriptor type of a builder.
      * @return The EncryptedWrapper.Type that is equivalent to the descriptor type.
      */
-    private HanRoutingProtocol.EncryptedWrapper.Type protocolMessageDescriptorToWrapperType(final Descriptors.Descriptor classDescriptor)
-    {
+    private HanRoutingProtocol.EncryptedWrapper.Type protocolMessageDescriptorToWrapperType(
+            final Descriptors.Descriptor classDescriptor) {
         String name = classDescriptor.getFullName();
         String capitalizedCleanName = name.toUpperCase();
         return HanRoutingProtocol.EncryptedWrapper.Type.valueOf(capitalizedCleanName);
     }
-
-
 }

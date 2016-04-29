@@ -9,7 +9,7 @@ package nl.han.asd.project.client.commonclient.node;
 public class Node {
     private String IP;
     private int port;
-    private String publicKey;
+    private byte[] publicKey;
 
     @Override
     public boolean equals(Object anotherObj) {
@@ -24,7 +24,7 @@ public class Node {
         return port;
     }
 
-    public String getPublicKey() {
+    public byte[] getPublicKey() {
         return publicKey;
     }
 }

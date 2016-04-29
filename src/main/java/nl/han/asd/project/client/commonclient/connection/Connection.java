@@ -16,7 +16,7 @@ class Connection {
     private Socket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
-    private IConnectionPipe connectionService;
+    private final IConnectionPipe connectionService;
 
     private int sleepTime = 25; // default
 
@@ -84,11 +84,11 @@ class Connection {
         byte[] buffer = new byte[1024];
         byte[] data = null;
 
-        int bytesRead = -1;
+        int bytesRead;
 
         try {
             // synchronize so only one operation is executed in a multi threaded environment.
-            // note that the code in the block underneath here should be the only accessor to the inputstream.
+            // note that the code in the block underneath here should be the only accessor to the input stream.
             synchronized (this) {
                 // -1: EOF
                 //  0: NOTHING TO READ
@@ -98,7 +98,7 @@ class Connection {
         } catch (IOException | NullPointerException e) {
             // something went wrong while reading the data from the stream.
             // if the connection was ever / is connected, attempt to close it.
-            if (isConnected() && bytesRead == -1)
+            if (isConnected())
             {
                 // we cannot fully determine if the connection is still established so attempt to close it and ignore
                 // any exception.
@@ -165,7 +165,7 @@ class Connection {
      * Stops reading data asynchronously.
      */
     public void stopReadAsync() {
-        if (!isRunning)
+        if (isRunning)
             isRunning = false;
     }
 
@@ -212,10 +212,7 @@ class Connection {
      * Checks if the socket connection is still available.
      * @return False if closed, True if open.
      */
-    public boolean isConnected()
-    {
-        if (socket == null) return false;
-
-        return socket.isConnected() && !socket.isClosed();
+    public boolean isConnected() {
+        return socket != null && socket.isConnected() && !socket.isClosed();
     }
 }

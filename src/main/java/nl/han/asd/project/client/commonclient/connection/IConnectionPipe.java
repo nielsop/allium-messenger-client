@@ -1,8 +1,8 @@
 package nl.han.asd.project.client.commonclient.connection;
 
 /**
- * Created by Jevgeni on 25-4-2016.
+ * An interface that serves as an interface between the Connection and ConnectionService classes.
  */
 interface IConnectionPipe {
-    public void onReceiveRead(final byte[] buffer);
+    void onReceiveRead(final byte[] buffer);
 }

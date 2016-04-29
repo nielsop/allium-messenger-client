@@ -1,8 +1,7 @@
-package LocalServer;
+package nl.han.asd.project.client.commonclient.connection;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import nl.han.asd.project.client.commonclient.connection.Packer;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -14,14 +13,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Created by Jevgeni on 19-4-2016.
+ * Created by Jevgeni on 26-4-2016.
  */
-public class Server {
+class Server {
     private volatile boolean isRunning = true;
-    private Packer packer;
+    public Packer packer;
+
+    private byte[] publicKey = null;
     private int i = 0;
-    private ExecutorService threadPool =
-            Executors.newFixedThreadPool(10);
+    private ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
     public Server() {
         final Injector injector = Guice.createInjector(new EncryptionModule());
@@ -32,11 +32,11 @@ public class Server {
         final ServerSocket serverSocket = new ServerSocket(port);
         Runnable runnable = () -> {
             try {
-                while(isRunning) {
+                while (isRunning) {
                     Socket socket = serverSocket.accept();
                     i++;
                     log(String.format("New connection: %d", i));
-                    threadPool.execute(new Worker(socket, packer));
+                    threadPool.execute(new Worker(socket, packer, getReceiverPublicKey()));
                 }
             } catch (IOException e) {
                 log("Server failed.");
@@ -47,16 +47,24 @@ public class Server {
         thread.start();
     }
 
-    public void Stop()
-    {
+    public void Stop() {
         isRunning = false;
     }
 
-    public void getPublicKey() {
-
+    public byte[] getMyPublicKey() {
+        return packer.getMyPublicKey();
     }
 
-    public void log(Object o){
+
+    public byte[] getReceiverPublicKey() {
+        return this.publicKey;
+    }
+
+    public void setReceiverPublicKey(byte[] publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    public void log(Object o) {
         System.out.println(o.toString());
     }
 }

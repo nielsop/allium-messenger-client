@@ -4,14 +4,15 @@ import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 /**
- * Created by Jevgeni on 23-4-2016.
+ * An class that holds specific data about a message, an instance of this class is returned
+ * whenever data is read from the connected socket.
  */
-public class ParsedMessage {
-    private HanRoutingProtocol.EncryptedWrapper.Type dataType;
-    private GeneratedMessage dataMessage;
-    private byte[] data;
+public class UnpackedMessage {
+    private final HanRoutingProtocol.EncryptedWrapper.Type dataType;
+    private final GeneratedMessage dataMessage;
+    private final byte[] data;
 
-    public ParsedMessage(final byte[] data, final HanRoutingProtocol.EncryptedWrapper.Type type, final GeneratedMessage message) {
+    public UnpackedMessage(final byte[] data, final HanRoutingProtocol.EncryptedWrapper.Type type, final GeneratedMessage message) {
         this.data = data;
         this.dataType = type;
         this.dataMessage = message;

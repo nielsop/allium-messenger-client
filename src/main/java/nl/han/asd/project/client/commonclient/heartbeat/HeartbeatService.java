@@ -3,7 +3,7 @@ package nl.han.asd.project.client.commonclient.heartbeat;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.connection.IConnectionService;
-import nl.han.asd.project.client.commonclient.connection.ParsedMessage;
+import nl.han.asd.project.client.commonclient.connection.UnpackedMessage;
 import nl.han.asd.project.client.commonclient.master.IHeartbeat;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
@@ -17,7 +17,7 @@ public class HeartbeatService implements IConnectionService {
     public IHeartbeat heartbeat;
 
     public HeartbeatService(String hostName, int portNumber) throws IOException {
-        connectionService = new ConnectionService("publickey", this);
+        connectionService = new ConnectionService(new byte[] { 0x00 }, this);
         connectionService.open(hostName, portNumber);
     }
 
@@ -46,7 +46,7 @@ public class HeartbeatService implements IConnectionService {
         connectionService.close();
     }
     @Override
-    public void onReceiveRead(ParsedMessage message) {
+    public void onReceiveRead(UnpackedMessage message) {
         try {
             HanRoutingProtocol.ClientHeartbeat clientHeartbeat = HanRoutingProtocol.ClientHeartbeat.parseFrom(message.getData());
             // or:

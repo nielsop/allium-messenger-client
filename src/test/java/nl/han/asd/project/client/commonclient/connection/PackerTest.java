@@ -2,7 +2,6 @@ package nl.han.asd.project.client.commonclient.connection;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
@@ -29,7 +28,8 @@ public class PackerTest {
     @Test
     public void TestPacking() throws InvalidProtocolBufferException {
         byte[] packedData = pack();
-        HanRoutingProtocol.EncryptedWrapper wrapper = HanRoutingProtocol.EncryptedWrapper.parseFrom(packedData);
+        UnpackedMessage unpackedData = unpack(packedData);
+        HanRoutingProtocol.ClientLoginRequest wrapper = HanRoutingProtocol.ClientLoginRequest.parseFrom(unpackedData.getData());
     }
 
     public byte[] pack() {
@@ -40,14 +40,14 @@ public class PackerTest {
         builder.setPassword("test");
 
         // Pack..
-        byte[] packed = packer.pack(builder, "publicKeyTest");
+        byte[] packed = packer.pack(builder, packer.getMyPublicKey());
 
         return packed;
     }
 
-    public ParsedMessage unpack(byte[] packed)
+    public UnpackedMessage unpack(byte[] packed)
     {
-        ParsedMessage unpacked = packer.unpack(packed);
+        UnpackedMessage unpacked = packer.unpack(packed);
 
         return unpacked;
     }
@@ -56,7 +56,7 @@ public class PackerTest {
     @Test
     public void TestUnpacking() throws InvalidProtocolBufferException {
         byte[] packedData = pack();
-        ParsedMessage unpackedMessage = unpack(packedData);
+        UnpackedMessage unpackedMessage = unpack(packedData);
 
         HanRoutingProtocol.ClientLoginRequest.parseFrom(unpackedMessage.getData());
 
