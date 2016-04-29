@@ -5,7 +5,6 @@ package nl.han.asd.project.client.commonclient.presentation.gui;
  */
 
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -14,12 +13,8 @@ import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.presentation.PresentationLayer;
 
 public class GUI extends Application {
-    private Stage stage;
     public PresentationLayer pLayer;
-
-    public enum Page {
-        LOGIN, REGISTER
-    }
+    private Stage stage;
 
     public static void main(String[] args) {
         launch(args);
@@ -40,7 +35,7 @@ public class GUI extends Application {
 
     public void setStage(Page page) {
         Scene scene = null;
-        switch(page) {
+        switch (page) {
             case LOGIN:
                 scene = new Scene(new PaneLogin(this).getGrid(), 400, 300);
                 break;
@@ -50,6 +45,10 @@ public class GUI extends Application {
         }
         stage.setScene(scene);
         stage.show();
+    }
+
+    public enum Page {
+        LOGIN, REGISTER
     }
 
     //TODO: fix dependency injection

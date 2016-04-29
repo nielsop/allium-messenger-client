@@ -3,7 +3,9 @@ package nl.han.asd.project.client.commonclient.connection;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Arrays;
@@ -11,7 +13,7 @@ import java.util.Arrays;
 /**
  * Provides basic socket operations used solely by the ConnectionService.
  */
-class Connection {
+public class Connection {
     private volatile boolean isRunning;
 
     private Socket socket;
@@ -24,7 +26,6 @@ class Connection {
     public Connection(final IConnectionPipe service)
     {
         connectionService = service;
-
         inputStream = null;
         outputStream = null;
         socket = null;
@@ -33,10 +34,11 @@ class Connection {
 
     /**
      * Opens a socket to a hostname and port combination.
-     * @param hostName Internet protocol address.
+     *
+     * @param hostName   Internet protocol address.
      * @param portNumber Port number to connect to.
      * @throws IllegalArgumentException A parameter has an invalid value.
-     * @throws SocketException Connection or streams failed.
+     * @throws SocketException          Connection or streams failed.
      */
     public void open(final String hostName, final int portNumber) throws IllegalArgumentException, SocketException {
         final Validation validation = new Validation();
@@ -163,6 +165,7 @@ class Connection {
 
     /**
      * Closes the sockets and their streams.
+     *
      * @throws IOException Either the sockets or streams had trouble closing down.
      */
     public void close() throws IOException {
@@ -181,6 +184,7 @@ class Connection {
     /**
      * Returns the current sleep time. Sleep time represents the amount of milliseconds the asynchronous thread
      * will sleep in between its process of reading data from the input stream.
+     *
      * @return Current sleep time.
      */
     public int getSleepTime() {
@@ -190,6 +194,7 @@ class Connection {
     /**
      * Sets sleep time. Sleep time represents the amount of milliseconds the asynchronous thread
      * will sleep in between its process of reading data from the input stream.
+     *
      * @param sleepTime Amount of milliseconds needed to wait.
      * @throws IllegalArgumentException A parameter has an invalid value.
      */
@@ -202,9 +207,11 @@ class Connection {
 
     /**
      * Checks if the socket connection is still available.
+     *
      * @return False if closed, True if open.
      */
     public boolean isConnected() {
         return socket != null && socket.isConnected() && !socket.isClosed();
     }
+
 }

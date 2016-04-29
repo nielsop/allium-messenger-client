@@ -26,6 +26,7 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Initializes this class.
+     *
      * @param sleepTime Amount of time the asynchronous thread sleeps in between reads from the socket.
      * @param receiverPublicKey The public key of the receiver.
      */
@@ -114,6 +115,7 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Stops reading asynchronously.
+     *
      * @throws SocketException If there is no valid connection.
      */
     public void stopReadAsync() throws SocketException {
@@ -126,8 +128,9 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Synchronously (blocking) read a the input stream. Then converts the results into an instance of @classDescriptor.
+     *
      * @param classDescriptor The class the data needs to be converted from.
-     * @param <T> Protocol buffer class.
+     * @param <T>             Protocol buffer class.
      * @return A protocol buffer (T) instance.
      * @throws SocketException An exception occurred while reading data from the stream.
      */
@@ -159,7 +162,8 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Opens a connection to a hostname and port combination.
-     * @param hostName Internet protocol address.
+     *
+     * @param hostName   Internet protocol address.
      * @param portNumber Port number to connect to.
      * @throws IOException If we couldn't connect to the hostname.
      */
@@ -169,6 +173,7 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Closes the existing connection.
+     *
      * @throws IOException
      */
     public void close() throws IOException {
@@ -181,6 +186,7 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Checks whether the connection is alive or not.
+     *
      * @return True if connected, False if disconnected.
      */
     public boolean isConnected() {

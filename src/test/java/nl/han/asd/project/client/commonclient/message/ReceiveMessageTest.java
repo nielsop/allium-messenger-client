@@ -20,7 +20,8 @@ public class ReceiveMessageTest {
         //mpService.processMessage(builder.build());
 
         mpService.messageStore.findMessage(builder.build());
+
         //EncryptedMessage encryptedMessage = mpService.peelMessagePacket(null);
-       // Assert.assertEquals(encryptedMessage.getUsername(), "ikzelf");
+        // Assert.assertEquals(encryptedMessage.getUsername(), "ikzelf");
     }
 }
