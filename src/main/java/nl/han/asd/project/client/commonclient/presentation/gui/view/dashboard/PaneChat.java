@@ -1,31 +1,50 @@
 package nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard;
 
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.BorderPane;
 import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
+import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboard;
 
 /**
  * Created by Marius on 25-04-16.
  */
-public class PaneChat extends Pane {
-    ScrollPane scrollPane = null;
+public class PaneChat {
+    private final GUI gui;
+    private final PaneDashboard paneDashboard;
 
-    public PaneChat(GUI gui) {
-        String style = "-fx-background-color:transparent;";
-        scrollPane = getScrollPane(true, false, new int[]{600, 0}, null, style);
-        scrollPane.setContent(getContent());
+    private BorderPane borderPane = null;
+
+    private PaneChatUserInput paneChatUserInput;
+    private PaneChatHistory paneChatHistory;
+
+    public PaneChat(GUI gui, PaneDashboard paneDashboard) {
+        this.gui = gui;
+        this.paneDashboard = paneDashboard;
+        setupPane();
     }
 
-    private VBox getContent() {
-        String style = "-fx-background-color:transparent;";
-        VBox vBox = getVBox(10, new int[]{10, 10, 10, 10}, style);
-        vBox.getChildren().add(new Label("chat"));
-        return vBox;
+    private void setupPane() {
+        paneChatUserInput = new PaneChatUserInput(gui, paneDashboard, this);
+        paneChatHistory = new PaneChatHistory(gui, paneDashboard, this);
+        borderPane = Pane.getBorderPane(new int[]{0, 0, 0, 0});
+
+        Label contactNameChatTitle = new Label("Contact name");
+        contactNameChatTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        borderPane.setTop(contactNameChatTitle);
+        borderPane.setCenter(paneChatHistory.getScrollPane());
+        borderPane.setBottom(paneChatUserInput.getHBox());
     }
 
-    public ScrollPane getScrollPane() {
-        return scrollPane;
+    public BorderPane getBorderPane() {
+        return borderPane;
+    }
+
+    public PaneChatUserInput getPaneChatUserInput() {
+        return paneChatUserInput;
+    }
+
+    public PaneChatHistory getPaneChatHistory() {
+        return paneChatHistory;
     }
 }

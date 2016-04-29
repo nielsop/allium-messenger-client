@@ -61,7 +61,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
      * @return The public key.
      */
     private String getPublicKey() {
-        return Base64.getEncoder().encodeToString(encryptionService.getPublicKey().getEncoded());
+        return Base64.getEncoder().encodeToString(encryptionService.getPublicKey());
     }
 
 

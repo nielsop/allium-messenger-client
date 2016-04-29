@@ -2,16 +2,15 @@ package nl.han.asd.project.client.commonclient.presentation.gui.view;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.Cursor;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.paint.Paint;
+import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 
 /**
  * Created by Marius on 19-04-16.
@@ -38,12 +37,12 @@ public class Pane {
         pane.setFitToHeight(fitHeight);
         pane.setStyle(style);
         if (width != null) {
-            if (width[0] > 0) pane.setMinWidth(width[0]);
-            if (width[1] > 0) pane.setMaxWidth(width[1]);
+            if (width[0] != 0) pane.setMinWidth(width[0]);
+            if (width[1] != 0 && width[1] > width[0]) pane.setMaxWidth(width[1]);
         }
         if (height != null) {
             if (height[0] != 0) pane.setMinHeight(height[0]);
-            if (height[1] != 0) pane.setMaxHeight(height[1]);
+            if (height[1] != 0 && height[1] > height[0]) pane.setMaxHeight(height[1]);
         }
         return pane;
     }
@@ -62,5 +61,16 @@ public class Pane {
         vbox.setPadding(new Insets(padding[0], padding[1], padding[2], padding[3]));
         vbox.setSpacing(margin);
         return vbox;
+    }
+
+    public static void fancyLabel(Label label, GUI gui) {
+        label.setOnMouseEntered(e -> {
+            label.setTextFill(Paint.valueOf("#000"));
+            gui.getScene().setCursor(Cursor.HAND);
+        });
+        label.setOnMouseExited(e -> {
+            label.setTextFill(Paint.valueOf("#888"));
+            gui.getScene().setCursor(Cursor.DEFAULT);
+        });
     }
 }

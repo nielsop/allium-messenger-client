@@ -9,8 +9,10 @@ import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
  */
 public class PaneSettings {
     GridPane gridPane = null;
+    private GUI gui;
 
     public PaneSettings(GUI gui) {
+        this.gui = gui;
     }
 
     public Parent getGridPane() {

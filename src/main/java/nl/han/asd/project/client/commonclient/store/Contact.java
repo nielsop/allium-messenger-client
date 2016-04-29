@@ -9,10 +9,18 @@ public class Contact {
     private String username;
     private Node[] connectedNodes;
     private String publicKey;
+    private boolean online;
 
     public Contact(String username, String publicKey) {
         this.username = username;
         this.publicKey = publicKey;
+    }
+
+    // TODO test, remove
+    public Contact(String username, String publicKey, boolean online) {
+        this.username = username;
+        this.publicKey = publicKey;
+        this.online = online;
     }
 
     public String getUsername() {
@@ -21,7 +29,7 @@ public class Contact {
 
     public Node[] getConnectedNodes() throws Exception {
         if (connectedNodes == null || connectedNodes.length <= 0) {
-            throw new Exception("The conneted Nodes from the contact are not set");
+            throw new Exception("The connected Nodes from the contact are not set");
         }
         return connectedNodes;
 
@@ -33,5 +41,13 @@ public class Contact {
 
     public String getPublicKey() {
         return publicKey;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 }

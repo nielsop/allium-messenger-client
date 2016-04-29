@@ -43,7 +43,7 @@ public class GUI extends Application {
         try {
             stage = primaryStage;
             stage.setTitle("Ui Berichter");
-            stage.setMinWidth(360);
+            stage.setMinWidth(640);
             stage.setMinHeight(360);
             setStage(Page.LOGIN);
         } catch (Exception ex) {
