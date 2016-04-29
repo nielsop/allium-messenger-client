@@ -9,6 +9,7 @@ import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -34,7 +35,7 @@ public class MasterGatewayTest {
     public MasterGateway gateway;
     private IEncryptionService encryptionService;
 
-   /* @Before
+    @Before
     public void setup() throws Exception {
         //Mock Socket with its outputStream and inputStream
         Socket s = Mockito.mock(Socket.class);
@@ -48,50 +49,8 @@ public class MasterGatewayTest {
         encryptionService = injector.getInstance(IEncryptionService.class);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testRegisterAddressNull() throws Exception {
-        gateway = new MasterGateway(encryptionService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testRegisterPortTooLow() throws Exception {
-        gateway = new MasterGateway(encryptionService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testRegisterPortTooHigh() throws Exception {
-        gateway = new MasterGateway(encryptionService);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testRegisterUsernameNull() throws Exception {
-        gateway = new MasterGateway(encryptionService);
-        gateway.register(null, password);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testRegisterPasswordNull() throws Exception {
-        gateway = new MasterGateway(encryptionService);
-        gateway.register(username, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGatewayInvalidAddressValueTooHigh() throws Exception {
-        new MasterGateway(encryptionService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGatewayInvalidAddressTooManyGroups() throws Exception {
-        new MasterGateway(encryptionService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGatewayInvalidAddressAllZero() throws Exception {
-        new MasterGateway(encryptionService);
-    }
-
     @Test
-    public void testGatewayValidAddress() {
+    public void testGatewayCreatingGatewayValid() {
         Exception ex = null;
         try {
             new MasterGateway(encryptionService);
@@ -105,7 +64,7 @@ public class MasterGatewayTest {
     public void testDependenciesNotNull() throws Exception {
         gateway = new MasterGateway(encryptionService);
         assertNotNull(gateway);
-    }*/
+    }
 
     private ResponseWrapper getMockedResponseWrapper() throws Exception {
         ResponseWrapper wrapper = Mockito.mock(ResponseWrapper.class);

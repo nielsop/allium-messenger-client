@@ -46,12 +46,21 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
     @Override
     public RegisterResponseWrapper register(String username, String password) {
-        HanRoutingProtocol.ClientLoginRequest registerRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
-                .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
+
+        HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder()
+                .setUsername(username).setPassword(password).build();
+
+        HanRoutingProtocol.EncryptedWrapper encryptedWrapper = HanRoutingProtocol.EncryptedWrapper.newBuilder()
+                .setData(registerRequest.toByteString()).setType(
+                        HanRoutingProtocol.EncryptedWrapper.Type.CLIENTREGISTERREQUEST).build();
 
         HanRoutingProtocol.ClientRegisterResponse registerResponse = writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class,
-                registerRequest.toByteArray());
+                encryptedWrapper.toByteArray());
+        if(registerResponse == null){
+            System.out.println("Register response is null");
+        }
         if (registerResponse == null) return null;
+
         return new RegisterResponseWrapper(registerResponse.getStatus());
     }
 
@@ -61,7 +70,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
      * @return The public key.
      */
     private String getPublicKey() {
-        return Base64.getEncoder().encodeToString(encryptionService.getPublicKey());
+        return "";//Base64.getEncoder().encodeToString(encryptionService.getPublicKey());
     }
 
 
