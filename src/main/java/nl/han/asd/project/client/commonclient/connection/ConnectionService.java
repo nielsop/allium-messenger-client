@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 

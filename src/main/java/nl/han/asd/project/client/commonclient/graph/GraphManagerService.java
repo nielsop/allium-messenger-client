@@ -21,21 +21,21 @@ public class GraphManagerService {
         return currentGraphVersion;
     }
 
-    public void setCurrentGraphVersion(int versionNumber){
+    public void setCurrentGraphVersion(int versionNumber) {
         this.currentGraphVersion = versionNumber;
     }
 
     public void processGraphUpdates() {
         UpdatedGraphResponseWrapper updatedGraph = gateway.getUpdatedGraph(currentGraphVersion);
-        if (updatedGraph.newVersion > currentGraphVersion) {
-            setCurrentGraphVersion(updatedGraph.newVersion);
+        if (updatedGraph.getLast().newVersion > currentGraphVersion) {
+            setCurrentGraphVersion(updatedGraph.getLast().newVersion);
 
-            if (updatedGraph.isFullGraph) {
+            if (updatedGraph.getLast().isFullGraph) {
                 graph.resetGraph();
-                updatedGraph.addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
+                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
             } else {
-                updatedGraph.deletedNodes.forEach(vertex -> graph.removeNodeVertex(vertex));
-                updatedGraph.addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
+                updatedGraph.getLast().deletedNodes.forEach(vertex -> graph.removeNodeVertex(vertex));
+                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
             }
         }
     }
