@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard;
 
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -25,9 +26,7 @@ public class PaneNav {
     private void setupPane(GUI gui) {
         hBox = Pane.getHBox(10, new int[]{5, 5, 5, 5}, "");
         Label logoutBtn = new Label("Uitloggen");
-        logoutBtn.setTextFill(Paint.valueOf("#888"));
         Label settingsBtn = new Label("Instellingen");
-        settingsBtn.setTextFill(Paint.valueOf("#888"));
 
         hBox.getChildren().addAll(logoutBtn, settingsBtn);
 
@@ -38,17 +37,17 @@ public class PaneNav {
         settingsBtn.setOnMouseClicked(e -> gui.setStage(GUI.Page.SETTINGS));
     }
 
-
-//    private void fancyLabel(Label label, GUI gui) {
-//        label.setOnMouseEntered(e -> {
-//            label.setTextFill(Paint.valueOf("#000"));
-//            gui.getScene().setCursor(Cursor.HAND);
-//        });
-//        label.setOnMouseExited(e -> {
-//            label.setTextFill(Paint.valueOf("#888"));
-//            gui.getScene().setCursor(Cursor.DEFAULT);
-//        });
-//    }
+    private void fancyLabel(Label label, GUI gui) {
+        label.setTextFill(Paint.valueOf("#888"));
+        label.setOnMouseEntered(e -> {
+            label.setTextFill(Paint.valueOf("#000"));
+            gui.getScene().setCursor(Cursor.HAND);
+        });
+        label.setOnMouseExited(e -> {
+            label.setTextFill(Paint.valueOf("#888"));
+            gui.getScene().setCursor(Cursor.DEFAULT);
+        });
+    }
 
     public Node getHBox() {
         return hBox;
