@@ -4,7 +4,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboard;
 
 import static nl.han.asd.project.client.commonclient.presentation.gui.view.Pane.fancyLabel;
@@ -12,10 +11,9 @@ import static nl.han.asd.project.client.commonclient.presentation.gui.view.Pane.
 /**
  * Created by DDulos on 28-Apr-16.
  */
-public class PaneChatUserInput{
-    private final GUI gui;
-    private final PaneDashboard paneDashboard;
-    private final PaneChat paneChat;
+public class PaneChatUserInput {
+    private PaneDashboard paneDashboard;
+    private PaneChat paneChat;
 
     private Label userInputLabel;
     private TextField userInputText;
@@ -24,20 +22,16 @@ public class PaneChatUserInput{
 
     private HBox hBox;
 
-    public PaneChatUserInput(GUI gui, PaneDashboard paneDashboard, PaneChat paneChat) {
-
-        this.gui = gui;
+    public PaneChatUserInput(PaneDashboard paneDashboard) {
         this.paneDashboard = paneDashboard;
-        this.paneChat = paneChat;
 
         userInputLabel = new Label("Type hier: ");
-
         userInputText = new TextField();
         userInputText.setStyle("-fx-min-width: inherit;");
 
         sendMessageButton = new Label("Verzend");
-        fancyLabel(sendMessageButton, gui);
-        sendMessageButton.setOnMouseClicked(e -> paneDashboard.getPaneChat().getPaneChatHistory().addToChatBox(userInputText.getText()));
+        fancyLabel(sendMessageButton, paneDashboard.getGUI());
+//        sendMessageButton.setOnMouseClicked(e -> paneDashboard.getPaneChat().getPaneChatHistory().addToChatBox(userInputText.getText()));
 
         sendFileButton = new Label("Bestand");
         sendFileButton.setVisible(false);

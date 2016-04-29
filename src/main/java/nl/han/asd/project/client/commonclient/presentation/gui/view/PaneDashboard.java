@@ -1,6 +1,6 @@
 package nl.han.asd.project.client.commonclient.presentation.gui.view;
 
-import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard.PaneChat;
@@ -11,24 +11,30 @@ import nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard.Pa
  * Created by Marius on 25-04-16.
  */
 public class PaneDashboard {
-    private final PaneNav paneNav;
-    private final PaneContacts paneContacts;
-    private final PaneChat paneChat;
-    BorderPane borderPane = null;
+    private PaneNav paneNav;
+    private PaneContacts paneContacts;
+    private PaneChat paneChat;
+    private BorderPane borderPane;
+    private GUI gui;
 
     public PaneDashboard(GUI gui) {
-        paneNav = new PaneNav(gui, this);
-        paneContacts = new PaneContacts(gui, this);
-        paneChat = new PaneChat(gui, this);
+        this.gui = gui;
+        paneNav = new PaneNav(this);
+        paneContacts = new PaneContacts(this);
+        paneChat = new PaneChat(this);
 
         borderPane = Pane.getBorderPane(new int[]{0, 0, 0, 0});
         borderPane.setTop(paneNav.getHBox());
-        borderPane.setLeft(paneContacts.getScrollPane());
+        borderPane.setLeft(paneContacts.getBorderPane());
         borderPane.setCenter(paneChat.getBorderPane());
     }
 
-    public PaneNav getPaneNav() {
-        return paneNav;
+    public void selectContact(Label contact) {
+        paneChat.setContact(contact);
+    }
+
+    public GUI getGUI() {
+        return gui;
     }
 
     public PaneContacts getPaneContacts() {
@@ -39,7 +45,7 @@ public class PaneDashboard {
         return paneChat;
     }
 
-    public Parent getBorderPane() {
+    public BorderPane getBorderPane() {
         return borderPane;
     }
 }

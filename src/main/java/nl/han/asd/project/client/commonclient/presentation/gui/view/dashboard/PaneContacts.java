@@ -1,54 +1,97 @@
 package nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboard;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
 import java.util.ArrayList;
 
+import static nl.han.asd.project.client.commonclient.presentation.gui.view.Pane.*;
+
 /**
  * Created by Marius on 25-04-16.
  */
-public class PaneContacts extends Pane {
-    private final GUI gui;
-    private final PaneDashboard paneDashboard;
-    ScrollPane scrollPane;
-    private HBox currentSelectedContact;
+public class PaneContacts {
+    private PaneDashboard paneDashboard;
+    private BorderPane borderPane;
+    private HBox current;
 
-    // Contact box background styles
-    private static final String DEFAULT_HBOX_STYLE = "-fx-background-color: #FFF;";
-    private static final String HOVER_HBOX_STYLE = "-fx-background-color: #EEE;";
-    private static final String CLICKED_HBOX_STYLE = "-fx-background-color: #CCC;";
-
-    // Online status styles
-    private static final String ONLINE_CONTACT_TEXTSTYLE = "-fx-text-fill: #000;";
-    private static final String OFFLINE_CONTACT_TEXTSTYLE = "-fx-text-fill: #999;";
-
-    // TODO set to model
-    ArrayList<Contact> contacts = new ArrayList<>();
-    private VBox contactListBox;
-
-
-    public PaneContacts(GUI gui, PaneDashboard paneDashboard) {
-        this.gui = gui;
+    public PaneContacts(PaneDashboard paneDashboard) {
         this.paneDashboard = paneDashboard;
-        setupPane();
+
+        borderPane = Pane.getBorderPane(new int[]{0,0,0,0});
+        borderPane.setTop(getTop());
+        borderPane.setCenter(getCenter());
+        borderPane.setBottom(getBottom());
     }
 
-    private void setupPane() {
+    public HBox getTop() {
+        HBox hBox = getHBox(0, new int[]{5,5,5,5}, "");
+        Label title = new Label("Contacten");
+        title.setStyle("-fx-font-weight: bold; -fx-font-size: 15px;");
+        hBox.getChildren().add(title);
+        return hBox;
+    }
+
+    public ScrollPane getCenter() {
         String style = "-fx-background-color:transparent; -fx-background: #DDD;";
-        scrollPane = getScrollPane(true, false, new int[]{200, 300}, null, style);
-        scrollPane.setContent(getContent());
+        ScrollPane scrollPane = getScrollPane(true, true, null, null, style);
+
+        VBox contactList = getVBox(0, new int[]{0,0,0,0}, "");
+
+        for (Contact contact : createTestContacts()) {
+            Label name = new Label(contact.getUsername());
+            HBox contactBox = getHBox(0, new int[]{5,5,5,5}, "-fx-background-color: #FFF;");
+            setHBoxMouseEvents(contactBox);
+            contactBox.getChildren().add(name);
+            contactList.getChildren().add(contactBox);
+        }
+
+        scrollPane.setContent(contactList);
+        return scrollPane;
     }
 
-    // TODO set to model
-    private void createTestContacts() {
+    private void setHBoxMouseEvents(HBox hBox) {
+        hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            paneDashboard.selectContact((Label) hBox.getChildren().get(0));
+            if (current != null) current.setStyle("-fx-background-color: #FFF;");
+            hBox.setStyle("-fx-background-color: #EEE;");
+            current = hBox;
+        });
+        hBox.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+            hBox.setStyle("-fx-background-color: #EEE;");
+        });
+        hBox.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+            if (hBox != current) hBox.setStyle("-fx-background-color: #FFF;");
+        });
+    }
+
+    public HBox getBottom() {
+        HBox hBox = getHBox(5, new int[]{0,0,0,0}, "");
+        Button edit = new Button("Edit");
+        Button add = new Button("Add");
+        Button remove = new Button("Remove");
+        hBox.getChildren().addAll(add, edit, remove);
+        return hBox;
+    }
+
+    public BorderPane getBorderPane() {
+        return borderPane;
+    }
+
+
+
+
+
+    private ArrayList<Contact> createTestContacts() {
+        ArrayList<Contact> contacts = new ArrayList<>();
         contacts.add(new Contact("Bram", "asdf4321", true));
         contacts.add(new Contact("Marius", "asdf4321", true));
         contacts.add(new Contact("Niels", "asdf4321", false));
@@ -56,65 +99,27 @@ public class PaneContacts extends Pane {
         contacts.add(new Contact("Dennis", "asdf4321", true));
         contacts.add(new Contact("Kenny", "asdf4321", false));
         contacts.add(new Contact("Julius", "asdf4321", false));
-
-    }
-
-    private VBox getContent() {
-        contactListBox = getVBox(10, new int[]{10, 10, 10, 10}, DEFAULT_HBOX_STYLE);
-        setPaneTitle();
-        addContactsToList();
-        return contactListBox;
-    }
-
-    private void setPaneTitle() {
-        Label paneTitle = new Label("Contacten");
-        paneTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 15px");
-        contactListBox.getChildren().add(paneTitle);
-    }
-
-    private void addContactsToList() {
-        // TODO test, remove
-        createTestContacts();
-
-        for (Contact contact : contacts) {
-            Label contactLabel = new Label(contact.getUsername());
-            if (contact.isOnline())
-                contactLabel.setStyle(ONLINE_CONTACT_TEXTSTYLE);
-            else
-                contactLabel.setStyle(OFFLINE_CONTACT_TEXTSTYLE);
-
-            HBox contactBox = Pane.getHBox(0, new int[]{0, 0, 0, 0}, "-fx-background-color: #FFF;");
-            contactBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> handleContactOnClick(contactBox));
-            setContactHoverStyle(contactBox);
-            contactBox.getChildren().add(contactLabel);
-            contactListBox.getChildren().add(contactBox);
-        }
-    }
-
-    private void setContactHoverStyle(final HBox contactBox) {
-        contactBox.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> changeContactBoxStyle(contactBox, HOVER_HBOX_STYLE));
-        contactBox.addEventHandler(MouseEvent.MOUSE_EXITED, event -> changeContactBoxStyle(contactBox, DEFAULT_HBOX_STYLE));
-    }
-
-    private void changeContactBoxStyle(HBox contactBox, String style) {
-        if (contactBox != currentSelectedContact) {
-            contactBox.setStyle(style);
-        }
-    }
-
-    private void handleContactOnClick(HBox selectedContact) {
-        if (currentSelectedContact != null)
-            currentSelectedContact.setStyle(DEFAULT_HBOX_STYLE);
-        currentSelectedContact = selectedContact;
-        Label label = (Label) selectedContact.getChildren().get(0);
-        currentSelectedContact.setStyle(CLICKED_HBOX_STYLE);
-        String test = "Contact selected: " + label.getText();
-        System.out.println(test);
-//        paneDashboard.getPaneChat().setLabelText(test);
-
-    }
-
-    public ScrollPane getScrollPane() {
-        return scrollPane;
+        contacts.add(new Contact("Bram", "asdf4321", true));
+        contacts.add(new Contact("Marius", "asdf4321", true));
+        contacts.add(new Contact("Niels", "asdf4321", false));
+        contacts.add(new Contact("Jevgeni", "asdf4321", true));
+        contacts.add(new Contact("Dennis", "asdf4321", true));
+        contacts.add(new Contact("Kenny", "asdf4321", false));
+        contacts.add(new Contact("Julius", "asdf4321", false));
+        contacts.add(new Contact("Bram", "asdf4321", true));
+        contacts.add(new Contact("Marius", "asdf4321", true));
+        contacts.add(new Contact("Niels", "asdf4321", false));
+        contacts.add(new Contact("Jevgeni", "asdf4321", true));
+        contacts.add(new Contact("Dennis", "asdf4321", true));
+        contacts.add(new Contact("Kenny", "asdf4321", false));
+        contacts.add(new Contact("Julius", "asdf4321", false));
+        contacts.add(new Contact("Bram", "asdf4321", true));
+        contacts.add(new Contact("Marius", "asdf4321", true));
+        contacts.add(new Contact("Niels", "asdf4321", false));
+        contacts.add(new Contact("Jevgeni", "asdf4321", true));
+        contacts.add(new Contact("Dennis", "asdf4321", true));
+        contacts.add(new Contact("Kenny", "asdf4321", false));
+        contacts.add(new Contact("Julius", "asdf4321", false));
+        return contacts;
     }
 }

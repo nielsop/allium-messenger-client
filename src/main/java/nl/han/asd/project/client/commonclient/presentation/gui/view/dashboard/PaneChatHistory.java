@@ -3,7 +3,6 @@ package nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
-import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboard;
 
@@ -11,32 +10,18 @@ import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboar
  * Created by DDulos on 28-Apr-16.
  */
 public class PaneChatHistory extends Pane {
-    private final GUI gui;
-    private final PaneDashboard paneDashboard;
-    private final PaneChat paneChat;
-
+    private PaneDashboard paneDashboard;
     private Label label;
-
-    ScrollPane scrollPane = null;
+    private ScrollPane scrollPane;
     private VBox chatBox;
 
-    public PaneChatHistory(GUI gui, PaneDashboard paneDashboard, PaneChat paneChat) {
-        this.gui = gui;
+    public PaneChatHistory(PaneDashboard paneDashboard) {
         this.paneDashboard = paneDashboard;
-        this.paneChat = paneChat;
 
-        setupPane();
-    }
-
-    private void setupPane() {
         String style = "-fx-background-color:transparent;";
         scrollPane = getScrollPane(false, false, new int[]{600, 0}, null, style);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setContent(getContent());
-    }
-
-    public ScrollPane getScrollPane() {
-        return scrollPane;
     }
 
     private VBox getContent() {
@@ -53,5 +38,9 @@ public class PaneChatHistory extends Pane {
     public void addToChatBox(String labelText) {
         chatBox.getChildren().add(new Label(labelText));
         scrollPane.setVvalue(scrollPane.getVmax());
+    }
+
+    public ScrollPane getScrollPane() {
+        return scrollPane;
     }
 }

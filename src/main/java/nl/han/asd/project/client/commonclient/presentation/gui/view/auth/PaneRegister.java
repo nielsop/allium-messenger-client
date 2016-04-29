@@ -1,7 +1,5 @@
 package nl.han.asd.project.client.commonclient.presentation.gui.view.auth;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -11,7 +9,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -57,13 +54,16 @@ public class PaneRegister {
         registerButton.setOnAction(e -> {
             if (usernameField.getText().length() < 3) status.setText("Username is too short!");
             else if (passwordField.getText().length() < 3) status.setText("Password is too short!");
-            else if (!passwordField.getText().equals(passwordRepeatField.getText())) status.setText("The passwords are not the same!");
+            else if (!passwordField.getText().equals(passwordRepeatField.getText()))
+                status.setText("The passwords are not the same!");
             else {
                 try {
                     HanRoutingProtocol.ClientRegisterResponse.Status registerResponseStatus = gui.pLayer.register(usernameField.getText(), passwordField.getText());
-                    if (registerResponseStatus == registerResponseStatus.SUCCES) status.setText("Registration successful!");
+                    if (registerResponseStatus == registerResponseStatus.SUCCES)
+                        status.setText("Registration successful!");
                     else if (registerResponseStatus == registerResponseStatus.FAILED) status.setText("Error!");
-                    else if (registerResponseStatus == registerResponseStatus.TAKEN_USERNAME) status.setText("Error! Chose another username.");
+                    else if (registerResponseStatus == registerResponseStatus.TAKEN_USERNAME)
+                        status.setText("Error! Chose another username.");
                 } catch (Exception ex) {
                     status.setText("Something went terribly wrong!");
                 }
@@ -72,7 +72,7 @@ public class PaneRegister {
 
         cancelButton.setOnAction(e -> gui.setStage(GUI.Page.LOGIN));
     }
- 
+
     public GridPane getGridPane() {
         return gridPane;
     }

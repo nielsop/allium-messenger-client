@@ -64,6 +64,7 @@ public class Pane {
     }
 
     public static void fancyLabel(Label label, GUI gui) {
+        label.setTextFill(Paint.valueOf("#888"));
         label.setOnMouseEntered(e -> {
             label.setTextFill(Paint.valueOf("#000"));
             gui.getScene().setCursor(Cursor.HAND);
