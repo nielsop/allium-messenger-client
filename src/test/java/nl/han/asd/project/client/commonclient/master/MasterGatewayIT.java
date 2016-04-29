@@ -24,7 +24,7 @@ public class MasterGatewayIT {
     @BeforeClass
     public static void setup() {
         Injector injector = Guice.createInjector(new EncryptionModule());
-        gateway = new MasterGateway("10.182.5.216", 1337, injector.getInstance(IEncryptionService.class));
+        gateway = new MasterGateway("195.169.194.234", 32901, injector.getInstance(IEncryptionService.class));
     }
 
     @AfterClass

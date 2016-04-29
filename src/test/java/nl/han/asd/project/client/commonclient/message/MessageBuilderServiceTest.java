@@ -28,8 +28,8 @@ public class MessageBuilderServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        // pathDeterminationService = new PathDeterminationService();
-        //   messageBuilderService = new MessageBuilderService(pathDeterminationService);
+         pathDeterminationService = new PathDeterminationService(updatedGraphMock, clientGroupMock);
+           messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
     }
 
     @Test
