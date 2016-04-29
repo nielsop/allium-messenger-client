@@ -4,9 +4,11 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
+import jdk.internal.org.objectweb.asm.Handle;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -85,13 +87,13 @@ public final class ConnectionService implements IConnectionPipe {
      * @return A byte array containing the received data from the input stream, or null if no data was read.
      * @throws SocketException If there is no valid connection.
      */
-    public UnpackedMessage read() throws SocketException {
+    private UnpackedMessage read() throws SocketException {
         if (!connection.isConnected()) {
             throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
         }
 
-        byte[] buffer = connection.read();
-        return packer.unpack(buffer);
+        HanRoutingProtocol.EncryptedWrapper wrapper = connection.read();
+        return packer.unpack(wrapper);
     }
 
     /**
@@ -151,8 +153,8 @@ public final class ConnectionService implements IConnectionPipe {
             throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
         }
 
-        byte[] buffer = packer.pack(instance, getReceiverPublicKey());
-        connection.write(buffer);
+        HanRoutingProtocol.EncryptedWrapper wrapper = packer.pack(instance, getReceiverPublicKey());
+        connection.write(wrapper);
     }
 
     /**
@@ -186,9 +188,9 @@ public final class ConnectionService implements IConnectionPipe {
     }
 
     @Override
-    public void onReceiveRead(final byte[] buffer) {
+    public void onReceiveRead(final HanRoutingProtocol.EncryptedWrapper wrapper) {
         if (service != null) {
-            UnpackedMessage message = packer.unpack(buffer);
+            UnpackedMessage message = packer.unpack(wrapper);
             service.onReceiveRead(message);
         }
     }

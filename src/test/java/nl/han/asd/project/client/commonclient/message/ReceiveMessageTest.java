@@ -17,7 +17,7 @@ public class ReceiveMessageTest {
         builder.setSender("Contact");
         builder.setText("Test message");
 
-        mpService.processMessage(builder.build());
+        //mpService.processMessage(builder.build());
 
         mpService.messageStore.findMessage(builder.build());
         //EncryptedMessage encryptedMessage = mpService.peelMessagePacket(null);

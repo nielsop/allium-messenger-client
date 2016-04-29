@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.connection;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.*;
 
 import java.io.IOException;
@@ -54,8 +55,7 @@ public class ConnectionServiceTest implements IConnectionService {
 
         connectionService.write(requestBuilder);
 
-        UnpackedMessage message = connectionService.read();
-        ClientLoginResponse response = ClientLoginResponse.parseFrom(message.getData());
+        ClientLoginResponse response = connectionService.readGeneric(HanRoutingProtocol.ClientLoginResponse.class);
         assertEquals(response.getSecretHash(),
                 String.format("%s:%s", requestBuilder.getUsername(),
                         requestBuilder.getPassword()));
@@ -127,7 +127,7 @@ public class ConnectionServiceTest implements IConnectionService {
     @Test(expected = SocketException.class) public void TestReadInvalid()
             throws IOException {
         connectionService.close();
-        UnpackedMessage message = connectionService.read();
+        connectionService.readGeneric(HanRoutingProtocol.ClientLoginRequest.class);
     }
 
     @Test(expected = IllegalArgumentException.class)

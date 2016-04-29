@@ -31,7 +31,7 @@ public class Packer {
      * @param recieverPublicKey The public key that should be included inside the EncryptedWrapper message.
      * @return The byte array that represents the EncryptedWrapper.
      */
-    public byte[] pack(final GeneratedMessage.Builder originalBuilder, final byte[] recieverPublicKey) {
+    public HanRoutingProtocol.EncryptedWrapper pack(final GeneratedMessage.Builder originalBuilder, final byte[] recieverPublicKey) {
         HanRoutingProtocol.EncryptedWrapper.Builder builder = HanRoutingProtocol.EncryptedWrapper
                 .newBuilder();
 
@@ -39,35 +39,30 @@ public class Packer {
                 originalBuilder.getDescriptorForType());
         builder.setType(type);
         builder.setPublicKey(""); // deprecated @ tba
-        builder.setData(originalBuilder.build().toByteString());
 
-        byte[] buffer = builder.build().toByteArray();
+        byte[] buffer = originalBuilder.build().toByteArray();
+        // encryption/decryption disabled for now.
+        //buffer = cryptographyService
+        //        .encryptData(ByteString.copyFrom(buffer), recieverPublicKey).toByteArray();
 
-        buffer = cryptographyService
-                .encryptData(ByteString.copyFrom(buffer), recieverPublicKey).toByteArray();
-        return buffer;
+        builder.setData(ByteString.copyFrom(buffer));
+
+        return builder.build();
     }
 
     /**
      * Unpacks a byte array that was read from the input stream.
-     * @param packed byte array that represents an EncryptedWrapper.
+     * @param packed EncryptedWrapper that needs to be unpacked.
      * @return The unpacked version of the encrypted wrapper.
      */
-    public UnpackedMessage unpack(final byte[] packed)  {
-        HanRoutingProtocol.EncryptedWrapper encryptedWrapper;
-        try {
-            byte[] buffer = cryptographyService.decryptData(ByteString.copyFrom(packed)).toByteArray();
-            encryptedWrapper = HanRoutingProtocol.EncryptedWrapper.parseFrom(buffer);
-        } catch (InvalidProtocolBufferException e) {
-            throw new PackerException(e);
-        }
+    public UnpackedMessage unpack(final HanRoutingProtocol.EncryptedWrapper packed)  {
+        byte[] buffer = packed.getData().toByteArray();
+        //buffer = cryptographyService.decryptData(ByteString.copyFrom(buffer)).toByteArray();
 
-        HanRoutingProtocol.EncryptedWrapper.Type type = encryptedWrapper.getType();
-        byte[] wrappedData = encryptedWrapper.getData().toByteArray();
-
+        HanRoutingProtocol.EncryptedWrapper.Type type = packed.getType();
         GeneratedMessage message = wrapperTypeToProtocolMessage(type);
 
-        return new UnpackedMessage(wrappedData, type,
+        return new UnpackedMessage(buffer, type,
                 message);
     }
 

@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.connection;
 
 import nl.han.asd.project.client.commonclient.utility.Validation;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.*;
 import java.net.Socket;
@@ -60,16 +61,16 @@ class Connection {
 
     /**
      * Writes data to the output stream.
-     * @param data Data to write to the stream.
+     * @param wrapper Data wrapped inside the EncryptedWrapper class to be send over the socket.
      * @throws SocketException Writing to stream failed.
      * @throws IllegalAccessException A parameter has an invalid value.
      */
-    public void write(final byte[] data) throws IllegalArgumentException, SocketException {
-        if (data == null)
+    public void write(final HanRoutingProtocol.EncryptedWrapper wrapper) throws IllegalArgumentException, SocketException {
+        if (wrapper == null)
             throw new IllegalArgumentException("data");
 
         try {
-            outputStream.write(data);
+            wrapper.writeDelimitedTo(outputStream);
         } catch (IOException | NullPointerException e) {
             throw new SocketException("An error occurred while trying to write data to the stream.");
         }
@@ -77,47 +78,37 @@ class Connection {
 
     /**
      * Reads data from the input stream.
-     * @return A byte array containing the data and null if no data was read and no exception occurred.
+     * @return An EncryptedWrapper that contains the real object.
      * @throws SocketException Connection or streams failed.
      */
-    public byte[] read() throws SocketException {
-        byte[] buffer = new byte[1024];
-        byte[] data = null;
-
-        int bytesRead;
+    public HanRoutingProtocol.EncryptedWrapper read() throws SocketException {
+        HanRoutingProtocol.EncryptedWrapper wrapper = null;
 
         try {
             // synchronize so only one operation is executed in a multi threaded environment.
             // note that the code in the block underneath here should be the only accessor to the input stream.
             synchronized (this) {
-                // -1: EOF
-                //  0: NOTHING TO READ
-                // >0: DATA
-                bytesRead = inputStream.read(buffer);
+                // ..
+                wrapper = HanRoutingProtocol.EncryptedWrapper.parseDelimitedFrom(inputStream);
             }
+
         } catch (IOException | NullPointerException e) {
             // something went wrong while reading the data from the stream.
             // if the connection was ever / is connected, attempt to close it.
-            if (isConnected())
-            {
+            if (isConnected()) {
                 // we cannot fully determine if the connection is still established so attempt to close it and ignore
                 // any exception.
                 try {
                     socket.close();
                 } catch (Exception anyException) { // catch any exception
                 }
+
             }
 
             throw new SocketException("An error occurred while trying to read data from the stream.");
         }
 
-        if (bytesRead > 0) {
-            // copyOf builds a new array, thus it removes the unnecessary 'empty' indices and returns a
-            // perfectly sized array.
-            data = Arrays.copyOf(buffer, bytesRead);
-        }
-
-        return data;
+        return wrapper;
     }
 
     /**
@@ -131,13 +122,14 @@ class Connection {
 
             Runnable readTask = () -> {
                 while (isRunning) {
+                    HanRoutingProtocol.EncryptedWrapper wrapper = null;
                     byte[] data = null;
                     try {
                         // Read data from stream using original Read.
-                        data = read();
+                        wrapper = read();
 
                         // Notify ConnectionService that new data is available.
-                        connectionService.onReceiveRead(data);
+                        connectionService.onReceiveRead(wrapper);
 
                         try {
                             // Sleep for a number of seconds.

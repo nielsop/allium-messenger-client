@@ -27,12 +27,12 @@ public class PackerTest {
 
     @Test
     public void TestPacking() throws InvalidProtocolBufferException {
-        byte[] packedData = pack();
+        HanRoutingProtocol.EncryptedWrapper packedData = pack();
         UnpackedMessage unpackedData = unpack(packedData);
         HanRoutingProtocol.ClientLoginRequest wrapper = HanRoutingProtocol.ClientLoginRequest.parseFrom(unpackedData.getData());
     }
 
-    public byte[] pack() {
+    public HanRoutingProtocol.EncryptedWrapper pack() {
         // Simulate a builder..
         HanRoutingProtocol.ClientLoginRequest.Builder builder = HanRoutingProtocol.ClientLoginRequest.newBuilder();
         builder.setPublicKey("test");
@@ -40,12 +40,12 @@ public class PackerTest {
         builder.setPassword("test");
 
         // Pack..
-        byte[] packed = packer.pack(builder, packer.getMyPublicKey());
+        HanRoutingProtocol.EncryptedWrapper packed = packer.pack(builder, packer.getMyPublicKey());
 
         return packed;
     }
 
-    public UnpackedMessage unpack(byte[] packed)
+    public UnpackedMessage unpack(HanRoutingProtocol.EncryptedWrapper packed)
     {
         UnpackedMessage unpacked = packer.unpack(packed);
 
@@ -55,7 +55,7 @@ public class PackerTest {
 
     @Test
     public void TestUnpacking() throws InvalidProtocolBufferException {
-        byte[] packedData = pack();
+        HanRoutingProtocol.EncryptedWrapper packedData = pack();
         UnpackedMessage unpackedMessage = unpack(packedData);
 
         HanRoutingProtocol.ClientLoginRequest.parseFrom(unpackedMessage.getData());

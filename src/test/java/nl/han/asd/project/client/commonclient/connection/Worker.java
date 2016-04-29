@@ -31,14 +31,12 @@ class Worker implements Runnable {
             input = clientSocket.getInputStream();
             output = clientSocket.getOutputStream();
 
-            byte[] buffer = new byte[1024];
-            byte[] data = null;
             try {
-                int bytesRead = input.read(buffer);
-                if (bytesRead > 0) {
+                HanRoutingProtocol.EncryptedWrapper wrapper = HanRoutingProtocol.EncryptedWrapper
+                        .parseDelimitedFrom(input);
+                if (wrapper != null) {
                     try {
-                        data = Arrays.copyOf(buffer, bytesRead);
-                        UnpackedMessage message = packer.unpack(data);
+                        UnpackedMessage message = packer.unpack(wrapper);
 
                         HanRoutingProtocol.ClientLoginRequest request = HanRoutingProtocol.ClientLoginRequest
                                 .parseFrom(message.getData());
@@ -53,13 +51,13 @@ class Worker implements Runnable {
 
                         System.out.println(
                                 "Request processed as 'protocol' request.");
-                        data = packer.pack(builder, this.publicKey);
+                        wrapper = packer.pack(builder, this.publicKey);
                     } catch (InvalidProtocolBufferException e) {
                         System.out.println(
                                 "Request processed as 'normal' request.");
                     }
 
-                    output.write(data);
+                    wrapper.writeDelimitedTo(output);
                 }
 
             } catch (IOException e) {
