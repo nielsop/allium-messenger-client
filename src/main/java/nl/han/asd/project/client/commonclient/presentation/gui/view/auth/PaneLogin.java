@@ -1,7 +1,5 @@
 package nl.han.asd.project.client.commonclient.presentation.gui.view.auth;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -11,7 +9,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
 
