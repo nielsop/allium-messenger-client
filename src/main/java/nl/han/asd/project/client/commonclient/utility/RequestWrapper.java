@@ -35,7 +35,7 @@ public class RequestWrapper {
         writeToSocket();
         try {
             HanRoutingProtocol.EncryptedWrapper response;
-            if ((response = parseDelimited(HanRoutingProtocol.EncryptedWrapper.class)) != null) {
+            if ((response = HanRoutingProtocol.EncryptedWrapper.parseDelimitedFrom(socket.getInputStream())) != null) {
                 return parseFrom(classDescriptor, response.getData().toByteArray());
             }
         } catch (IOException e) {
@@ -50,22 +50,6 @@ public class RequestWrapper {
             defaultInstanceField.setAccessible(true);
             T defaultInstance = (T) defaultInstanceField.get(null);
             return (T) defaultInstance.getParserForType().parseFrom(data);
-        } catch (IllegalAccessException | IOException e) {
-            // return null
-        } catch (NoSuchFieldException e) {
-            throw new InvalidProtocolBufferException("Invalid class provided.");
-        }
-        return null;
-    }
-
-    private <T extends GeneratedMessage> T parseDelimited(Class<T> classDescriptor) throws SocketException, InvalidProtocolBufferException {
-        try {
-            if (socket != null && socket.getInputStream() != null) {
-                Field defaultInstanceField = classDescriptor.getDeclaredField("DEFAULT_INSTANCE");
-                defaultInstanceField.setAccessible(true);
-                T defaultInstance = (T) defaultInstanceField.get(null);
-                return (T) defaultInstance.getParserForType().parseDelimitedFrom(socket.getInputStream());
-            }
         } catch (IllegalAccessException | IOException e) {
             // return null
         } catch (NoSuchFieldException e) {
