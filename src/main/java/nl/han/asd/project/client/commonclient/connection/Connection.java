@@ -11,6 +11,8 @@ import java.util.Arrays;
 
 /**
  * Provides basic socket operations used solely by the ConnectionService.
+ *
+ * @author Jevgeni Geursten
  */
 public class Connection {
     private volatile boolean isRunning;

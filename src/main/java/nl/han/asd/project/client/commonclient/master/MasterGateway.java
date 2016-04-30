@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.master;
 import com.google.inject.Inject;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
@@ -74,8 +75,16 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         HanRoutingProtocol.EncryptedWrapper encryptedRequest = HanRoutingProtocol.EncryptedWrapper.newBuilder()
                 .setData(graphUpdateRequest.toByteString()).setType(HanRoutingProtocol.EncryptedWrapper.Type.GRAPHUPDATEREQUEST).build();
 
+        ByteOutputStream bos = new ByteOutputStream();
+        try {
+            encryptedRequest.writeDelimitedTo(bos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        HanRoutingProtocol.GraphUpdateResponse graphUpdate = writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class, encryptedRequest.toByteArray());
+
+
+        HanRoutingProtocol.GraphUpdateResponse graphUpdate = writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class, bos.toByteArray());
         if (graphUpdate == null) return null;
 
         return new UpdatedGraphResponseWrapper(graphUpdate.getGraphUpdatesList());

@@ -10,6 +10,8 @@ import java.net.SocketException;
 
 /**
  * Provides a connection service using sockets such as reading and writing data.
+ *
+ * @author Jevgeni Geurtsen
  */
 public final class ConnectionService {
     private final static int DEFAULT_SLEEPTIME = 25; // 25ms
