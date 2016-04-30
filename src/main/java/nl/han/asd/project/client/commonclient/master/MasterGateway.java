@@ -13,7 +13,6 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.Base64;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
 
@@ -27,10 +26,14 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     private IEncryptionService encryptionService;
 
     @Inject
-    public MasterGateway(String hostname, int port, IEncryptionService encryptionService) {
-        this.hostname = hostname;
-        this.port = port;
+    public MasterGateway(IEncryptionService encryptionService) {
         this.encryptionService = encryptionService;
+        connectionService = new ConnectionService(new byte[]{0x00});
+        try {
+            connectionService.open("195.169.194.234", 33011);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -48,7 +51,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     @Override
     public RegisterResponseWrapper register(String username, String password) {
         HanRoutingProtocol.ClientLoginRequest registerRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
-                .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
+                .setUsername(username).setPassword(password).setPublicKey("0x00").build();
         HanRoutingProtocol.EncryptedWrapper encryptedRequest = HanRoutingProtocol.EncryptedWrapper.newBuilder()
                 .setData(registerRequest.toByteString()).build();
 
@@ -107,7 +110,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
      * @return The public key.
      */
     private String getPublicKey() {
-        return Base64.getEncoder().encodeToString(encryptionService.getPublicKey());
+        return null;
     }
 
 
@@ -132,7 +135,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         if (connectionService == null) {
             // new byte[] { 0x00 } = public key that belongs to the cryptography service of the receiver
             //                          en/decryption is disabled for now, so initializing with an null-byte is sufficient.
-            connectionService = new ConnectionService(new byte[] { 0x00 } );
+            connectionService = new ConnectionService(new byte[]{0x00});
         }
         try {
             connectionService.open(hostname, port);
