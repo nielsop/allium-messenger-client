@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.utility;
+package nl.han.asd.project.client.commonclient.master.wrapper;
 
 import com.google.protobuf.GeneratedMessage;
 
@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
- * @author Niels Bokmans
- * @version 1.0
- * @since 15-4-2016
+ * Created by niels on 4/30/2016.
  */
 public class RequestWrapper {
 
@@ -31,3 +29,4 @@ public class RequestWrapper {
         }
     }
 }
+
