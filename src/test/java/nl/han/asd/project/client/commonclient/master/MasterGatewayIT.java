@@ -4,10 +4,14 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
+import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -44,8 +48,7 @@ public class MasterGatewayIT {
                 e.printStackTrace();
             }
         }
-
-           gateway = new MasterGateway(master.getHostName(), master.getPort(1337), injector.getInstance(IEncryptionService.class));
+        gateway = new MasterGateway(master.getHostName(), master.getPort(1337), injector.getInstance(IEncryptionService.class));
     }
 
     @After
@@ -71,6 +74,8 @@ public class MasterGatewayIT {
     /* Login of clients on master server */
     @Test
     public void testLoginSuccessful() {
+        gateway.register(VALID_USERNAME, VALID_PASSWORD);
+
         Assert.assertTrue(gateway.authenticate(VALID_USERNAME, VALID_PASSWORD).status ==
                 HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
     }
@@ -79,14 +84,15 @@ public class MasterGatewayIT {
     // TODO: Tests for when we actually add real nodes & see if the right node is added to master.
     @Test
     public void testGetUpdatedGraphSuccessful() {
-        Assert.assertTrue(gateway.getUpdatedGraph().newVersion >= gateway.getCurrentGraphVersion());
+        Assert.assertTrue(gateway.getUpdatedGraph().getLast().newVersion >= gateway.getCurrentGraphVersion());
     }
 
     /* Get active client group from master server */
 
     @Test
     public void testGetClientGroupSuccessful() {
-        Assert.assertTrue(gateway.getClientGroup().clientGroup.size() >= 0);
+        ClientGroupResponseWrapper response = gateway.getClientGroup();
+        Assert.assertTrue(response.clientGroup.size() >= 0);
     }
     /* */
 }
