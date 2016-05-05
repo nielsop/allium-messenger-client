@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.presentation;
 
 import nl.han.asd.project.client.commonclient.login.ILogin;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.message.Message;
@@ -13,6 +14,8 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+
+import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse.Status.SUCCES;
 
 /**
  * Android/Desktop application
@@ -26,7 +29,7 @@ public class PresentationLayer {
     public IMessageObserver messageObserver;
     public IRegistration registration;
     public ILogin login;
-    private Contact me;
+    private Contact currentUser;
 
     /**
      * Constructs a presentation layer, using one given gateway.
@@ -72,11 +75,12 @@ public class PresentationLayer {
         return registerResponse.getStatus();
     }
 
-    public Contact getMe() {
-        if (me == null) me = new Contact("Marius", "asdf4321", true);
-        return me;
+    public Contact getCurrentUser() {
+        if (currentUser == null) currentUser = new Contact("Marius", "asdf4321", true);
+        return currentUser;
     }
 
+    // TODO testdata, remove when done
     ArrayList<Message> bram = new ArrayList<>();
     ArrayList<Message> niels = new ArrayList<>();
     ArrayList<Message> jevgenie = new ArrayList<>();
@@ -118,4 +122,12 @@ public class PresentationLayer {
         else if (message.getReceiver().getUsername().equals("Julius")) julius.add(message);
     }
 
+    public HanRoutingProtocol.ClientLoginResponse.Status login(String username, String password) {
+        LoginResponseWrapper loginResponse = login.login(username, password);
+
+        if (loginResponse.status == SUCCES) {
+
+        }
+        return loginResponse.status;
+    }
 }

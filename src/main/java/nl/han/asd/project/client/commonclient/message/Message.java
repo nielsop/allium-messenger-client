@@ -11,11 +11,12 @@ public class Message {
     private String text;
     private Contact sender;
     private Contact receiver;
+    private long messageDateTime;
 
-    public Message(String text, Contact sender, Contact reciever) {
+    public Message(String text, Contact sender, Contact receiver) {
         this.text = text;
         this.sender = sender;
-        this.receiver = reciever;
+        this.receiver = receiver;
     }
 
     public Contact getReceiver() {

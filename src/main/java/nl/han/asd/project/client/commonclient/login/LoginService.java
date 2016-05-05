@@ -2,9 +2,9 @@ package nl.han.asd.project.client.commonclient.login;
 
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 import nl.han.asd.project.client.commonclient.utility.Validation;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
 
@@ -25,10 +25,14 @@ public class LoginService implements ILogin {
         this.masterGateway = gateway;
     }
 
-    public boolean login(String username, String password) {
+    public LoginResponseWrapper login(String username, String password) {
+        // DO NOT REMOVE, YET!
+        if (Validation.validateLoginData(username, password)) return masterGateway.authenticate(username, password);
+        else return null;
+
         //TODO: Initialize setConnectedNodes upon successful authentication
-        return Validation.validateLoginData(username, password) &&
-                masterGateway.authenticate(username, password).status ==
-                        HanRoutingProtocol.ClientLoginResponse.Status.SUCCES;
+//        return Validation.validateLoginData(username, password) &&
+//                masterGateway.authenticate(username, password).status ==
+//                        HanRoutingProtocol.ClientLoginResponse.Status.SUCCES;
     }
 }

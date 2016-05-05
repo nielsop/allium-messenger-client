@@ -24,7 +24,7 @@ public class PaneDashboard {
 
     public PaneDashboard(GUI gui) {
         this.gui = gui;
-        me = gui.pLayer.getMe();
+        me = gui.pLayer.getCurrentUser();
 
         paneNav = new PaneNav(this);
         paneContacts = new PaneContacts(this);
