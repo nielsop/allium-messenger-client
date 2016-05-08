@@ -2,13 +2,19 @@ package nl.han.asd.project.client.commonclient.master;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.xebialabs.overcast.host.CloudHost;
+import com.xebialabs.overcast.host.CloudHostFactory;
+import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.net.Socket;
 
 /**
  * @author Niels Bokmans
@@ -17,19 +23,36 @@ import org.junit.Test;
  */
 public class MasterGatewayIT {
 
+    private CloudHost master;
     private static final String VALID_USERNAME = "Nielsje41";
     private static final String VALID_PASSWORD = "wachtwoord";
     private static MasterGateway gateway;
 
-    @BeforeClass
-    public static void setup() {
+    @Before
+    public void setup() {
+        master = CloudHostFactory.getCloudHost("master");
+        master.setup();
         Injector injector = Guice.createInjector(new EncryptionModule());
-        gateway = new MasterGateway("195.169.194.234", 32901, injector.getInstance(IEncryptionService.class));
+        while (true) {
+            try {
+                new Socket(master.getHostName(), master.getPort(1337));
+                break;
+            } catch (IOException e) {
+                System.out.println("Trying again in 2 seconds");
+            }
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        gateway = new MasterGateway(master.getHostName(), master.getPort(1337), injector.getInstance(IEncryptionService.class));
     }
 
-    @AfterClass
-    public static void finish() {
-        gateway.close();
+    @After
+    public void aster() {
+        master.teardown();
     }
 
     /* Registration of clients on master server */
@@ -48,9 +71,10 @@ public class MasterGatewayIT {
     }
 
     /* Login of clients on master server */
-
     @Test
     public void testLoginSuccessful() {
+        gateway.register(VALID_USERNAME, VALID_PASSWORD);
+
         Assert.assertTrue(gateway.authenticate(VALID_USERNAME, VALID_PASSWORD).status ==
                 HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
     }
@@ -59,14 +83,15 @@ public class MasterGatewayIT {
     // TODO: Tests for when we actually add real nodes & see if the right node is added to master.
     @Test
     public void testGetUpdatedGraphSuccessful() {
-        Assert.assertTrue(gateway.getUpdatedGraph().newVersion >= gateway.getCurrentGraphVersion());
+        Assert.assertTrue(gateway.getUpdatedGraph().getLast().newVersion >= gateway.getCurrentGraphVersion());
     }
 
     /* Get active client group from master server */
 
     @Test
     public void testGetClientGroupSuccessful() {
-        Assert.assertTrue(gateway.getClientGroup().clientGroup.size() >= 0);
+        ClientGroupResponseWrapper response = gateway.getClientGroup();
+        Assert.assertTrue(response.clientGroup.size() >= 0);
     }
     /* */
 }

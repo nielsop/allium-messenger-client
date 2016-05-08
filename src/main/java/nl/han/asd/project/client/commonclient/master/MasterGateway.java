@@ -8,78 +8,73 @@ import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponse
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
+import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.net.SocketException;
-import java.util.Base64;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
 
     //TODO: missing: IWebService from Master
 
     private static int currentGraphVersion = -1;
+    private ConnectionService connectionService;
+    private Socket socket;
     private String hostname;
     private int port;
-    private ConnectionService connectionService;
 
     private IEncryptionService encryptionService;
 
     @Inject
-    public MasterGateway(String hostname, int port, IEncryptionService encryptionService) {
-        this.hostname = hostname;
-        this.port = port;
+    public MasterGateway(IEncryptionService encryptionService) {
         this.encryptionService = encryptionService;
+
+        try {
+            socket = new Socket(hostname, port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public LoginResponseWrapper authenticate(String username, String password) {
         HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
                 .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
-
-        HanRoutingProtocol.ClientLoginResponse loginResponse = writeAndRead(HanRoutingProtocol.ClientLoginResponse.class,
-                loginRequest.toByteArray());
-        if (loginResponse == null) return null;
-        return new LoginResponseWrapper(loginResponse.getConnectedNodesList(), loginResponse.getSecretHash(),
-                loginResponse.getStatus());
+        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.EncryptedWrapper.Type.CLIENTLOGINREQUEST, socket);
+        HanRoutingProtocol.ClientLoginResponse response = request.writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
+        return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(),
+                response.getStatus());
     }
 
     @Override
     public RegisterResponseWrapper register(String username, String password) {
-        HanRoutingProtocol.ClientLoginRequest registerRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
-                .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
-        HanRoutingProtocol.EncryptedWrapper encryptedRequest = HanRoutingProtocol.EncryptedWrapper.newBuilder()
-                .setData(registerRequest.toByteString()).build();
-
-        HanRoutingProtocol.ClientRegisterResponse registerResponse = writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class,
-                encryptedRequest.toByteArray());
-        if (registerResponse == null) return null;
-        return new RegisterResponseWrapper(registerResponse.getStatus());
+        HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder()
+                .setUsername(username).setPassword(password).build();
+        RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.EncryptedWrapper.Type.CLIENTREGISTERREQUEST, socket);
+        HanRoutingProtocol.ClientRegisterResponse response = req.writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);
+        return new RegisterResponseWrapper(response.getStatus());
     }
 
     @Override
     public UpdatedGraphResponseWrapper getUpdatedGraph() {
         HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder()
                 .setCurrentVersion(getCurrentGraphVersion()).build();
+        RequestWrapper req = new RequestWrapper(graphUpdateRequest, HanRoutingProtocol.EncryptedWrapper.Type.GRAPHUPDATEREQUEST, socket);
 
-        HanRoutingProtocol.GraphUpdate graphUpdateResponse = writeAndRead(HanRoutingProtocol.GraphUpdate.class,
-                graphUpdateRequest.toByteArray());
-        if (graphUpdateResponse == null) return null;
-        UpdatedGraphResponseWrapper updatedGraph = new UpdatedGraphResponseWrapper(graphUpdateResponse.getNewVersion(),
-                graphUpdateResponse.getIsFullGraph(), graphUpdateResponse.getAddedNodesList(),
-                graphUpdateResponse.getDeletedNodesList());
-        setCurrentGraphVersion(updatedGraph.newVersion);
-        return updatedGraph;
+        HanRoutingProtocol.GraphUpdateResponse response = req.writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class);
+        UpdatedGraphResponseWrapper updatedGraphs = new UpdatedGraphResponseWrapper(response.getGraphUpdatesList());
+        setCurrentGraphVersion(updatedGraphs.getLast().newVersion);
+        return updatedGraphs;
     }
 
     @Override
     public ClientGroupResponseWrapper getClientGroup() {
         HanRoutingProtocol.ClientRequest clientRequest = HanRoutingProtocol.ClientRequest.newBuilder().build();
-
-        HanRoutingProtocol.ClientResponse clientResponse = writeAndRead(HanRoutingProtocol.ClientResponse.class,
-                clientRequest.toByteArray());
-        if (clientResponse == null) return null;
+        RequestWrapper req = new RequestWrapper(clientRequest, HanRoutingProtocol.EncryptedWrapper.Type.CLIENTREQUEST, socket);
+        HanRoutingProtocol.ClientResponse clientResponse = req.writeAndRead(HanRoutingProtocol.ClientResponse.class);
         return new ClientGroupResponseWrapper(clientResponse.getClientsList());
     }
 
@@ -110,7 +105,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         return Base64.getEncoder().encodeToString(encryptionService.getPublicKey());
     }
 
-
     /**
      * Returns the connection.
      *
@@ -132,7 +126,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         if (connectionService == null) {
             // new byte[] { 0x00 } = public key that belongs to the cryptography service of the receiver
             //                          en/decryption is disabled for now, so initializing with an null-byte is sufficient.
-            connectionService = new ConnectionService(new byte[] { 0x00 } );
+            connectionService = new ConnectionService(new byte[]{0x00});
         }
         try {
             connectionService.open(hostname, port);
@@ -163,23 +157,4 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         }
     }
 
-
-    /**
-     * Writes a byte array to the connection and parses the response.
-     *
-     * @param classDescriptor The class to parse the response to.
-     * @param data            The byte array with data.
-     * @param <T>             Type of the class to parse the response to.
-     * @return A parsed response.
-     */
-    private <T extends GeneratedMessage> T writeAndRead(Class<T> classDescriptor, byte[] data) {
-        final ConnectionService connection = getConnection();
-        try {
-            //connection.write(data);
-            return connectionService.readGeneric(classDescriptor);
-        } catch (SocketException | InvalidProtocolBufferException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

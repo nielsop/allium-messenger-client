@@ -13,7 +13,7 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
  */
 public class LoginService implements ILogin {
 
-    private static final MasterGateway masterGateway = new MasterGateway("localhost", 1234, null);
+    private static final MasterGateway masterGateway = new MasterGateway(null);
     private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]";
     private static final String REGEX_ALPHANUMERICSPECIAL = "^(?=(?:\\D*?\\d){8,32}(?!.*?\\d))[a-zA-Z0-9@\\#$%&*()_+\\]\\[';:?.,!^-]+$";
 

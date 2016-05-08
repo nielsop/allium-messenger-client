@@ -38,7 +38,6 @@ public class Packer {
         HanRoutingProtocol.EncryptedWrapper.Type type = protocolMessageDescriptorToWrapperType(
                 originalBuilder.getDescriptorForType());
         builder.setType(type);
-        builder.setPublicKey(""); // deprecated @ tba
 
         byte[] buffer = originalBuilder.build().toByteArray();
         // encryption/decryption disabled for now.

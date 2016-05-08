@@ -20,16 +20,19 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
 
     @Override
     public ByteString decryptData(ByteString data) {
-        return ByteString.copyFrom(encryptionService.decryptData(data.toByteArray()));
+        return null;
+       // return ByteString.copyFrom(encryptionService.decryptData(data.toByteArray()));
     }
 
     @Override
     public ByteString encryptData(ByteString data, byte[] publicKey) {
-        return ByteString.copyFrom(encryptionService.encryptData(publicKey, data.toByteArray()));
+        return null;
+     //   return ByteString.copyFrom(encryptionService.encryptData(publicKey, data.toByteArray()));
     }
 
     @Override
     public byte[] getPublicKey() {
-        return encryptionService.getPublicKey();
+    //    return encryptionService.getPublicKey();
+        return null;
     }
 }
