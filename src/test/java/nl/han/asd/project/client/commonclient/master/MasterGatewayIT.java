@@ -6,7 +6,6 @@ import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.After;
 import org.junit.Assert;
@@ -48,7 +47,7 @@ public class MasterGatewayIT {
             }
         }
         //TODO fixen dat dit weer runt
-       // gateway = new MasterGateway(master.getHostName(), master.getPort(1337), injector.getInstance(IEncryptionService.class));
+        // gateway = new MasterGateway(master.getHostName(), master.getPort(1337), injector.getInstance(IEncryptionService.class));
     }
 
     @After
