@@ -1,9 +1,13 @@
 package nl.han.asd.project.client.commonclient.utility;
 
 import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * @author Niels Bokmans
@@ -15,19 +19,50 @@ public class RequestWrapper {
     private GeneratedMessage message;
     private Socket socket;
 
-    public RequestWrapper(final GeneratedMessage message, final Socket socket) {
-        this.message = message;
+    /**
+     * Creates a new request wrapper. Will automatically transform the request into an encrypted request.
+     *
+     * @param message The request.
+     * @param requestType The request type.
+     * @param socket The socket to write to and read from.
+     */
+    public RequestWrapper(final GeneratedMessage message, final HanRoutingProtocol.EncryptedWrapper.Type requestType, final Socket socket) {
+        this.message = HanRoutingProtocol.EncryptedWrapper.newBuilder().setType(requestType).setData(message.toByteString()).build();
         this.socket = socket;
     }
 
-    /**
-     * Writes delimited to socket
-     */
-    public void writeToSocket() {
+    public <T extends GeneratedMessage> T writeAndRead(Class<T> classDescriptor) {
+        writeToSocket();
+        try {
+            HanRoutingProtocol.EncryptedWrapper response;
+            if ((response = HanRoutingProtocol.EncryptedWrapper.parseDelimitedFrom(socket.getInputStream())) != null) {
+                return parseFrom(classDescriptor, response.getData().toByteArray());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private <T extends GeneratedMessage> T parseFrom(Class<T> classDescriptor, byte[] data) throws SocketException, InvalidProtocolBufferException {
+        try {
+            Field defaultInstanceField = classDescriptor.getDeclaredField("DEFAULT_INSTANCE");
+            defaultInstanceField.setAccessible(true);
+            T defaultInstance = (T) defaultInstanceField.get(null);
+            return (T) defaultInstance.getParserForType().parseFrom(data);
+        } catch (IllegalAccessException | IOException e) {
+            // return null
+        } catch (NoSuchFieldException e) {
+            throw new InvalidProtocolBufferException("Invalid class provided.");
+        }
+        return null;
+    }
+
+    private void writeToSocket() {
         try {
             message.writeDelimitedTo(socket.getOutputStream());
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

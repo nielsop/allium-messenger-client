@@ -2,7 +2,8 @@ package nl.han.asd.project.client.commonclient.connection;
 
 /**
  * Created by Marius on 25-04-16.
+ * An interface used to return data when asynchronously reading on a socket.
  */
 public interface IConnectionService {
-    public void onReceiveRead(byte[] buffer);
+    void onReceiveRead(final UnpackedMessage message);
 }

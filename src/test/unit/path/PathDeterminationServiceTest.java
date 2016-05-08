@@ -86,6 +86,13 @@ Checking if error is trown when miniumHops is negative number
         }
         Assert.assertTrue(inArray(generatePath.get(0), contactConnectedNodes));
     }
+
+
+//    @Test
+//    public void clientHostConnectedNodesAreUpdatedIfLastUpdateIsExpired() {
+//        throw new NotImplementedException();
+//    }
+
     private boolean inArray(Node needle, Node[] haystack) {
         for (Node n : haystack) {
             if (n == needle) {

@@ -26,10 +26,23 @@ public class MessageBuilderServiceTest {
     @InjectMocks
     private PathDeterminationService pathDeterminationService;
 
+
+    @Before
+    public void setUp() throws Exception {
+         pathDeterminationService = new PathDeterminationService(updatedGraphMock, clientGroupMock);
+           messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
+    }
+
     @Test
     public void buildMessage() {
-        cryptographyService = new CryptographyService();
+        //cryptographyService = new CryptographyService();
+        //messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
+
+		//MERGE - onzeker welke ik moest gebruiken
+		/*
+		        cryptographyService = new CryptographyService();
         messageBuilderService = new MessageBuilderService(cryptographyService);
+		*/
     }
 
     @Test
