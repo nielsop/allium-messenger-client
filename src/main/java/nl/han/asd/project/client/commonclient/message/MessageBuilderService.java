@@ -6,9 +6,12 @@ import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
+import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
+import nl.han.asd.project.client.commonclient.node.Node;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.util.ArrayList;
@@ -18,12 +21,11 @@ public class MessageBuilderService implements IMessageBuilder {
     public IGetPath getPath;
     public ISendMessage sendMessage;
     public IMessageStore messageStore;
+	
     public IEncrypt encrypt;
-
     public IDecrypt decrypt;
+    public CryptographyService cryptographyService;
     private int MIN_HOPS = 3;
-    private IGetPath pathDeterminationService;
-    private IEncrypt cryptographyService;
 
     @Inject
     public MessageBuilderService(IGetPath getPath, IEncrypt encrypt, ISendMessage sendMessage, IMessageStore messageStore) {
@@ -35,8 +37,11 @@ public class MessageBuilderService implements IMessageBuilder {
 
     public MessageBuilderService(IGetPath pathDeterminationService, IEncrypt cryptographyService) {
         this.pathDeterminationService = pathDeterminationService;
+	}
+	
+    /*public MessageBuilderService(CryptographyService cryptographyService) {
         this.cryptographyService = cryptographyService;
-    }
+    }*/
 
     public void sendMessage(String messageText, Contact contactReciever, Contact contactSender) {
         EncryptedMessage messageToSend = buildMessagePackage(messageText, contactReciever, contactSender);
@@ -50,7 +55,7 @@ public class MessageBuilderService implements IMessageBuilder {
     }
 
     private EncryptedMessage buildMessagePackage(String messageText, Contact contactReciever, Contact contactSender) {
-        ArrayList<Node> path = pathDeterminationService.getPath(MIN_HOPS, contactReciever);
+        ArrayList<Node> path = getPath.getPath(MIN_HOPS, contactReciever);
 
         Message message = new Message(messageText, contactSender, contactReciever);
 
@@ -74,6 +79,7 @@ public class MessageBuilderService implements IMessageBuilder {
         builder.setEncryptedData(ByteString.copyFromUtf8(message.getText()));
 
         return encrypt.encryptData(builder.build().toByteString(), node.getPublicKey());
+       // return cryptographyService.encryptData(builder.build().toByteString(), node.getPublicKey());
     }
 
     
@@ -95,6 +101,7 @@ public class MessageBuilderService implements IMessageBuilder {
         remainingPath.remove(0);
 
         ByteString encryptedMessage = encrypt.encryptData(builder.build().toByteString(),node.getPublicKey());
+        //ByteString encryptedMessage = cryptographyService.encryptData(builder.build().toByteString(),node.getPublicKey());
 
         return buildMessagePackageLayer(encryptedMessage, remainingPath);
     }

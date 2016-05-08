@@ -1,6 +1,6 @@
 package nl.han.asd.project.client.commonclient.path;
 
-import nl.han.asd.project.client.commonclient.graph.Node;
+
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.store.Contact;

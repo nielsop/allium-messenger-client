@@ -3,7 +3,7 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.protobuf.ByteString;
 
 /**
- * Created by Julius on 15/04/16.
+ * Created by Marius on 25-04-16.
  */
 public class EncryptedMessage {
     private String username;

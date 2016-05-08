@@ -3,12 +3,11 @@ package nl.han.asd.project.client.commonclient.utility;
 import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
+//import nl.han.onionmessenger.commonclient.HanRoutingProtocol;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
-
-//import nl.han.onionmessenger.commonclient.HanRoutingProtocol;
 
 /**
  * @author Niels Bokmans

@@ -43,6 +43,7 @@ public class MessageBuilderServiceTest {
     @InjectMocks
     private MessageBuilderService messageBuilderService;
 
+
     @Before
     public void setUp() throws Exception {
         messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,sendMessage,messageStore);
@@ -50,6 +51,8 @@ public class MessageBuilderServiceTest {
 
     @Test
     public void buildMessage(){
+        // pathDeterminationService = new PathDeterminationService(updatedGraphMock, clientGroupMock);
+        //   messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
     }
 
     @Test

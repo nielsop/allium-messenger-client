@@ -8,14 +8,12 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class NodeGateway implements ISendMessage {
+//    private INodeGateway nodeGateway;
 
-    private INodeGateway nodeGateway;
-
-    //TODO: Fix Dependency Injection
-    /*@Inject
-    public NodeGateway(INodeGateway nodeGateway) {
-        this.nodeGateway = nodeGateway;
-    }*/
+//    @Inject
+//    public NodeGateway(INodeGateway nodeGateway) {
+//        this.nodeGateway = nodeGateway;
+//    }
 
     @Override
     public void sendMessage(EncryptedMessage message) {
@@ -35,12 +33,11 @@ public class NodeGateway implements ISendMessage {
             request.setPort(message.getPort());
             request.setEncryptedData(message.getEncryptedData());
 
-            final RequestWrapper req = new RequestWrapper(request.build(), socket);
-            req.writeToSocket();
+            //TODO: onderstaand stukje -v- omschrijven naar nieuwe request wrapper
+            //final RequestWrapper req = new RequestWrapper(request.build(), socket);
+            //req.writeToSocket();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }
