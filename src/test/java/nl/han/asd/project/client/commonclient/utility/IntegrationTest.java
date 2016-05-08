@@ -1,4 +1,4 @@
-package utility;
+package nl.han.asd.project.client.commonclient.utility;
 
 /**
  * @author Niels Bokmans

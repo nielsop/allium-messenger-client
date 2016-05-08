@@ -1,4 +1,4 @@
-package unit.login;
+package nl.han.asd.project.client.commonclient.login;
 
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import org.junit.Before;

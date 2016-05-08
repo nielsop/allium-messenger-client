@@ -33,8 +33,9 @@ public class NodeGateway implements ISendMessage {
             request.setPort(message.getPort());
             request.setEncryptedData(message.getEncryptedData());
 
-            final RequestWrapper req = new RequestWrapper(request.build(), socket);
-            req.writeToSocket();
+            //TODO: onderstaand stukje -v- omschrijven naar nieuwe request wrapper
+            //final RequestWrapper req = new RequestWrapper(request.build(), socket);
+            //req.writeToSocket();
         } catch (IOException e) {
             e.printStackTrace();
         }

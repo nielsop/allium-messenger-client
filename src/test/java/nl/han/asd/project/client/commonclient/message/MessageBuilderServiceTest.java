@@ -1,13 +1,13 @@
-package unit.message;
+package nl.han.asd.project.client.commonclient.message;
 
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
-import nl.han.asd.project.client.commonclient.message.MessageBuilderService;
 import nl.han.asd.project.client.commonclient.node.Node;
 import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,8 +29,8 @@ public class MessageBuilderServiceTest {
 
     @Before
     public void setUp() throws Exception {
-         pathDeterminationService = new PathDeterminationService(updatedGraphMock, clientGroupMock);
-           messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
+        // pathDeterminationService = new PathDeterminationService(updatedGraphMock, clientGroupMock);
+        //   messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
     }
 
     @Test
@@ -38,8 +38,8 @@ public class MessageBuilderServiceTest {
         //cryptographyService = new CryptographyService();
         //messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
 
-		//MERGE - onzeker welke ik moest gebruiken
-		/*
+        //MERGE - onzeker welke ik moest gebruiken
+        /*
 		        cryptographyService = new CryptographyService();
         messageBuilderService = new MessageBuilderService(cryptographyService);
 		*/

@@ -1,4 +1,4 @@
-package unit.server;
+package nl.han.asd.project.client.commonclient.server;
 
 import java.io.IOException;
 

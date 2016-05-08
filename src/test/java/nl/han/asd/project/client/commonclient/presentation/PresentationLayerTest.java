@@ -1,4 +1,4 @@
-package unit.presentation;
+package nl.han.asd.project.client.commonclient.presentation;
 
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
@@ -28,7 +28,7 @@ public class PresentationLayerTest {
         RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
-        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
+        assertEquals(registerResponse.status, pLayer.register("username", "password"));
     }
 
     @Test
@@ -36,7 +36,7 @@ public class PresentationLayerTest {
         RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
-        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
+        assertEquals(registerResponse.status, pLayer.register("username", "password"));
     }
 
     @Test
@@ -44,6 +44,6 @@ public class PresentationLayerTest {
         RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.TAKEN_USERNAME).getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
-        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
+        assertEquals(registerResponse.status, pLayer.register("username", "password"));
     }
 }

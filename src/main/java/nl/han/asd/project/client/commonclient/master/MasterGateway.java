@@ -7,12 +7,9 @@ import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
-<<<<<<< HEAD
-import nl.han.asd.project.client.commonclient.utility.Validation;
-=======
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
->>>>>>> feature/BerichtenOntvangen
+import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
@@ -20,6 +17,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Base64;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
 

@@ -1,4 +1,4 @@
-package path;
+package nl.han.asd.project.client.commonclient.path;
 
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;

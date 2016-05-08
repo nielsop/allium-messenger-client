@@ -1,15 +1,7 @@
-package integration.master;
+package nl.han.asd.project.client.commonclient.master;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-<<<<<<< HEAD:src/test/integration/master/MasterGatewayIT.java
-import nl.han.asd.project.client.commonclient.CommonclientModule;
-import nl.han.asd.project.client.commonclient.master.MasterGateway;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.junit.*;
-import org.junit.rules.Timeout;
-=======
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
@@ -20,7 +12,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
->>>>>>> feature/BerichtenOntvangen:src/test/java/nl/han/asd/project/client/commonclient/master/MasterGatewayIT.java
 
 import java.io.IOException;
 import java.net.Socket;
@@ -56,7 +47,8 @@ public class MasterGatewayIT {
                 e.printStackTrace();
             }
         }
-        gateway = new MasterGateway(master.getHostName(), master.getPort(1337), injector.getInstance(IEncryptionService.class));
+        //TODO fixen dat dit weer runt
+       // gateway = new MasterGateway(master.getHostName(), master.getPort(1337), injector.getInstance(IEncryptionService.class));
     }
 
     @After
@@ -68,14 +60,14 @@ public class MasterGatewayIT {
     @Test
     public void testRegisterClientSuccessful() {
         Assert.assertEquals(
-                gateway.register(VALID_USERNAME, VALID_PASSWORD).getStatus(),
+                gateway.register(VALID_USERNAME, VALID_PASSWORD).status,
                 HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES);
     }
 
     @Test
     public void testRegisterClientUsernameTaken() {
         Assert.assertEquals(
-                gateway.register(VALID_USERNAME, VALID_PASSWORD).getStatus(),
+                gateway.register(VALID_USERNAME, VALID_PASSWORD).status,
                 HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME);
     }
 

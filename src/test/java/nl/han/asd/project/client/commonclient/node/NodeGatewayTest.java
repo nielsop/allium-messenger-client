@@ -1,4 +1,4 @@
-package unit.node;
+package nl.han.asd.project.client.commonclient.node;
 
 import nl.han.asd.project.client.commonclient.node.NodeGateway;
 import org.junit.After;

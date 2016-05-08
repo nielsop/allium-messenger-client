@@ -60,7 +60,7 @@ public class PresentationLayer {
         //Get registering response
         RegisterResponseWrapper registerResponse = registration.register(username, password);
         //In every other case, do something.
-        switch (registerResponse.getStatus()) {
+        switch (registerResponse.status) {
             case SUCCES:
                 System.out.println("Registering worked!");
                 break;
@@ -72,7 +72,7 @@ public class PresentationLayer {
                 break;
         }
         //Return the status
-        return registerResponse.getStatus();
+        return registerResponse.status;
     }
 
     public Contact getCurrentUser() {
