@@ -84,7 +84,7 @@ public class MasterGatewayIT {
     // TODO: Tests for when we actually add real nodes & see if the right node is added to master.
     @Test
     public void testGetUpdatedGraphSuccessful() {
-        Assert.assertTrue(gateway.getUpdatedGraph().getLast().newVersion >= gateway.getCurrentGraphVersion());
+        Assert.assertTrue(gateway.getUpdatedGraph(0).getLast().newVersion >= gateway.getCurrentGraphVersion());
     }
 
     /* Get active client group from master server */

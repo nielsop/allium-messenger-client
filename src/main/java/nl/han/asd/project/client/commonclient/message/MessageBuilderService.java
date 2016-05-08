@@ -7,11 +7,9 @@ import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
-import nl.han.asd.project.client.commonclient.node.Node;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.util.ArrayList;
@@ -35,9 +33,6 @@ public class MessageBuilderService implements IMessageBuilder {
         this.messageStore = messageStore;
     }
 
-    public MessageBuilderService(IGetPath pathDeterminationService, IEncrypt cryptographyService) {
-        this.pathDeterminationService = pathDeterminationService;
-	}
 	
     /*public MessageBuilderService(CryptographyService cryptographyService) {
         this.cryptographyService = cryptographyService;

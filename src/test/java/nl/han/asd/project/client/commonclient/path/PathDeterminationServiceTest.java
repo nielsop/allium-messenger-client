@@ -4,7 +4,6 @@ import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 
-import nl.han.asd.project.client.commonclient.node.Node;
 import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.After;
