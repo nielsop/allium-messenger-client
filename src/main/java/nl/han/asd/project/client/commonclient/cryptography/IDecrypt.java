@@ -8,5 +8,5 @@ import com.google.protobuf.ByteString;
  * @since 20-4-2016
  */
 public interface IDecrypt {
-    public ByteString decryptData(ByteString data);
+    ByteString decryptData(ByteString data);
 }

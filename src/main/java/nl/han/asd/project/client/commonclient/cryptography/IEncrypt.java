@@ -3,7 +3,9 @@ package nl.han.asd.project.client.commonclient.cryptography;
 import com.google.protobuf.ByteString;
 
 /**
- * Created by Niels Bokmans on 12-4-2016.
+ * @author Julius
+ * @version 1.0
+ * @since 29/04/16
  */
 public interface IEncrypt {
     ByteString encryptData(ByteString data, byte[] publicKey);

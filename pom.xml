@@ -83,18 +83,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <groups>nl.han.asd.project.client.commonclient.utility.UnitTest</groups>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <groups>nl.han.asd.project.client.commonclient.utility.IntegrationTest</groups>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -155,23 +143,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>nl.han.asd.project</groupId>
-            <artifactId>protocol</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.xebialabs.cloud</groupId>
-            <artifactId>overcast</artifactId>
-            <version>2.4.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>${guice.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.inject.extensions</groupId>
-            <artifactId>guice-assistedinject</artifactId>
             <version>${guice.version}</version>
         </dependency>
         <dependency>
@@ -197,17 +170,12 @@
 
         <!-- unit test dependencies -->
         <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>3.0.0-beta-2</version>
-		</dependency>
-		<dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>${mockito.version}</version>
@@ -225,12 +193,15 @@
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- This dependency may not be neccessary, but it fixed an earlier issue.
-        https://groups.google.com/forum/?fromgroups=#!topic/powermock/LSJ2g-7ws_k -> for explaining what was wrong. -->
-        <!--<dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.20.0-GA</version>
-        </dependency>-->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.0.0-beta-2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xebialabs.cloud</groupId>
+            <artifactId>overcast</artifactId>
+            <version>2.5.1</version>
+        </dependency>
     </dependencies>
 </project>

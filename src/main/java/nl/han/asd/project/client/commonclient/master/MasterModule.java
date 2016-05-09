@@ -13,5 +13,6 @@ public class MasterModule extends AbstractModule {
         bind(IGetUpdatedGraph.class).to(MasterGateway.class);
         bind(IAuthentication.class).to(MasterGateway.class);
         bind(IRegistration.class).to(MasterGateway.class);
+        bind(MasterGateway.class);
     }
 }

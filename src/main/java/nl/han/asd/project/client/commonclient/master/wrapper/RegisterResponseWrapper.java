@@ -8,7 +8,16 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
  * @since 22-4-2016
  */
 public class RegisterResponseWrapper {
+    /**
+     * Stores the status of the register request.
+     */
     public HanRoutingProtocol.ClientRegisterResponse.Status status;
+
+    /**
+     * Creates a new RegisterResponseWrapper request
+     *
+     * @param status The status of the response.
+     */
     public RegisterResponseWrapper(HanRoutingProtocol.ClientRegisterResponse.Status status) {
         this.status = status;
     }

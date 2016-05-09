@@ -9,12 +9,13 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 public class MessageProcessingService implements IReceiveMessage {
     public IMessageStore messageStore;
-    public IDecrypt decrypt;
+
+    //public IMessage message;
+   public IDecrypt decrypt;
 
     @Inject
-    public MessageProcessingService(IMessageStore messageStore, IDecrypt decrypt) {
+    public MessageProcessingService(IMessageStore messageStore) {
         this.messageStore = messageStore;
-        this.decrypt = decrypt;
     }
 
     @Override

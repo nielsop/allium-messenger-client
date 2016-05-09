@@ -1,9 +1,9 @@
 package nl.han.asd.project.client.commonclient.path;
 
 
+import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
-import nl.han.asd.project.client.commonclient.node.Node;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
 import javax.inject.Inject;
@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class PathDeterminationService implements IGetPath {
-    public IGetUpdatedGraph updatedGraph;
+    public IGetUpdatedGraph graphUpdates;
     public IGetClientGroup clientGroup;
 
     @Inject
-    public PathDeterminationService(IGetUpdatedGraph updatedGraph, IGetClientGroup clientGroup) {
-        this.updatedGraph = updatedGraph;
+    public PathDeterminationService(IGetUpdatedGraph graphUpdates, IGetClientGroup clientGroup) {
+        this.graphUpdates = graphUpdates;
         this.clientGroup = clientGroup;
     }
 
@@ -46,8 +46,8 @@ public class PathDeterminationService implements IGetPath {
         ArrayList<Node> path = new ArrayList<Node>();
         path.add(hostConnectedNode);
 
-        for (int i = 1; i < minHops; i++) {
-            path.add(i, new Node());
+        for(int i = 1; i < minHops; i++){
+            path.add(i,new Node("Node_ID1","192.168.2.empty",1234, "123456789".getBytes()));
         }
 
         return path;

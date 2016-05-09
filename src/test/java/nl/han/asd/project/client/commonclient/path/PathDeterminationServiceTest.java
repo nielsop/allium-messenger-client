@@ -1,8 +1,10 @@
 package nl.han.asd.project.client.commonclient.path;
 
+import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
-import nl.han.asd.project.client.commonclient.node.Node;
+
+import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.After;
 import org.junit.Assert;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 public class PathDeterminationServiceTest {
     @Mock
     IGetUpdatedGraph updatedGraphMock;
+
     @Mock
     IGetClientGroup clientGroupMock;
     @InjectMocks
@@ -31,8 +34,8 @@ public class PathDeterminationServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        contact = new Contact("Username", "1234");
-        contact.setConnectedNodes(new Node[]{new Node(), new Node(), new Node(), new Node(), new Node()});
+        contact = new Contact("Username","1234");
+        contact.setConnectedNodes(new Node[]{new Node("NODE_ID_1","192.168.2.8",1234, "123456789".getBytes()),new Node("NODE_ID_2","192.168.2.9",1234,"123456789".getBytes()),new Node("NODE_ID_3","192.168.2.10",1234,"123456789".getBytes())});
     }
 
 
@@ -54,7 +57,7 @@ Checking if generatedPath contains Node objects
  */
     @Test
     public void checkIfGeneratedPathContainsNodes() {
-        Node[] selfMadePath = {new Node(), new Node(), new Node()};
+        Node[] selfMadePath = {new Node("NODE_ID_1","192.168.2.8",1234,"123456789".getBytes()),new Node("NODE_ID_2","192.168.2.9",1234,"123456789".getBytes()),new Node("NODE_ID_3","192.168.2.10",1234,"123456789".getBytes())};
 
         ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
 
@@ -85,6 +88,7 @@ Checking if error is trown when miniumHops is negative number
         }
         Assert.assertTrue(inArray(generatePath.get(0), contactConnectedNodes));
     }
+
 
 //    @Test
 //    public void clientHostConnectedNodesAreUpdatedIfLastUpdateIsExpired() {
