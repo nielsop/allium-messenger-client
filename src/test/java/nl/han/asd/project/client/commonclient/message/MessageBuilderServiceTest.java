@@ -45,11 +45,14 @@ public class MessageBuilderServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,sendMessage,messageStore);
+         pathDeterminationService = new PathDeterminationService(updatedGraphMock, clientGroupMock);
+           messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
     }
 
     @Test
-    public void buildMessage(){
+    public void buildMessage() {
+        //cryptographyService = new CryptographyService();
+        //messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
     }
 
     @Test

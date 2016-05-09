@@ -13,7 +13,7 @@ public class CryptographyServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        cryptographyService = new CryptographyService();
+        //cryptographyService = new CryptographyService();
     }
 
     @After

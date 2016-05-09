@@ -83,18 +83,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <groups>nl.han.asd.project.client.commonclient.utility.UnitTest</groups>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <groups>nl.han.asd.project.client.commonclient.utility.IntegrationTest</groups>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
