@@ -2,16 +2,17 @@ package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
-import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
+import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
-import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -19,9 +20,9 @@ public class MessageBuilderService implements IMessageBuilder {
     public IGetPath getPath;
     public ISendMessage sendMessage;
     public IMessageStore messageStore;
-	
+    protected ConnectionService connectionService = null;
+
     public IEncrypt encrypt;
-    public IDecrypt decrypt;
     public CryptographyService cryptographyService;
     private int MIN_HOPS = 3;
 
@@ -33,11 +34,6 @@ public class MessageBuilderService implements IMessageBuilder {
         this.messageStore = messageStore;
     }
 
-	
-    /*public MessageBuilderService(CryptographyService cryptographyService) {
-        this.cryptographyService = cryptographyService;
-    }*/
-
     public void sendMessage(String messageText, Contact contactReciever, Contact contactSender) {
         EncryptedMessage messageToSend = buildMessagePackage(messageText, contactReciever, contactSender);
 
@@ -45,8 +41,12 @@ public class MessageBuilderService implements IMessageBuilder {
 
         builder.setEncryptedData(messageToSend.getEncryptedData());
 
-        // verzenden die handel
-
+        connectionService = new ConnectionService(messageToSend.getPublicKey());
+        try {
+            connectionService.open(messageToSend.getIP(),messageToSend.getPort());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private EncryptedMessage buildMessagePackage(String messageText, Contact contactReciever, Contact contactSender) {
@@ -77,7 +77,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
     
     private EncryptedMessage buildLastMessagePackageLayer(Node node, ByteString data) {
-        return new EncryptedMessage(null, node.getIP(), node.getPort(), data);
+        return new EncryptedMessage(null, node.getIP(), node.getPort(),node.getPublicKey(), data);
     }
 
     private ByteString buildMessagePackageLayer(ByteString message, ArrayList<Node> remainingPath){

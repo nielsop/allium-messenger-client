@@ -6,16 +6,19 @@ import com.google.protobuf.ByteString;
  * Created by Marius on 25-04-16.
  */
 public class EncryptedMessage {
-    private String username;
-    private String IP;
-    private int port;
-    private ByteString encryptedData;
 
-    public EncryptedMessage(String username, String IP, int port, ByteString encryptedData) {
+    private final byte[] publicKey;
+    private final String username;
+    private final String IP;
+    private final int port;
+    private final ByteString encryptedData;
+
+    public EncryptedMessage(String username, String IP, int port, byte[] publicKey ,ByteString encryptedData) {
         this.username = username;
         this.IP = IP;
         this.port = port;
         this.encryptedData = encryptedData;
+        this.publicKey = publicKey;
     }
 
     public String getUsername() {
@@ -32,5 +35,9 @@ public class EncryptedMessage {
 
     public ByteString getEncryptedData() {
         return encryptedData;
+    }
+
+    public byte[] getPublicKey() {
+        return publicKey;
     }
 }
