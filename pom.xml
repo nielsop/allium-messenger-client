@@ -90,6 +90,9 @@
                 <configuration>
                     <destFile>${basedir}/target/jacoco.exec</destFile>
                     <dataFile>${basedir}/target/jacoco.exec</dataFile>
+                    <excludes>
+                        <exclude>**/*gui.*</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
