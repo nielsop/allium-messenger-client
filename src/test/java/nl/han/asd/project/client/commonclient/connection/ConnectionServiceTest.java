@@ -137,7 +137,6 @@ public class ConnectionServiceTest implements IConnectionService {
 
     @Test public void TestConnectedState() throws IOException {
         connectionService.close();
-
         assertEquals(false, connectionService.isConnected());
     }
 
