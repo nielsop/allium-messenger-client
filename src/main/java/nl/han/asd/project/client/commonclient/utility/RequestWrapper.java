@@ -3,6 +3,8 @@ package nl.han.asd.project.client.commonclient.utility;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -18,6 +20,7 @@ public class RequestWrapper {
 
     private GeneratedMessage message;
     private Socket socket;
+    private static final Logger logger = LoggerFactory.getLogger(RequestWrapper.class);
 
     /**
      * Creates a new request wrapper. Will automatically transform the request into an encrypted request.
@@ -26,8 +29,10 @@ public class RequestWrapper {
      * @param requestType The request type.
      * @param socket The socket to write to and read from.
      */
-    public RequestWrapper(final GeneratedMessage message, final HanRoutingProtocol.EncryptedWrapper.Type requestType, final Socket socket) {
-        this.message = HanRoutingProtocol.EncryptedWrapper.newBuilder().setType(requestType).setData(message.toByteString()).build();
+    public RequestWrapper(final GeneratedMessage message, final HanRoutingProtocol.EncryptedWrapper.Type requestType,
+            final Socket socket) {
+        this.message = HanRoutingProtocol.EncryptedWrapper.newBuilder().setType(requestType)
+                .setData(message.toByteString()).build();
         this.socket = socket;
     }
 
@@ -39,19 +44,20 @@ public class RequestWrapper {
                 return parseFrom(classDescriptor, response.getData().toByteArray());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return null;
     }
 
-    private <T extends GeneratedMessage> T parseFrom(Class<T> classDescriptor, byte[] data) throws SocketException, InvalidProtocolBufferException {
+    private <T extends GeneratedMessage> T parseFrom(Class<T> classDescriptor, byte[] data)
+            throws SocketException, InvalidProtocolBufferException {
         try {
             Field defaultInstanceField = classDescriptor.getDeclaredField("DEFAULT_INSTANCE");
             defaultInstanceField.setAccessible(true);
             T defaultInstance = (T) defaultInstanceField.get(null);
             return (T) defaultInstance.getParserForType().parseFrom(data);
         } catch (IllegalAccessException | IOException e) {
-            // return null
+            logger.error(e.getMessage(), e);
         } catch (NoSuchFieldException e) {
             throw new InvalidProtocolBufferException("Invalid class provided.");
         }
@@ -62,7 +68,7 @@ public class RequestWrapper {
         try {
             message.writeDelimitedTo(socket.getOutputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 }
