@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.master;
 
 import com.google.inject.Inject;
+import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
@@ -15,19 +16,15 @@ import java.net.Socket;
 import java.util.Base64;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
-
     //TODO: missing: IWebService from Master
 
     private static int currentGraphVersion = -1;
     private ConnectionService connectionService;
     private Socket socket;
-    private String hostname;
-    private int port;
-
     private IEncryptionService encryptionService;
 
     @Inject
-    public MasterGateway(IEncryptionService encryptionService) {
+    public MasterGateway(String hostname, int port, IEncryptionService encryptionService) {
         this.encryptionService = encryptionService;
 
         try {
@@ -127,7 +124,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             connectionService = new ConnectionService(new byte[]{0x00});
         }
         try {
-            connectionService.open(hostname, port);
+            connectionService.open(Configuration.HOSTNAME, Configuration.PORT);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
