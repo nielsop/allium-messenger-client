@@ -18,6 +18,8 @@ import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboar
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneSettings;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.auth.PaneLogin;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.auth.PaneRegister;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GUI extends Application {
     private Stage stage;
@@ -31,6 +33,8 @@ public class GUI extends Application {
     public enum Page {
         LOGIN, REGISTER, DASHBOARD, CONTACTS, CHAT, SETTINGS, CONFIRMATION
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(GUI.class);
 
     public static void main(String[] args) {
         launch(args);
@@ -47,7 +51,7 @@ public class GUI extends Application {
             stage.setMinHeight(360);
             setStage(Page.LOGIN);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
         }
     }
 

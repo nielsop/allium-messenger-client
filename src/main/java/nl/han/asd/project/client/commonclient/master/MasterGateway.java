@@ -10,6 +10,8 @@ import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphRespons
 import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -22,6 +24,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     private ConnectionService connectionService;
     private Socket socket;
     private IEncryptionService encryptionService;
+    public static final Logger logger = LoggerFactory.getLogger(MasterGateway.class);
 
     @Inject
     public MasterGateway(String hostname, int port, IEncryptionService encryptionService) {
@@ -30,7 +33,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         try {
             socket = new Socket(hostname, port);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -125,8 +128,8 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         }
         try {
             connectionService.open(Configuration.HOSTNAME, Configuration.PORT);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -147,7 +150,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             try {
                 connectionService.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
     }

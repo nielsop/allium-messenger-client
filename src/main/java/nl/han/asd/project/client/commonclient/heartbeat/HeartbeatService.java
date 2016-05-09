@@ -6,6 +6,8 @@ import nl.han.asd.project.client.commonclient.connection.IConnectionService;
 import nl.han.asd.project.client.commonclient.connection.UnpackedMessage;
 import nl.han.asd.project.client.commonclient.master.IHeartbeat;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -14,6 +16,8 @@ public class HeartbeatService implements IConnectionService {
     public IHeartbeat heartbeat;
     protected volatile boolean isRunning = true;
     protected ConnectionService connectionService = null;
+
+    private static final Logger logger = LoggerFactory.getLogger(HeartbeatService.class);
 
     public HeartbeatService(String hostName, int portNumber) throws IOException {
         //connectionService = new ConnectionService((IConnectionService) this);
@@ -32,7 +36,7 @@ public class HeartbeatService implements IConnectionService {
                     connectionService.write(builder);
                     Thread.sleep(25);
                 } catch (InterruptedException | SocketException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                 }
             }
         };
@@ -52,7 +56,7 @@ public class HeartbeatService implements IConnectionService {
             // or:
             //HanRoutingProtocol.ClientHeartbeat clientHeartbeat = message.getDataMessage().getParserForType().parseFrom(message.getData());
         } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 }
