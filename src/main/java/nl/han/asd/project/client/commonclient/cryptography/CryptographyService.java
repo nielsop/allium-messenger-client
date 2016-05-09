@@ -4,8 +4,6 @@ import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 
-import java.nio.charset.StandardCharsets;
-
 /**
  * @author Niels Bokmans
  * @version 1.0
@@ -42,12 +40,11 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
      */
     @Override
     public ByteString encryptData(ByteString data, byte[] publicKey) {
-        return null;
-     //   return ByteString.copyFrom(encryptionService.encryptData(publicKey, data.toByteArray()));
+//       return ByteString.copyFrom(encryptionService.encryptData(publicKey, data.toByteArray()));
+    return data;
     }
 	
     public byte[] getPublicKey() {
-    //    return encryptionService.getPublicKey();
-        return null;
+       return encryptionService.getPublicKey();
     }
 }

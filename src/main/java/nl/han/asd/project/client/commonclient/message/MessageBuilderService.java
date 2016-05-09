@@ -1,6 +1,8 @@
 package nl.han.asd.project.client.commonclient.message;
 
+import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
@@ -10,6 +12,8 @@ import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.IOException;
@@ -32,9 +36,12 @@ public class MessageBuilderService implements IMessageBuilder {
         this.encrypt = encrypt;
         this.sendMessage = sendMessage;
         this.messageStore = messageStore;
+        final Injector injector = Guice.createInjector(new EncryptionModule());
+        cryptographyService = new CryptographyService(injector.getInstance(IEncryptionService.class));
     }
 
     public void sendMessage(String messageText, Contact contactReciever, Contact contactSender) {
+        //check if contactReciever contains latest data from master server.
         EncryptedMessage messageToSend = buildMessagePackage(messageText, contactReciever, contactSender);
 
         HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
@@ -44,6 +51,7 @@ public class MessageBuilderService implements IMessageBuilder {
         connectionService = new ConnectionService(messageToSend.getPublicKey());
         try {
             connectionService.open(messageToSend.getIP(),messageToSend.getPort());
+            connectionService.write(builder);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,7 +61,7 @@ public class MessageBuilderService implements IMessageBuilder {
         ArrayList<Node> path = getPath.getPath(MIN_HOPS, contactReciever);
 
         Message message = new Message(messageText, contactSender, contactReciever);
-
+        //kijken of path of die nodes bevat anders gooi exep
         ByteString firstLayer = buildFirstMessagePackageLayer(path.get(0), message);
         path.remove(0);
         return buildLastMessagePackageLayer(path.get(path.size()-1),buildMessagePackageLayer(firstLayer,path));
