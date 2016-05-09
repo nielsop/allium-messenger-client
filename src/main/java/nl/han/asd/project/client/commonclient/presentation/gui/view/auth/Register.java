@@ -16,12 +16,12 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 /**
  * Created by Marius on 19-04-16.
  */
-public class PaneRegister {
+public class Register {
     GridPane gridPane = null;
 
-    public PaneRegister(GUI gui) {
+    public Register(GUI gui) {
         //Set gridPane
-        gridPane = Pane.getGridPane(Pos.CENTER, new int[]{25, 25, 25, 25});
+        gridPane = Pane.getGridPane(Pos.CENTER, new int[] { 25, 25, 25, 25 });
         Text title = new Text("Welcome to the onion messenger");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
 
@@ -52,8 +52,10 @@ public class PaneRegister {
         gridPane.add(status, 1, 6);
 
         registerButton.setOnAction(e -> {
-            if (usernameField.getText().length() < 3) status.setText("Username is too short!");
-            else if (passwordField.getText().length() < 3) status.setText("Password is too short!");
+            if (usernameField.getText().length() < 3)
+                status.setText("Username is too short!");
+            else if (passwordField.getText().length() < 3)
+                status.setText("Password is too short!");
             else if (!passwordField.getText().equals(passwordRepeatField.getText()))
                 status.setText("The passwords are not the same!");
             else {
@@ -61,7 +63,8 @@ public class PaneRegister {
                     HanRoutingProtocol.ClientRegisterResponse.Status registerResponseStatus = gui.pLayer.register(usernameField.getText(), passwordField.getText());
                     if (registerResponseStatus == registerResponseStatus.SUCCES)
                         status.setText("Registration successful!");
-                    else if (registerResponseStatus == registerResponseStatus.FAILED) status.setText("Error!");
+                    else if (registerResponseStatus == registerResponseStatus.FAILED)
+                        status.setText("Error!");
                     else if (registerResponseStatus == registerResponseStatus.TAKEN_USERNAME)
                         status.setText("Error! Chose another username.");
                 } catch (Exception ex) {

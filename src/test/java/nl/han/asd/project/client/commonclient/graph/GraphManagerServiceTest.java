@@ -4,13 +4,11 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
-import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import org.junit.*;
 import org.junit.rules.Timeout;
-import org.mockito.Mock;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -21,7 +19,7 @@ import java.net.Socket;
 public class GraphManagerServiceTest {
 
     private GraphManagerService graphManagerService;
-private CloudHost master;
+    private CloudHost master;
 
     @Rule
     public Timeout globalTimeout = Timeout.seconds(10);
@@ -45,8 +43,8 @@ private CloudHost master;
                 e.printStackTrace();
             }
         }
-        MasterGateway gateway = new MasterGateway(master.getHostName(), master.getPort(1337), injector.getInstance(
-                IEncryptionService.class));
+        MasterGateway gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
+        gateway.setConnectionData(master.getHostName(), master.getPort(1337));
         graphManagerService = new GraphManagerService(gateway);
     }
 
@@ -57,7 +55,7 @@ private CloudHost master;
 
     @Test
     public void testCheckGraphVersion() throws Exception {
-//        graphManagerService.processGraphUpdates();
+        //        graphManagerService.processGraphUpdates();
         Assert.assertEquals(1, 1); //TODO: testcase afmaken
     }
 }

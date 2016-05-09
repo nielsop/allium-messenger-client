@@ -13,11 +13,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.presentation.PresentationLayer;
+import nl.han.asd.project.client.commonclient.presentation.gui.controller.auth.LoginController;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneConfirmation;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboard;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneSettings;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.auth.PaneLogin;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.auth.PaneRegister;
+import nl.han.asd.project.client.commonclient.presentation.gui.view.auth.Register;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,10 +58,10 @@ public class GUI extends Application {
     public void setStage(Page page) {
         switch (page) {
             case LOGIN:
-                scene = buildScene(new PaneLogin(this).getGridPane());
+                scene = buildScene(new LoginController(this).getGridPane());
                 break;
             case REGISTER:
-                scene = buildScene(new PaneRegister(this).getGridPane());
+                scene = buildScene(new Register(this).getGridPane());
                 break;
             case DASHBOARD:
                 scene = buildScene(new PaneDashboard(this).getBorderPane());
@@ -73,7 +73,7 @@ public class GUI extends Application {
                 scene = buildScene(new PaneConfirmation(this).getPane());
                 break;
             default:
-                scene = buildScene(new PaneLogin(this).getGridPane());
+                scene = buildScene(new LoginController(this).getGridPane());
                 break;
         }
         stage.setScene(scene);
@@ -81,8 +81,10 @@ public class GUI extends Application {
     }
 
     private Scene buildScene(Parent pane) {
-        if (scene != null) return new Scene(pane, scene.getWidth(), scene.getHeight());
-        else return new Scene(pane);
+        if (scene != null)
+            return new Scene(pane, scene.getWidth(), scene.getHeight());
+        else
+            return new Scene(pane);
     }
 
     @Inject
