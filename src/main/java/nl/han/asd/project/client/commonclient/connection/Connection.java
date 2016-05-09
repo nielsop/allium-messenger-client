@@ -1,5 +1,9 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+/**
+ * Created by Marius on 25-04-16.
+ */
+
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
@@ -12,6 +16,8 @@ import java.util.Arrays;
 
 /**
  * Provides basic socket operations used solely by the ConnectionService.
+ *
+ * @author Jevgeni Geursten
  */
 public class Connection {
     private volatile boolean isRunning;

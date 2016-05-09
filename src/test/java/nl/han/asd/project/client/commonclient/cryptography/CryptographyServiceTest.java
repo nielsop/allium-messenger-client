@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.cryptography;
 
 import com.google.protobuf.ByteString;
+import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

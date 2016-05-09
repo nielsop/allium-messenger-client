@@ -3,7 +3,6 @@ package nl.han.asd.project.client.commonclient.connection;
 import com.google.protobuf.ByteString;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import jdk.internal.org.objectweb.asm.Handle;
@@ -17,6 +16,8 @@ import java.net.SocketException;
 
 /**
  * Provides a connection service using sockets such as reading and writing data.
+ *
+ * @author Jevgeni Geurtsen
  */
 public final class ConnectionService implements IConnectionPipe {
     private final static int DEFAULT_SLEEP_TIME = 25; // 25ms

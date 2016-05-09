@@ -1,8 +1,6 @@
 package nl.han.asd.project.client.commonclient.master;
 
 import com.google.inject.Inject;
-import com.google.protobuf.GeneratedMessage;
-import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
@@ -14,7 +12,7 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
+import java.util.Base64;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
 
@@ -59,9 +57,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     }
 
     @Override
-    public UpdatedGraphResponseWrapper getUpdatedGraph() {
+    public UpdatedGraphResponseWrapper getUpdatedGraph(int version) {
         HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder()
-                .setCurrentVersion(getCurrentGraphVersion()).build();
+                .setCurrentVersion(version).build();
         RequestWrapper req = new RequestWrapper(graphUpdateRequest, HanRoutingProtocol.EncryptedWrapper.Type.GRAPHUPDATEREQUEST, socket);
 
         HanRoutingProtocol.GraphUpdateResponse response = req.writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class);

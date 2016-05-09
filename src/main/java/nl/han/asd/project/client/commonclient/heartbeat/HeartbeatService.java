@@ -16,6 +16,7 @@ public class HeartbeatService implements IConnectionService {
     protected ConnectionService connectionService = null;
 
     public HeartbeatService(String hostName, int portNumber) throws IOException {
+        //connectionService = new ConnectionService((IConnectionService) this);
         connectionService = new ConnectionService(new byte[] { 0x00 }, this);
         connectionService.open(hostName, portNumber);
     }

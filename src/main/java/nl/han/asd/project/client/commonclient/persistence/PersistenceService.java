@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-
 import nl.han.asd.project.client.commonclient.database.IDatabase;
 
 import javax.inject.Inject;

@@ -3,6 +3,8 @@ package nl.han.asd.project.client.commonclient.path;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
+
+import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.After;
 import org.junit.Assert;
@@ -86,6 +88,7 @@ Checking if error is trown when miniumHops is negative number
         }
         Assert.assertTrue(inArray(generatePath.get(0), contactConnectedNodes));
     }
+
 
 //    @Test
 //    public void clientHostConnectedNodesAreUpdatedIfLastUpdateIsExpired() {

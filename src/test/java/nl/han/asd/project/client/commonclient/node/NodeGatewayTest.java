@@ -1,11 +1,9 @@
 package nl.han.asd.project.client.commonclient.node;
 
-import nl.han.asd.project.client.commonclient.utility.IntegrationTest;
+import nl.han.asd.project.client.commonclient.node.NodeGateway;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 /**
  * Created by Julius on 18/04/16.
  */
@@ -22,7 +20,6 @@ public class NodeGatewayTest {
     }
 
     @Test
-    @Category(IntegrationTest.class)
     public void sendMessageTest() {
     }
 

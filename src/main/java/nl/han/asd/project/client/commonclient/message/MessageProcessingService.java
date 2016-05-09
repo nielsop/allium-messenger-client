@@ -1,12 +1,9 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
-<<<<<<< HEAD
-=======
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
->>>>>>> 7712f05574e65cc2b80d70093f612d03fab479a8
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 

@@ -14,5 +14,6 @@ public class LoginModule extends AbstractModule {
     protected void configure() {
         bind(IAuthentication.class).to(MasterGateway.class);
         bind(ISetConnectedNodes.class).to(NodeConnectionService.class);
+        bind(ILogin.class).to(LoginService.class);
     }
 }
