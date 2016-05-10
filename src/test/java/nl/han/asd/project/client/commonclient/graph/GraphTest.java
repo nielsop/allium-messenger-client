@@ -62,7 +62,7 @@ public class GraphTest {
         Assert.assertTrue(nodeVertex != null);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testExeptionWhenGetVertexMapSizeCantFindVertex() {
         HanRoutingProtocol.Node node = HanRoutingProtocol.Node.newBuilder().setPort(1337).setIPaddress("192.168.2.1")
                 .setId("NODE_1").setPublicKey("12345").build();
