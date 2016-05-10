@@ -52,7 +52,7 @@ public class DashboardController {
     }
 
     public Contact getMe() {
-        return model.getMe();
+        return model.getCurrentUser();
     }
 
     public ArrayList<Contact> getContacts() {

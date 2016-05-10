@@ -11,20 +11,20 @@ import java.util.ArrayList;
  */
 public class DashboardModel {
     private GUI gui;
-    private Contact me;
+    private Contact currentUser;
     private ArrayList<Contact> contacts;
 
     public DashboardModel(GUI gui) {
         this.gui = gui;
-        me = gui.pLayer.getCurrentUser();
+        currentUser = gui.pLayer.getCurrentUser();
     }
 
     public GUI getGUI() {
         return gui;
     }
 
-    public Contact getMe() {
-        return me;
+    public Contact getCurrentUser() {
+        return currentUser;
     }
 
     public ArrayList<Message> getMessages(Contact contact) {

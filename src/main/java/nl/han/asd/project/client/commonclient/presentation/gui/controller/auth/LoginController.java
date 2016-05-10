@@ -4,7 +4,6 @@ import javafx.scene.layout.GridPane;
 import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.model.auth.LoginModel;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.auth.LoginView;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 /**
  * Created by Kenny on 9-5-2016.
@@ -26,8 +25,16 @@ public class LoginController {
             else if (view.getPassword().length() < 8)
                 view.setStatus("Password is too short!");
             else {
-                if (model.getLoginStatus(view.getUsername(), view.getPassword()) == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-                    model.setStage(GUI.Page.DASHBOARD);
+                switch(model.getLoginStatus(view.getUsername(), view.getPassword())) {
+                    case SUCCES:
+                        model.setStage(GUI.Page.DASHBOARD);
+                        break;
+                    case INVALID_COMBINATION:
+                        view.setStatus("Username or password is incorrect!");
+                        break;
+                    case FAILED:
+                        view.setStatus("Error while logging in, please try again!");
+                        break;
                 }
             }
         });
