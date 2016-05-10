@@ -6,9 +6,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneFactory;
+import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
 
-import static nl.han.asd.project.client.commonclient.presentation.gui.view.PaneFactory.*;
+import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.*;
 
 /**
  * Created by Marius on 25-04-16.

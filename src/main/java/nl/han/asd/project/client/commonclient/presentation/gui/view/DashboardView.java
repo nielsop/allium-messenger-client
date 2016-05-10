@@ -2,6 +2,7 @@ package nl.han.asd.project.client.commonclient.presentation.gui.view;
 
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
 
 /**
  * Created by Marius on 25-04-16.

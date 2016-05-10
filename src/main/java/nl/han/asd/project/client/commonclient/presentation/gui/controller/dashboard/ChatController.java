@@ -12,8 +12,8 @@ import nl.han.asd.project.client.commonclient.presentation.gui.model.dashboard.C
 import nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard.ChatView;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-import static nl.han.asd.project.client.commonclient.presentation.gui.view.PaneFactory.getHBox;
-import static nl.han.asd.project.client.commonclient.presentation.gui.view.PaneFactory.getVBox;
+import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.getHBox;
+import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.getVBox;
 
 /**
  * Created by Marius on 25-04-16.
@@ -22,7 +22,6 @@ public class ChatController {
     private ChatModel model;
     private ChatView view;
     private boolean scrollFix = false;
-    private HBox current;
 
     public ChatController(DashboardController dashboardController) {
         model = new ChatModel(dashboardController);
@@ -77,15 +76,15 @@ public class ChatController {
 
     private void setHBoxMouseEvents(HBox hBox) {
         hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            if (current != null) current.setStyle("-fx-background-color: #EEE;");
-            hBox.setStyle("-fx-background-color: #DDD;");
-            current = hBox;
+            view.setSelectedMessage(hBox);
+
         });
         hBox.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-            hBox.setStyle("-fx-background-color: #DDD;");
+            view.setEnteredMessage(hBox); //Entered = hovered
+
         });
         hBox.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-            if (hBox != current) hBox.setStyle("-fx-background-color: #EEE;");
+            view.setExitedMessage(hBox); //Exited = no longer hovered
         });
     }
 

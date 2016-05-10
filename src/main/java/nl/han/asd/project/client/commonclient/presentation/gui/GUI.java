@@ -49,13 +49,13 @@ public class GUI extends Application {
             stage.setTitle("Ui Berichter");
             stage.setMinWidth(640);
             stage.setMinHeight(360);
-            setStage(Page.LOGIN);
+            setScene(Page.LOGIN);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
     }
 
-    public void setStage(Page page) {
+    public void setScene(Page page) {
         switch (page) {
             case LOGIN:
                 scene = buildScene(new LoginController(this).getGridPane());

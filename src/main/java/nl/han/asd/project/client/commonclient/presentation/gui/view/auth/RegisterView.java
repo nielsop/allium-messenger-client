@@ -9,7 +9,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneFactory;
+import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
 
 /**
  * Created by Marius on 19-04-16.

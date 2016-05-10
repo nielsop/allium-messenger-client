@@ -7,10 +7,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneFactory;
+import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
 
-import static nl.han.asd.project.client.commonclient.presentation.gui.view.PaneFactory.getHBox;
-import static nl.han.asd.project.client.commonclient.presentation.gui.view.PaneFactory.getScrollPane;
+import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.getHBox;
+import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.getScrollPane;
 
 /**
  * Created by Marius on 25-04-16.
@@ -22,6 +22,7 @@ public class ChatView {
     private BorderPane bottom = getBottom();
     private TextArea newMessage;
     private Button sendNewMessage;
+    private HBox current;
 
     public ChatView() {
         borderPane = PaneFactory.getBorderPane(new int[]{0, 0, 0, 0});
@@ -102,5 +103,19 @@ public class ChatView {
 
     public VBox getChatContent() {
         return (VBox) center.getContent();
+    }
+
+    public void setSelectedMessage(HBox hBox) {
+        if (current != null) current.setStyle("-fx-background-color: #EEE;");
+        hBox.setStyle("-fx-background-color: #DDD;");
+        current = hBox;
+    }
+
+    public void setEnteredMessage(HBox hBox) {
+        hBox.setStyle("-fx-background-color: #DDD;");
+    }
+
+    public void setExitedMessage(HBox hBox) {
+        if (hBox != current) hBox.setStyle("-fx-background-color: #EEE;");
     }
 }

@@ -2,7 +2,7 @@ package nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneFactory;
+import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
 
 /**
  * Created by Marius on 26-04-16.

@@ -9,7 +9,7 @@ import nl.han.asd.project.client.commonclient.presentation.gui.model.dashboard.C
 import nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard.ContactView;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-import static nl.han.asd.project.client.commonclient.presentation.gui.view.PaneFactory.getHBox;
+import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.getHBox;
 
 /**
  * Created by Marius on 25-04-16.

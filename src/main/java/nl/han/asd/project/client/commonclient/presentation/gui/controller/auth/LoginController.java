@@ -21,13 +21,13 @@ public class LoginController {
     private void onActions() {
         view.getLoginButton().setOnAction(e -> {
             if (view.getUsername().length() < 3)
-                view.setStatus("Username is too short!");
+                view.setStatus("Username is too short! At least 3 characters.");
             else if (view.getPassword().length() < 8)
-                view.setStatus("Password is too short!");
+                view.setStatus("Password is too short! At least 8 characters.");
             else {
                 switch(model.getLoginStatus(view.getUsername(), view.getPassword())) {
                     case SUCCES:
-                        model.setStage(GUI.Page.DASHBOARD);
+                        setStage(GUI.Page.DASHBOARD);
                         break;
                     case INVALID_COMBINATION:
                         view.setStatus("Username or password is incorrect!");
@@ -39,11 +39,15 @@ public class LoginController {
             }
         });
 
-        view.getRegisterButton().setOnAction(e -> model.setStage(GUI.Page.REGISTER));
+        view.getRegisterButton().setOnAction(e -> setStage(GUI.Page.REGISTER));
     }
 
     public GridPane getGridPane() {
         return view.getGridPane();
+    }
+
+    public void setStage(GUI.Page stage) {
+        model.getGUI().setScene(stage);
     }
 
 }

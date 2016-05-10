@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.presentation.gui.view;
+package nl.han.asd.project.client.commonclient.presentation.gui;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,7 +10,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 
 /**
  * Created by Marius on 19-04-16.

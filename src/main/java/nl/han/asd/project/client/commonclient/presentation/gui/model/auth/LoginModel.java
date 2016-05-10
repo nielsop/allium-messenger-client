@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.presentation.gui.model.auth;
 
-import com.amazonaws.services.elasticache.model.SourceType;
 import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
@@ -18,7 +17,7 @@ public class LoginModel {
         return gui.pLayer.login(username, password);
     }
 
-    public void setStage(GUI.Page stage) {
-        gui.setStage(stage);
+    public GUI getGUI() {
+        return gui;
     }
 }
