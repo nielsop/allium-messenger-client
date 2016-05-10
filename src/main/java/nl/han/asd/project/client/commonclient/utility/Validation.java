@@ -4,8 +4,9 @@ package nl.han.asd.project.client.commonclient.utility;
  * Created by Marius on 25-04-16.
  */
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.apache.http.conn.util.InetAddressUtils;
+
+import static org.apache.http.conn.util.InetAddressUtils.*;
 
 /**
  * Provides validation methods.
@@ -14,49 +15,21 @@ public class Validation {
 
     private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]*";
 
+//    private Validation(){
+//
+//    }
+
     /**
-     * Validates the given IP4 address.
-     * When the IP4 isn't valid this function will throw an error.
      *
-     * @param address Address to validate.
+     * @param address
+     * @return
      */
-    public static void validateAddress(String address) {
-        //Address may not be null
-        if (address == null)
-            throw new NullPointerException(
-                    "Invalid adress; adress may not be null.");
-        if (!address.equalsIgnoreCase("localhost")) {
-            //IP regular expression
-            String ipPattern = "^([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$";
-            //Create pattern object
-            int[] addressAsArray = new int[4];
-            Pattern r = Pattern.compile(ipPattern);
-            //Create matcher object
-            Matcher m = r.matcher(address);
-            //Check if match is found
-            if (m.find()) {
-                for (int i = 1; i < 5; i++) {
-                    //Parse every group to int
-                    int ipGroup = Integer.parseInt(m.group(i));
-                    //Check if first value is not 0.
-                    if (i == 1 && ipGroup == 0)
-                        throw new IllegalArgumentException(
-                                "First value may not be 0.");
-                    //Check if at least one group is greater than 254
-                    if (ipGroup > 254)
-                        throw new IllegalArgumentException(
-                                "One of the IP-values is greater than 254.");
-                        //If all values are correct, put the values in an array => [xxx, xxx, xxx, xxx]
-                    else
-                        addressAsArray[i - 1] = ipGroup;
-                }
-            }
-            //No match found
-            else {
-                throw new IllegalArgumentException(
-                        "IP format is not valid. Must be xxx.xxx.xxx.xxx");
-            }
+    public static boolean validateAddress(String address) {
+
+        if(isIPv4Address(address) || isIPv6Address(address) || isIPv6StdAddress(address) || isIPv6HexCompressedAddress(address)){
+            return true;
         }
+        else return false;
     }
 
     /**
