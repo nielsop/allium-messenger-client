@@ -15,11 +15,6 @@ import java.util.Properties;
 public class Configuration {
 
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
-    private static final int DEFAULT_PORT = 32992;
-    private static final String DEFAULT_HOSTNAME = "195.169.194.234";
-
-    public static int port = DEFAULT_PORT;
-    public static String hostname = DEFAULT_HOSTNAME;
 
     /**
      * Private constructor to prevent instantiation.

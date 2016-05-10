@@ -25,7 +25,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     private ConnectionService connectionService;
     private Socket socket;
     private IEncryptionService encryptionService;
-    private String hostname = Configuration.hostname;
+    private String hostname = Configuration.getHostname();
     private int port = Configuration.getPort();
 
     @Inject
