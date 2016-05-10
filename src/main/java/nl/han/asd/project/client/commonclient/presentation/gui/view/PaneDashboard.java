@@ -1,7 +1,6 @@
 package nl.han.asd.project.client.commonclient.presentation.gui.view;
 
 import javafx.scene.layout.BorderPane;
-import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard.PaneChat;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard.PaneContacts;
@@ -30,7 +29,7 @@ public class PaneDashboard {
         paneContacts = new PaneContacts(this);
         paneChat = new PaneChat(this);
 
-        borderPane = Pane.getBorderPane(new int[]{0, 0, 0, 0});
+        borderPane = Pane.getBorderPane(new int[] { 0, 0, 0, 0 });
         borderPane.setStyle("-fx-background-color: #FFF; -fx-background: #FFF;");
         borderPane.setTop(paneNav.getHBox());
         borderPane.setLeft(paneContacts.getBorderPane());
@@ -61,15 +60,4 @@ public class PaneDashboard {
         return me;
     }
 
-//    public ArrayList<Message> getMessages(Contact contact) {
-//        return gui.pLayer.getMessages(contact);
-//    }
-//
-//    public ArrayList<Contact> getContacts() {
-//        return gui.pLayer.getContacts();
-//    }
-//
-//    public void sendMessage(Message message) {
-//        gui.pLayer.sendMessage(message);
-//    }
 }

@@ -5,5 +5,6 @@ package nl.han.asd.project.client.commonclient.connection;
  */
 public class PackerException extends RuntimeException {
 
-    public PackerException(Exception exception) { }
+    public PackerException(Exception exception) {
+    }
 }

@@ -18,11 +18,10 @@ import java.net.Socket;
  */
 public class GraphManagerServiceTest {
 
-    private GraphManagerService graphManagerService;
-    private CloudHost master;
-
     @Rule
     public Timeout globalTimeout = Timeout.seconds(10);
+    private GraphManagerService graphManagerService;
+    private CloudHost master;
 
     @Before
     public void setUp() throws Exception {

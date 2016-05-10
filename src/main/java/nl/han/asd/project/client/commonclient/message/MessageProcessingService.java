@@ -10,8 +10,7 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 public class MessageProcessingService implements IReceiveMessage {
     public IMessageStore messageStore;
 
-    //public IMessage message;
-   public IDecrypt decrypt;
+    public IDecrypt decrypt;
 
     @Inject
     public MessageProcessingService(IMessageStore messageStore) {
@@ -24,7 +23,7 @@ public class MessageProcessingService implements IReceiveMessage {
         messageStore.addMessage(message);
     }
 
-    private HanRoutingProtocol.Message decryptEncryptedMessage(HanRoutingProtocol.MessageWrapper encryptedMessage){
+    private HanRoutingProtocol.Message decryptEncryptedMessage(HanRoutingProtocol.MessageWrapper encryptedMessage) {
         ByteString messageBuffer = decrypt.decryptData(encryptedMessage.getEncryptedData());
         HanRoutingProtocol.Message message = null;
         try {
@@ -35,8 +34,5 @@ public class MessageProcessingService implements IReceiveMessage {
         return message;
     }
 
-    //TODO
-    /*public nl.han.asd.project.client.commonclient.message.EncryptedMessage peelMessagePacket(Object messagePacket) {
-        return nl.han.asd.project.client.commonclient.message.EncryptedMessage.parseFrom(messagePacket);
-    }*/
+    //TODO peelMessagePacket / Pakket uitpakken
 }

@@ -13,14 +13,12 @@ import java.io.IOException;
 import java.net.SocketException;
 
 public class HeartbeatService implements IConnectionService {
+    private static final Logger logger = LoggerFactory.getLogger(HeartbeatService.class);
     public IHeartbeat heartbeat;
     protected volatile boolean isRunning = true;
     protected ConnectionService connectionService = null;
 
-    private static final Logger logger = LoggerFactory.getLogger(HeartbeatService.class);
-
     public HeartbeatService(String hostName, int portNumber) throws IOException {
-        //connectionService = new ConnectionService((IConnectionService) this);
         connectionService = new ConnectionService(new byte[] { 0x00 }, this);
         connectionService.open(hostName, portNumber);
     }
@@ -31,7 +29,7 @@ public class HeartbeatService implements IConnectionService {
         builder.setSecretHash("x");
 
         Runnable heartbeatTask = () -> {
-            while (isRunning == true) {
+            while (isRunning) {
                 try {
                     connectionService.write(builder);
                     Thread.sleep(25);
@@ -49,12 +47,12 @@ public class HeartbeatService implements IConnectionService {
         isRunning = false;
         connectionService.close();
     }
+
     @Override
     public void onReceiveRead(UnpackedMessage message) {
         try {
-            HanRoutingProtocol.ClientHeartbeat clientHeartbeat = HanRoutingProtocol.ClientHeartbeat.parseFrom(message.getData());
-            // or:
-            //HanRoutingProtocol.ClientHeartbeat clientHeartbeat = message.getDataMessage().getParserForType().parseFrom(message.getData());
+            HanRoutingProtocol.ClientHeartbeat clientHeartbeat = HanRoutingProtocol.ClientHeartbeat
+                    .parseFrom(message.getData());
         } catch (InvalidProtocolBufferException e) {
             logger.error(e.getMessage(), e);
         }

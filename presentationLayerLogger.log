@@ -5,3 +5,9 @@
 0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: test SUCCES
 0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: gtytguyg SUCCES
 0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: dgsg SUCCES
+0    [Time-limited test] WARN  com.xebialabs.overcast.PropertiesLoader  - File C:\Users\Niels Bokmans\.overcast\overcast.conf not found.
+2    [Time-limited test] INFO  com.xebialabs.overcast.PropertiesLoader  - Loading from file C:\Users\Niels Bokmans\Documents\commonclient\overcast.conf
+33   [Time-limited test] WARN  com.xebialabs.overcast.PropertiesLoader  - File 'overcast.conf' not found on classpath.
+5591 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Registering failed!
+5591 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Username already exists, registering failed.
+5592 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Registering worked!

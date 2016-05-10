@@ -6,7 +6,7 @@ import nl.han.asd.project.client.commonclient.store.Contact;
  * Created by Marius on 25-04-16.
  */
 public class Message {
-    private String ID;
+    private String id;
 
     private String text;
     private Contact sender;

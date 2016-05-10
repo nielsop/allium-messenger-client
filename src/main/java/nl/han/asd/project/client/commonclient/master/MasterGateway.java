@@ -20,12 +20,12 @@ import java.util.Base64;
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
     //TODO: missing: IWebService from Master
 
+    public static final Logger logger = LoggerFactory.getLogger(MasterGateway.class);
     private static int currentGraphVersion = -1;
     private ConnectionService connectionService;
     private Socket socket;
     private IEncryptionService encryptionService;
-    public static final Logger logger = LoggerFactory.getLogger(MasterGateway.class);
-    private String hostname = Configuration.HOSTNAME;
+    private String hostname = Configuration.hostname;
     private int port = Configuration.PORT;
 
     @Inject
@@ -43,7 +43,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             try {
                 socket = new Socket(hostname, port);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
         return socket;
@@ -53,24 +53,34 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     public LoginResponseWrapper authenticate(String username, String password) {
         HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
                 .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
-        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST, socket);
-        HanRoutingProtocol.ClientLoginResponse response = request.writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
-        return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(), response.getStatus());
+        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST,
+                socket);
+        HanRoutingProtocol.ClientLoginResponse response = request
+                .writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
+        return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(),
+                response.getStatus());
     }
 
     @Override
     public RegisterResponseWrapper register(String username, String password) {
-        HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder().setUsername(username).setPassword(password).build();RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREGISTERREQUEST, socket);
-        HanRoutingProtocol.ClientRegisterResponse response = req.writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);
+        HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder()
+                .setUsername(username).setPassword(password).build();
+        RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREGISTERREQUEST,
+                socket);
+        HanRoutingProtocol.ClientRegisterResponse response = req
+                .writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);
         return new RegisterResponseWrapper(response.getStatus());
     }
 
     @Override
     public UpdatedGraphResponseWrapper getUpdatedGraph(int version) {
-        HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder().setCurrentVersion(version).build();
-        RequestWrapper req = new RequestWrapper(graphUpdateRequest, HanRoutingProtocol.Wrapper.Type.GRAPHUPDATEREQUEST, socket);
+        HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder()
+                .setCurrentVersion(version).build();
+        RequestWrapper req = new RequestWrapper(graphUpdateRequest, HanRoutingProtocol.Wrapper.Type.GRAPHUPDATEREQUEST,
+                socket);
 
-        HanRoutingProtocol.GraphUpdateResponse response = req.writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class);
+        HanRoutingProtocol.GraphUpdateResponse response = req
+                .writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class);
         UpdatedGraphResponseWrapper updatedGraphs = new UpdatedGraphResponseWrapper(response.getGraphUpdatesList());
         setCurrentGraphVersion(updatedGraphs.getLast().newVersion);
         return updatedGraphs;
@@ -136,7 +146,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             connectionService = new ConnectionService(new byte[] { 0x00 });
         }
         try {
-            connectionService.open(Configuration.HOSTNAME, Configuration.PORT);
+            connectionService.open(Configuration.hostname, Configuration.PORT);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }

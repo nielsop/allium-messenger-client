@@ -54,7 +54,8 @@ public final class ConnectionService implements IConnectionPipe {
      *                      while reading asynchronous.
      * @throws IOException
      */
-    public ConnectionService(final int sleepTime, final byte[] receiverPublicKey, final IConnectionService targetService) {
+    public ConnectionService(final int sleepTime, final byte[] receiverPublicKey,
+            final IConnectionService targetService) {
         this(sleepTime, receiverPublicKey);
 
         if (targetService == null) {
@@ -136,7 +137,8 @@ public final class ConnectionService implements IConnectionPipe {
      * @return A protocol buffer (T) instance.
      * @throws SocketException An exception occurred while reading data from the stream.
      */
-    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor) throws SocketException, InvalidProtocolBufferException, PackerException {
+    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor)
+            throws SocketException, InvalidProtocolBufferException, PackerException {
         UnpackedMessage unpackedMessage = this.read();
         if (unpackedMessage.getDataMessage().getClass() == classDescriptor) {
             return (T) unpackedMessage.getDataMessage().getParserForType().parseFrom(unpackedMessage.getData());
@@ -199,11 +201,11 @@ public final class ConnectionService implements IConnectionPipe {
         }
     }
 
-    public void setReceiverPublicKey(byte[] receiverPublicKey) {
-        this.receiverPublicKey = receiverPublicKey;
-    }
-
     public byte[] getReceiverPublicKey() {
         return this.receiverPublicKey;
+    }
+
+    public void setReceiverPublicKey(byte[] receiverPublicKey) {
+        this.receiverPublicKey = receiverPublicKey;
     }
 }

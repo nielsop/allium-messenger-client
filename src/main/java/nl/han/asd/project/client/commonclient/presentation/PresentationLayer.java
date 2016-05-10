@@ -42,7 +42,8 @@ public class PresentationLayer {
     }
 
     @Inject
-    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
+    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver,
+            IRegistration registration, ILogin login) {
         this.contact = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
@@ -62,9 +63,6 @@ public class PresentationLayer {
         RegisterResponseWrapper registerResponse = registration.register(username, password);
         //In every other case, do something.
         switch (registerResponse.status) {
-            default:
-                logger.info("Default response. Something went wrong...");
-                break;
             case SUCCES:
                 logger.info("Registering worked!");
                 break;
@@ -73,6 +71,9 @@ public class PresentationLayer {
                 break;
             case TAKEN_USERNAME:
                 logger.info("Username already exists, registering failed.");
+                break;
+            default:
+                logger.info("Default response. Something went wrong...");
                 break;
         }
         //Return the status

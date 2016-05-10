@@ -5,41 +5,15 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.Socket;
-
 public class NodeGateway implements ISendMessage {
-//    private INodeGateway nodeGateway;
-
-//    @Inject
-//    public NodeGateway(INodeGateway nodeGateway) {
-//        this.nodeGateway = nodeGateway;
-//    }
     private static final Logger logger = LoggerFactory.getLogger(NodeGateway.class);
 
     @Override
     public void sendMessage(EncryptedMessage message) {
-        //build connection based on message ip & post
+        HanRoutingProtocol.MessageWrapper.Builder request = HanRoutingProtocol.MessageWrapper.newBuilder();
 
-        //build protocol buffer based on message data
-
-        //send message with build connection.
-        Socket socket;
-
-        try {
-            socket = new Socket(message.getIP(), message.getPort());
-
-            HanRoutingProtocol.MessageWrapper.Builder request = HanRoutingProtocol.MessageWrapper.newBuilder();
-
-            request.setIPaddress(message.getIP());
-            request.setPort(message.getPort());
-            request.setEncryptedData(message.getEncryptedData());
-
-            //TODO: onderstaand stukje -v- omschrijven naar nieuwe request wrapper
-            //final RequestWrapper req = new RequestWrapper(request.build(), socket);
-            //req.writeToSocket();
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
+        request.setIPaddress(message.getIp());
+        request.setPort(message.getPort());
+        request.setEncryptedData(message.getEncryptedData());
     }
 }

@@ -7,19 +7,19 @@ import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboard;
 
-import static nl.han.asd.project.client.commonclient.presentation.gui.view.Pane.*;
+import static nl.han.asd.project.client.commonclient.presentation.gui.view.Pane.fancyLabel;
 
 /**
  * Created by Marius on 26-04-16.
  */
 public class PaneNav {
-    private PaneDashboard paneDashboard;
     HBox hBox = null;
+    private PaneDashboard paneDashboard;
 
     public PaneNav(PaneDashboard paneDashboard) {
         this.paneDashboard = paneDashboard;
 
-        hBox = Pane.getHBox(10, new int[]{5, 5, 5, 5}, "");
+        hBox = Pane.getHBox(10, new int[] { 5, 5, 5, 5 }, "");
         hBox.setStyle("-fx-background-color: #EEE; -fx-background: #EEE;");
         Label logoutBtn = new Label("Uitloggen");
         Label settingsBtn = new Label("Instellingen");

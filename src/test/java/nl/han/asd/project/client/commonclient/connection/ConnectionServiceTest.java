@@ -7,7 +7,8 @@ import org.junit.*;
 import java.io.IOException;
 import java.net.SocketException;
 
-import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -15,8 +16,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class ConnectionServiceTest implements IConnectionService {
 
-    private final byte[] EMPTY_BYTE_ARRAY = new byte[] { 0x00 };
     private static Server server = new Server();
+    private final byte[] EMPTY_BYTE_ARRAY = new byte[] { 0x00 };
     private ConnectionService connectionService = null;
 
     public ConnectionServiceTest() {

@@ -27,9 +27,9 @@ public class Contact {
         return username;
     }
 
-    public Node[] getConnectedNodes() throws Exception {
+    public Node[] getConnectedNodes() throws RuntimeException {
         if (connectedNodes == null || connectedNodes.length <= 0) {
-            throw new Exception("The connected Nodes from the contact are not set");
+            throw new RuntimeException("The connected Nodes from the contact are not set");
         }
         return connectedNodes;
 
