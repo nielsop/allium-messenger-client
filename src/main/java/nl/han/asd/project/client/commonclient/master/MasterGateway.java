@@ -20,13 +20,13 @@ import java.util.Base64;
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
     //TODO: missing: IWebService from Master
 
-    public static final Logger logger = LoggerFactory.getLogger(MasterGateway.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MasterGateway.class);
     private static int currentGraphVersion = -1;
     private ConnectionService connectionService;
     private Socket socket;
     private IEncryptionService encryptionService;
     private String hostname = Configuration.hostname;
-    private int port = Configuration.PORT;
+    private int port = Configuration.getPort();
 
     @Inject
     public MasterGateway(IEncryptionService encryptionService) {
@@ -43,7 +43,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             try {
                 socket = new Socket(hostname, port);
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return socket;
@@ -146,9 +146,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             connectionService = new ConnectionService(new byte[] { 0x00 });
         }
         try {
-            connectionService.open(Configuration.hostname, Configuration.PORT);
+            connectionService.open(Configuration.getHostname(), Configuration.getPort());
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -169,7 +169,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             try {
                 connectionService.close();
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

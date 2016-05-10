@@ -18,6 +18,7 @@ import nl.han.asd.project.client.commonclient.store.Contact;
 import static nl.han.asd.project.client.commonclient.presentation.gui.view.Pane.*;
 
 public class PaneChat {
+    public static final String FX_BACKGROUND_COLOR_EEE = "-fx-background-color: #EEE;";
     private PaneDashboard paneDashboard;
     private BorderPane borderPane;
     private HBox current;
@@ -54,16 +55,16 @@ public class PaneChat {
     private void setHBoxMouseEvents(HBox hBox) {
         hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (current != null)
-                current.setStyle("-fx-background-color: #EEE;");
+                current.setStyle(FX_BACKGROUND_COLOR_EEE);
             hBox.setStyle("-fx-background-color: #DDD;");
             current = hBox;
         });
         hBox.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-            hBox.setStyle("-fx-background-color: #DDD;");
+            hBox.setStyle(FX_BACKGROUND_COLOR_EEE);
         });
         hBox.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
             if (hBox != current)
-                hBox.setStyle("-fx-background-color: #EEE;");
+                hBox.setStyle(FX_BACKGROUND_COLOR_EEE);
         });
     }
 

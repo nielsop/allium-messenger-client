@@ -22,7 +22,7 @@ import java.net.SocketException;
  */
 public class Connection {
 
-    private static final Logger logger = LoggerFactory.getLogger(Connection.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
     private final IConnectionPipe connectionService;
     private volatile boolean isRunning;
     private Socket socket;
@@ -46,19 +46,19 @@ public class Connection {
      * @throws IllegalArgumentException A parameter has an invalid value.
      * @throws SocketException          Connection or streams failed.
      */
-    public void open(final String hostName, final int portNumber) throws IllegalArgumentException, SocketException {
+    public void open(final String hostName, final int portNumber) throws SocketException {
         if (Validation.isValidAddress(hostName) && Validation.isValidPort(portNumber)) {
             try {
                 socket = new Socket(hostName, portNumber);
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
                 throw new SocketException("Couldn't connect to the given endpoint.");
             }
             try {
                 outputStream = socket.getOutputStream();
                 inputStream = socket.getInputStream();
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
                 throw new SocketException("An error occurred while opening the streams on the connected socket.");
             }
         }
@@ -70,14 +70,14 @@ public class Connection {
      * @throws SocketException Writing to stream failed.
      * @throws IllegalArgumentException A parameter has an invalid value.
      */
-    public void write(final HanRoutingProtocol.Wrapper wrapper) throws IllegalArgumentException, SocketException {
+    public void write(final HanRoutingProtocol.Wrapper wrapper) throws SocketException {
         if (wrapper == null)
             throw new IllegalArgumentException("data");
 
         try {
             wrapper.writeDelimitedTo(outputStream);
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new SocketException("An error occurred while trying to write data to the stream.");
         }
     }
@@ -97,7 +97,7 @@ public class Connection {
                 socket.close();
             }
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new SocketException("An error occurred while trying to read data from the stream.");
         }
         return wrapper;
@@ -119,10 +119,10 @@ public class Connection {
                         Thread.sleep(sleepTime);
                     } catch (InterruptedException e) {
                         Thread.interrupted();
-                        logger.error(e.getMessage(), e);
+                        LOGGER.error(e.getMessage(), e);
                     } catch (SocketException e) {
                         isRunning = false;
-                        logger.error(e.getMessage(), e);
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
             };
@@ -174,7 +174,7 @@ public class Connection {
      * @param sleepTime Amount of milliseconds needed to wait.
      * @throws IllegalArgumentException A parameter has an invalid value.
      */
-    public void setSleepTime(final int sleepTime) throws IllegalArgumentException {
+    public void setSleepTime(final int sleepTime) {
         if (sleepTime < 0)
             throw new IllegalArgumentException("Must be at least 1.");
 

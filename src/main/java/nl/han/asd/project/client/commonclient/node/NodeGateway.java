@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NodeGateway implements ISendMessage {
-    private static final Logger logger = LoggerFactory.getLogger(NodeGateway.class);
-
     @Override
     public void sendMessage(EncryptedMessage message) {
         HanRoutingProtocol.MessageWrapper.Builder request = HanRoutingProtocol.MessageWrapper.newBuilder();

@@ -21,7 +21,7 @@ import javax.inject.Inject;
  */
 public class PresentationLayer {
 
-    private static final Logger logger = LoggerFactory.getLogger(PresentationLayer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PresentationLayer.class);
 
     //TODO: android app? desktop app?
     public IContact contact;
@@ -64,16 +64,16 @@ public class PresentationLayer {
         //In every other case, do something.
         switch (registerResponse.status) {
             case SUCCES:
-                logger.info("Registering worked!");
+                LOGGER.info("Registering worked!");
                 break;
             case FAILED:
-                logger.info("Registering failed!");
+                LOGGER.info("Registering failed!");
                 break;
             case TAKEN_USERNAME:
-                logger.info("Username already exists, registering failed.");
+                LOGGER.info("Username already exists, registering failed.");
                 break;
             default:
-                logger.info("Default response. Something went wrong...");
+                LOGGER.info("Default response. Something went wrong...");
                 break;
         }
         //Return the status
@@ -86,7 +86,7 @@ public class PresentationLayer {
 
     public HanRoutingProtocol.ClientLoginResponse.Status login(String username, String password) {
         LoginResponseWrapper loginResponse = login.login(username, password);
-        logger.info("User: \"" + username + "\" login status: " + loginResponse.status.name());
+        LOGGER.info("User: \"" + username + "\" login status: " + loginResponse.status.name());
         if (loginResponse.status == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
             currentUser = new Contact(username, privateKey, true);
         }

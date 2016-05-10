@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GUI extends Application {
-    private static final Logger logger = LoggerFactory.getLogger(GUI.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GUI.class);
     public PresentationLayer pLayer;
     private Stage stage;
     private Scene scene;
@@ -46,7 +46,7 @@ public class GUI extends Application {
             stage.setMinHeight(360);
             setStage(Page.LOGIN);
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            LOGGER.error(ex.getMessage(), ex);
         }
     }
 

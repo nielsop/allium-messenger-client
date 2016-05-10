@@ -18,7 +18,7 @@ import java.net.SocketException;
  */
 public class RequestWrapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestWrapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestWrapper.class);
     private GeneratedMessage message;
     private Socket socket;
 
@@ -44,7 +44,7 @@ public class RequestWrapper {
                 return parseFrom(classDescriptor, response.getData().toByteArray());
             }
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
@@ -57,8 +57,9 @@ public class RequestWrapper {
             T defaultInstance = (T) defaultInstanceField.get(null);
             return (T) defaultInstance.getParserForType().parseFrom(data);
         } catch (IllegalAccessException | IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } catch (NoSuchFieldException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new InvalidProtocolBufferException("Invalid class provided.");
         }
         return null;
@@ -68,7 +69,7 @@ public class RequestWrapper {
         try {
             message.writeDelimitedTo(socket.getOutputStream());
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 }

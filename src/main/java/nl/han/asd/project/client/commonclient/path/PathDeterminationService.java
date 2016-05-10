@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class PathDeterminationService implements IGetPath {
-    private static final Logger logger = LoggerFactory.getLogger(PathDeterminationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PathDeterminationService.class);
     public IGetUpdatedGraph graphUpdates;
     public IGetClientGroup clientGroup;
 
@@ -36,7 +36,7 @@ public class PathDeterminationService implements IGetPath {
         try {
             connectedNodes = contact.getConnectedNodes();
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         Random ran = new Random();
         int indexConnectedNode = ran.nextInt(connectedNodes.length);

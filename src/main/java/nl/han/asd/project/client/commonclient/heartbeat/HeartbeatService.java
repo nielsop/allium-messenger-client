@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.SocketException;
 
 public class HeartbeatService implements IConnectionService {
-    private static final Logger logger = LoggerFactory.getLogger(HeartbeatService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HeartbeatService.class);
     public IHeartbeat heartbeat;
     protected volatile boolean isRunning = true;
     protected ConnectionService connectionService = null;
@@ -34,7 +34,7 @@ public class HeartbeatService implements IConnectionService {
                     connectionService.write(builder);
                     Thread.sleep(25);
                 } catch (InterruptedException | SocketException e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         };
@@ -54,7 +54,7 @@ public class HeartbeatService implements IConnectionService {
             HanRoutingProtocol.ClientHeartbeat clientHeartbeat = HanRoutingProtocol.ClientHeartbeat
                     .parseFrom(message.getData());
         } catch (InvalidProtocolBufferException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 }
