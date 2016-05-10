@@ -6,13 +6,14 @@ package nl.han.asd.project.client.commonclient.connection;
 
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Arrays;
 
 /**
  * Provides basic socket operations used solely by the ConnectionService.
@@ -26,6 +27,8 @@ public class Connection {
     private OutputStream outputStream;
     private InputStream inputStream;
     private final IConnectionPipe connectionService;
+
+    private static final Logger logger = LoggerFactory.getLogger(Connection.class);
 
     private int sleepTime = 25; // default
 
@@ -46,7 +49,7 @@ public class Connection {
      * @throws IllegalArgumentException A parameter has an invalid value.
      * @throws SocketException          Connection or streams failed.
      */
-    public void open(final String hostName, final int portNumber) throws IllegalArgumentException, SocketException {
+    public void open(final String hostName, final int portNumber) throws SocketException {
         final Validation validation = new Validation();
         validation.validateAddress(hostName);
         validation.validatePort(portNumber);
@@ -55,7 +58,8 @@ public class Connection {
             // connect to the socket.
             socket = new Socket(hostName, portNumber);
         } catch (IOException e) {
-            throw new SocketException("Couldn't connect to the given endpoint.");
+            logger.error(e.getMessage());
+            throw new RuntimeException("Couldn't connect to the given endpoint.");
         }
 
         try {
@@ -63,6 +67,7 @@ public class Connection {
             outputStream = socket.getOutputStream();
             inputStream = socket.getInputStream();
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             throw new SocketException("An error occurred while opening the streams on the connected socket.");
         }
     }
@@ -74,8 +79,10 @@ public class Connection {
      * @throws IllegalAccessException A parameter has an invalid value.
      */
     public void write(final HanRoutingProtocol.Wrapper wrapper) throws IllegalArgumentException, SocketException {
-        if (wrapper == null)
-            throw new IllegalArgumentException("data");
+        if (wrapper == null) {
+            logger.error("Parameter wrapper was null.");
+            throw new IllegalArgumentException("wrapper");
+        }
 
         try {
             wrapper.writeDelimitedTo(outputStream);
@@ -96,11 +103,10 @@ public class Connection {
             // synchronize so only one operation is executed in a multi threaded environment.
             // note that the code in the block underneath here should be the only accessor to the input stream.
             synchronized (this) {
-                // ..
                 wrapper = HanRoutingProtocol.Wrapper.parseDelimitedFrom(inputStream);
             }
-
-        } catch (IOException | NullPointerException e) {
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             // something went wrong while reading the data from the stream.
             // if the connection was ever / is connected, attempt to close it.
             if (isConnected()) {
@@ -110,12 +116,9 @@ public class Connection {
                     socket.close();
                 } catch (Exception anyException) { // catch any exception
                 }
-
             }
-
             throw new SocketException("An error occurred while trying to read data from the stream.");
         }
-
         return wrapper;
     }
 

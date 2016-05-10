@@ -118,9 +118,9 @@ public class ConnectionServiceTest implements IConnectionService {
         connectionService.write(builder);
     }
 
-    @Test(expected = SocketException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void TestInvalidIP() throws IOException {
-        connectionService.open("127.1.1.1", 1345);
+        connectionService.open("127.1.1.", 1345);
     }
 
 
