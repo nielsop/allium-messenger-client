@@ -67,6 +67,7 @@ public class RequestWrapper {
 
     private void writeToSocket() {
         try {
+            final GeneratedMessage m = message;
             message.writeDelimitedTo(socket.getOutputStream());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);

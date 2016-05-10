@@ -60,7 +60,7 @@ public class MasterGatewayIT {
     /* Registration of clients on master server */
     @Test
     public void testRegisterClientSuccessful() {
-        Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME /*TODO: Status.SUCCES*/,
+        Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES,
                 gateway.register("meneer", VALID_PASSWORD).status);
     }
 

@@ -61,6 +61,8 @@ public class Connection {
                 LOGGER.error(e.getMessage(), e);
                 throw new SocketException("An error occurred while opening the streams on the connected socket.");
             }
+        } else {
+            throw new SocketException("Invalid hostname or portnumber specified!");
         }
     }
 

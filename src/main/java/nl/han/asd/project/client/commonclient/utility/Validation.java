@@ -38,10 +38,7 @@ public class Validation {
      *             http://www.jguru.com/faq/view.jsp?EID=17521
      */
     public static boolean isValidPort(int port) {
-        if (!(port >= 0 && port <= 65535)) {
-            throw new IllegalArgumentException("Port should be in range of 1024 - 65535.");
-        }
-        return true;
+        return port >= 0 && port <= 65535;
     }
 
     public static boolean validateLoginData(String username, String password) {

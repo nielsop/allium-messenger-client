@@ -5,7 +5,6 @@ import com.google.inject.Injector;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
-import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -175,9 +174,7 @@ public final class ConnectionService implements IConnectionPipe {
      * @throws IOException If we couldn't connect to the hostname.
      */
     public void open(final String hostName, final int portNumber) throws IOException {
-        if (Validation.validateLoginData(hostName, Integer.toString(portNumber))) {
-            connection.open(hostName, portNumber);
-        }
+        connection.open(hostName, portNumber);
     }
 
     /**
