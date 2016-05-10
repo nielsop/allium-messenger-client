@@ -2,8 +2,6 @@ package nl.han.asd.project.client.commonclient.node;
 
 import nl.han.asd.project.client.commonclient.message.EncryptedMessage;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NodeGateway implements ISendMessage {
     @Override

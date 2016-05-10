@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
+import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -140,8 +141,7 @@ public final class ConnectionService implements IConnectionPipe {
      * @return A protocol buffer (T) instance.
      * @throws SocketException An exception occurred while reading data from the stream.
      */
-    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor)
-            throws SocketException {
+    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor) throws SocketException {
         UnpackedMessage unpackedMessage = this.read();
         if (unpackedMessage.getDataMessage().getClass() == classDescriptor) {
             try {
@@ -175,7 +175,9 @@ public final class ConnectionService implements IConnectionPipe {
      * @throws IOException If we couldn't connect to the hostname.
      */
     public void open(final String hostName, final int portNumber) throws IOException {
-        connection.open(hostName, portNumber);
+        if (Validation.validateLoginData(hostName, Integer.toString(portNumber))) {
+            connection.open(hostName, portNumber);
+        }
     }
 
     /**

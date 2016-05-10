@@ -72,11 +72,6 @@ public class ConnectionServiceTest implements IConnectionService {
         ConnectionService connection2 = new ConnectionService(-20, EMPTY_BYTE_ARRAY);
     }
 
-    @Test(expected = SocketException.class)
-    public void TestHost() throws IOException {
-        ConnectionService connection2 = new ConnectionService(20, EMPTY_BYTE_ARRAY, this);
-        connection2.open("127.0.", 10);
-    }
 
     @Test(expected = IllegalArgumentException.class)
     public void TestPort() throws IOException {
