@@ -21,7 +21,7 @@ public final class ConnectionService implements IConnectionPipe {
     private final static int DEFAULT_SLEEP_TIME = 25; // 25ms
 
     private Packer packer = null;
-    private byte[]  receiverPublicKey = null;
+    private byte[] receiverPublicKey = null;
     private Connection connection = null;
     private IConnectionService service = null;
 
@@ -58,7 +58,8 @@ public final class ConnectionService implements IConnectionPipe {
         this(sleepTime, receiverPublicKey);
 
         if (targetService == null) {
-            throw new IllegalArgumentException("You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
+            throw new IllegalArgumentException(
+                    "You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
         }
 
         service = targetService;
@@ -71,7 +72,6 @@ public final class ConnectionService implements IConnectionPipe {
     public ConnectionService(final byte[] receiverPublicKey) {
         this(DEFAULT_SLEEP_TIME, receiverPublicKey);
     }
-
 
     /**
      * Initializes this class.
@@ -107,7 +107,8 @@ public final class ConnectionService implements IConnectionPipe {
             throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
         }
         if (service == null) {
-            throw new IllegalArgumentException("You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
+            throw new IllegalArgumentException(
+                    "You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
         }
 
         // uses observer
@@ -135,14 +136,10 @@ public final class ConnectionService implements IConnectionPipe {
      * @return A protocol buffer (T) instance.
      * @throws SocketException An exception occurred while reading data from the stream.
      */
-    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor)
-            throws SocketException, InvalidProtocolBufferException,
-            PackerException {
+    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor) throws SocketException, InvalidProtocolBufferException, PackerException {
         UnpackedMessage unpackedMessage = this.read();
-        if (unpackedMessage.getDataMessage().getClass() == classDescriptor)
-        {
-            return (T) unpackedMessage.getDataMessage().getParserForType().parseFrom(
-                    unpackedMessage.getData());
+        if (unpackedMessage.getDataMessage().getClass() == classDescriptor) {
+            return (T) unpackedMessage.getDataMessage().getParserForType().parseFrom(unpackedMessage.getData());
         }
         return null;
     }

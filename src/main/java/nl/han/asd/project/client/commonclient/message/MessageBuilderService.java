@@ -72,9 +72,7 @@ public class MessageBuilderService implements IMessageBuilder {
         builder.setIPaddress(node.getIP());
         builder.setPort(node.getPort());
         builder.setEncryptedData(ByteString.copyFromUtf8(message.getText()));
-
-        return encrypt.encryptData(builder.build().toByteString(), node.getPublicKey());
-       // return cryptographyService.encryptData(builder.build().toByteString(), node.getPublicKey());
+        return cryptographyService.encryptData(builder.build().toByteString(), node.getPublicKey());
     }
 
     
@@ -95,9 +93,8 @@ public class MessageBuilderService implements IMessageBuilder {
 
         remainingPath.remove(0);
 
-        ByteString encryptedMessage = encrypt.encryptData(builder.build().toByteString(),node.getPublicKey());
+        ByteString encryptedMessage = cryptographyService.encryptData(builder.build().toByteString(),node.getPublicKey());
         //ByteString encryptedMessage = cryptographyService.encryptData(builder.build().toByteString(),node.getPublicKey());
-
         return buildMessagePackageLayer(encryptedMessage, remainingPath);
     }
 }

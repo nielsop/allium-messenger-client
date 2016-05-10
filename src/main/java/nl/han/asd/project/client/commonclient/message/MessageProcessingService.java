@@ -1,7 +1,6 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
-
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
@@ -10,13 +9,13 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 public class MessageProcessingService implements IReceiveMessage {
     public IMessageStore messageStore;
+
     //public IMessage message;
-    public IDecrypt decrypt;
+   public IDecrypt decrypt;
 
     @Inject
     public MessageProcessingService(IMessageStore messageStore) {
         this.messageStore = messageStore;
-
     }
 
     @Override

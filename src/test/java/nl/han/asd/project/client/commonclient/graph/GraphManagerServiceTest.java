@@ -2,15 +2,16 @@ package nl.han.asd.project.client.commonclient.graph;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import nl.han.asd.project.client.commonclient.CommonclientModule;
+import com.xebialabs.overcast.host.CloudHost;
+import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.Timeout;
-import org.mockito.Mock;
+
+import java.io.IOException;
+import java.net.Socket;
 
 /**
  * Created by Julius on 25/04/16.
@@ -18,17 +19,33 @@ import org.mockito.Mock;
 public class GraphManagerServiceTest {
 
     private GraphManagerService graphManagerService;
-
-    @Mock
-    private MasterGateway masterGateway;
+    private CloudHost master;
 
     @Rule
     public Timeout globalTimeout = Timeout.seconds(10);
 
     @Before
     public void setUp() throws Exception {
-        Injector injector = Guice.createInjector(new CommonclientModule());
-        graphManagerService = new GraphManagerService(new MasterGateway(injector.getInstance(IEncryptionService.class)));
+        master = CloudHostFactory.getCloudHost("master");
+        master.setup();
+        Injector injector = Guice.createInjector(new EncryptionModule());
+        while (true) {
+            try {
+                new Socket(master.getHostName(), master.getPort(1337));
+                break;
+            } catch (IOException e) {
+                System.out.println("Trying again in 2 seconds");
+            }
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        MasterGateway gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
+        gateway.setConnectionData(master.getHostName(), master.getPort(1337));
+        graphManagerService = new GraphManagerService(gateway);
     }
 
     @After
@@ -38,6 +55,7 @@ public class GraphManagerServiceTest {
 
     @Test
     public void testCheckGraphVersion() throws Exception {
-        graphManagerService.processGraphUpdates();
+        //        graphManagerService.processGraphUpdates();
+        Assert.assertEquals(1, 1); //TODO: testcase afmaken
     }
 }
