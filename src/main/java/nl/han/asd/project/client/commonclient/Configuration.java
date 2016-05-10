@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public class Configuration {
 
-    private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 
     /**
      * Private constructor to prevent instantiation.
@@ -29,7 +29,7 @@ public class Configuration {
             properties.load(inputStream);
             return Integer.parseInt(properties.getProperty("port"));
         } catch (final IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return -1;
     }
@@ -41,7 +41,7 @@ public class Configuration {
             properties.load(inputStream);
             return properties.getProperty("server");
         } catch (final IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return "";
     }

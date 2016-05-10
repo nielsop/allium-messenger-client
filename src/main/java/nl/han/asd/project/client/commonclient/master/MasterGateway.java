@@ -89,7 +89,8 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     @Override
     public ClientGroupResponseWrapper getClientGroup() {
         HanRoutingProtocol.ClientRequest clientRequest = HanRoutingProtocol.ClientRequest.newBuilder().build();
-        RequestWrapper req = new RequestWrapper(clientRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREQUEST, getSocket());
+        RequestWrapper req = new RequestWrapper(clientRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREQUEST,
+                getSocket());
         HanRoutingProtocol.ClientResponse clientResponse = req.writeAndRead(HanRoutingProtocol.ClientResponse.class);
         return new ClientGroupResponseWrapper(clientResponse.getClientsList());
     }
