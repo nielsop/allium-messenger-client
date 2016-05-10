@@ -7,7 +7,6 @@ import org.junit.*;
 import java.io.IOException;
 import java.net.SocketException;
 
-import static com.sun.xml.internal.ws.dump.LoggingDumpTube.Position.Before;
 import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
 import static org.junit.Assert.assertEquals;
 
