@@ -20,12 +20,12 @@ public class MessageProcessingService implements IReceiveMessage {
     }
 
     @Override
-    public void processMessage(HanRoutingProtocol.EncryptedMessage encryptedMessage) {
+    public void processMessage(HanRoutingProtocol.MessageWrapper encryptedMessage) {
         HanRoutingProtocol.Message message = decryptEncryptedMessage(encryptedMessage);
         messageStore.addMessage(message);
     }
 
-    private HanRoutingProtocol.Message decryptEncryptedMessage(HanRoutingProtocol.EncryptedMessage encryptedMessage){
+    private HanRoutingProtocol.Message decryptEncryptedMessage(HanRoutingProtocol.MessageWrapper encryptedMessage){
         ByteString messageBuffer = decrypt.decryptData(encryptedMessage.getEncryptedData());
         HanRoutingProtocol.Message message = null;
         try {
