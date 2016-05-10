@@ -6,5 +6,5 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
  * An interface that serves as an interface between the Connection and ConnectionService classes.
  */
 interface IConnectionPipe {
-    void onReceiveRead(final HanRoutingProtocol.EncryptedWrapper wrapper);
+    void onReceiveRead(final HanRoutingProtocol.Wrapper wrapper);
 }

@@ -29,18 +29,16 @@ public class RequestWrapper {
      * @param requestType The request type.
      * @param socket The socket to write to and read from.
      */
-    public RequestWrapper(final GeneratedMessage message, final HanRoutingProtocol.EncryptedWrapper.Type requestType,
-            final Socket socket) {
-        this.message = HanRoutingProtocol.EncryptedWrapper.newBuilder().setType(requestType)
-                .setData(message.toByteString()).build();
+    public RequestWrapper(final GeneratedMessage message, final HanRoutingProtocol.Wrapper.Type requestType, final Socket socket) {
+        this.message = HanRoutingProtocol.Wrapper.newBuilder().setType(requestType).setData(message.toByteString()).build();
         this.socket = socket;
     }
 
     public <T extends GeneratedMessage> T writeAndRead(Class<T> classDescriptor) {
         writeToSocket();
         try {
-            HanRoutingProtocol.EncryptedWrapper response;
-            if ((response = HanRoutingProtocol.EncryptedWrapper.parseDelimitedFrom(socket.getInputStream())) != null) {
+            HanRoutingProtocol.Wrapper response;
+            if ((response = HanRoutingProtocol.Wrapper.parseDelimitedFrom(socket.getInputStream())) != null) {
                 return parseFrom(classDescriptor, response.getData().toByteArray());
             }
         } catch (IOException e) {

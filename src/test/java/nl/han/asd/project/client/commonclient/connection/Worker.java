@@ -32,7 +32,7 @@ class Worker implements Runnable {
             output = clientSocket.getOutputStream();
 
             try {
-                HanRoutingProtocol.EncryptedWrapper wrapper = HanRoutingProtocol.EncryptedWrapper
+                HanRoutingProtocol.Wrapper wrapper = HanRoutingProtocol.Wrapper
                         .parseDelimitedFrom(input);
                 if (wrapper != null) {
                     try {

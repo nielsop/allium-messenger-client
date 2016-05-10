@@ -51,17 +51,16 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
     @Override
     public LoginResponseWrapper authenticate(String username, String password) {
-        HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder().setUsername(username).setPassword(password)
-                .setPublicKey(getPublicKey()).build();
-        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.EncryptedWrapper.Type.CLIENTLOGINREQUEST, getSocket());
+        HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
+                .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
+        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST, socket);
         HanRoutingProtocol.ClientLoginResponse response = request.writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
         return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(), response.getStatus());
     }
 
     @Override
     public RegisterResponseWrapper register(String username, String password) {
-        HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder().setUsername(username).setPassword(password).build();
-        RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.EncryptedWrapper.Type.CLIENTREGISTERREQUEST, getSocket());
+        HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder().setUsername(username).setPassword(password).build();RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREGISTERREQUEST, socket);
         HanRoutingProtocol.ClientRegisterResponse response = req.writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);
         return new RegisterResponseWrapper(response.getStatus());
     }
@@ -69,7 +68,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     @Override
     public UpdatedGraphResponseWrapper getUpdatedGraph(int version) {
         HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder().setCurrentVersion(version).build();
-        RequestWrapper req = new RequestWrapper(graphUpdateRequest, HanRoutingProtocol.EncryptedWrapper.Type.GRAPHUPDATEREQUEST, getSocket());
+        RequestWrapper req = new RequestWrapper(graphUpdateRequest, HanRoutingProtocol.Wrapper.Type.GRAPHUPDATEREQUEST, socket);
 
         HanRoutingProtocol.GraphUpdateResponse response = req.writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class);
         UpdatedGraphResponseWrapper updatedGraphs = new UpdatedGraphResponseWrapper(response.getGraphUpdatesList());
@@ -80,7 +79,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     @Override
     public ClientGroupResponseWrapper getClientGroup() {
         HanRoutingProtocol.ClientRequest clientRequest = HanRoutingProtocol.ClientRequest.newBuilder().build();
-        RequestWrapper req = new RequestWrapper(clientRequest, HanRoutingProtocol.EncryptedWrapper.Type.CLIENTREQUEST, getSocket());
+        RequestWrapper req = new RequestWrapper(clientRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREQUEST, socket);
         HanRoutingProtocol.ClientResponse clientResponse = req.writeAndRead(HanRoutingProtocol.ClientResponse.class);
         return new ClientGroupResponseWrapper(clientResponse.getClientsList());
     }
