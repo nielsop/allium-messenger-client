@@ -6,5 +6,5 @@ import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrappe
  * Created by Marius on 19-04-16.
  */
 public interface ILogin {
-    public LoginResponseWrapper login(String username, String password);
+    LoginResponseWrapper login(String username, String password);
 }

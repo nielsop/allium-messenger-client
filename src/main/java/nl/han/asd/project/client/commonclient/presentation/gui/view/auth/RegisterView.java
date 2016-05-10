@@ -14,58 +14,46 @@ import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
 /**
  * Created by Marius on 19-04-16.
  */
-public class LoginView {
+public class RegisterView {
     private GridPane gridPane;
-    private Button registerButton;
-    private Button loginButton;
-    private TextField usernameField;
-    private PasswordField passwordField;
-    private Text status;
+    private final TextField usernameField;
+    private final PasswordField passwordField;
+    private final PasswordField passwordRepeatField;
+    private final Button cancelButton;
+    private final Button registerButton;
+    private final Text status;
 
-    public LoginView() {
+    public RegisterView() {
         //Set gridPane
         gridPane = Pane.getGridPane(Pos.CENTER, new int[]{25, 25, 25, 25});
-
         Text title = new Text("Welcome to the onion messenger");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
 
-        //Set labels
         Label usernameLabel = new Label("Username:");
         Label passwordLabel = new Label("Password:");
+        Label passwordRepeatLabel = new Label("Password repeat:");
 
-        //Set input fields
         usernameField = new TextField();
         passwordField = new PasswordField();
+        passwordRepeatField = new PasswordField();
 
-        //Set buttons
+        cancelButton = new Button("Cancel");
+        cancelButton.setAlignment(Pos.BOTTOM_LEFT);
         registerButton = new Button("Register");
-        registerButton.setAlignment(Pos.BOTTOM_LEFT);
-        loginButton = new Button("Login");
-        loginButton.setAlignment(Pos.BOTTOM_RIGHT);
+        registerButton.setAlignment(Pos.BOTTOM_RIGHT);
 
-        //Set text
         status = new Text();
 
         gridPane.add(title, 0, 0, 2, 1);
         gridPane.add(usernameLabel, 0, 1);
-        gridPane.add(usernameField, 1, 1);
         gridPane.add(passwordLabel, 0, 2);
+        gridPane.add(passwordRepeatLabel, 0, 3);
+        gridPane.add(usernameField, 1, 1);
         gridPane.add(passwordField, 1, 2);
-        gridPane.add(registerButton, 0, 4);
-        gridPane.add(loginButton, 1, 4);
-        gridPane.add(status, 1, 5);
-    }
-
-    public GridPane getGridPane() {
-        return gridPane;
-    }
-
-    public Button getRegisterButton() {
-        return registerButton;
-    }
-
-    public Button getLoginButton() {
-        return loginButton;
+        gridPane.add(passwordRepeatField, 1, 3);
+        gridPane.add(cancelButton, 0, 5);
+        gridPane.add(registerButton, 1, 5);
+        gridPane.add(status, 1, 6);
     }
 
     public String getUsername() {
@@ -76,11 +64,27 @@ public class LoginView {
         return passwordField.getText();
     }
 
+    public Button getRegisterButton() {
+        return registerButton;
+    }
+
+    public Button getCancelButton() {
+        return cancelButton;
+    }
+
+    public String getPasswordRepeat() {
+        return passwordRepeatField.getText();
+    }
+
     public String getStatus() {
         return status.getText();
     }
 
     public void setStatus(String text) {
         status.setText(text);
+    }
+
+    public GridPane getGridPane() {
+        return gridPane;
     }
 }

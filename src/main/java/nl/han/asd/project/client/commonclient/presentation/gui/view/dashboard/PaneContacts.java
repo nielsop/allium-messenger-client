@@ -11,8 +11,6 @@ import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboard;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-import java.util.ArrayList;
-
 import static nl.han.asd.project.client.commonclient.presentation.gui.view.Pane.*;
 
 /**
@@ -48,13 +46,13 @@ public class PaneContacts {
 
         VBox contactList = getVBox(0, new int[]{0,0,0,0}, "");
 
-        for (Contact contact : paneDashboard.getContacts()) {
-            Label name = new Label(contact.getUsername());
-            HBox contactBox = getHBox(0, new int[]{5,5,5,5}, "-fx-background-color: #FFF;");
-            setHBoxMouseEvents(contactBox, contact);
-            contactBox.getChildren().add(name);
-            contactList.getChildren().add(contactBox);
-        }
+//        for (Contact contact : paneDashboard.getContacts()) {
+//            Label name = new Label(contact.getUsername());
+//            HBox contactBox = getHBox(0, new int[]{5,5,5,5}, "-fx-background-color: #FFF;");
+//            setHBoxMouseEvents(contactBox, contact);
+//            contactBox.getChildren().add(name);
+//            contactList.getChildren().add(contactBox);
+//        }
 
         scrollPane.setContent(contactList);
         return scrollPane;

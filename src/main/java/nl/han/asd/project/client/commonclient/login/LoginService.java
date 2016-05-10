@@ -1,11 +1,16 @@
 package nl.han.asd.project.client.commonclient.login;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
 import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 import nl.han.asd.project.client.commonclient.utility.Validation;
+import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 
 import javax.inject.Inject;
 
@@ -28,6 +33,9 @@ public class LoginService implements ILogin {
         this.setConnectedNodes = setConnectedNodes;
         this.authentication = authentication;
         this.masterGateway = gateway;
+        //Injector injector = Guice.createInjector(new EncryptionModule());
+        //this.masterGateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
+        //this.masterGateway.setConnectionData(Configuration.HOSTNAME, Configur);
     }
 
     public LoginResponseWrapper login(String username, String password) {

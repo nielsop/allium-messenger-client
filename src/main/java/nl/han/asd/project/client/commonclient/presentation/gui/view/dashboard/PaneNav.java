@@ -7,7 +7,7 @@ import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboard;
 
-import static nl.han.asd.project.client.commonclient.presentation.gui.view.Pane.*;
+import static nl.han.asd.project.client.commonclient.presentation.gui.view.Pane.fancyLabel;
 
 /**
  * Created by Marius on 26-04-16.
