@@ -94,7 +94,7 @@ public final class ConnectionService implements IConnectionPipe {
             throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
         }
 
-        HanRoutingProtocol.EncryptedWrapper wrapper = connection.read();
+        HanRoutingProtocol.Wrapper wrapper = connection.read();
         return packer.unpack(wrapper);
     }
 
@@ -157,7 +157,7 @@ public final class ConnectionService implements IConnectionPipe {
             throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
         }
 
-        HanRoutingProtocol.EncryptedWrapper wrapper = packer.pack(instance, getReceiverPublicKey());
+        HanRoutingProtocol.Wrapper wrapper = packer.pack(instance, getReceiverPublicKey());
         connection.write(wrapper);
     }
 
@@ -195,7 +195,7 @@ public final class ConnectionService implements IConnectionPipe {
     }
 
     @Override
-    public void onReceiveRead(final HanRoutingProtocol.EncryptedWrapper wrapper) {
+    public void onReceiveRead(final HanRoutingProtocol.Wrapper wrapper) {
         if (service != null) {
             UnpackedMessage message = packer.unpack(wrapper);
             service.onReceiveRead(message);

@@ -8,11 +8,11 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
  * whenever data is read from the connected socket.
  */
 public class UnpackedMessage {
-    private final HanRoutingProtocol.EncryptedWrapper.Type dataType;
+    private final HanRoutingProtocol.Wrapper.Type dataType;
     private final GeneratedMessage dataMessage;
     private final byte[] data;
 
-    public UnpackedMessage(final byte[] data, final HanRoutingProtocol.EncryptedWrapper.Type type, final GeneratedMessage message) {
+    public UnpackedMessage(final byte[] data, final HanRoutingProtocol.Wrapper.Type type, final GeneratedMessage message) {
         this.data = data;
         this.dataType = type;
         this.dataMessage = message;
@@ -38,7 +38,7 @@ public class UnpackedMessage {
      * The type of the EncryptedWrapper class, this matches the 'getDataMessage' type.
      * @return Type of the EncryptedWrapper.Type matching 'getData'
      */
-    public HanRoutingProtocol.EncryptedWrapper.Type getDataType() {
+    public HanRoutingProtocol.Wrapper.Type getDataType() {
         return dataType;
     }
 }

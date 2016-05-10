@@ -27,12 +27,12 @@ public class PackerTest {
 
     @Test
     public void TestPacking() throws InvalidProtocolBufferException {
-        HanRoutingProtocol.EncryptedWrapper packedData = pack();
+        HanRoutingProtocol.Wrapper packedData = pack();
         UnpackedMessage unpackedData = unpack(packedData);
         HanRoutingProtocol.ClientLoginRequest wrapper = HanRoutingProtocol.ClientLoginRequest.parseFrom(unpackedData.getData());
     }
 
-    public HanRoutingProtocol.EncryptedWrapper pack() {
+    public HanRoutingProtocol.Wrapper pack() {
         // Simulate a builder..
         HanRoutingProtocol.ClientLoginRequest.Builder builder = HanRoutingProtocol.ClientLoginRequest.newBuilder();
         builder.setPublicKey("test");
@@ -40,12 +40,12 @@ public class PackerTest {
         builder.setPassword("test");
 
         // Pack..
-        HanRoutingProtocol.EncryptedWrapper packed = packer.pack(builder, packer.getMyPublicKey());
+        HanRoutingProtocol.Wrapper packed = packer.pack(builder, packer.getMyPublicKey());
 
         return packed;
     }
 
-    public UnpackedMessage unpack(HanRoutingProtocol.EncryptedWrapper packed)
+    public UnpackedMessage unpack(HanRoutingProtocol.Wrapper packed)
     {
         UnpackedMessage unpacked = packer.unpack(packed);
 
@@ -55,12 +55,12 @@ public class PackerTest {
 
     @Test
     public void TestUnpacking() throws InvalidProtocolBufferException {
-        HanRoutingProtocol.EncryptedWrapper packedData = pack();
+        HanRoutingProtocol.Wrapper packedData = pack();
         UnpackedMessage unpackedMessage = unpack(packedData);
 
         HanRoutingProtocol.ClientLoginRequest.parseFrom(unpackedMessage.getData());
 
-        assertEquals(unpackedMessage.getDataType(), HanRoutingProtocol.EncryptedWrapper.Type.CLIENTLOGINREQUEST);
+        assertEquals(unpackedMessage.getDataType(), HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST);
         assertEquals(unpackedMessage.getDataMessage().getClass(), HanRoutingProtocol.ClientLoginRequest.class);
 
         HanRoutingProtocol.ClientLoginRequest clr = (HanRoutingProtocol.ClientLoginRequest)unpackedMessage.getDataMessage().getParserForType().parseFrom(unpackedMessage.getData());
