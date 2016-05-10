@@ -21,18 +21,21 @@ import static nl.han.asd.project.client.commonclient.presentation.gui.view.Pane.
  * Created by Marius on 25-04-16.
  */
 public class PaneChat {
+    // To insure chatbox doesnt scrolls to bottom after every scroll but after message has been added
+    private boolean messageAdded_scrollToBottom;
+
     private PaneDashboard paneDashboard;
     private BorderPane borderPane;
     private HBox current;
     private Contact receiver;
-    private Contact me;
+    private Contact currentUser;
     private HBox title;
     private VBox chatList;
     private ScrollPane chatPane;
 
     public PaneChat(PaneDashboard paneDashboard) {
         this.paneDashboard = paneDashboard;
-        me = paneDashboard.getMe();
+        currentUser = paneDashboard.getMe();
 
         borderPane = Pane.getBorderPane(new int[]{0, 0, 0, 0});
         borderPane.setStyle("-fx-background-color: #EEE; -fx-background: #EEE;");
@@ -51,6 +54,13 @@ public class PaneChat {
     public ScrollPane getCenter() {
         String style = "-fx-background-color:transparent; -fx-background: #EEE;";
         chatPane = getScrollPane(true, true, null, null, style);
+        chatPane.vvalueProperty().addListener((observable, oldValue, newValue) -> {
+            if(messageAdded_scrollToBottom) {
+                chatPane.setVvalue(chatPane.getVmax());
+                messageAdded_scrollToBottom = false;
+            }
+        });
+
         return chatPane;
     }
 
@@ -76,7 +86,7 @@ public class PaneChat {
         newMessage.setPrefHeight(50);
         send.setOnMouseClicked(e -> {
             if (newMessage.getText().length() > 0) {
-                paneDashboard.getPaneChat().addMessageToChat(new Message(newMessage.getText(), me, receiver), chatList, true);
+                paneDashboard.getPaneChat().addMessageToChat(new Message(newMessage.getText(), currentUser, receiver), chatList, true);
                 chatPane.setVvalue(1.0);
                 newMessage.setText("");
             }
@@ -110,7 +120,7 @@ public class PaneChat {
         HBox messageBox = getHBox(0, new int[]{5, 5, 5, 5}, "-fx-background-color: #EEE;");
         messageBox.getChildren().add(new Text(message.getText()));
 
-        if (message.getSender().getUsername().equals(me.getUsername())) messageBox.setAlignment(Pos.TOP_RIGHT);
+        if (message.getSender().getUsername().equals(currentUser.getUsername())) messageBox.setAlignment(Pos.TOP_RIGHT);
         else messageBox.setAlignment(Pos.TOP_LEFT);
 
         setHBoxMouseEvents(messageBox);
@@ -118,6 +128,7 @@ public class PaneChat {
 
         if (newMessage) {
             paneDashboard.sendMessage(message);
+            messageAdded_scrollToBottom = true;
         }
     }
 }
