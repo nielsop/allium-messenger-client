@@ -5,3 +5,11 @@
 6519 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Registering failed!
 6520 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Username already exists, registering failed.
 6523 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Registering worked!
+0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: "tfguhijkl" login status: SUCCES
+0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: "fghjkhgj" login status: SUCCES
+0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: "fdghjhgfd" login status: SUCCES
+0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: "dfghkljjg" login status: SUCCES
+0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: "hjkhjghkh" login status: SUCCES
+0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: "fghjk" login status: SUCCES
+0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: "fghjk" login status: SUCCES
+0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: "ghjk" login status: SUCCES

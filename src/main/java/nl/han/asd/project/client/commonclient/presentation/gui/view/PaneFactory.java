@@ -15,7 +15,7 @@ import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 /**
  * Created by Marius on 19-04-16.
  */
-public class Pane {
+public class PaneFactory {
     public static GridPane getGridPane(Pos alignment, int[] padding) {
         GridPane pane = new GridPane();
         pane.setAlignment(alignment);

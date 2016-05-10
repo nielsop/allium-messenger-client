@@ -10,12 +10,10 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
  * Created by Marius on 10-05-16.
  */
 public class RegisterController {
-    RegisterView view;
-    RegisterModel model;
-    private GUI gui;
+    private RegisterView view;
+    private RegisterModel model;
 
     public RegisterController(GUI gui) {
-        this.gui = gui;
         view = new RegisterView();
         model = new RegisterModel(gui);
         onActions();
@@ -44,7 +42,7 @@ public class RegisterController {
             }
         });
 
-        view.getCancelButton().setOnAction(e -> gui.setStage(GUI.Page.LOGIN));
+        view.getCancelButton().setOnAction(e -> model.setStage(GUI.Page.LOGIN));
     }
 
     public GridPane getGridPane() {

@@ -12,10 +12,8 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 public class LoginController {
     private LoginView view;
     private LoginModel model;
-    private GUI gui;
 
     public LoginController(GUI gui) {
-        this.gui = gui;
         view = new LoginView();
         model = new LoginModel(gui);
         onActions();
@@ -29,12 +27,12 @@ public class LoginController {
                 view.setStatus("Password is too short!");
             else {
                 if (model.getLoginStatus(view.getUsername(), view.getPassword()) == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-                    gui.setStage(GUI.Page.DASHBOARD);
+                    model.setStage(GUI.Page.DASHBOARD);
                 }
             }
         });
 
-        view.getRegisterButton().setOnAction(e -> gui.setStage(GUI.Page.REGISTER));
+        view.getRegisterButton().setOnAction(e -> model.setStage(GUI.Page.REGISTER));
     }
 
     public GridPane getGridPane() {

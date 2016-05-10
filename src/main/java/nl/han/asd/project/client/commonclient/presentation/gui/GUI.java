@@ -13,11 +13,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.presentation.PresentationLayer;
+import nl.han.asd.project.client.commonclient.presentation.gui.controller.ConfirmationController;
+import nl.han.asd.project.client.commonclient.presentation.gui.controller.DashboardController;
+import nl.han.asd.project.client.commonclient.presentation.gui.controller.SettingController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.auth.LoginController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.auth.RegisterController;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneConfirmation;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboard;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,13 +64,13 @@ public class GUI extends Application {
                 scene = buildScene(new RegisterController(this).getGridPane());
                 break;
             case DASHBOARD:
-                scene = buildScene(new PaneDashboard(this).getBorderPane());
+                scene = buildScene(new DashboardController(this).getBorderPane());
                 break;
             case SETTINGS:
-                scene = buildScene(new PaneSettings(this).getGridPane());
+                scene = buildScene(new SettingController(this).getGridPane());
                 break;
             case CONFIRMATION:
-                scene = buildScene(new PaneConfirmation(this).getPane());
+                scene = buildScene(new ConfirmationController(this).getGridPane());
                 break;
             default:
                 scene = buildScene(new LoginController(this).getGridPane());

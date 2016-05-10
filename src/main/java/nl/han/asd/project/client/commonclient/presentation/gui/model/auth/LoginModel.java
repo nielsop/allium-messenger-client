@@ -17,4 +17,8 @@ public class LoginModel {
     public HanRoutingProtocol.ClientLoginResponse.Status getLoginStatus(String username, String password) {
         return gui.pLayer.login(username, password);
     }
+
+    public void setStage(GUI.Page stage) {
+        gui.setStage(stage);
+    }
 }

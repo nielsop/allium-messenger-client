@@ -9,7 +9,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
+import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneFactory;
 
 /**
  * Created by Marius on 19-04-16.
@@ -24,7 +24,7 @@ public class LoginView {
 
     public LoginView() {
         //Set gridPane
-        gridPane = Pane.getGridPane(Pos.CENTER, new int[]{25, 25, 25, 25});
+        gridPane = PaneFactory.getGridPane(Pos.CENTER, new int[]{25, 25, 25, 25});
 
         Text title = new Text("Welcome to the onion messenger");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));

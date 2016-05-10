@@ -7,15 +7,9 @@ import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 /**
  * Created by Marius on 25-04-16.
  */
-public class PaneSettings {
-    GridPane gridPane = null;
-    private GUI gui;
-
-    public PaneSettings(GUI gui) {
-        this.gui = gui;
-    }
-
-    public Parent getGridPane() {
+public class ConfirmationView {
+    private GridPane gridPane;
+    public GridPane getGridPane() {
         return gridPane;
     }
 }

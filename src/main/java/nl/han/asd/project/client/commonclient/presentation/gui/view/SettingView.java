@@ -7,13 +7,14 @@ import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 /**
  * Created by Marius on 25-04-16.
  */
-public class PaneConfirmation {
-    GridPane pane = null;
+public class SettingView {
+    private GridPane gridPane;
 
-    public PaneConfirmation(GUI gui) {
+    public SettingView() {
+
     }
 
-    public Parent getPane() {
-        return pane;
+    public GridPane getGridPane() {
+        return gridPane;
     }
 }

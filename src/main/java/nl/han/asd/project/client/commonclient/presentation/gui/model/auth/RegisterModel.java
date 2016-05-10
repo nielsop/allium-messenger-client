@@ -16,4 +16,8 @@ public class RegisterModel {
     public HanRoutingProtocol.ClientRegisterResponse.Status getRegisterStatus(String username, String password) {
         return gui.pLayer.register(username, password);
     }
+
+    public void setStage(GUI.Page stage) {
+        gui.setStage(stage);
+    }
 }
