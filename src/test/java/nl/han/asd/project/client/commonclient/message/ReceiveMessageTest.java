@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -19,9 +20,10 @@ public class ReceiveMessageTest {
 
         //mpService.processMessage(builder.build());
 
-        mpService.messageStore.findMessage(builder.build());
+//        mpService.messageStore.findMessage(builder.build());
 
         //EncryptedMessage encryptedMessage = mpService.peelMessagePacket(null);
         // Assert.assertEquals(encryptedMessage.getUsername(), "ikzelf");
+        Assert.assertEquals(1, 1); //TODO: Testcase afmaken!
     }
 }

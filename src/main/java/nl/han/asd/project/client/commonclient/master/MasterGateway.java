@@ -1,7 +1,6 @@
 package nl.han.asd.project.client.commonclient.master;
 
-import com.google.protobuf.GeneratedMessage;
-import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.inject.Inject;
 import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
@@ -9,38 +8,32 @@ import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrappe
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
-import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Base64;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
-
     //TODO: missing: IWebService from Master
 
     private static int currentGraphVersion = -1;
     private ConnectionService connectionService;
     private Socket socket;
-    private String hostname;
-    private int port;
-
     private IEncryptionService encryptionService;
+    public static final Logger logger = LoggerFactory.getLogger(MasterGateway.class);
 
     @Inject
-    public MasterGateway(IEncryptionService encryptionService) {
-        Validation.validateAddress(Configuration.HOSTNAME);
-        Validation.validatePort(Configuration.PORT);
+    public MasterGateway(String hostname, int port, IEncryptionService encryptionService) {
         this.encryptionService = encryptionService;
 
         try {
             socket = new Socket(hostname, port);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -64,9 +57,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     }
 
     @Override
-    public UpdatedGraphResponseWrapper getUpdatedGraph(int currentVersion) {
+    public UpdatedGraphResponseWrapper getUpdatedGraph(int version) {
         HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder()
-                .setCurrentVersion(currentVersion).build();
+                .setCurrentVersion(version).build();
         RequestWrapper req = new RequestWrapper(graphUpdateRequest, HanRoutingProtocol.Wrapper.Type.GRAPHUPDATEREQUEST, socket);
 
         HanRoutingProtocol.GraphUpdateResponse response = req.writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class);
@@ -135,8 +128,8 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         }
         try {
             connectionService.open(Configuration.HOSTNAME, Configuration.PORT);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -157,7 +150,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             try {
                 connectionService.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
     }
