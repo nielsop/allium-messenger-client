@@ -57,19 +57,19 @@ public class PaneDashboard {
         return borderPane;
     }
 
-    public ArrayList<Message> getMessages(Contact contact) {
-        return gui.pLayer.getMessages(contact);
-    }
-
     public Contact getMe() {
         return me;
     }
 
-    public ArrayList<Contact> getContacts() {
-        return gui.pLayer.getContacts();
-    }
-
-    public void sendMessage(Message message) {
-        gui.pLayer.sendMessage(message);
-    }
+//    public ArrayList<Message> getMessages(Contact contact) {
+//        return gui.pLayer.getMessages(contact);
+//    }
+//
+//    public ArrayList<Contact> getContacts() {
+//        return gui.pLayer.getContacts();
+//    }
+//
+//    public void sendMessage(Message message) {
+//        gui.pLayer.sendMessage(message);
+//    }
 }

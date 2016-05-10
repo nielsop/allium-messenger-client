@@ -29,7 +29,7 @@ public class NodeGateway implements ISendMessage {
         try {
             socket = new Socket(message.getIP(), message.getPort());
 
-            HanRoutingProtocol.EncryptedMessage.Builder request = HanRoutingProtocol.EncryptedMessage.newBuilder();
+            HanRoutingProtocol.MessageWrapper.Builder request = HanRoutingProtocol.MessageWrapper.newBuilder();
 
             request.setIPaddress(message.getIP());
             request.setPort(message.getPort());

@@ -25,7 +25,7 @@ public class MainClient implements IConnectionService {
         //connectionService = new ConnectionService(this);
         connectionService.open("10.182.5.214", 4444);
 
-        HanRoutingProtocol.EncryptedMessage.Builder encryptedMessageBuilder = HanRoutingProtocol.EncryptedMessage.newBuilder();
+        HanRoutingProtocol.MessageWrapper.Builder encryptedMessageBuilder = HanRoutingProtocol.MessageWrapper.newBuilder();
         encryptedMessageBuilder.setIPaddress("127.0.0.1");
         encryptedMessageBuilder.setPort(5555);
         encryptedMessageBuilder.setUsername("Jev");

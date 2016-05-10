@@ -31,11 +31,11 @@ public class Packer {
      * @param recieverPublicKey The public key that should be included inside the EncryptedWrapper message.
      * @return The byte array that represents the EncryptedWrapper.
      */
-    public HanRoutingProtocol.EncryptedWrapper pack(final GeneratedMessage.Builder originalBuilder, final byte[] recieverPublicKey) {
-        HanRoutingProtocol.EncryptedWrapper.Builder builder = HanRoutingProtocol.EncryptedWrapper
+    public HanRoutingProtocol.Wrapper pack(final GeneratedMessage.Builder originalBuilder, final byte[] recieverPublicKey) {
+        HanRoutingProtocol.Wrapper.Builder builder = HanRoutingProtocol.Wrapper
                 .newBuilder();
 
-        HanRoutingProtocol.EncryptedWrapper.Type type = protocolMessageDescriptorToWrapperType(
+        HanRoutingProtocol.Wrapper.Type type = protocolMessageDescriptorToWrapperType(
                 originalBuilder.getDescriptorForType());
         builder.setType(type);
 
@@ -54,11 +54,11 @@ public class Packer {
      * @param packed EncryptedWrapper that needs to be unpacked.
      * @return The unpacked version of the encrypted wrapper.
      */
-    public UnpackedMessage unpack(final HanRoutingProtocol.EncryptedWrapper packed)  {
+    public UnpackedMessage unpack(final HanRoutingProtocol.Wrapper packed)  {
         byte[] buffer = packed.getData().toByteArray();
         //buffer = cryptographyService.decryptData(ByteString.copyFrom(buffer)).toByteArray();
 
-        HanRoutingProtocol.EncryptedWrapper.Type type = packed.getType();
+        HanRoutingProtocol.Wrapper.Type type = packed.getType();
         GeneratedMessage message = wrapperTypeToProtocolMessage(type);
 
         return new UnpackedMessage(buffer, type,
@@ -72,7 +72,7 @@ public class Packer {
      * @return An class that extends from GeneratedMessage which can be used to decode the data inside an EncryptedWrapper.
      * @throws UnknownObjectException
      */
-    private <T extends GeneratedMessage> T wrapperTypeToProtocolMessage(final HanRoutingProtocol.EncryptedWrapper.Type type) {
+    private <T extends GeneratedMessage> T wrapperTypeToProtocolMessage(final HanRoutingProtocol.Wrapper.Type type) {
         String name = type.name();
 
         List<Descriptors.Descriptor> descriptorList = HanRoutingProtocol.getDescriptor().getMessageTypes();
@@ -100,10 +100,10 @@ public class Packer {
      * @param classDescriptor The descriptor type of a builder.
      * @return The EncryptedWrapper.Type that is equivalent to the descriptor type.
      */
-    private HanRoutingProtocol.EncryptedWrapper.Type protocolMessageDescriptorToWrapperType(
+    private HanRoutingProtocol.Wrapper.Type protocolMessageDescriptorToWrapperType(
             final Descriptors.Descriptor classDescriptor) {
         String name = classDescriptor.getFullName();
         String capitalizedCleanName = name.toUpperCase();
-        return HanRoutingProtocol.EncryptedWrapper.Type.valueOf(capitalizedCleanName);
+        return HanRoutingProtocol.Wrapper.Type.valueOf(capitalizedCleanName);
     }
 }
