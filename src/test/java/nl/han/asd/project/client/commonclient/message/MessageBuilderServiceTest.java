@@ -29,33 +29,20 @@ import static org.mockito.Matchers.anyInt;
 public class MessageBuilderServiceTest {
 
     private CryptographyService cryptographyService;
-    @Mock
-    IGetUpdatedGraph updatedGraphMock;
+    @Mock IGetUpdatedGraph updatedGraphMock;
 
-    IGetPath pathDeterminationService = Mockito.mock(PathDeterminationService.class);
-    @Mock
-    IEncrypt encrypt = Mockito.mock(CryptographyService.class);
-    @Mock
-    ISendMessage sendMessage;
-    @Mock
-    IMessageStore messageStore;
+    IGetPath pathDeterminationService = Mockito
+            .mock(PathDeterminationService.class);
+    @Mock IEncrypt encrypt = Mockito.mock(CryptographyService.class);
+    @Mock ISendMessage sendMessage;
+    @Mock IMessageStore messageStore;
 
-    @InjectMocks
-    private MessageBuilderService messageBuilderService;
-
+    @InjectMocks private MessageBuilderService messageBuilderService;
 
     @Before
     public void setUp() throws Exception {
         messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,sendMessage,messageStore);
-
     }
-
-    @Test
-    public void buildMessage() {
-        //cryptographyService = new CryptographyService();
-        //messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
-    }
-
 
     @Test
     public void sendMessageTest(){

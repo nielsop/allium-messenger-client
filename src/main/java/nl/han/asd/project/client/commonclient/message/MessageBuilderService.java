@@ -44,7 +44,7 @@ public class MessageBuilderService implements IMessageBuilder {
         //check if contactReciever contains latest data from master server.
         EncryptedMessage messageToSend = buildMessagePackage(messageText, contactReciever, contactSender);
 
-        HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
+        HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
         builder.setEncryptedData(messageToSend.getEncryptedData());
 
@@ -74,7 +74,7 @@ public class MessageBuilderService implements IMessageBuilder {
      * @return encrypted data from the first layer that is build
      */
     private ByteString buildFirstMessagePackageLayer(Node node, Message message) {
-        HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
+        HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
         builder.setUsername(message.getReceiver().getUsername());
         builder.setIPaddress(node.getIP());
@@ -92,7 +92,7 @@ public class MessageBuilderService implements IMessageBuilder {
         if (remainingPath.size() == 1) {
             return message;
         }
-        HanRoutingProtocol.EncryptedMessage.Builder builder = HanRoutingProtocol.EncryptedMessage.newBuilder();
+        HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
         Node node = remainingPath.get(0);
         builder.setIPaddress(node.getIP());

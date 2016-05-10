@@ -18,9 +18,9 @@ public class ResponseWrapper {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ResponseWrapper.class);
     public Socket socket;
-    private HanRoutingProtocol.EncryptedWrapper.Type responseType;
+    private HanRoutingProtocol.Wrapper.Type responseType;
 
-    public ResponseWrapper(final HanRoutingProtocol.EncryptedWrapper.Type responseType, final Socket socket) {
+    public ResponseWrapper(final HanRoutingProtocol.Wrapper.Type responseType, final Socket socket) {
         this.responseType = responseType;
         this.socket = socket;
     }

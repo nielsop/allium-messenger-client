@@ -1,8 +1,9 @@
 package nl.han.asd.project.client.commonclient.node;
 
 import nl.han.asd.project.client.commonclient.message.EncryptedMessage;
-import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -14,6 +15,7 @@ public class NodeGateway implements ISendMessage {
 //    public NodeGateway(INodeGateway nodeGateway) {
 //        this.nodeGateway = nodeGateway;
 //    }
+    private static final Logger logger = LoggerFactory.getLogger(NodeGateway.class);
 
     @Override
     public void sendMessage(EncryptedMessage message) {
@@ -27,7 +29,7 @@ public class NodeGateway implements ISendMessage {
         try {
             socket = new Socket(message.getIP(), message.getPort());
 
-            HanRoutingProtocol.EncryptedMessage.Builder request = HanRoutingProtocol.EncryptedMessage.newBuilder();
+            HanRoutingProtocol.MessageWrapper.Builder request = HanRoutingProtocol.MessageWrapper.newBuilder();
 
             request.setIPaddress(message.getIP());
             request.setPort(message.getPort());
@@ -37,7 +39,7 @@ public class NodeGateway implements ISendMessage {
             //final RequestWrapper req = new RequestWrapper(request.build(), socket);
             //req.writeToSocket();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 }

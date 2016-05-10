@@ -1,10 +1,11 @@
 package nl.han.asd.project.client.commonclient.path;
 
-
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -13,9 +14,12 @@ import java.util.Random;
 public class PathDeterminationService implements IGetPath {
     public IGetUpdatedGraph graphUpdates;
     public IGetClientGroup clientGroup;
+    private static final Logger logger = LoggerFactory
+            .getLogger(PathDeterminationService.class);
 
     @Inject
-    public PathDeterminationService(IGetUpdatedGraph graphUpdates, IGetClientGroup clientGroup) {
+    public PathDeterminationService(IGetUpdatedGraph graphUpdates,
+            IGetClientGroup clientGroup) {
         this.graphUpdates = graphUpdates;
         this.clientGroup = clientGroup;
     }
@@ -23,10 +27,12 @@ public class PathDeterminationService implements IGetPath {
     @Override
     public ArrayList<Node> getPath(int minHops, Contact contactOntvanger) {
         if (minHops < 1) {
-            throw new IllegalArgumentException("The minimum amount of Hops should be more than 0");
+            throw new IllegalArgumentException(
+                    "The minimum amount of Hops should be more than 0");
         }
 
-        return buildPath(calculateUsableConnectedNode(contactOntvanger), minHops);
+        return buildPath(calculateUsableConnectedNode(contactOntvanger),
+                minHops);
     }
 
     private Node calculateUsableConnectedNode(Contact contact) {
@@ -34,7 +40,7 @@ public class PathDeterminationService implements IGetPath {
         try {
             connectedNodes = contact.getConnectedNodes();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         Random ran = new Random();
         int indexConnectedNode = ran.nextInt(connectedNodes.length);
@@ -46,8 +52,9 @@ public class PathDeterminationService implements IGetPath {
         ArrayList<Node> path = new ArrayList<Node>();
         path.add(hostConnectedNode);
 
-        for(int i = 1; i < minHops; i++){
-            path.add(i,new Node("Node_ID1","192.168.2.empty",1234, "123456789".getBytes()));
+        for (int i = 1; i < minHops; i++) {
+            path.add(i, new Node("Node_ID1", "192.168.2.empty", 1234,
+                    "123456789".getBytes()));
         }
 
         return path;

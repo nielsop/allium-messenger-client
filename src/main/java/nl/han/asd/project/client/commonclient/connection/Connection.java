@@ -73,7 +73,7 @@ public class Connection {
      * @throws SocketException Writing to stream failed.
      * @throws IllegalAccessException A parameter has an invalid value.
      */
-    public void write(final HanRoutingProtocol.EncryptedWrapper wrapper) throws IllegalArgumentException, SocketException {
+    public void write(final HanRoutingProtocol.Wrapper wrapper) throws IllegalArgumentException, SocketException {
         if (wrapper == null)
             throw new IllegalArgumentException("data");
 
@@ -89,15 +89,15 @@ public class Connection {
      * @return An EncryptedWrapper that contains the real object.
      * @throws SocketException Connection or streams failed.
      */
-    public HanRoutingProtocol.EncryptedWrapper read() throws SocketException {
-        HanRoutingProtocol.EncryptedWrapper wrapper = null;
+    public HanRoutingProtocol.Wrapper read() throws SocketException {
+        HanRoutingProtocol.Wrapper wrapper = null;
 
         try {
             // synchronize so only one operation is executed in a multi threaded environment.
             // note that the code in the block underneath here should be the only accessor to the input stream.
             synchronized (this) {
                 // ..
-                wrapper = HanRoutingProtocol.EncryptedWrapper.parseDelimitedFrom(inputStream);
+                wrapper = HanRoutingProtocol.Wrapper.parseDelimitedFrom(inputStream);
             }
 
         } catch (IOException | NullPointerException e) {
@@ -130,7 +130,7 @@ public class Connection {
 
             Runnable readTask = () -> {
                 while (isRunning) {
-                    HanRoutingProtocol.EncryptedWrapper wrapper = null;
+                    HanRoutingProtocol.Wrapper wrapper = null;
                     byte[] data = null;
                     try {
                         // Read data from stream using original Read.
