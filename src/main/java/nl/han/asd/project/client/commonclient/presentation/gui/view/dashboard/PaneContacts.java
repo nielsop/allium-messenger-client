@@ -48,13 +48,13 @@ public class PaneContacts {
 
         VBox contactList = getVBox(0, new int[]{0,0,0,0}, "");
 
-        for (Contact contact : paneDashboard.getContacts()) {
+        /*for (Contact contact : paneDashboard.getContacts()) {
             Label name = new Label(contact.getUsername());
             HBox contactBox = getHBox(0, new int[]{5,5,5,5}, "-fx-background-color: #FFF;");
             setHBoxMouseEvents(contactBox, contact);
             contactBox.getChildren().add(name);
             contactList.getChildren().add(contactBox);
-        }
+        }*/
 
         scrollPane.setContent(contactList);
         return scrollPane;

@@ -7,6 +7,7 @@ import org.junit.*;
 import java.io.IOException;
 import java.net.SocketException;
 
+import static com.sun.xml.internal.ws.dump.LoggingDumpTube.Position.Before;
 import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
 import static org.junit.Assert.assertEquals;
 
@@ -22,17 +23,20 @@ public class ConnectionServiceTest implements IConnectionService {
     public ConnectionServiceTest() {
     }
 
-    @BeforeClass public static void InitServer() throws IOException {
+    @BeforeClass
+    public static void InitServer() throws IOException {
         // setup the local server for testing purposes only, executing should happen before the class is initialized.
         server.Start(10002);
     }
 
-    @AfterClass public static void StopServer() {
+    @AfterClass
+    public static void StopServer() {
         // stop the local server after we ran all tests.
         server.Stop();
     }
 
-    @Before public void InitConnectionService() throws IOException {
+    @Before
+    public void InitConnectionService() throws IOException {
         connectionService = new ConnectionService(EMPTY_BYTE_ARRAY, this);
 
         // set the public key of the server to our connection service
@@ -42,12 +46,13 @@ public class ConnectionServiceTest implements IConnectionService {
         connectionService.open("127.0.0.1", 10002);
     }
 
-    @After public void CloseConnectionService() throws IOException {
+    @After
+    public void CloseConnectionService() throws IOException {
         connectionService.close();
     }
 
-    @Test public void TestProtocol()
-            throws InvalidProtocolBufferException, SocketException {
+    @Test
+    public void TestProtocol() throws InvalidProtocolBufferException, SocketException {
         ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
         requestBuilder.setUsername("test");
         requestBuilder.setPassword("test");
@@ -57,8 +62,7 @@ public class ConnectionServiceTest implements IConnectionService {
 
         ClientLoginResponse response = connectionService.readGeneric(HanRoutingProtocol.ClientLoginResponse.class);
         assertEquals(response.getSecretHash(),
-                String.format("%s:%s", requestBuilder.getUsername(),
-                        requestBuilder.getPassword()));
+                String.format("%s:%s", requestBuilder.getUsername(), requestBuilder.getPassword()));
         assertEquals(response.getStatus(), ClientLoginResponse.Status.SUCCES);
 
     }
@@ -68,33 +72,32 @@ public class ConnectionServiceTest implements IConnectionService {
         ConnectionService connection2 = new ConnectionService(-20, EMPTY_BYTE_ARRAY);
     }
 
-    @Test(expected = IllegalArgumentException.class) public void TestHost()
-            throws IOException {
-        ConnectionService connection2 = new ConnectionService(20, EMPTY_BYTE_ARRAY,
-                this);
+    @Test(expected = IllegalArgumentException.class)
+    public void TestHost() throws IOException {
+        ConnectionService connection2 = new ConnectionService(20, EMPTY_BYTE_ARRAY, this);
         connection2.open("127.0.", 10);
     }
 
-    @Test(expected = IllegalArgumentException.class) public void TestPort()
-            throws IOException {
+    @Test(expected = IllegalArgumentException.class)
+    public void TestPort() throws IOException {
         ConnectionService connection2 = new ConnectionService(EMPTY_BYTE_ARRAY);
         connection2.open("127.0.0.1", -20);
     }
 
-    @Test(expected = SocketException.class) public void TestReadAsync()
-            throws IOException {
+    @Test(expected = SocketException.class)
+    public void TestReadAsync() throws IOException {
         ConnectionService connection2 = new ConnectionService(EMPTY_BYTE_ARRAY);
         connection2.readAsync();
     }
 
-    @Test(expected = SocketException.class) public void TestStopReadyAsync()
-            throws IOException {
+    @Test(expected = SocketException.class)
+    public void TestStopReadyAsync() throws IOException {
         ConnectionService connection2 = new ConnectionService(EMPTY_BYTE_ARRAY);
         connection2.stopReadAsync();
     }
 
-    @Test public void TestGenerics()
-            throws SocketException, InvalidProtocolBufferException {
+    @Test
+    public void TestGenerics() throws SocketException, InvalidProtocolBufferException {
         ClientLoginRequest.Builder builder = ClientLoginRequest.newBuilder();
         builder.setUsername("test");
         builder.setPassword("test");
@@ -105,14 +108,14 @@ public class ConnectionServiceTest implements IConnectionService {
         assertEquals(ClientLoginResponse.Status.SUCCES, response.getStatus());
     }
 
-    @Test(expected = SocketException.class) public void TestInvalidGeneric()
-            throws IOException {
+    @Test(expected = SocketException.class)
+    public void TestInvalidGeneric() throws IOException {
         connectionService.close();
         ClientLoginResponse response = connectionService.readGeneric(ClientLoginResponse.class);
     }
 
-    @Test(expected = SocketException.class) public void TestWriteInvalid()
-            throws IOException {
+    @Test(expected = SocketException.class)
+    public void TestWriteInvalid() throws IOException {
         connectionService.close();
         ClientLoginRequest.Builder builder = ClientLoginRequest.newBuilder();
         connectionService.write(builder);
@@ -123,9 +126,8 @@ public class ConnectionServiceTest implements IConnectionService {
         connectionService.open("127.1.1.1", 1345);
     }
 
-
-    @Test(expected = SocketException.class) public void TestReadInvalid()
-            throws IOException {
+    @Test(expected = SocketException.class)
+    public void TestReadInvalid() throws IOException {
         connectionService.close();
         connectionService.readGeneric(HanRoutingProtocol.ClientLoginRequest.class);
     }
@@ -135,7 +137,8 @@ public class ConnectionServiceTest implements IConnectionService {
         ConnectionService service = new ConnectionService(25, null);
     }
 
-    @Test public void TestConnectedState() throws IOException {
+    @Test
+    public void TestConnectedState() throws IOException {
         connectionService.close();
 
         assertEquals(false, connectionService.isConnected());
@@ -147,7 +150,8 @@ public class ConnectionServiceTest implements IConnectionService {
         connectionService.stopReadAsync();
     }
 
-    @Override public void onReceiveRead(UnpackedMessage message) {
+    @Override
+    public void onReceiveRead(UnpackedMessage message) {
         try {
             connectionService.stopReadAsync();
         } catch (SocketException e) {

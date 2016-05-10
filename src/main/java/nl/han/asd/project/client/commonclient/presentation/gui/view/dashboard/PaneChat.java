@@ -100,9 +100,9 @@ public class PaneChat {
     public VBox getChatPane(Contact contact) {
         VBox vBox = getVBox(0, new int[]{0, 0, 0, 0}, "");
 
-        for (Message message : paneDashboard.getMessages(contact)) {
+       /* for (Message message : paneDashboard.getMessages(contact)) {
             addMessageToChat(message, vBox, false);
-        }
+        }*/
         return vBox;
     }
 
@@ -117,7 +117,7 @@ public class PaneChat {
         chat.getChildren().add(messageBox);
 
         if (newMessage) {
-            paneDashboard.sendMessage(message);
+            //paneDashboard.sendMessage(message);
         }
     }
 }
