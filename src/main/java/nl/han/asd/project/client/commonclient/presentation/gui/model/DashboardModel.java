@@ -4,7 +4,7 @@ import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Marius on 25-04-16.
@@ -12,11 +12,10 @@ import java.util.ArrayList;
 public class DashboardModel {
     private GUI gui;
     private Contact currentUser;
-    private ArrayList<Contact> contacts;
 
     public DashboardModel(GUI gui) {
         this.gui = gui;
-        currentUser = gui.pLayer.getCurrentUser();
+        currentUser = gui.getPresentationLayer().getCurrentUser();
     }
 
     public GUI getGUI() {
@@ -27,17 +26,15 @@ public class DashboardModel {
         return currentUser;
     }
 
-    public ArrayList<Message> getMessages(Contact contact) {
-//        return gui.pLayer.getMessages(contact);
-        return null;
+    public List<Message> getMessages(Contact contact) {
+        return gui.getPresentationLayer().getMessages(contact);
     }
 
-    public ArrayList<Contact> getContacts() {
-//        return gui.pLayer.getContacts();
-        return null;
+    public List<Contact> getContacts() {
+        return gui.getPresentationLayer().getContacts();
     }
 
     public void sendMessage(Message message) {
-//        gui.pLayer.sendMessage(message);
+        gui.getPresentationLayer().sendMessage(message);
     }
 }
