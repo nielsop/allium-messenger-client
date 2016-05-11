@@ -14,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -30,14 +32,13 @@ public class GraphManagerServiceTest {
 
     private GraphManagerService graphManagerService;
     private CloudHost master;
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphManagerService.class);
 
     @Mock
     UpdatedGraphResponseWrapper updatedGraphResponseWrapper;
 
     @Mock
     MasterGateway masterGateway;
-//    @Rule
-//    public Timeout globalTimeout = Timeout.seconds(10);
 
     @Before
     public void setUp() throws Exception {
@@ -55,12 +56,10 @@ public class GraphManagerServiceTest {
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(),e);
             }
         }
 
-//        MasterGateway gateway = new MasterGateway(master.getHostName(), master.getPort(1337), injector.getInstance(
-//                IEncryptionService.class));
         masterGateway = Mockito.mock(MasterGateway.class);
         graphManagerService = new GraphManagerService(masterGateway);
         updatedGraphResponseWrapper = Mockito.mock(UpdatedGraphResponseWrapper.class);
@@ -117,14 +116,11 @@ public class GraphManagerServiceTest {
         graphUpdate.setNewVersion(1);
         graphUpdate.setIsFullGraph(true);
 
-//        updatedGraphResponseWrapper.updatedGraphs.add(new UpdatedGraphWrapper(graphUpdate.build()));
         updatedGraphs.add(new UpdatedGraphWrapper(graphUpdate.build()));
         updatedGraphResponseWrapper.setUpdatedGraphs(updatedGraphs);
         when(updatedGraphResponseWrapper.getLast()).thenReturn(updatedGraphs.get(updatedGraphs.size() - 1));
         when(masterGateway.getUpdatedGraph(anyInt())).thenReturn(updatedGraphResponseWrapper);
         when(updatedGraphResponseWrapper.getUpdatedGraphs()).thenReturn(updatedGraphs);
-//        when(updatedGraphResponseWrapper.updatedGraphs).thenReturn(updatedGraphs);
         graphManagerService.processGraphUpdates();
-        //Assert.assertEquals(1, 1); //TODO: testcase afmaken
     }
 }
