@@ -1,12 +1,13 @@
 package nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard;
 
-import javafx.scene.control.Button;
+import com.jfoenix.controls.JFXButton;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
+import nl.han.asd.project.client.commonclient.presentation.gui.view.Styles;
 
 import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.*;
 
@@ -19,12 +20,12 @@ public class ContactView {
     private ScrollPane center = getCenter();
     private HBox bottom = getBottom();
     private VBox contactList;
-    private Button edit;
-    private Button remove;
-    private Button add;
+    private JFXButton edit;
+    private JFXButton remove;
+    private JFXButton add;
 
     public ContactView() {
-        borderPane = PaneFactory.getBorderPane(new int[]{0,0,0,0});
+        borderPane = PaneFactory.getBorderPane(new int[] { 0, 0, 0, 0 });
         borderPane.setStyle("-fx-background-color: #FFF; -fx-background: #FFF;");
         borderPane.setTop(top);
         borderPane.setCenter(center);
@@ -32,7 +33,7 @@ public class ContactView {
     }
 
     private HBox getTop() {
-        HBox hBox = getHBox(0, new int[]{5,5,5,5}, "");
+        HBox hBox = getHBox(0, new int[] { 5, 5, 5, 5 }, "");
         Label title = new Label("Contacten");
         title.setStyle("-fx-font-size: 15px;");
         hBox.getChildren().add(title);
@@ -42,16 +43,19 @@ public class ContactView {
     private ScrollPane getCenter() {
         String style = "-fx-background-color:#FFF; -fx-background: #FFF;";
         ScrollPane scrollPane = getScrollPane(true, true, null, null, style);
-        contactList = getVBox(0, new int[]{0,0,0,0}, "");
+        contactList = getVBox(0, new int[] { 0, 0, 0, 0 }, "");
         scrollPane.setContent(contactList);
         return scrollPane;
     }
 
     private HBox getBottom() {
-        HBox hBox = getHBox(5, new int[]{0,0,0,0}, "");
-        edit = new Button("Edit");
-        add = new Button("Add");
-        remove = new Button("Remove");
+        HBox hBox = getHBox(5, new int[] { 0, 0, 0, 0 }, "");
+        edit = new JFXButton("Edit");
+        edit.setStyle(Styles.FX_BUTTON_RAISED);
+        add = new JFXButton("Add");
+        add.setStyle(Styles.FX_BUTTON_RAISED);
+        remove = new JFXButton("Remove");
+        remove.setStyle(Styles.FX_BUTTON_RAISED);
         hBox.getChildren().addAll(add, edit, remove);
         return hBox;
     }

@@ -1,13 +1,14 @@
 package nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard;
 
-import javafx.scene.control.Button;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
+import nl.han.asd.project.client.commonclient.presentation.gui.view.Styles;
 
 import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.getHBox;
 import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.getScrollPane;
@@ -20,12 +21,12 @@ public class ChatView {
     private HBox top = getTop();
     private ScrollPane center = getCenter();
     private BorderPane bottom = getBottom();
-    private TextArea newMessage;
-    private Button sendNewMessage;
+    private JFXTextArea newMessage;
+    private JFXButton sendNewMessage;
     private HBox current;
 
     public ChatView() {
-        borderPane = PaneFactory.getBorderPane(new int[]{0, 0, 0, 0});
+        borderPane = PaneFactory.getBorderPane(new int[] { 0, 0, 0, 0 });
         borderPane.setStyle("-fx-background-color: #EEE; -fx-background: #EEE;");
         borderPane.setTop(top);
         borderPane.setCenter(center);
@@ -33,7 +34,7 @@ public class ChatView {
     }
 
     private HBox getTop() {
-        HBox top = getHBox(0, new int[]{5, 5, 5, 5}, "");
+        HBox top = getHBox(0, new int[] { 5, 5, 5, 5 }, "");
         top.setStyle("-fx-font-weight: bold; -fx-font-size: 15px;");
         top.getChildren().add(new Label("Klik op een contact om te chatten."));
         return top;
@@ -46,10 +47,11 @@ public class ChatView {
     }
 
     private BorderPane getBottom() {
-        BorderPane bottom = PaneFactory.getBorderPane(new int[]{0, 0, 0, 0});
-        sendNewMessage = new Button("send");
+        BorderPane bottom = PaneFactory.getBorderPane(new int[] { 0, 0, 0, 0 });
+        sendNewMessage = new JFXButton("send");
+        sendNewMessage.setStyle(Styles.FX_BUTTON_RAISED);
         sendNewMessage.setPrefHeight(50);
-        newMessage = new TextArea();
+        newMessage = new JFXTextArea();
         newMessage.setPrefHeight(50);
         bottom.setCenter(newMessage);
         bottom.setRight(sendNewMessage);
@@ -92,7 +94,7 @@ public class ChatView {
         this.newMessage.setText(newMessage);
     }
 
-    public Button getSendNewMessage() {
+    public JFXButton getSendNewMessage() {
         return sendNewMessage;
     }
 
@@ -106,7 +108,8 @@ public class ChatView {
     }
 
     public void setSelectedMessage(HBox hBox) {
-        if (current != null) current.setStyle("-fx-background-color: #EEE;");
+        if (current != null)
+            current.setStyle("-fx-background-color: #EEE;");
         hBox.setStyle("-fx-background-color: #DDD;");
         current = hBox;
     }
@@ -116,6 +119,7 @@ public class ChatView {
     }
 
     public void setExitedMessage(HBox hBox) {
-        if (hBox != current) hBox.setStyle("-fx-background-color: #EEE;");
+        if (hBox != current)
+            hBox.setStyle("-fx-background-color: #EEE;");
     }
 }

@@ -25,7 +25,7 @@ public class NavController {
         fancyLabel(view.getLogout(), model.getGUI());
         view.getLogout().setOnMouseClicked(e -> model.getGUI().setScene(GUI.Page.LOGIN));
 
-        fancyLabel(view.getLogout(), model.getGUI());
+        fancyLabel(view.getSettings(), model.getGUI());
         view.getLogout().setOnMouseClicked(e -> model.getGUI().setScene(GUI.Page.SETTINGS));
     }
 

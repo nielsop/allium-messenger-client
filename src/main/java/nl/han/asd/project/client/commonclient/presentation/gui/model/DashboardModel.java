@@ -28,16 +28,16 @@ public class DashboardModel {
     }
 
     public ArrayList<Message> getMessages(Contact contact) {
-//        return gui.pLayer.getMessages(contact);
+        //        return gui.pLayer.getMessages(contact);
         return null;
     }
 
     public ArrayList<Contact> getContacts() {
-//        return gui.pLayer.getContacts();
+        //        return gui.pLayer.getContacts();
         return null;
     }
 
     public void sendMessage(Message message) {
-//        gui.pLayer.sendMessage(message);
+        //        gui.pLayer.sendMessage(message);
     }
 }
