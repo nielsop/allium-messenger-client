@@ -13,9 +13,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.presentation.PresentationLayer;
-import nl.han.asd.project.client.commonclient.presentation.gui.controller.ConfirmationController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.DashboardController;
-import nl.han.asd.project.client.commonclient.presentation.gui.controller.SettingController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.auth.LoginController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.auth.RegisterController;
 import org.slf4j.Logger;
@@ -61,12 +59,6 @@ public class GUI extends Application {
             case DASHBOARD:
                 scene = buildScene(new DashboardController(this).getBorderPane());
                 break;
-            case SETTINGS:
-                scene = buildScene(new SettingController(this).getGridPane());
-                break;
-            case CONFIRMATION:
-                scene = buildScene(new ConfirmationController(this).getGridPane());
-                break;
             default:
                 scene = buildScene(new LoginController(this).getGridPane());
                 break;
@@ -88,6 +80,6 @@ public class GUI extends Application {
     }
 
     public enum Page {
-        LOGIN, REGISTER, DASHBOARD, CONTACTS, CHAT, SETTINGS, CONFIRMATION
+        LOGIN, REGISTER, DASHBOARD, SETTINGS
     }
 }
