@@ -29,7 +29,8 @@ public class PackerTest {
     public void TestPacking() throws InvalidProtocolBufferException {
         HanRoutingProtocol.Wrapper packedData = pack();
         UnpackedMessage unpackedData = unpack(packedData);
-        HanRoutingProtocol.ClientLoginRequest wrapper = HanRoutingProtocol.ClientLoginRequest.parseFrom(unpackedData.getData());
+        HanRoutingProtocol.ClientLoginRequest wrapper = HanRoutingProtocol.ClientLoginRequest
+                .parseFrom(unpackedData.getData());
     }
 
     public HanRoutingProtocol.Wrapper pack() {
@@ -45,13 +46,11 @@ public class PackerTest {
         return packed;
     }
 
-    public UnpackedMessage unpack(HanRoutingProtocol.Wrapper packed)
-    {
+    public UnpackedMessage unpack(HanRoutingProtocol.Wrapper packed) {
         UnpackedMessage unpacked = packer.unpack(packed);
 
         return unpacked;
     }
-
 
     @Test
     public void TestUnpacking() throws InvalidProtocolBufferException {
@@ -63,7 +62,8 @@ public class PackerTest {
         assertEquals(unpackedMessage.getDataType(), HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST);
         assertEquals(unpackedMessage.getDataMessage().getClass(), HanRoutingProtocol.ClientLoginRequest.class);
 
-        HanRoutingProtocol.ClientLoginRequest clr = (HanRoutingProtocol.ClientLoginRequest)unpackedMessage.getDataMessage().getParserForType().parseFrom(unpackedMessage.getData());
+        HanRoutingProtocol.ClientLoginRequest clr = (HanRoutingProtocol.ClientLoginRequest) unpackedMessage
+                .getDataMessage().getParserForType().parseFrom(unpackedMessage.getData());
     }
 
 }

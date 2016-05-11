@@ -1,12 +1,12 @@
 package nl.han.asd.project.client.commonclient.master.wrapper;
 
 import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Niels Bokmans

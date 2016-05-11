@@ -7,13 +7,13 @@ import com.google.protobuf.ByteString;
  */
 public class EncryptedMessage {
     private String username;
-    private String IP;
+    private String ip;
     private int port;
     private ByteString encryptedData;
 
-    public EncryptedMessage(String username, String IP, int port, ByteString encryptedData) {
+    public EncryptedMessage(String username, String ip, int port, ByteString encryptedData) {
         this.username = username;
-        this.IP = IP;
+        this.ip = ip;
         this.port = port;
         this.encryptedData = encryptedData;
     }
@@ -26,8 +26,8 @@ public class EncryptedMessage {
         return port;
     }
 
-    public String getIP() {
-        return IP;
+    public String getIp() {
+        return ip;
     }
 
     public ByteString getEncryptedData() {

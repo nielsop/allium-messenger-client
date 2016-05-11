@@ -11,8 +11,7 @@ public class ReceiveMessageTest {
     public final MessageProcessingService mpService = new MessageProcessingService(null);
 
     @Test
-    public void ProcessReceivedMessage()
-    {
+    public void ProcessReceivedMessage() {
         HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
         builder.setId("1000");
         builder.setSender("Contact");
@@ -20,7 +19,7 @@ public class ReceiveMessageTest {
 
         //mpService.processMessage(builder.build());
 
-//        mpService.messageStore.findMessage(builder.build());
+        //        mpService.messageStore.findMessage(builder.build());
 
         //EncryptedMessage encryptedMessage = mpService.peelMessagePacket(null);
         // Assert.assertEquals(encryptedMessage.getUsername(), "ikzelf");
