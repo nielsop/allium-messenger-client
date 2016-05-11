@@ -12,14 +12,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class PathDeterminationService implements IGetPath {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PathDeterminationService.class);
     public IGetUpdatedGraph graphUpdates;
     public IGetClientGroup clientGroup;
-    private static final Logger logger = LoggerFactory
-            .getLogger(PathDeterminationService.class);
 
     @Inject
-    public PathDeterminationService(IGetUpdatedGraph graphUpdates,
-            IGetClientGroup clientGroup) {
+    public PathDeterminationService(IGetUpdatedGraph graphUpdates, IGetClientGroup clientGroup) {
         this.graphUpdates = graphUpdates;
         this.clientGroup = clientGroup;
     }
@@ -27,12 +25,10 @@ public class PathDeterminationService implements IGetPath {
     @Override
     public ArrayList<Node> getPath(int minHops, Contact contactOntvanger) {
         if (minHops < 1) {
-            throw new IllegalArgumentException(
-                    "The minimum amount of Hops should be more than 0");
+            throw new IllegalArgumentException("The minimum amount of Hops should be more than 0");
         }
 
-        return buildPath(calculateUsableConnectedNode(contactOntvanger),
-                minHops);
+        return buildPath(calculateUsableConnectedNode(contactOntvanger), minHops);
     }
 
     private Node calculateUsableConnectedNode(Contact contact) {
@@ -40,7 +36,7 @@ public class PathDeterminationService implements IGetPath {
         try {
             connectedNodes = contact.getConnectedNodes();
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         Random ran = new Random();
         int indexConnectedNode = ran.nextInt(connectedNodes.length);
@@ -53,8 +49,7 @@ public class PathDeterminationService implements IGetPath {
         path.add(hostConnectedNode);
 
         for (int i = 1; i < minHops; i++) {
-            path.add(i, new Node("Node_ID1", "192.168.2.empty", 1234,
-                    "123456789".getBytes()));
+            path.add(i, new Node("Node_ID1", "192.168.2.empty", 1234, "123456789".getBytes()));
         }
 
         return path;

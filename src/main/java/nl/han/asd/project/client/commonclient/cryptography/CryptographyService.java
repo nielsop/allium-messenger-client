@@ -4,8 +4,6 @@ import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 
-import java.nio.charset.StandardCharsets;
-
 /**
  * @author Niels Bokmans
  * @version 1.0
@@ -15,12 +13,11 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
     private IEncryptionService encryptionService;
 
     @Inject
-    public CryptographyService(final IEncryptionService encryptionService)
-    {
+    public CryptographyService(final IEncryptionService encryptionService) {
         this.encryptionService = encryptionService;
     }
 
-	 /**
+    /**
      * Decrypts a byte array containing data.
      *
      * @param data The byte array in ByteString format.
@@ -29,10 +26,8 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
     @Override
     public ByteString decryptData(ByteString data) {
         return null;
-       // return ByteString.copyFrom(encryptionService.decryptData(data.toByteArray()));
     }
 
-	
     /**
      * Encrypts a byte array containing data.
      *
@@ -43,11 +38,9 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
     @Override
     public ByteString encryptData(ByteString data, byte[] publicKey) {
         return null;
-     //   return ByteString.copyFrom(encryptionService.encryptData(publicKey, data.toByteArray()));
     }
-	
+
     public byte[] getPublicKey() {
-    //    return encryptionService.getPublicKey();
-        return null;
+        return new byte[] {};
     }
 }

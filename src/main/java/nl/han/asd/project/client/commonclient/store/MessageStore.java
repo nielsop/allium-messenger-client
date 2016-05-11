@@ -15,11 +15,11 @@ public class MessageStore implements IMessageStore, IMessageObserver {
 
     @Override
     public void addMessage(HanRoutingProtocol.Message message) {
-
+        //TODO: implement!
     }
 
     @Override
     public void findMessage(HanRoutingProtocol.Message message) {
-
+        //TODO: implement!
     }
 }

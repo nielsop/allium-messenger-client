@@ -8,6 +8,8 @@ import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -18,10 +20,11 @@ import java.net.SocketException;
  * @author Jevgeni Geurtsen
  */
 public final class ConnectionService implements IConnectionPipe {
-    private final static int DEFAULT_SLEEP_TIME = 25; // 25ms
-
+    private static final int DEFAULT_SLEEP_TIME = 25; // 25ms
+    private static final String INVALID_SOCKET_CONNECTION = "Socket has no valid or connection, or the valid connection was closed.";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
     private Packer packer = null;
-    private byte[]  receiverPublicKey = null;
+    private byte[] receiverPublicKey = null;
     private Connection connection = null;
     private IConnectionService service = null;
 
@@ -54,11 +57,13 @@ public final class ConnectionService implements IConnectionPipe {
      *                      while reading asynchronous.
      * @throws IOException
      */
-    public ConnectionService(final int sleepTime, final byte[] receiverPublicKey, final IConnectionService targetService) {
+    public ConnectionService(final int sleepTime, final byte[] receiverPublicKey,
+            final IConnectionService targetService) {
         this(sleepTime, receiverPublicKey);
 
         if (targetService == null) {
-            throw new IllegalArgumentException("You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
+            throw new IllegalArgumentException(
+                    "You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
         }
 
         service = targetService;
@@ -71,7 +76,6 @@ public final class ConnectionService implements IConnectionPipe {
     public ConnectionService(final byte[] receiverPublicKey) {
         this(DEFAULT_SLEEP_TIME, receiverPublicKey);
     }
-
 
     /**
      * Initializes this class.
@@ -91,7 +95,7 @@ public final class ConnectionService implements IConnectionPipe {
      */
     private UnpackedMessage read() throws SocketException {
         if (!connection.isConnected()) {
-            throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
+            throw new SocketException(INVALID_SOCKET_CONNECTION);
         }
 
         HanRoutingProtocol.Wrapper wrapper = connection.read();
@@ -104,10 +108,11 @@ public final class ConnectionService implements IConnectionPipe {
      */
     public void readAsync() throws SocketException {
         if (!connection.isConnected()) {
-            throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
+            throw new SocketException(INVALID_SOCKET_CONNECTION);
         }
         if (service == null) {
-            throw new IllegalArgumentException("You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
+            throw new IllegalArgumentException(
+                    "You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
         }
 
         // uses observer
@@ -121,7 +126,7 @@ public final class ConnectionService implements IConnectionPipe {
      */
     public void stopReadAsync() throws SocketException {
         if (!connection.isConnected()) {
-            throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
+            throw new SocketException(INVALID_SOCKET_CONNECTION);
         }
 
         connection.stopReadAsync();
@@ -135,14 +140,14 @@ public final class ConnectionService implements IConnectionPipe {
      * @return A protocol buffer (T) instance.
      * @throws SocketException An exception occurred while reading data from the stream.
      */
-    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor)
-            throws SocketException, InvalidProtocolBufferException,
-            PackerException {
+    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor) throws SocketException {
         UnpackedMessage unpackedMessage = this.read();
-        if (unpackedMessage.getDataMessage().getClass() == classDescriptor)
-        {
-            return (T) unpackedMessage.getDataMessage().getParserForType().parseFrom(
-                    unpackedMessage.getData());
+        if (unpackedMessage.getDataMessage().getClass() == classDescriptor) {
+            try {
+                return (T) unpackedMessage.getDataMessage().getParserForType().parseFrom(unpackedMessage.getData());
+            } catch (InvalidProtocolBufferException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         }
         return null;
     }
@@ -154,7 +159,7 @@ public final class ConnectionService implements IConnectionPipe {
      */
     public <T extends GeneratedMessage.Builder> void write(final T instance) throws SocketException {
         if (!connection.isConnected()) {
-            throw new SocketException("Socket has no valid or connection, or the valid connection was closed.");
+            throw new SocketException(INVALID_SOCKET_CONNECTION);
         }
 
         HanRoutingProtocol.Wrapper wrapper = packer.pack(instance, getReceiverPublicKey());
@@ -202,11 +207,11 @@ public final class ConnectionService implements IConnectionPipe {
         }
     }
 
-    public void setReceiverPublicKey(byte[] receiverPublicKey) {
-        this.receiverPublicKey = receiverPublicKey;
-    }
-
     public byte[] getReceiverPublicKey() {
         return this.receiverPublicKey;
+    }
+
+    public void setReceiverPublicKey(byte[] receiverPublicKey) {
+        this.receiverPublicKey = receiverPublicKey;
     }
 }

@@ -11,13 +11,8 @@ import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.PaneDashboard;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-import java.util.ArrayList;
-
 import static nl.han.asd.project.client.commonclient.presentation.gui.view.Pane.*;
 
-/**
- * Created by Marius on 25-04-16.
- */
 public class PaneContacts {
     private PaneDashboard paneDashboard;
     private BorderPane borderPane;
@@ -27,7 +22,7 @@ public class PaneContacts {
     public PaneContacts(PaneDashboard paneDashboard) {
         this.paneDashboard = paneDashboard;
 
-        borderPane = Pane.getBorderPane(new int[]{0,0,0,0});
+        borderPane = Pane.getBorderPane(new int[] { 0, 0, 0, 0 });
         borderPane.setStyle("-fx-background-color: #FFF; -fx-background: #FFF;");
         borderPane.setTop(getTop());
         borderPane.setCenter(getCenter());
@@ -35,7 +30,7 @@ public class PaneContacts {
     }
 
     public HBox getTop() {
-        HBox hBox = getHBox(0, new int[]{5,5,5,5}, "");
+        HBox hBox = getHBox(0, new int[] { 5, 5, 5, 5 }, "");
         Label title = new Label("Contacten");
         title.setStyle("-fx-font-size: 15px;");
         hBox.getChildren().add(title);
@@ -46,15 +41,7 @@ public class PaneContacts {
         String style = "-fx-background-color:#FFF; -fx-background: #FFF;";
         ScrollPane scrollPane = getScrollPane(true, true, null, null, style);
 
-        VBox contactList = getVBox(0, new int[]{0,0,0,0}, "");
-
-        for (Contact contact : paneDashboard.getContacts()) {
-            Label name = new Label(contact.getUsername());
-            HBox contactBox = getHBox(0, new int[]{5,5,5,5}, "-fx-background-color: #FFF;");
-            setHBoxMouseEvents(contactBox, contact);
-            contactBox.getChildren().add(name);
-            contactList.getChildren().add(contactBox);
-        }
+        VBox contactList = getVBox(0, new int[] { 0, 0, 0, 0 }, "");
 
         scrollPane.setContent(contactList);
         return scrollPane;
@@ -63,7 +50,8 @@ public class PaneContacts {
     private void setHBoxMouseEvents(HBox hBox, Contact contact) {
         hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             paneDashboard.selectContact(contact);
-            if (current != null) current.setStyle("-fx-background-color: #FFF;");
+            if (current != null)
+                current.setStyle("-fx-background-color: #FFF;");
             hBox.setStyle("-fx-background-color: #EEE;");
             current = hBox;
             currentContact = contact;
@@ -72,12 +60,13 @@ public class PaneContacts {
             hBox.setStyle("-fx-background-color: #EEE;");
         });
         hBox.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-            if (hBox != current) hBox.setStyle("-fx-background-color: #FFF;");
+            if (hBox != current)
+                hBox.setStyle("-fx-background-color: #FFF;");
         });
     }
 
     public HBox getBottom() {
-        HBox hBox = getHBox(5, new int[]{0,0,0,0}, "");
+        HBox hBox = getHBox(5, new int[] { 0, 0, 0, 0 }, "");
         Button edit = new Button("Edit");
         Button add = new Button("Add");
         Button remove = new Button("Remove");

@@ -16,9 +16,8 @@ import java.util.concurrent.Executors;
  * Created by Jevgeni on 26-4-2016.
  */
 class Server {
-    private volatile boolean isRunning = true;
     public Packer packer;
-
+    private volatile boolean isRunning = true;
     private byte[] publicKey = null;
     private int i = 0;
     private ExecutorService threadPool = Executors.newFixedThreadPool(10);
@@ -54,7 +53,6 @@ class Server {
     public byte[] getMyPublicKey() {
         return packer.getMyPublicKey();
     }
-
 
     public byte[] getReceiverPublicKey() {
         return this.publicKey;
