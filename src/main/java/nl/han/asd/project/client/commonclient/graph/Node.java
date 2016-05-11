@@ -22,7 +22,7 @@ public class Node {
         this.IP = IP;
         this.port = port;
         this.publicKey = publicKey;
-        adj = new LinkedList<Edge>();
+        this.adj = new LinkedList<Edge>();
     }
 
     @Override

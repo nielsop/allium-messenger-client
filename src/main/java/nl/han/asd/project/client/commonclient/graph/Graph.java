@@ -32,7 +32,14 @@ public class Graph {
     }
 
     public void addNodeVertex(HanRoutingProtocol.Node vertex){
+
         Node node = new Node(vertex.getId(),vertex.getIPaddress(),vertex.getPort(),vertex.getPublicKeyBytes().toByteArray());
+
+
+        for (HanRoutingProtocol.Edge edge : vertex.getEdgeList()){
+            Edge newEdge = new Edge(getNodeVertex(edge.getTargetNodeId()),edge.getWeight());
+        }
+
         vertexMap.putIfAbsent(node.getID(),node);
     }
 

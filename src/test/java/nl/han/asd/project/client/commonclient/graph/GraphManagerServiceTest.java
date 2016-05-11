@@ -4,16 +4,24 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
-import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
+import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphWrapper;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import org.junit.*;
-import org.junit.rules.Timeout;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Julius on 25/04/16.
@@ -21,10 +29,15 @@ import java.net.Socket;
 public class GraphManagerServiceTest {
 
     private GraphManagerService graphManagerService;
-private CloudHost master;
+    private CloudHost master;
 
-    @Rule
-    public Timeout globalTimeout = Timeout.seconds(10);
+    @Mock
+    UpdatedGraphResponseWrapper updatedGraphResponseWrapper;
+
+    @Mock
+    MasterGateway masterGateway;
+//    @Rule
+//    public Timeout globalTimeout = Timeout.seconds(10);
 
     @Before
     public void setUp() throws Exception {
@@ -45,9 +58,12 @@ private CloudHost master;
                 e.printStackTrace();
             }
         }
-        MasterGateway gateway = new MasterGateway(master.getHostName(), master.getPort(1337), injector.getInstance(
-                IEncryptionService.class));
-        graphManagerService = new GraphManagerService(gateway);
+
+//        MasterGateway gateway = new MasterGateway(master.getHostName(), master.getPort(1337), injector.getInstance(
+//                IEncryptionService.class));
+        masterGateway = Mockito.mock(MasterGateway.class);
+        graphManagerService = new GraphManagerService(masterGateway);
+        updatedGraphResponseWrapper = Mockito.mock(UpdatedGraphResponseWrapper.class);
     }
 
     @After
@@ -57,7 +73,58 @@ private CloudHost master;
 
     @Test
     public void testCheckGraphVersion() throws Exception {
-//        graphManagerService.processGraphUpdates();
-        Assert.assertEquals(1, 1); //TODO: testcase afmaken
+        List<HanRoutingProtocol.Node> addedNodes = new ArrayList<>();
+        List<UpdatedGraphWrapper> updatedGraphs = new ArrayList<>();
+
+
+        HanRoutingProtocol.Edge.Builder edge_1 = HanRoutingProtocol.Edge.newBuilder();
+        edge_1.setTargetNodeId("NODE_ID_2");
+        edge_1.setWeight(12);
+
+        HanRoutingProtocol.Edge.Builder edge_2 = HanRoutingProtocol.Edge.newBuilder();
+        edge_2.setTargetNodeId("NODE_ID_1");
+        edge_2.setWeight(6);
+
+        HanRoutingProtocol.Node.Builder node_1 = HanRoutingProtocol.Node.newBuilder();
+        node_1.setPort(1);
+        node_1.setIPaddress("192.168.2.1");
+        node_1.addEdge(edge_1);
+        node_1.setId("NODE_ID_1");
+        node_1.setPublicKey("123456789");
+        addedNodes.add(node_1.build());
+
+
+        HanRoutingProtocol.Node.Builder node_2 = HanRoutingProtocol.Node.newBuilder();
+        node_2.setPort(2);
+        node_2.setIPaddress("192.168.2.2");
+        node_2.addEdge(edge_2);
+        node_2.setId("NODE_ID_2");
+        node_2.setPublicKey("123456789");
+
+        addedNodes.add(node_2.build());
+
+        HanRoutingProtocol.Node.Builder node_3 = HanRoutingProtocol.Node.newBuilder();
+        node_3.setPort(3);
+        node_3.setIPaddress("192.168.2.3");
+        node_3.setId("NODE_ID_3");
+        node_3.setPublicKey("123456789");
+
+        addedNodes.add(node_3.build());
+
+
+        HanRoutingProtocol.GraphUpdate.Builder graphUpdate = HanRoutingProtocol.GraphUpdate.newBuilder();
+        graphUpdate.addAllAddedNodes(addedNodes);
+        graphUpdate.setNewVersion(1);
+        graphUpdate.setIsFullGraph(true);
+
+//        updatedGraphResponseWrapper.updatedGraphs.add(new UpdatedGraphWrapper(graphUpdate.build()));
+        updatedGraphs.add(new UpdatedGraphWrapper(graphUpdate.build()));
+        updatedGraphResponseWrapper.setUpdatedGraphs(updatedGraphs);
+        when(updatedGraphResponseWrapper.getLast()).thenReturn(updatedGraphs.get(updatedGraphs.size() - 1));
+        when(masterGateway.getUpdatedGraph(anyInt())).thenReturn(updatedGraphResponseWrapper);
+        when(updatedGraphResponseWrapper.getUpdatedGraphs()).thenReturn(updatedGraphs);
+//        when(updatedGraphResponseWrapper.updatedGraphs).thenReturn(updatedGraphs);
+        graphManagerService.processGraphUpdates();
+        //Assert.assertEquals(1, 1); //TODO: testcase afmaken
     }
 }

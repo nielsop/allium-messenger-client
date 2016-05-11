@@ -12,15 +12,16 @@ import org.junit.Test;
  */
 public class GraphTest {
     private Graph graph;
+    private HanRoutingProtocol.Node node;
 
     @Before
     public void setUp() throws Exception {
         graph = new Graph();
+        node = HanRoutingProtocol.Node.newBuilder().setPort(1337).setIPaddress("192.168.2.1").setId("NODE_1").setPublicKey("12345").build();
     }
 
     @Test
     public void testResetGraph() throws Exception {
-        HanRoutingProtocol.Node node = HanRoutingProtocol.Node.newBuilder().setPort(1337).setIPaddress("192.168.2.1").setId("NODE_1").setPublicKey("12345").build();
         HanRoutingProtocol.Node node2 = HanRoutingProtocol.Node.newBuilder().setPort(1337).setIPaddress("192.168.2.1").setId("NODE_2").setPublicKey("12345").build();
         graph.addNodeVertex(node);
         graph.addNodeVertex(node2);
@@ -30,15 +31,19 @@ public class GraphTest {
     }
 
     @Test
-    public void testAddNodeVertex() throws Exception {
-        HanRoutingProtocol.Node node = HanRoutingProtocol.Node.newBuilder().setPort(1337).setIPaddress("192.168.2.1").setId("NODE_1").setPublicKey("12345").build();
+    public void testAddNodeVertexWithoutEdges() throws Exception {
+        graph.addNodeVertex(node);
+        Assert.assertEquals(1,graph.getVertexMapSize());
+    }
+
+    @Test
+    public void testAddNodeVertexWithEdges() throws Exception {
         graph.addNodeVertex(node);
         Assert.assertEquals(1,graph.getVertexMapSize());
     }
 
     @Test
     public void testRemoveNodeVertex() throws Exception {
-        HanRoutingProtocol.Node node = HanRoutingProtocol.Node.newBuilder().setPort(1337).setIPaddress("192.168.2.1").setId("NODE_1").setPublicKey("12345").build();
         graph.addNodeVertex(node);
         Assert.assertEquals(1,graph.getVertexMapSize());
 
@@ -49,7 +54,6 @@ public class GraphTest {
 
     @Test
     public void testGetVertexMapSize(){
-        HanRoutingProtocol.Node node = HanRoutingProtocol.Node.newBuilder().setPort(1337).setIPaddress("192.168.2.1").setId("NODE_1").setPublicKey("12345").build();
         graph.addNodeVertex(node);
 
         Node nodeVertex = graph.getNodeVertex("NODE_1");
