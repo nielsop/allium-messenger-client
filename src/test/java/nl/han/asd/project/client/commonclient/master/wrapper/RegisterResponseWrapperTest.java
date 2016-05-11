@@ -4,8 +4,6 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 /**
  * @author Niels Bokmans
  * @version 1.0
@@ -13,10 +11,10 @@ import static org.junit.Assert.*;
  */
 public class RegisterResponseWrapperTest {
 
-
     @Test
     public void testRegisterWrapperCreationSavesStatus() {
-        final RegisterResponseWrapper registerResponseWrapper = new RegisterResponseWrapper(HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES);
+        final RegisterResponseWrapper registerResponseWrapper = new RegisterResponseWrapper(
+                HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES);
         Assert.assertEquals(registerResponseWrapper.status, HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES);
     }
 }

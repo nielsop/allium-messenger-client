@@ -4,7 +4,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
-import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
@@ -19,12 +18,9 @@ import javax.inject.Inject;
  */
 public class LoginService implements ILogin {
 
-    private MasterGateway masterGateway = null;
-    //private static final MasterGateway masterGateway = new MasterGateway(null);
-	
     private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]";
     private static final String REGEX_ALPHANUMERICSPECIAL = "^(?=(?:\\D*?\\d){8,32}(?!.*?\\d))[a-zA-Z0-9@\\#$%&*()_+\\]\\[';:?.,!^-]+$";
-
+    private MasterGateway masterGateway = null;
     private ISetConnectedNodes setConnectedNodes;
     private IAuthentication authentication;
 
@@ -40,7 +36,9 @@ public class LoginService implements ILogin {
 
     public LoginResponseWrapper login(String username, String password) {
         // DO NOT REMOVE, YET!
-        if (Validation.validateLoginData(username, password)) return masterGateway.authenticate(username, password);
-        else return null;
+        if (Validation.validateLoginData(username, password))
+            return masterGateway.authenticate(username, password);
+        else
+            return null;
     }
 }

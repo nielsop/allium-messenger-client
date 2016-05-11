@@ -12,7 +12,8 @@ public class UnpackedMessage {
     private final GeneratedMessage dataMessage;
     private final byte[] data;
 
-    public UnpackedMessage(final byte[] data, final HanRoutingProtocol.Wrapper.Type type, final GeneratedMessage message) {
+    public UnpackedMessage(final byte[] data, final HanRoutingProtocol.Wrapper.Type type,
+            final GeneratedMessage message) {
         this.data = data;
         this.dataType = type;
         this.dataMessage = message;

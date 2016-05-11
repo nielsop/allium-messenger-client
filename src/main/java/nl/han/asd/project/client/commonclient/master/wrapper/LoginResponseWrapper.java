@@ -36,7 +36,7 @@ public class LoginResponseWrapper {
      * @param status     The status of the login request.
      */
     public LoginResponseWrapper(List<HanRoutingProtocol.Node> nodeList, String secretHash,
-                                HanRoutingProtocol.ClientLoginResponse.Status status) {
+            HanRoutingProtocol.ClientLoginResponse.Status status) {
         this.nodeList = nodeList;
         this.secretHash = secretHash;
         this.status = status;

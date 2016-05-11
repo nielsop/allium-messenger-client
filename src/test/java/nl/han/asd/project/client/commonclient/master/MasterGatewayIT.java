@@ -24,9 +24,9 @@ import java.util.UUID;
  */
 public class MasterGatewayIT {
 
-    private CloudHost master;
     private static final String VALID_USERNAME = "Nielsje41";
     private static final String VALID_PASSWORD = "wachtwoord";
+    private CloudHost master;
     private MasterGateway gateway;
 
     @Before
@@ -60,14 +60,16 @@ public class MasterGatewayIT {
     /* Registration of clients on master server */
     @Test
     public void testRegisterClientSuccessful() {
-        Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME /*TODO: Status.SUCCES*/, gateway.register("meneer", VALID_PASSWORD).status);
+        Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES,
+                gateway.register("meneer", VALID_PASSWORD).status);
     }
 
     @Test
     public void testRegisterClientUsernameTaken() {
         String username = UUID.randomUUID().toString();
         gateway.register(username, VALID_PASSWORD);
-        Assert.assertEquals(gateway.register(username, VALID_PASSWORD).status, HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME);
+        Assert.assertEquals(gateway.register(username, VALID_PASSWORD).status,
+                HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME);
     }
 
     /* Login of clients on master server */
@@ -75,7 +77,8 @@ public class MasterGatewayIT {
     public void testLoginSuccessful() {
         gateway.register(VALID_USERNAME, VALID_PASSWORD);
 
-        Assert.assertTrue(gateway.authenticate(VALID_USERNAME, VALID_PASSWORD).status == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
+        Assert.assertTrue(gateway.authenticate(VALID_USERNAME, VALID_PASSWORD).status
+                == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
     }
 
     /* Get updated graph from master server */
