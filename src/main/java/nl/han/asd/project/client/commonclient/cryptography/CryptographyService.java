@@ -13,12 +13,11 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
     private IEncryptionService encryptionService;
 
     @Inject
-    public CryptographyService(final IEncryptionService encryptionService)
-    {
+    public CryptographyService(final IEncryptionService encryptionService) {
         this.encryptionService = encryptionService;
     }
 
-	 /**
+    /**
      * Decrypts a byte array containing data.
      *
      * @param data The byte array in ByteString format.
@@ -27,10 +26,8 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
     @Override
     public ByteString decryptData(ByteString data) {
         return null;
-       // return ByteString.copyFrom(encryptionService.decryptData(data.toByteArray()));
     }
 
-	
     /**
      * Encrypts a byte array containing data.
      *
@@ -40,11 +37,10 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
      */
     @Override
     public ByteString encryptData(ByteString data, byte[] publicKey) {
-//       return ByteString.copyFrom(encryptionService.encryptData(publicKey, data.toByteArray()));
     return data;
     }
-	
+
     public byte[] getPublicKey() {
-       return encryptionService.getPublicKey();
+        return new byte[] {};
     }
 }

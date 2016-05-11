@@ -3,7 +3,6 @@ package nl.han.asd.project.client.commonclient.connection;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.GeneratedMessage;
-import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
@@ -31,19 +30,15 @@ public class Packer {
      * @param recieverPublicKey The public key that should be included inside the EncryptedWrapper message.
      * @return The byte array that represents the EncryptedWrapper.
      */
-    public HanRoutingProtocol.Wrapper pack(final GeneratedMessage.Builder originalBuilder, final byte[] recieverPublicKey) {
-        HanRoutingProtocol.Wrapper.Builder builder = HanRoutingProtocol.Wrapper
-                .newBuilder();
+    public HanRoutingProtocol.Wrapper pack(final GeneratedMessage.Builder originalBuilder,
+            final byte[] recieverPublicKey) {
+        HanRoutingProtocol.Wrapper.Builder builder = HanRoutingProtocol.Wrapper.newBuilder();
 
         HanRoutingProtocol.Wrapper.Type type = protocolMessageDescriptorToWrapperType(
                 originalBuilder.getDescriptorForType());
         builder.setType(type);
 
         byte[] buffer = originalBuilder.build().toByteArray();
-        // encryption/decryption disabled for now.
-        //buffer = cryptographyService
-        //        .encryptData(ByteString.copyFrom(buffer), recieverPublicKey).toByteArray();
-
         builder.setData(ByteString.copyFrom(buffer));
 
         return builder.build();
@@ -54,15 +49,11 @@ public class Packer {
      * @param packed EncryptedWrapper that needs to be unpacked.
      * @return The unpacked version of the encrypted wrapper.
      */
-    public UnpackedMessage unpack(final HanRoutingProtocol.Wrapper packed)  {
+    public UnpackedMessage unpack(final HanRoutingProtocol.Wrapper packed) {
         byte[] buffer = packed.getData().toByteArray();
-        //buffer = cryptographyService.decryptData(ByteString.copyFrom(buffer)).toByteArray();
-
         HanRoutingProtocol.Wrapper.Type type = packed.getType();
         GeneratedMessage message = wrapperTypeToProtocolMessage(type);
-
-        return new UnpackedMessage(buffer, type,
-                message);
+        return new UnpackedMessage(buffer, type, message);
     }
 
     /**
@@ -80,9 +71,8 @@ public class Packer {
             if (descriptor.getName().equalsIgnoreCase(name)) {
                 try {
                     //nl.han.asd.project.protocol.HanRoutingProtocol$ClientLoginRequest
-                    String internalName = String.format("%s$%s",
-                            HanRoutingProtocol.class.getCanonicalName(),
-                            descriptor.getName());
+                    String internalName = String
+                            .format("%s$%s", HanRoutingProtocol.class.getCanonicalName(), descriptor.getName());
                     Field defaultInstanceField = Class.forName(internalName).getDeclaredField("DEFAULT_INSTANCE");
                     defaultInstanceField.setAccessible(true);
                     Object defaultInstanceValue = defaultInstanceField.get(null);

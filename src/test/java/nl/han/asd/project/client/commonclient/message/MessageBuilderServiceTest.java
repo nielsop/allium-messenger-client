@@ -28,16 +28,20 @@ import static org.mockito.Matchers.anyInt;
  */
 public class MessageBuilderServiceTest {
 
-    private CryptographyService cryptographyService;
-    @Mock IGetUpdatedGraph updatedGraphMock;
+    @Mock
+    IGetUpdatedGraph updatedGraphMock;
+    @Mock
+    IEncrypt encrypt = Mockito.mock(CryptographyService.class);
+    @Mock
+    ISendMessage sendMessage;
+    @Mock
+    IMessageStore messageStore;
+
+    @InjectMocks
+    private MessageBuilderService messageBuilderService;
 
     IGetPath pathDeterminationService = Mockito
             .mock(PathDeterminationService.class);
-    @Mock IEncrypt encrypt = Mockito.mock(CryptographyService.class);
-    @Mock ISendMessage sendMessage;
-    @Mock IMessageStore messageStore;
-
-    @InjectMocks private MessageBuilderService messageBuilderService;
 
     @Before
     public void setUp() throws Exception {
@@ -58,6 +62,7 @@ public class MessageBuilderServiceTest {
         Mockito.when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(path);
         messageBuilderService.sendMessage("hallo 124",contactReciever,contactSender);
 	}
+
 
 
     @After
