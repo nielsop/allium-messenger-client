@@ -9,6 +9,11 @@ import nl.han.asd.project.client.commonclient.presentation.gui.view.auth.LoginVi
  * Created by Kenny on 9-5-2016.
  */
 public class LoginController {
+    private static final String ONSUBMIT_PASS_SHORT = "Password is too short! At least 8 characters.";
+    private static final String ONSUBMIT_USERNAME_SHORT = "Username is too short! At least 3 characters.";
+    private static final String ONLOGIN_INVALID_COMBINATION = "Username or password is incorrect!";
+    private static final String ONLOGIN_FAILED = "Error while logging in, please try again!";
+    private static final String ONLOGIN_DEFAULT = "Error while logging in, please try again!";
     private LoginView view;
     private LoginModel model;
 
@@ -21,25 +26,32 @@ public class LoginController {
     private void onActions() {
         view.getLoginButton().setOnAction(e -> {
             if (view.getUsername().length() < 3)
-                view.setStatus("Username is too short! At least 3 characters.");
+                view.setStatus(ONSUBMIT_USERNAME_SHORT);
             else if (view.getPassword().length() < 8)
-                view.setStatus("Password is too short! At least 8 characters.");
+                view.setStatus(ONSUBMIT_PASS_SHORT);
             else {
-                switch(model.getLoginStatus(view.getUsername(), view.getPassword())) {
-                    case SUCCES:
-                        setStage(GUI.Page.DASHBOARD);
-                        break;
-                    case INVALID_COMBINATION:
-                        view.setStatus("Username or password is incorrect!");
-                        break;
-                    case FAILED:
-                        view.setStatus("Error while logging in, please try again!");
-                        break;
-                }
+                onLogin();
             }
         });
 
         view.getRegisterButton().setOnAction(e -> setStage(GUI.Page.REGISTER));
+    }
+
+    private void onLogin() {
+        switch(model.getLoginStatus(view.getUsername(), view.getPassword())) {
+            case SUCCES:
+                setStage(GUI.Page.DASHBOARD);
+                break;
+            case INVALID_COMBINATION:
+                view.setStatus(ONLOGIN_INVALID_COMBINATION);
+                break;
+            case FAILED:
+                view.setStatus(ONLOGIN_FAILED);
+                break;
+            default:
+                view.setStatus(ONLOGIN_DEFAULT);
+                break;
+        }
     }
 
     public GridPane getGridPane() {

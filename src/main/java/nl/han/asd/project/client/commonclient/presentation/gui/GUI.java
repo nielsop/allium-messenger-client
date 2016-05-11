@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 public class GUI extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(GUI.class);
-    public PresentationLayer pLayer;
+    private PresentationLayer pLayer;
     private Stage stage;
     private Scene scene;
 
@@ -81,5 +81,9 @@ public class GUI extends Application {
 
     public enum Page {
         LOGIN, REGISTER, DASHBOARD, SETTINGS
+    }
+
+    public PresentationLayer getPresentationLayer() {
+        return pLayer;
     }
 }
