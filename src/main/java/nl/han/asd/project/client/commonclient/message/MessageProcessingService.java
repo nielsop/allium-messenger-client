@@ -6,12 +6,15 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MessageProcessingService implements IReceiveMessage {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
     public IMessageStore messageStore;
 
-    //public IMessage message;
-   public IDecrypt decrypt;
+    public IDecrypt decrypt;
 
     @Inject
     public MessageProcessingService(IMessageStore messageStore) {
@@ -24,19 +27,16 @@ public class MessageProcessingService implements IReceiveMessage {
         messageStore.addMessage(message);
     }
 
-    private HanRoutingProtocol.Message decryptEncryptedMessage(HanRoutingProtocol.MessageWrapper encryptedMessage){
+    private HanRoutingProtocol.Message decryptEncryptedMessage(HanRoutingProtocol.MessageWrapper encryptedMessage) {
         ByteString messageBuffer = decrypt.decryptData(encryptedMessage.getEncryptedData());
         HanRoutingProtocol.Message message = null;
         try {
             message = HanRoutingProtocol.Message.parseFrom(messageBuffer);
         } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return message;
     }
 
-    //TODO
-    /*public nl.han.asd.project.client.commonclient.message.EncryptedMessage peelMessagePacket(Object messagePacket) {
-        return nl.han.asd.project.client.commonclient.message.EncryptedMessage.parseFrom(messagePacket);
-    }*/
+    //TODO peelMessagePacket / Pakket uitpakken
 }

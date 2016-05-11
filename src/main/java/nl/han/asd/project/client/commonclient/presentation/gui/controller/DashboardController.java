@@ -10,7 +10,7 @@ import nl.han.asd.project.client.commonclient.presentation.gui.model.DashboardMo
 import nl.han.asd.project.client.commonclient.presentation.gui.view.DashboardView;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Marius on 25-04-16.
@@ -34,9 +34,8 @@ public class DashboardController {
         view.setBorderPaneContent(navController.getHBox(), contactController.getBorderPane(), chatController.getBorderPane());
     }
 
-
-    public void selectContact(Contact contact) {
-//        paneChat.setContact(contact);
+    public void setSelectedContactChat(Contact contact) {
+        chatController.setSelectedContact(contact);
     }
 
     public ContactController getContactController() {
@@ -55,7 +54,7 @@ public class DashboardController {
         return model.getCurrentUser();
     }
 
-    public ArrayList<Contact> getContacts() {
+    public List<Contact> getContacts() {
         return model.getContacts();
     }
 
@@ -65,5 +64,9 @@ public class DashboardController {
 
     public GUI getGUI() {
         return model.getGUI();
+    }
+
+    public List<Message> getMessages(Contact contact) {
+        return model.getMessages(contact);
     }
 }

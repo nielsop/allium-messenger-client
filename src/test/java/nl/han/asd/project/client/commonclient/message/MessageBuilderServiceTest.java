@@ -11,7 +11,6 @@ import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -29,59 +28,45 @@ import static org.mockito.Matchers.anyInt;
  */
 public class MessageBuilderServiceTest {
 
-    private CryptographyService cryptographyService;
-    @Mock IGetUpdatedGraph updatedGraphMock;
+    @Mock
+    IGetUpdatedGraph updatedGraphMock;
+    @Mock
+    IEncrypt encrypt = Mockito.mock(CryptographyService.class);
+    @Mock
+    ISendMessage sendMessage;
+    @Mock
+    IMessageStore messageStore;
+
+    @InjectMocks
+    private MessageBuilderService messageBuilderService;
 
     IGetPath pathDeterminationService = Mockito
             .mock(PathDeterminationService.class);
-    @Mock IEncrypt encrypt = Mockito.mock(CryptographyService.class);
-    @Mock ISendMessage sendMessage;
-    @Mock IMessageStore messageStore;
 
-    @InjectMocks private MessageBuilderService messageBuilderService;
-
-    @Before public void setUp() throws Exception {
-        //         pathDeterminationService = new PathDeterminationService(updatedGraphMock, clientGroupMock);
-        //           messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
+    @Before
+    public void setUp() throws Exception {
+        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,sendMessage,messageStore);
     }
 
-    @Test public void buildMessage() {
-        //cryptographyService = new CryptographyService();
-        //messageBuilderService = new MessageBuilderService(pathDeterminationService, cryptographyService);
-        messageBuilderService = new MessageBuilderService(
-                pathDeterminationService, encrypt, sendMessage, messageStore);
-    }
+    @Test
+    public void sendMessageTest(){
+        Contact contactReciever = new Contact("julius","1234");
+        Contact contactSender = new Contact("bram","123456");
+        contactReciever.setConnectedNodes(new Node[]{new Node("NODE_ID_1","192.168.2.8",1234,"123456789".getBytes()),new Node("NODE_ID_2","192.168.2.9",1234,"123456789".getBytes()),new Node("NODE_ID_3","192.168.2.10",1234,"123456789".getBytes())});
 
-    @Test public void sendMessageTest() {
-        Contact contactReciever = new Contact("julius", "1234");
-        Contact contactSender = new Contact("bram", "123456");
-        contactReciever.setConnectedNodes(new Node[] {
-                new Node("NODE_ID_1", "192.168.2.8", 1234,
-                        "123456789".getBytes()),
-                new Node("NODE_ID_2", "192.168.2.9", 1234,
-                        "123456789".getBytes()),
-                new Node("NODE_ID_3", "192.168.2.10", 1234,
-                        "123456789".getBytes()) });
+        ArrayList<Node> path = new ArrayList<Node>(Arrays.asList(new Node("NODE_ID_1","192.168.2.1",1234,"123456789".getBytes()), new Node("NODE_ID_2","192.168.2.2",1234,"123456789".getBytes()), new Node("NODE_ID_3","192.168.2.3",1234,"123456789".getBytes())));
+        Byte[] encryptedData = new Byte[]{0,1,0,1};
 
-        ArrayList<Node> path = new ArrayList<Node>(Arrays.asList(
-                new Node("NODE_ID_1", "192.168.2.1", 1234,
-                        "123456789".getBytes()),
-                new Node("NODE_ID_2", "192.168.2.2", 1234,
-                        "123456789".getBytes()),
-                new Node("NODE_ID_3", "192.168.2.3", 1234,
-                        "123456789".getBytes())));
-        Byte[] encryptedData = new Byte[] { 0, 1, 0, 1 };
-        Mockito.when(
-                pathDeterminationService.getPath(anyInt(), any(Contact.class)))
-                .thenReturn(path);
-        Mockito.when(encrypt.encryptData(Mockito.any(ByteString.class),
-                Mockito.any(byte[].class)))
-                .thenReturn(ByteString.copyFromUtf8("data"));
-        //        messageBuilderService.sendMessage("hallo 124",contactReciever,contactSender);
-        Assert.assertEquals(1, 1); //TODO: Testcase afmaken!
-    }
+        Mockito.when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(path);
+        Mockito.when(encrypt.encryptData(Mockito.any(ByteString.class),Mockito.any(byte[].class))).thenReturn(ByteString.copyFromUtf8("data"));
+        Mockito.when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(path);
+        messageBuilderService.sendMessage("hallo 124",contactReciever,contactSender);
+	}
 
-    @After public void tearDown() throws Exception {
+
+
+    @After
+    public void tearDown() throws Exception {
 
     }
 }

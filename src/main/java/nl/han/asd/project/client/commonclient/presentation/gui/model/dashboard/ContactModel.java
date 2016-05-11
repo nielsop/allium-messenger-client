@@ -3,7 +3,7 @@ package nl.han.asd.project.client.commonclient.presentation.gui.model.dashboard;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.DashboardController;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Marius on 25-04-16.
@@ -17,14 +17,18 @@ public class ContactModel {
     }
 
     public void selectContact(Contact contact) {
-        dashboardController.selectContact(contact);
+        dashboardController.setSelectedContactChat(contact);
     }
 
-    public void setCurrectContact(Contact currectContact) {
-        this.currentContact = currectContact;
+    public void setCurrectContact(Contact currentContact) {
+        this.currentContact = currentContact;
     }
 
-    public ArrayList<Contact> getContacts() {
+    public List<Contact> getContacts() {
         return dashboardController.getContacts();
+    }
+
+    public Contact getCurrentContact() {
+        return currentContact;
     }
 }

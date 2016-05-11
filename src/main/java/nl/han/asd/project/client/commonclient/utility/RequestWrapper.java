@@ -18,9 +18,9 @@ import java.net.SocketException;
  */
 public class RequestWrapper {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestWrapper.class);
     private GeneratedMessage message;
     private Socket socket;
-    private static final Logger logger = LoggerFactory.getLogger(RequestWrapper.class);
 
     /**
      * Creates a new request wrapper. Will automatically transform the request into an encrypted request.
@@ -29,8 +29,10 @@ public class RequestWrapper {
      * @param requestType The request type.
      * @param socket The socket to write to and read from.
      */
-    public RequestWrapper(final GeneratedMessage message, final HanRoutingProtocol.Wrapper.Type requestType, final Socket socket) {
-        this.message = HanRoutingProtocol.Wrapper.newBuilder().setType(requestType).setData(message.toByteString()).build();
+    public RequestWrapper(final GeneratedMessage message, final HanRoutingProtocol.Wrapper.Type requestType,
+            final Socket socket) {
+        this.message = HanRoutingProtocol.Wrapper.newBuilder().setType(requestType).setData(message.toByteString())
+                .build();
         this.socket = socket;
     }
 
@@ -42,7 +44,7 @@ public class RequestWrapper {
                 return parseFrom(classDescriptor, response.getData().toByteArray());
             }
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
@@ -55,8 +57,9 @@ public class RequestWrapper {
             T defaultInstance = (T) defaultInstanceField.get(null);
             return (T) defaultInstance.getParserForType().parseFrom(data);
         } catch (IllegalAccessException | IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } catch (NoSuchFieldException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new InvalidProtocolBufferException("Invalid class provided.");
         }
         return null;
@@ -64,9 +67,10 @@ public class RequestWrapper {
 
     private void writeToSocket() {
         try {
+            final GeneratedMessage m = message;
             message.writeDelimitedTo(socket.getOutputStream());
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 }

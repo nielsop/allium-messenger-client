@@ -4,6 +4,8 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.net.SocketException;
@@ -19,6 +21,7 @@ import java.util.List;
  */
 public class UpdatedGraphResponseWrapper {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpdatedGraphResponseWrapper.class);
     /**
      * Contains all the updated graphs, differentiated by version.
      */
@@ -32,9 +35,10 @@ public class UpdatedGraphResponseWrapper {
     public UpdatedGraphResponseWrapper(List<ByteString> graphUpdates) {
         graphUpdates.forEach(graphUpdate -> {
             try {
-                updatedGraphs.add(new UpdatedGraphWrapper(readGeneric(HanRoutingProtocol.GraphUpdate.class, graphUpdate)));
+                updatedGraphs
+                        .add(new UpdatedGraphWrapper(readGeneric(HanRoutingProtocol.GraphUpdate.class, graphUpdate)));
             } catch (SocketException | InvalidProtocolBufferException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         });
     }
@@ -59,7 +63,8 @@ public class UpdatedGraphResponseWrapper {
      * @throws InvalidProtocolBufferException Throws a InvalidProtocolBufferException incase the wrong protocol buffer
      *                                        is being used to parse the message.
      */
-    private <T extends GeneratedMessage> T readGeneric(Class<T> classDescriptor, ByteString b) throws SocketException, InvalidProtocolBufferException {
+    private <T extends GeneratedMessage> T readGeneric(Class<T> classDescriptor, ByteString b)
+            throws SocketException, InvalidProtocolBufferException {
         byte[] buffer = b.toByteArray();
         if (buffer != null) {
             try {
@@ -68,8 +73,9 @@ public class UpdatedGraphResponseWrapper {
                 T defaultInstance = (T) defaultInstanceField.get(null);
                 return (T) defaultInstance.getParserForType().parseFrom(buffer);
             } catch (IllegalAccessException | InvalidProtocolBufferException e) {
-                // return null
+                LOGGER.error(e.getMessage(), e);
             } catch (NoSuchFieldException e) {
+                LOGGER.error(e.getMessage(), e);
                 throw new InvalidProtocolBufferException("Invalid class provided.");
             }
         }

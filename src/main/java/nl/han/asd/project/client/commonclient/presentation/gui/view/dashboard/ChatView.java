@@ -8,7 +8,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.Styles;
 
 import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.getHBox;
 import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.getScrollPane;
@@ -34,28 +33,26 @@ public class ChatView {
     }
 
     private HBox getTop() {
-        HBox top = getHBox(0, new int[] { 5, 5, 5, 5 }, "");
-        top.setStyle("-fx-font-weight: bold; -fx-font-size: 15px;");
-        top.getChildren().add(new Label("Klik op een contact om te chatten."));
-        return top;
+        HBox temp = getHBox(0, new int[]{5, 5, 5, 5}, "");
+        temp.setStyle("-fx-font-weight: bold; -fx-font-size: 15px;");
+        temp.getChildren().add(new Label("Klik op een contact om te chatten."));
+        return temp;
     }
 
     private ScrollPane getCenter() {
         String style = "-fx-background-color:transparent; -fx-background: #EEE;";
-        ScrollPane center = getScrollPane(true, true, null, null, style);
-        return center;
+        return getScrollPane(true, true, null, null, style);
     }
 
     private BorderPane getBottom() {
-        BorderPane bottom = PaneFactory.getBorderPane(new int[] { 0, 0, 0, 0 });
+        BorderPane temp = PaneFactory.getBorderPane(new int[]{0, 0, 0, 0});
         sendNewMessage = new JFXButton("send");
-        sendNewMessage.setStyle(Styles.FX_BUTTON_RAISED);
         sendNewMessage.setPrefHeight(50);
         newMessage = new JFXTextArea();
         newMessage.setPrefHeight(50);
-        bottom.setCenter(newMessage);
-        bottom.setRight(sendNewMessage);
-        return bottom;
+        temp.setCenter(newMessage);
+        temp.setRight(sendNewMessage);
+        return temp;
     }
 
     public BorderPane getBorderPane() {
@@ -108,8 +105,9 @@ public class ChatView {
     }
 
     public void setSelectedMessage(HBox hBox) {
-        if (current != null)
+        if (current != null) {
             current.setStyle("-fx-background-color: #EEE;");
+        }
         hBox.setStyle("-fx-background-color: #DDD;");
         current = hBox;
     }
@@ -119,7 +117,8 @@ public class ChatView {
     }
 
     public void setExitedMessage(HBox hBox) {
-        if (hBox != current)
+        if (hBox != current) {
             hBox.setStyle("-fx-background-color: #EEE;");
+        }
     }
 }

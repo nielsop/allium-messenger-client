@@ -5,6 +5,7 @@ import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
+import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContact;
 import nl.han.asd.project.client.commonclient.store.IMessageObserver;
@@ -13,22 +14,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Android/Desktop application
- * <p>
+ * <p/>
  * Leave empty until we know what to do with it
  */
 public class PresentationLayer {
 
-    private static final Logger logger = LoggerFactory.getLogger(PresentationLayer.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(PresentationLayer.class);
 
-    //TODO: android app? desktop app?
-    public IContact contact;
-    public IMessageBuilder messageBuilder;
-    public IMessageObserver messageObserver;
-    public IRegistration registration;
-    public ILogin login;
+    private IContact contact;
+    private IMessageBuilder messageBuilder;
+    private IMessageObserver messageObserver;
+    private IRegistration registration;
+    private ILogin login;
     private Contact currentUser;
     private String privateKey = "privateKey";
 
@@ -42,7 +44,8 @@ public class PresentationLayer {
     }
 
     @Inject
-    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
+    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver,
+                             IRegistration registration, ILogin login) {
         this.contact = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
@@ -57,38 +60,52 @@ public class PresentationLayer {
      * @param username username given by user.
      * @param password password given by user.
      */
-    public HanRoutingProtocol.ClientRegisterResponse.Status register(String username, String password) {
+    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password) {
         //Get registering response
         RegisterResponseWrapper registerResponse = registration.register(username, password);
         //In every other case, do something.
-        switch (registerResponse.status) {
-            default:
-                logger.info("Default response. Something went wrong...");
-                break;
+        switch (registerResponse.getStatus()) {
             case SUCCES:
-                logger.info("Registering worked!");
+                LOGGER.info("Registering worked!");
                 break;
             case FAILED:
-                logger.info("Registering failed!");
+                LOGGER.info("Registering failed!");
                 break;
             case TAKEN_USERNAME:
-                logger.info("Username already exists, registering failed.");
+                LOGGER.info("Username already exists, registering failed.");
+                break;
+            default:
+                LOGGER.info("Default response. Something went wrong...");
                 break;
         }
         //Return the status
-        return registerResponse.status;
+        return registerResponse.getStatus();
     }
 
     public Contact getCurrentUser() {
         return currentUser;
     }
 
-    public HanRoutingProtocol.ClientLoginResponse.Status login(String username, String password) {
+    public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) {
         LoginResponseWrapper loginResponse = login.login(username, password);
-        logger.info("User: \"" + username + "\" login status: " + loginResponse.status.name());
-        if (loginResponse.status == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
+        LOGGER.info("User: \"" + username + "\" loginRequest status: " + loginResponse.getStatus().name());
+        if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
             currentUser = new Contact(username, privateKey, true);
         }
-        return loginResponse.status;
+        return loginResponse.getStatus();
+    }
+
+    public List<Message> getMessages(Contact contact) {
+        LOGGER.info("find messages for user: " + contact.getUsername());
+        return new ArrayList<>();
+    }
+
+    public List<Contact> getContacts() {
+        return new ArrayList<>();
+
+    }
+
+    public void sendMessage(Message message) {
+        PresentationLayer.LOGGER.info(message.getSender() + " sends to " + message.getReceiver() + "the following massage:\n" + message.getText());
     }
 }

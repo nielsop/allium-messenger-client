@@ -12,9 +12,6 @@ import javafx.scene.text.Text;
 import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
 import nl.han.asd.project.client.commonclient.presentation.gui.view.Styles;
 
-/**
- * Created by Marius on 19-04-16.
- */
 public class LoginView {
     private GridPane gridPane;
     private JFXButton registerButton;
@@ -24,21 +21,34 @@ public class LoginView {
     private Text status;
 
     public LoginView() {
-        //Set gridPane
-        gridPane = PaneFactory.getGridPane(Pos.CENTER, new int[] { 25, 25, 25, 25 });
 
+        gridPane = PaneFactory.getGridPane(Pos.CENTER, new int[]{25, 25, 25, 25});
+        setTitle();
+        setLabels();
+        setInputFields();
+        setButtons();
+        setText();
+    }
+
+    private void setTitle() {
         Text title = new Text("Welcome to the onion messenger");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        gridPane.add(title, 0, 0, 2, 1);
+    }
 
-        //Set labels
-        Label usernameLabel = new Label("Username:");
-        Label passwordLabel = new Label("Password:");
+    private void setLabels() {
+        gridPane.add(new Label("Username:"), 0, 1);
+        gridPane.add(new Label("Password:"), 0, 2);
+    }
 
-        //Set input fields
+    private void setInputFields() {
         usernameField = new JFXTextField();
         passwordField = new JFXPasswordField();
+        gridPane.add(usernameField, 1, 1);
+        gridPane.add(passwordField, 1, 2);
+    }
 
-        //Set buttons
+    private void setButtons() {
         registerButton = new JFXButton("Register");
         registerButton.setStyle(Styles.FX_BUTTON_RAISED);
         registerButton.setAlignment(Pos.BOTTOM_LEFT);
@@ -46,16 +56,12 @@ public class LoginView {
         loginButton.setStyle(Styles.FX_BUTTON_RAISED);
         loginButton.setAlignment(Pos.BOTTOM_RIGHT);
 
-        //Set text
-        status = new Text();
-
-        gridPane.add(title, 0, 0, 2, 1);
-        gridPane.add(usernameLabel, 0, 1);
-        gridPane.add(usernameField, 1, 1);
-        gridPane.add(passwordLabel, 0, 2);
-        gridPane.add(passwordField, 1, 2);
         gridPane.add(registerButton, 0, 4);
         gridPane.add(loginButton, 1, 4);
+    }
+
+    private void setText() {
+        status = new Text();
         gridPane.add(status, 1, 5);
     }
 

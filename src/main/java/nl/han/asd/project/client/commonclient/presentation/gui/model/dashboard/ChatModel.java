@@ -4,6 +4,8 @@ import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.DashboardController;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
+import java.util.List;
+
 /**
  * Created by Marius on 25-04-16.
  */
@@ -31,6 +33,10 @@ public class ChatModel {
 
     public void sendMessage(Message message) {
         dashboardController.sendMessage(message);
+    }
+
+    public List<Message> getMessages(Contact contact) {
+        return dashboardController.getMessages(contact);
     }
 
 }

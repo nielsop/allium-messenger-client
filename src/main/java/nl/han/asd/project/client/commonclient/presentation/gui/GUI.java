@@ -13,31 +13,24 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.presentation.PresentationLayer;
-import nl.han.asd.project.client.commonclient.presentation.gui.controller.ConfirmationController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.DashboardController;
-import nl.han.asd.project.client.commonclient.presentation.gui.controller.SettingController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.auth.LoginController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.auth.RegisterController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GUI extends Application {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GUI.class);
+    private PresentationLayer pLayer;
     private Stage stage;
     private Scene scene;
-    public PresentationLayer pLayer;
-
-    public Scene getScene() {
-        return scene;
-    }
-
-    public enum Page {
-        LOGIN, REGISTER, DASHBOARD, CONTACTS, CHAT, SETTINGS, CONFIRMATION
-    }
-
-    private static final Logger logger = LoggerFactory.getLogger(GUI.class);
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 
     @Override
@@ -51,7 +44,7 @@ public class GUI extends Application {
             stage.setMinHeight(360);
             setScene(Page.LOGIN);
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            LOGGER.error(ex.getMessage(), ex);
         }
     }
 
@@ -65,12 +58,6 @@ public class GUI extends Application {
                 break;
             case DASHBOARD:
                 scene = buildScene(new DashboardController(this).getBorderPane());
-                break;
-            case SETTINGS:
-                scene = buildScene(new SettingController(this).getGridPane());
-                break;
-            case CONFIRMATION:
-                scene = buildScene(new ConfirmationController(this).getGridPane());
                 break;
             default:
                 scene = buildScene(new LoginController(this).getGridPane());
@@ -90,5 +77,13 @@ public class GUI extends Application {
     @Inject
     public void setPresentationLayer(PresentationLayer pLayer) {
         this.pLayer = pLayer;
+    }
+
+    public enum Page {
+        LOGIN, REGISTER, DASHBOARD, SETTINGS
+    }
+
+    public PresentationLayer getPresentationLayer() {
+        return pLayer;
     }
 }
