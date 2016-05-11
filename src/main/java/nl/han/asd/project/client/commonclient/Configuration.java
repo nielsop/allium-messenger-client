@@ -13,7 +13,6 @@ import java.util.Properties;
  * @since 29/04/16
  */
 public class Configuration {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 
     /**

@@ -13,7 +13,11 @@ public class LoginModel {
         this.gui = gui;
     }
 
-    public boolean isLoginSuccess(String username, String password) {
-        return gui.pLayer.login(username, password) == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES;
+    public HanRoutingProtocol.ClientLoginResponse.Status getLoginStatus(String username, String password) {
+        return gui.pLayer.login(username, password);
+    }
+
+    public GUI getGUI() {
+        return gui;
     }
 }
