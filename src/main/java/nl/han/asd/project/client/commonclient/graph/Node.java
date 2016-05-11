@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,19 +9,18 @@ import java.util.List;
  * @since 20-4-2016
  */
 public class Node {
-    private String ID;
-    private String IP;
+    private List<Edge> adjacent;
+    private String id;
+    private String ipAddress;
     private int port;
     private byte[] publicKey;
-    List<Edge> adj;
 
-
-    public Node(String ID ,String IP, int port, byte[] publicKey){
-        this.ID = ID;
-        this.IP = IP;
+    public Node(String id, String ipAddress, int port, byte[] publicKey) {
+        this.id = id;
+        this.ipAddress = ipAddress;
         this.port = port;
         this.publicKey = publicKey;
-        this.adj = new LinkedList<Edge>();
+        this.adjacent = new LinkedList<>();
     }
 
     @Override
@@ -30,8 +28,13 @@ public class Node {
         return anotherObj instanceof Node;
     }
 
-    public String getIP() {
-        return IP;
+    @Override
+    public int hashCode() {
+        return (id + "@" + ipAddress + ":" + port).hashCode();
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
     }
 
     public int getPort() {
@@ -42,7 +45,7 @@ public class Node {
         return publicKey;
     }
 
-    public String getID() {
-        return ID;
+    public String getId() {
+        return id;
     }
 }

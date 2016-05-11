@@ -20,7 +20,6 @@ public class Worker implements Runnable {
         this.clientSocket = clientSocket;
     }
 
-
     @Override
     public void run() {
         InputStream input = null;

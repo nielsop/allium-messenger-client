@@ -8,6 +8,7 @@ import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphWrapper;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+<<<<<<< HEAD
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.After;
 import org.junit.Before;
@@ -16,6 +17,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+=======
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import org.junit.*;
+import org.junit.rules.Timeout;
+>>>>>>> f8801a3a96fa9d70497bce083c7cb26138c7677b
 
 import java.io.IOException;
 import java.net.Socket;

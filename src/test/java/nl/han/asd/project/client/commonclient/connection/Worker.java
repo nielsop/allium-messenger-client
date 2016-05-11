@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Arrays;
 
 /**
  * Created by Jevgeni on 26-4-2016.
@@ -23,7 +22,8 @@ class Worker implements Runnable {
         this.publicKey = publicKey;
     }
 
-    @Override public void run() {
+    @Override
+    public void run() {
         InputStream input = null;
         OutputStream output = null;
 
@@ -32,8 +32,7 @@ class Worker implements Runnable {
             output = clientSocket.getOutputStream();
 
             try {
-                HanRoutingProtocol.Wrapper wrapper = HanRoutingProtocol.Wrapper
-                        .parseDelimitedFrom(input);
+                HanRoutingProtocol.Wrapper wrapper = HanRoutingProtocol.Wrapper.parseDelimitedFrom(input);
                 if (wrapper != null) {
                     try {
                         UnpackedMessage message = packer.unpack(wrapper);
@@ -42,19 +41,14 @@ class Worker implements Runnable {
                                 .parseFrom(message.getData());
                         HanRoutingProtocol.ClientLoginResponse.Builder builder = HanRoutingProtocol.ClientLoginResponse
                                 .newBuilder();
-                        builder.setSecretHash(String.format("%s:%s", request.getUsername(),
-                                request.getPassword()));
-                        builder.setStatus(
-                                HanRoutingProtocol.ClientLoginResponse.Status
-                                        .valueOf(
-                                                HanRoutingProtocol.ClientLogoutResponse.Status.SUCCES_VALUE));
+                        builder.setSecretHash(String.format("%s:%s", request.getUsername(), request.getPassword()));
+                        builder.setStatus(HanRoutingProtocol.ClientLoginResponse.Status
+                                .valueOf(HanRoutingProtocol.ClientLogoutResponse.Status.SUCCES_VALUE));
 
-                        System.out.println(
-                                "Request processed as 'protocol' request.");
+                        System.out.println("Request processed as 'protocol' request.");
                         wrapper = packer.pack(builder, this.publicKey);
                     } catch (InvalidProtocolBufferException e) {
-                        System.out.println(
-                                "Request processed as 'normal' request.");
+                        System.out.println("Request processed as 'normal' request.");
                     }
 
                     wrapper.writeDelimitedTo(output);

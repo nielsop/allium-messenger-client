@@ -10,15 +10,11 @@ import java.util.HashMap;
 public class Graph {
 
     private HashMap<String,Node> vertexMap =
-            new HashMap<>( );
 
-
-    public Node getNodeVertex( String nodeID )
-    {
-        Node vertex = vertexMap.get( nodeID );
-        if( vertex == null )
-        {
-            throw new NullPointerException("Node vertex does not exist in the Graph");
+    public Node getNodeVertex(String nodeID) {
+        Node vertex = vertexMap.get(nodeID);
+        if (vertex == null) {
+            throw new IllegalArgumentException("Node vertex with ID " + nodeID + " does not exist in the Graph");
         }
         return vertex;
     }
@@ -38,7 +34,7 @@ public class Graph {
         vertexMap.putIfAbsent(node.getID(),node);
     }
 
-    public void removeNodeVertex(HanRoutingProtocol.Node vertex){
+    public void removeNodeVertex(HanRoutingProtocol.Node vertex) {
         vertexMap.remove(vertex.getId());
     }
 
