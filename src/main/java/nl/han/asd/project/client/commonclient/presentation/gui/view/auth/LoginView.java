@@ -22,7 +22,7 @@ public class LoginView {
     public LoginView() {
         gridPane = PaneFactory.getGridPane(Pos.CENTER, new int[]{25, 25, 25, 25});
         setTitle();
-        createLabels();
+        setLabels();
         setInputFields();
         setButtons();
         setText();
@@ -34,7 +34,7 @@ public class LoginView {
         gridPane.add(title, 0, 0, 2, 1);
     }
 
-    private void createLabels() {
+    private void setLabels() {
         gridPane.add(new Label("Username:"), 0, 1);
         gridPane.add(new Label("Password:"), 0, 2);
     }
