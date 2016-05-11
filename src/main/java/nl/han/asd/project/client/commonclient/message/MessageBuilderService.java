@@ -15,6 +15,8 @@ import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class MessageBuilderService implements IMessageBuilder {
     public ISendMessage sendMessage;
     public IMessageStore messageStore;
     protected ConnectionService connectionService = null;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
 
     public IEncrypt encrypt;
     public CryptographyService cryptographyService;
@@ -53,7 +56,7 @@ public class MessageBuilderService implements IMessageBuilder {
             connectionService.open(messageToSend.getIP(),messageToSend.getPort());
             connectionService.write(builder);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Message could not be send due to connection problems.");
         }
     }
 
