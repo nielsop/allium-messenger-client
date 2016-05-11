@@ -26,7 +26,7 @@ public class MessageBuilderService implements IMessageBuilder {
     public IGetPath getPath;
     public ISendMessage sendMessage;
     public IMessageStore messageStore;
-    protected ConnectionService connectionService = null;
+    private ConnectionService connectionService = null;
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
 
     public IEncrypt encrypt;
@@ -43,9 +43,9 @@ public class MessageBuilderService implements IMessageBuilder {
         cryptographyService = new CryptographyService(injector.getInstance(IEncryptionService.class));
     }
 
-    public void sendMessage(String messageText, Contact contactReciever, Contact contactSender) {
-        //check if contactReciever contains latest data from master server.
-        EncryptedMessage messageToSend = buildMessagePackage(messageText, contactReciever, contactSender);
+    public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
+        //TODO check if contactReceiver contains latest data from master server.
+        EncryptedMessage messageToSend = buildMessagePackage(messageText, contactReceiver, contactSender);
 
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
@@ -60,11 +60,11 @@ public class MessageBuilderService implements IMessageBuilder {
         }
     }
 
-    private EncryptedMessage buildMessagePackage(String messageText, Contact contactReciever, Contact contactSender) {
-        ArrayList<Node> path = getPath.getPath(MIN_HOPS, contactReciever);
+    private EncryptedMessage buildMessagePackage(String messageText, Contact contactReceiver, Contact contactSender) {
+        ArrayList<Node> path = getPath.getPath(MIN_HOPS, contactReceiver);
 
-        Message message = new Message(messageText, contactSender, contactReciever);
-        //kijken of path of die nodes bevat anders gooi exep
+        Message message = new Message(messageText, contactSender, contactReceiver);
+        //TODO kijken of path of die nodes bevat anders gooi exep
         ByteString firstLayer = buildFirstMessagePackageLayer(path.get(0), message);
         path.remove(0);
         return buildLastMessagePackageLayer(path.get(path.size()-1),buildMessagePackageLayer(firstLayer,path));
