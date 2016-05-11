@@ -37,7 +37,7 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
      */
     @Override
     public ByteString encryptData(ByteString data, byte[] publicKey) {
-        return null;
+    return data;
     }
 
     public byte[] getPublicKey() {
