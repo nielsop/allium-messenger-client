@@ -14,7 +14,7 @@ public class LoginModel {
     }
 
     public HanRoutingProtocol.ClientLoginResponse.Status getLoginStatus(String username, String password) {
-        return gui.getPresentationLayer().loginRequest(username, password);
+        return getGUI().getPresentationLayer().loginRequest(username, password);
     }
 
     public GUI getGUI() {

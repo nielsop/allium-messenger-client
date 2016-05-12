@@ -41,7 +41,7 @@ public class Validation {
         return port >= 0 && port <= 65535;
     }
 
-    public static boolean validateLoginData(String username, String password) {
+    public static boolean validateUserAndPass(String username, String password) {
         return isValidUsername(username) && isValidPassword(password);
     }
 
@@ -73,7 +73,7 @@ public class Validation {
         }
         if (password.length() < 8 || password.length() > 16) {
             throw new IllegalArgumentException(
-                    "Ongeldige wachtwoord! Voer een wachtwoord van minimaal 8 en maximaal 12 tekens in.");
+                    "Ongeldige wachtwoord! Voer een wachtwoord van minimaal 8 en maximaal 16 tekens in.");
         }
         return true;
     }

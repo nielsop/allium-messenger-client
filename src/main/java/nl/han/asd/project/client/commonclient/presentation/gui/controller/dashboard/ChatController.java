@@ -52,7 +52,7 @@ public class ChatController {
     }
 
     private VBox getChatPane(Contact contact) {
-        VBox vBox = getVBox(0, new int[]{0, 0, 0, 0}, "");
+        VBox vBox = getVBox(0, new int[] { 0, 0, 0, 0 }, "");
         for (Message message : model.getMessages(contact)) {
             addMessageToChat(message, vBox, false);
         }
@@ -60,12 +60,13 @@ public class ChatController {
     }
 
     public void addMessageToChat(Message message, VBox chat, boolean newMessage) {
-        HBox messageBox = getHBox(0, new int[]{5, 5, 5, 5}, "-fx-background-color: #EEE;");
+        HBox messageBox = getHBox(0, new int[] { 5, 5, 5, 5 }, "-fx-background-color: #EEE;");
         messageBox.getChildren().add(new Text(message.getText()));
 
         if (message.getSender().getUsername().equals(model.getCurrentUser().getUsername())) {
             messageBox.setAlignment(Pos.TOP_RIGHT);
-        } else messageBox.setAlignment(Pos.TOP_LEFT);
+        } else
+            messageBox.setAlignment(Pos.TOP_LEFT);
 
         setHBoxMouseEvents(messageBox);
         chat.getChildren().add(messageBox);

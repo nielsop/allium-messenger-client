@@ -50,7 +50,7 @@ public class DashboardController {
         return view.getBorderPane();
     }
 
-    public Contact getMe() {
+    public Contact getCurrentUser() {
         return model.getCurrentUser();
     }
 

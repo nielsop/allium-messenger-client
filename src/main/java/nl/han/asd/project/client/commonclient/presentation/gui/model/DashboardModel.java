@@ -15,7 +15,7 @@ public class DashboardModel {
 
     public DashboardModel(GUI gui) {
         this.gui = gui;
-        currentUser = gui.getPresentationLayer().getCurrentUser();
+        currentUser = getGUI().getPresentationLayer().getCurrentUser();
     }
 
     public GUI getGUI() {
@@ -25,15 +25,16 @@ public class DashboardModel {
     public Contact getCurrentUser() {
         return currentUser;
     }
+
     public List<Message> getMessages(Contact contact) {
-        return gui.getPresentationLayer().getMessages(contact);
+        return getGUI().getPresentationLayer().getMessages(contact);
     }
 
     public List<Contact> getContacts() {
-        return gui.getPresentationLayer().getContacts();
+        return getGUI().getPresentationLayer().getContacts();
     }
 
     public void sendMessage(Message message) {
-        gui.getPresentationLayer().sendMessage(message);
+        getGUI().getPresentationLayer().sendMessage(message);
     }
 }

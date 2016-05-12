@@ -24,8 +24,7 @@ public class PresentationLayerTest {
 
     @Test
     public void testRegisterStatusSuccess() throws Exception {
-        RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(
-                ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).getStatus());
+        RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
         assertEquals(registerResponse.getStatus(), pLayer.registerRequest("username", "password"));
@@ -33,8 +32,7 @@ public class PresentationLayerTest {
 
     @Test
     public void testRegisterStatusFailed() throws Exception {
-        RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(
-                ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).getStatus());
+        RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
         assertEquals(registerResponse.getStatus(), pLayer.registerRequest("username", "password"));
@@ -43,8 +41,7 @@ public class PresentationLayerTest {
     @Test
     public void testRegisterStatusUsernameTaken() throws Exception {
         RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(
-                ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.TAKEN_USERNAME)
-                        .getStatus());
+                ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.TAKEN_USERNAME).getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
         assertEquals(registerResponse.getStatus(), pLayer.registerRequest("username", "password"));

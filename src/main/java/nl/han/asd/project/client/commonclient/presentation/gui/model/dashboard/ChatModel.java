@@ -16,7 +16,7 @@ public class ChatModel {
 
     public ChatModel(DashboardController dashboardController) {
         this.dashboardController = dashboardController;
-        currentUser = dashboardController.getMe();
+        currentUser = dashboardController.getCurrentUser();
     }
 
     public Contact getCurrentUser() {

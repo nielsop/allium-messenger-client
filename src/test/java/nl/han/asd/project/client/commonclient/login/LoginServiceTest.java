@@ -32,52 +32,52 @@ public class LoginServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsUsernameEmpty() {
-        Validation.validateLoginData(INVALID_USERNAME_EMPTY, VALID_PASSWORD);
+        Validation.validateUserAndPass(INVALID_USERNAME_EMPTY, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsPasswordEmpty() {
-        Validation.validateLoginData(VALID_USERNAME, INVALID_PASSWORD_EMPTY);
+        Validation.validateUserAndPass(VALID_USERNAME, INVALID_PASSWORD_EMPTY);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsUsernameTooLong() {
-        Validation.validateLoginData(INVALID_USERNAME_TOO_LONG, VALID_PASSWORD);
+        Validation.validateUserAndPass(INVALID_USERNAME_TOO_LONG, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsPasswordTooLong() {
-        Validation.validateLoginData(VALID_USERNAME, INVALID_PASSWORD_TOO_LONG);
+        Validation.validateUserAndPass(VALID_USERNAME, INVALID_PASSWORD_TOO_LONG);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsUsernameTooShort() {
-        Validation.validateLoginData(INVALID_USERNAME_TOO_SHORT, VALID_PASSWORD);
+        Validation.validateUserAndPass(INVALID_USERNAME_TOO_SHORT, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsPasswordTooShort() {
-        Validation.validateLoginData(VALID_USERNAME, INVALID_PASSWORD_TOO_SHORT);
+        Validation.validateUserAndPass(VALID_USERNAME, INVALID_PASSWORD_TOO_SHORT);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUsernameContainsForbiddenCharacters() {
-        Validation.validateLoginData(INVALID_USERNAME_FORBIDDEN_CHARACTERS, VALID_PASSWORD);
+        Validation.validateUserAndPass(INVALID_USERNAME_FORBIDDEN_CHARACTERS, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPasswordContainsForbiddenCharacters() {
-        Validation.validateLoginData(VALID_USERNAME, INVALID_PASSWORD_FORBIDDEN_CHARACTERS);
+        Validation.validateUserAndPass(VALID_USERNAME, INVALID_PASSWORD_FORBIDDEN_CHARACTERS);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsUsernameNull() {
-        Validation.validateLoginData(INVALID_USERNAME_NULL, VALID_PASSWORD);
+        Validation.validateUserAndPass(INVALID_USERNAME_NULL, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsPasswordNull() {
-        Validation.validateLoginData(VALID_USERNAME, INVALID_PASSWORD_NULL);
+        Validation.validateUserAndPass(VALID_USERNAME, INVALID_PASSWORD_NULL);
     }
 
 }

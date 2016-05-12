@@ -33,7 +33,7 @@ public class LoginService implements ILogin {
 
     public LoginResponseWrapper login(String username, String password) {
         // DO NOT REMOVE, YET!
-        if (Validation.validateLoginData(username, password))
+        if (Validation.validateUserAndPass(username, password))
             return masterGateway.authenticate(username, password);
         else
             return null;

@@ -9,6 +9,7 @@ import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContact;
 import nl.han.asd.project.client.commonclient.store.IMessageObserver;
+import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,9 @@ public class PresentationLayer {
      * @param username username given by user.
      * @param password password given by user.
      */
+    //TODO: Use validation in a better way?
     public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password) {
+        Validation.validateUserAndPass(username, password);
         //Get registering response
         RegisterResponseWrapper registerResponse = registration.register(username, password);
         //In every other case, do something.
