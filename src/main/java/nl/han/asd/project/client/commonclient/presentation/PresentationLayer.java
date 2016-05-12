@@ -7,7 +7,7 @@ import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWra
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.IContact;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageObserver;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -27,7 +27,7 @@ public class PresentationLayer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(PresentationLayer.class);
 
-    private IContact contact;
+    private IContactStore contact;
     private IMessageBuilder messageBuilder;
     private IMessageObserver messageObserver;
     private IRegistration registration;
@@ -45,13 +45,19 @@ public class PresentationLayer {
     }
 
     @Inject
-    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver,
-                             IRegistration registration, ILogin login) {
+    public PresentationLayer(IContactStore contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
         this.contact = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
         this.registration = registration;
         this.login = login;
+
+        // TODO remove test method
+        setupTestData();
+    }
+
+    private void setupTestData() {
+        contact.createTestContacts();
     }
 
     /**
@@ -99,16 +105,17 @@ public class PresentationLayer {
     }
 
     public List<Message> getMessages(Contact contact) {
-        LOGGER.info("find messages for user: " + contact.getUsername());
+        LOGGER.info("Find messages for user: " + contact.getUsername());
         return new ArrayList<>();
     }
 
     public List<Contact> getContacts() {
-        return new ArrayList<>();
-
+        LOGGER.info("Find contacts");
+        return contact.getAllContacts();
     }
 
     public void sendMessage(Message message) {
         PresentationLayer.LOGGER.info(message.getSender() + " sends to " + message.getReceiver() + "the following massage:\n" + message.getText());
+        System.out.println(message.getSender() + " sends to " + message.getReceiver() + "the following massage:\n" + message.getText());
     }
 }
