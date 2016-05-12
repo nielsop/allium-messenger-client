@@ -8,6 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
+import nl.han.asd.project.client.commonclient.presentation.gui.view.Styles;
 
 import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.getHBox;
 import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory.getScrollPane;
@@ -20,8 +21,8 @@ public class ChatView {
     private HBox top = getTop();
     private ScrollPane center = getCenter();
     private BorderPane bottom = getBottom();
-    private JFXTextArea newMessage;
-    private JFXButton sendNewMessage;
+    private JFXTextArea messageTextArea;
+    private JFXButton btn_sendMessage;
     private HBox current;
 
     public ChatView() {
@@ -46,12 +47,13 @@ public class ChatView {
 
     private BorderPane getBottom() {
         BorderPane temp = PaneFactory.getBorderPane(new int[]{0, 0, 0, 0});
-        sendNewMessage = new JFXButton("send");
-        sendNewMessage.setPrefHeight(50);
-        newMessage = new JFXTextArea();
-        newMessage.setPrefHeight(50);
-        temp.setCenter(newMessage);
-        temp.setRight(sendNewMessage);
+        btn_sendMessage = new JFXButton("Send");
+        btn_sendMessage.setStyle(Styles.FX_BUTTON_RAISED);
+        btn_sendMessage.setPrefHeight(50);
+        messageTextArea = new JFXTextArea();
+        messageTextArea.setPrefHeight(50);
+        temp.setCenter(messageTextArea);
+        temp.setRight(btn_sendMessage);
         return temp;
     }
 
@@ -83,16 +85,16 @@ public class ChatView {
         return center.getVmax();
     }
 
-    public String getNewMessage() {
-        return newMessage.getText();
+    public String getMessageTextArea() {
+        return messageTextArea.getText();
     }
 
-    public void setNewMessage(String newMessage) {
-        this.newMessage.setText(newMessage);
+    public void setMessageTextArea(String messageTextArea) {
+        this.messageTextArea.setText(messageTextArea);
     }
 
-    public JFXButton getSendNewMessage() {
-        return sendNewMessage;
+    public JFXButton getBtn_sendMessage() {
+        return btn_sendMessage;
     }
 
     public void setChatContent(VBox chatContent, String username) {

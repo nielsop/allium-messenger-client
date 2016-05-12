@@ -14,3 +14,15 @@
 0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: "fghjk" login status: SUCCES
 0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: "ghjk" login status: SUCCES
 0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - User: "12321421" login status: SUCCES
+0    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Find contacts
+1    [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Find contacts
+2019 [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Find messages for user: niels
+2511 [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Find messages for user: niels
+3135 [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Find messages for user: niels
+3425 [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Find messages for user: bram
+3871 [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Find messages for user: kenny
+4199 [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Find messages for user: dennis
+4683 [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Find messages for user: julius
+5199 [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Find messages for user: marius
+8431 [JavaFX Application Thread] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - nl.han.asd.project.client.commonclient.store.Contact@4982ee51 sends to nl.han.asd.project.client.commonclient.store.Contact@641f0396the following massage:
+123213213
