@@ -39,7 +39,7 @@ public class ChatController {
 
         view.getInput().getRight().setOnMouseClicked(e -> {
             if (view.getMessageTextArea().length() > 0) {
-                addMessageToChat(new Message(view.getMessageTextArea(), model.getCurrentUser(), model.getReceiver()), view.getChatContent(), true);
+                addMessageToChat(new Message(view.getMessageTextArea(), model.getCurrentUser(), model.getSelectedContact()), view.getChatContent(), true);
                 view.getChat().setVvalue(1.0);
                 view.setMessageTextArea("");
             }
@@ -47,8 +47,8 @@ public class ChatController {
     }
 
     private void setChat() {
-        view.setChatContent(getChatPane(model.getReceiver()), model.getReceiver().getUsername());
-        model.setReceiver(model.getReceiver());
+        view.setChatContent(getChatPane(model.getSelectedContact()), model.getSelectedContact().getUsername());
+        model.setSelectedContact(model.getSelectedContact());
     }
 
     private VBox getChatPane(Contact contact) {
@@ -87,7 +87,7 @@ public class ChatController {
     }
 
     public void setSelectedContact(Contact selectedContact) {
-        model.setReceiver(selectedContact);
+        model.setSelectedContact(selectedContact);
         setChat();
     }
 }

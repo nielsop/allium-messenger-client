@@ -14,5 +14,5 @@ public interface IContactStore {
 
     Contact findContact(String username);
 
-    void clearAllContacts();
+    void deleteAllContacts();
 }

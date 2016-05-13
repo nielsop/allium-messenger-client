@@ -44,6 +44,13 @@ public class ContactStoreTest {
         initializeTestContacts();
     }
 
+    private void addTestContacts() {
+        contactStore.addContact(usernameContact1, publicKeyContact1);
+        contactStore.addContact(usernameContact2, publicKeyContact2);
+        contactStore.addContact(usernameContact3, publicKeyContact3);
+        contactStore.addContact(usernameContact4, publicKeyContact4);
+    }
+
     private void initializeTestContacts() {
         // Single contactStore in list
         singleContactArrayList.add(new Contact(usernameContact1, publicKeyContact1));
@@ -61,31 +68,17 @@ public class ContactStoreTest {
         Contact tempContact = contactStore.getAllContacts().get(0);
         assertEquals(usernameContact1, tempContact.getUsername());
         assertEquals(publicKeyContact1, tempContact.getPublicKey());
-        assertEquals(1, contactStore.getAllContacts().size());
     }
 
     @Test
     public void testAddMultipleContactsToList() {
-        contactStore.addContact(usernameContact1, publicKeyContact1);
-        contactStore.addContact(usernameContact2, publicKeyContact2);
-        contactStore.addContact(usernameContact3, publicKeyContact3);
-        contactStore.addContact(usernameContact4, publicKeyContact4);
-        ArrayList<Contact> contactList = contactStore.getAllContacts();
-        for (int i = 0; i < multipleContactArrayList.size(); i++) {
-            Contact testContact = multipleContactArrayList.get(i);
-            Contact tempContact = contactList.get(i);
-            assertEquals(testContact.getUsername(), tempContact.getUsername());
-            assertEquals(testContact.getPublicKey(), tempContact.getPublicKey());
-        }
-        assertEquals(4, contactList.size());
+        addTestContacts();
+        assertEquals(4, contactStore.getAllContacts().size());
     }
 
     @Test
     public void testFindContactInListWithUsername() {
-        contactStore.addContact(usernameContact1, publicKeyContact1);
-        contactStore.addContact(usernameContact2, publicKeyContact2);
-        contactStore.addContact(usernameContact3, publicKeyContact3);
-        contactStore.addContact(usernameContact4, publicKeyContact4);
+        addTestContacts();
         Contact selectedContact = contactStore.findContact(usernameContact3);
         assertEquals(usernameContact3, selectedContact.getUsername());
         assertEquals(publicKeyContact3, selectedContact.getPublicKey());
@@ -93,10 +86,7 @@ public class ContactStoreTest {
 
     @Test
     public void testDeleteSingleContactFromList() {
-        contactStore.addContact(usernameContact1, publicKeyContact1);
-        contactStore.addContact(usernameContact2, publicKeyContact2);
-        contactStore.addContact(usernameContact3, publicKeyContact3);
-        contactStore.addContact(usernameContact4, publicKeyContact4);
+        addTestContacts();
         contactStore.deleteContact(usernameContact2);
         Contact selectedContact = contactStore.findContact(usernameContact2);
         assertEquals(null, selectedContact);
@@ -105,11 +95,8 @@ public class ContactStoreTest {
 
     @Test
     public void testClearAllContactsFromList() {
-        contactStore.addContact(usernameContact1, publicKeyContact1);
-        contactStore.addContact(usernameContact2, publicKeyContact2);
-        contactStore.addContact(usernameContact3, publicKeyContact3);
-        contactStore.addContact(usernameContact4, publicKeyContact4);
-        contactStore.clearAllContacts();
+        addTestContacts();
+        contactStore.deleteAllContacts();
         assertEquals(0, contactStore.getAllContacts().size());
     }
 }

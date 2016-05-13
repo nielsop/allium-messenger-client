@@ -9,13 +9,13 @@ import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageObserver;
+import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +27,8 @@ public class PresentationLayer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(PresentationLayer.class);
 
-    private IContactStore contact;
+    private IContactStore contacts;
+    private IMessageStore messages;
     private IMessageBuilder messageBuilder;
     private IMessageObserver messageObserver;
     private IRegistration registration;
@@ -46,18 +47,19 @@ public class PresentationLayer {
 
     @Inject
     public PresentationLayer(IContactStore contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
-        this.contact = contact;
+        this.contacts = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
         this.registration = registration;
         this.login = login;
 
         // TODO remove test method
-        setupTestData();
+        createTestContacts();
     }
 
-    private void setupTestData() {
-        contact.createTestContacts();
+    // TODO remove test method
+    private void createTestContacts() {
+        contacts.createTestContacts();
     }
 
     /**
@@ -104,18 +106,18 @@ public class PresentationLayer {
         return loginResponse.getStatus();
     }
 
-    public List<Message> getMessages(Contact contact) {
-        LOGGER.info("Find messages for user: " + contact.getUsername());
-        return new ArrayList<>();
+    public List<Message> getMessages(String contact) {
+        LOGGER.info("Find messages for user: " + contact);
+        return messages.getMessages(contact);
     }
 
     public List<Contact> getContacts() {
         LOGGER.info("Find contacts");
-        return contact.getAllContacts();
+        return contacts.getAllContacts();
     }
 
     public void sendMessage(Message message) {
-        PresentationLayer.LOGGER.info(message.getSender() + " sends to " + message.getReceiver() + "the following massage:\n" + message.getText());
-        System.out.println(message.getSender() + " sends to " + message.getReceiver() + "the following massage:\n" + message.getText());
+        LOGGER.info(message.getSender() + " sends to " + message.getReceiver() + "the following massage:\n" + message.getText());
+        messages.sendMessage(message);
     }
 }

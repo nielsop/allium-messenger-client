@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class ChatModel {
     private DashboardController dashboardController;
-    private Contact receiver;
+    private Contact selectedContact;
     private Contact currentUser;
 
     public ChatModel(DashboardController dashboardController) {
@@ -23,12 +23,12 @@ public class ChatModel {
         return currentUser;
     }
 
-    public Contact getReceiver() {
-        return receiver;
+    public Contact getSelectedContact() {
+        return selectedContact;
     }
 
-    public void setReceiver(Contact receiver) {
-        this.receiver = receiver;
+    public void setSelectedContact(Contact selectedContact) {
+        this.selectedContact = selectedContact;
     }
 
     public void sendMessage(Message message) {

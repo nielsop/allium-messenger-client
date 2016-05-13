@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class ContactModel {
     private DashboardController dashboardController;
-    private Contact currentContact;
+    private Contact selectedContact;
 
     public ContactModel(DashboardController dashboardController) {
         this.dashboardController = dashboardController;
@@ -20,15 +20,15 @@ public class ContactModel {
         dashboardController.setSelectedContactChat(contact);
     }
 
-    public void setCurrectContact(Contact currentContact) {
-        this.currentContact = currentContact;
+    public void setSelectedContact(Contact contact) {
+        this.selectedContact = contact;
     }
 
     public List<Contact> getContacts() {
         return dashboardController.getContacts();
     }
 
-    public Contact getCurrentContact() {
-        return currentContact;
+    public Contact getSelectedContact() {
+        return selectedContact;
     }
 }

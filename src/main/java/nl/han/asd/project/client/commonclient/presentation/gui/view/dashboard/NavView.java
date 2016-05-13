@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.presentation.gui.view.dashboard;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
+import nl.han.asd.project.client.commonclient.presentation.gui.view.Styles;
 
 /**
  * Created by Marius on 26-04-16.
@@ -14,7 +15,7 @@ public class NavView {
 
     public NavView() {
         hBox = PaneFactory.getHBox(10, new int[]{5, 5, 5, 5}, "");
-        hBox.setStyle("-fx-background-color: #EEE; -fx-background: #EEE;");
+        hBox.setStyle("-fx-background-color: " + Styles.LIGHTGREY2 + "; -fx-background: " + Styles.LIGHTGREY2 + ";");
         logout = new Label("Uitloggen");
         settings = new Label("Instellingen");
 

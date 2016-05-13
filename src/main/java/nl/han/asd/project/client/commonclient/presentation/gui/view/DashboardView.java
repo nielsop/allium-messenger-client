@@ -12,7 +12,7 @@ public class DashboardView {
 
     public DashboardView() {
         borderPane = PaneFactory.getBorderPane(new int[]{0, 0, 0, 0});
-        borderPane.setStyle("-fx-background-color: #FFF; -fx-background: #FFF;");
+        borderPane.setStyle("-fx-background-color: " + Styles.WHITE + "; -fx-background: " + Styles.WHITE + ";");
     }
 
     public void setBorderPaneContent(HBox top, BorderPane left, BorderPane center) {

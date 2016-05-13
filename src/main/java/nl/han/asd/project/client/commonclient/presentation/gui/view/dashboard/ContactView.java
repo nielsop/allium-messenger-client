@@ -26,7 +26,7 @@ public class ContactView {
 
     public ContactView() {
         borderPane = PaneFactory.getBorderPane(new int[] { 0, 0, 0, 0 });
-        borderPane.setStyle("-fx-background-color: #FFF; -fx-background: #FFF;");
+        borderPane.setStyle("-fx-background-color: " + Styles.WHITE + "; -fx-background: " + Styles.WHITE + ";");
         borderPane.setTop(top);
         borderPane.setCenter(center);
         borderPane.setBottom(bottom);
@@ -41,7 +41,7 @@ public class ContactView {
     }
 
     private ScrollPane getCenter() {
-        String style = "-fx-background-color:#FFF; -fx-background: #FFF;";
+        String style = "-fx-background-color: " + Styles.WHITE + "; -fx-background: " + Styles.WHITE + ";";
         ScrollPane scrollPane = getScrollPane(true, true, null, null, style);
         contactList = getVBox(0, new int[] { 0, 0, 0, 0 }, "");
         scrollPane.setContent(contactList);

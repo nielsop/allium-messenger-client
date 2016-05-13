@@ -27,7 +27,7 @@ public class ChatView {
 
     public ChatView() {
         borderPane = PaneFactory.getBorderPane(new int[] { 0, 0, 0, 0 });
-        borderPane.setStyle("-fx-background-color: #EEE; -fx-background: #EEE;");
+        borderPane.setStyle("-fx-background-color: " + Styles.LIGHTGREY2 + "; -fx-background: " + Styles.LIGHTGREY2 + ";");
         borderPane.setTop(top);
         borderPane.setCenter(center);
         borderPane.setBottom(bottom);
@@ -108,19 +108,19 @@ public class ChatView {
 
     public void setSelectedMessage(HBox hBox) {
         if (current != null) {
-            current.setStyle("-fx-background-color: #EEE;");
+            current.setStyle("-fx-background-color: " + Styles.LIGHTGREY2 + ";");
         }
-        hBox.setStyle("-fx-background-color: #DDD;");
+        hBox.setStyle("-fx-background-color: " + Styles.LIGHTGREY + ";");
         current = hBox;
     }
 
     public void setEnteredMessage(HBox hBox) {
-        hBox.setStyle("-fx-background-color: #DDD;");
+        hBox.setStyle("-fx-background-color: " + Styles.LIGHTGREY + ";");
     }
 
     public void setExitedMessage(HBox hBox) {
         if (hBox != current) {
-            hBox.setStyle("-fx-background-color: #EEE;");
+            hBox.setStyle("-fx-background-color: " + Styles.LIGHTGREY2 + ";");
         }
     }
 }

@@ -10,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import nl.han.asd.project.client.commonclient.presentation.gui.view.Styles;
 
 /**
  * Created by Marius on 19-04-16.
@@ -72,13 +73,13 @@ public class PaneFactory {
     }
 
     public static void fancyLabel(Label label, GUI gui) {
-        label.setTextFill(Paint.valueOf("#888"));
+        label.setTextFill(Paint.valueOf(Styles.GREY));
         label.setOnMouseEntered(e -> {
-            label.setTextFill(Paint.valueOf("#000"));
+            label.setTextFill(Paint.valueOf(Styles.BLACK));
             gui.getScene().setCursor(Cursor.HAND);
         });
         label.setOnMouseExited(e -> {
-            label.setTextFill(Paint.valueOf("#888"));
+            label.setTextFill(Paint.valueOf(Styles.GREY));
             gui.getScene().setCursor(Cursor.DEFAULT);
         });
     }

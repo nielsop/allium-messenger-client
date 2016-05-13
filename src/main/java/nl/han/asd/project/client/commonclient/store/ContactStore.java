@@ -33,17 +33,16 @@ public class ContactStore implements IContactStore {
 
     @Override
     public void deleteContact(String username) {
-        for (int i = 0; i < contactList.size(); i++) {
-            Contact contact = contactList.get(i);
+        for (Contact contact : contactList) {
             if (contact.getUsername().equals(username)) {
-                contactList.remove(i);
+                contactList.remove(contact);
                 break;
             }
         }
     }
 
     @Override
-    public void clearAllContacts() {
+    public void deleteAllContacts() {
         contactList.clear();
     }
 

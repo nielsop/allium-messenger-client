@@ -21,7 +21,6 @@ public class LoginView {
     private Text status;
 
     public LoginView() {
-
         gridPane = PaneFactory.getGridPane(Pos.CENTER, new int[]{25, 25, 25, 25});
         setTitle();
         setLabels();

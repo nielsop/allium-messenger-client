@@ -7,11 +7,16 @@ package nl.han.asd.project.client.commonclient.presentation.gui.view;
  */
 public class Styles {
     // Main colors
-    public static final String DEFAULT_PRIMARY_COLOR = "rgb(77,102,204)";
-    public static final String DEFAULT_PRIMARY_CONTRAST_COLOR = "WHITE";
+    public static final String PRIMARY = "rgb(77,102,204)";
+    public static final String WHITE = "rgb(255,255,255)";
+    public static final String BLACK = "rgb(0,0,0)";
+    public static final String DARKGREY = "rgb(80,80,80)";
+    public static final String GREY = "rgb(136,136,136)";
+    public static final String LIGHTGREY = "rgb(221,221,221)";
+    public static final String LIGHTGREY2 = "rgb(238,238,238)";
 
     // Button styles:
     public static final String FX_BUTTON_RAISED =
-            "-fx-padding: 0.7em 0.57em; -fx-font-size: 14px; -fx-button-type: RAISED; -fx-background-color: " + DEFAULT_PRIMARY_COLOR + "; -fx-text-fill: "
-                    + DEFAULT_PRIMARY_CONTRAST_COLOR + ";";
+            "-fx-padding: 0.7em 0.57em; -fx-font-size: 14px; -fx-button-type: RAISED; -fx-background-color: " + PRIMARY + "; -fx-text-fill: "
+                    + WHITE + ";";
 }

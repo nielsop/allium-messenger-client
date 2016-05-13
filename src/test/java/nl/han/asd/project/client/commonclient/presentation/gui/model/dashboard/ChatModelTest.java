@@ -37,8 +37,8 @@ public class ChatModelTest {
 
     @Test
     public void setReceiver() throws Exception {
-        testChatModel.setReceiver(receiver);
-        Assert.assertEquals(receiver, testChatModel.getReceiver());
+        testChatModel.setSelectedContact(receiver);
+        Assert.assertEquals(receiver, testChatModel.getSelectedContact());
     }
 
     @Ignore

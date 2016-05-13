@@ -44,7 +44,7 @@ public class ContactController {
             if (current != null) current.setStyle(STYLE_BACKGROUND_WHITE);
             hBox.setStyle(STYLE_BACKGROUND_LIGHTGREY);
             current = hBox;
-            model.setCurrectContact(contact);
+            model.setSelectedContact(contact);
         });
         hBox.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> hBox.setStyle(STYLE_BACKGROUND_LIGHTGREY));
         hBox.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
