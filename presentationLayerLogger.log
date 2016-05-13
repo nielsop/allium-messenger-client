@@ -291,3 +291,6 @@ java.net.ConnectException: Connection refused: connect
 15651 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Registering failed!
 15651 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Username already exists, registering failed.
 15652 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Registering worked!
+0    [main] WARN  com.xebialabs.overcast.PropertiesLoader  - File C:\Users\Niels Bokmans\.overcast\overcast.conf not found.
+1    [main] INFO  com.xebialabs.overcast.PropertiesLoader  - Loading from file C:\Users\Niels Bokmans\Documents\commonclient\overcast.conf
+22   [main] WARN  com.xebialabs.overcast.PropertiesLoader  - File 'overcast.conf' not found on classpath.

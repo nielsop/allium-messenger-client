@@ -76,7 +76,6 @@ public class MasterGatewayIT {
     @Test
     public void testLoginSuccessful() {
         gateway.register(VALID_USERNAME, VALID_PASSWORD);
-
         Assert.assertTrue(gateway.authenticate(VALID_USERNAME, VALID_PASSWORD).status
                 == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
     }
