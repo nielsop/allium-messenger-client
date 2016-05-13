@@ -9,20 +9,20 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import nl.han.asd.project.client.commonclient.presentation.gui.view.Pane;
+import nl.han.asd.project.client.commonclient.presentation.gui.PaneFactory;
 
 public class LoginView {
-    public Button registerButton;
-    public Button loginButton;
-    public TextField usernameField;
-    public PasswordField passwordField;
-    public Text status;
-    GridPane gridPane = null;
+    private GridPane gridPane;
+    private Button registerButton;
+    private Button loginButton;
+    private TextField usernameField;
+    private PasswordField passwordField;
+    private Text status;
 
     public LoginView() {
-        gridPane = Pane.getGridPane(Pos.CENTER, new int[] { 25, 25, 25, 25 });
+        gridPane = PaneFactory.getGridPane(Pos.CENTER, new int[]{25, 25, 25, 25});
         setTitle();
-        createLabels();
+        setLabels();
         setInputFields();
         setButtons();
         setText();
@@ -34,7 +34,7 @@ public class LoginView {
         gridPane.add(title, 0, 0, 2, 1);
     }
 
-    private void createLabels() {
+    private void setLabels() {
         gridPane.add(new Label("Username:"), 0, 1);
         gridPane.add(new Label("Password:"), 0, 2);
     }
@@ -63,5 +63,29 @@ public class LoginView {
 
     public GridPane getGridPane() {
         return gridPane;
+    }
+
+    public Button getRegisterButton() {
+        return registerButton;
+    }
+
+    public Button getLoginButton() {
+        return loginButton;
+    }
+
+    public String getUsername() {
+        return usernameField.getText();
+    }
+
+    public String getPassword() {
+        return passwordField.getText();
+    }
+
+    public String getStatus() {
+        return status.getText();
+    }
+
+    public void setStatus(String text) {
+        status.setText(text);
     }
 }

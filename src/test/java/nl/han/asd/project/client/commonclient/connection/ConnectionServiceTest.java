@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.*;
@@ -17,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class ConnectionServiceTest implements IConnectionService {
 
     private static Server server = new Server();
-    private final byte[] EMPTY_BYTE_ARRAY = new byte[] { 0x00 };
+    private final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
     private ConnectionService connectionService = null;
 
     public ConnectionServiceTest() {
@@ -37,7 +38,7 @@ public class ConnectionServiceTest implements IConnectionService {
 
     @Before
     public void InitConnectionService() throws IOException {
-        connectionService = new ConnectionService(EMPTY_BYTE_ARRAY, this);
+        connectionService = new ConnectionService(EMPTY_PUBLICKEY_BYTES, this);
 
         // set the public key of the server to our connection service
         connectionService.setReceiverPublicKey(server.getMyPublicKey());
@@ -56,7 +57,7 @@ public class ConnectionServiceTest implements IConnectionService {
         ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
         requestBuilder.setUsername("test");
         requestBuilder.setPassword("test");
-        requestBuilder.setPublicKey("test");
+        requestBuilder.setPublicKey(ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES));
 
         connectionService.write(requestBuilder);
 
@@ -69,30 +70,35 @@ public class ConnectionServiceTest implements IConnectionService {
 
     @Test(expected = IllegalArgumentException.class)
     public void TestSleepTime() {
-        ConnectionService connection2 = new ConnectionService(-20, EMPTY_BYTE_ARRAY);
+        ConnectionService connection2 = new ConnectionService(-20,
+                EMPTY_PUBLICKEY_BYTES);
     }
 
     @Test(expected = SocketException.class)
     public void TestHost() throws IOException {
-        ConnectionService connection2 = new ConnectionService(20, EMPTY_BYTE_ARRAY, this);
+        ConnectionService connection2 = new ConnectionService(20,
+                EMPTY_PUBLICKEY_BYTES, this);
         connection2.open("127.0.", 10);
     }
 
     @Test(expected = SocketException.class)
     public void TestPort() throws IOException {
-        ConnectionService connection2 = new ConnectionService(EMPTY_BYTE_ARRAY);
+        ConnectionService connection2 = new ConnectionService(
+                EMPTY_PUBLICKEY_BYTES);
         connection2.open("127.0.0.1", -20);
     }
 
     @Test(expected = SocketException.class)
     public void TestReadAsync() throws IOException {
-        ConnectionService connection2 = new ConnectionService(EMPTY_BYTE_ARRAY);
+        ConnectionService connection2 = new ConnectionService(
+                EMPTY_PUBLICKEY_BYTES);
         connection2.readAsync();
     }
 
     @Test(expected = SocketException.class)
     public void TestStopReadyAsync() throws IOException {
-        ConnectionService connection2 = new ConnectionService(EMPTY_BYTE_ARRAY);
+        ConnectionService connection2 = new ConnectionService(
+                EMPTY_PUBLICKEY_BYTES);
         connection2.stopReadAsync();
     }
 
@@ -101,7 +107,7 @@ public class ConnectionServiceTest implements IConnectionService {
         ClientLoginRequest.Builder builder = ClientLoginRequest.newBuilder();
         builder.setUsername("test");
         builder.setPassword("test");
-        builder.setPublicKey("xxxx");
+        builder.setPublicKey(ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES));
         connectionService.write(builder);
 
         ClientLoginResponse response = connectionService.readGeneric(ClientLoginResponse.class);
@@ -140,7 +146,6 @@ public class ConnectionServiceTest implements IConnectionService {
     @Test
     public void TestConnectedState() throws IOException {
         connectionService.close();
-
         assertEquals(false, connectionService.isConnected());
     }
 

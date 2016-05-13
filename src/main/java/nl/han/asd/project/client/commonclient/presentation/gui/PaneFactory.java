@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.presentation.gui.view;
+package nl.han.asd.project.client.commonclient.presentation.gui;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,17 +10,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 
-public class Pane {
-
-    /**
-     * Private constructor to prevent instantiation.
-     */
-    private Pane() {
-
-    }
-
+/**
+ * Created by Marius on 19-04-16.
+ */
+public class PaneFactory {
     public static GridPane getGridPane(Pos alignment, int[] padding) {
         GridPane pane = new GridPane();
         pane.setAlignment(alignment);
@@ -37,7 +31,7 @@ public class Pane {
     }
 
     public static ScrollPane getScrollPane(boolean fitWidth, boolean fitHeight, int[] width, int[] height,
-            String style) {
+                                           String style) {
         ScrollPane pane = new ScrollPane();
         pane.setFitToWidth(fitWidth);
         pane.setFitToHeight(fitHeight);

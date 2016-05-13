@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.master;
 
 import com.google.inject.Inject;
+import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
@@ -52,13 +53,11 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     @Override
     public LoginResponseWrapper authenticate(String username, String password) {
         HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
-                .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
-        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST,
-                getSocket());
-        HanRoutingProtocol.ClientLoginResponse response = request
-                .writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
-        return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(),
-                response.getStatus());
+                .setUsername(username).setPassword(password).setPublicKey(
+                        ByteString.copyFrom(encryptionService.getPublicKey())).build();
+        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST, getSocket());
+        HanRoutingProtocol.ClientLoginResponse response = request.writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
+        return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(), response.getStatus());
     }
 
     @Override
@@ -69,6 +68,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
                 getSocket());
         HanRoutingProtocol.ClientRegisterResponse response = req
                 .writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);
+        RegisterResponseWrapper wrapper = new RegisterResponseWrapper(response.getStatus());
         return new RegisterResponseWrapper(response.getStatus());
     }
 
@@ -114,15 +114,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     }
 
     /**
-     * Returns the public key.
-     *
-     * @return The public key.
-     */
-    private String getPublicKey() {
-        return Base64.getEncoder().encodeToString(encryptionService.getPublicKey());
-    }
-
-    /**
      * Returns the connection.
      *
      * @return The connection
@@ -144,7 +135,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         if (connectionService == null) {
             // new byte[] { 0x00 } = public key that belongs to the cryptography service of the receiver
             //                          en/decryption is disabled for now, so initializing with an null-byte is sufficient.
-            connectionService = new ConnectionService(new byte[] { 0x00 });
+            connectionService = new ConnectionService(new byte[]{0x00});
         }
         try {
             connectionService.open(Configuration.getHostname(), Configuration.getPort());
