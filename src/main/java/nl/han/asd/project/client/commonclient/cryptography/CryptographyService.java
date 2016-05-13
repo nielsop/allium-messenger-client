@@ -25,7 +25,9 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
      */
     @Override
     public ByteString decryptData(ByteString data) {
-        return null;
+
+        return ByteString
+                .copyFrom(encryptionService.decryptData(data.toByteArray()));
     }
 
     /**
@@ -37,10 +39,11 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
      */
     @Override
     public ByteString encryptData(ByteString data, byte[] publicKey) {
-        return null;
+        return ByteString.copyFrom(
+                encryptionService.encryptData(publicKey, data.toByteArray()));
     }
 
     public byte[] getPublicKey() {
-        return new byte[] {};
+        return encryptionService.getPublicKey();
     }
 }

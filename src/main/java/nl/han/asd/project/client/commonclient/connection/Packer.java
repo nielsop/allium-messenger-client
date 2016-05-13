@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Wrapper that wraps EncryptedWrapper.
  */
-public class Packer {
+class Packer {
     private CryptographyService cryptographyService = null;
 
     public Packer(final CryptographyService cryptographyService) {

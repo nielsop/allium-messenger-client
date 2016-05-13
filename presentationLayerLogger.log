@@ -291,3 +291,36 @@ java.net.ConnectException: Connection refused: connect
 15651 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Registering failed!
 15651 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Username already exists, registering failed.
 15652 [main] INFO  nl.han.asd.project.client.commonclient.presentation.PresentationLayer  - Registering worked!
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [java.security.InvalidKeyException: invalid key format].
+59   [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [java.security.InvalidKeyException: invalid key format].
+63   [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+144  [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [java.security.InvalidKeyException: invalid key format].
+62   [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+102  [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [java.security.InvalidKeyException: invalid key format].
+51   [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+86   [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [java.security.InvalidKeyException: invalid key format].
+62   [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [java.security.InvalidKeyException: invalid key format].
+48   [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [java.security.InvalidKeyException: invalid key format].
+59   [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [java.security.InvalidKeyException: invalid key format].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+38   [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+77   [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].
+0    [main] ERROR nl.han.asd.project.commonservices.encryption.internal.AsymmetricEncryption  - Exception during decryption [Data must not be longer than 64 bytes].

@@ -1,6 +1,10 @@
 package nl.han.asd.project.client.commonclient.store;
 
 import com.google.inject.AbstractModule;
+import nl.han.asd.project.client.commonclient.database.Database;
+import nl.han.asd.project.client.commonclient.database.IDatabase;
+import nl.han.asd.project.client.commonclient.persistence.IPersistence;
+import nl.han.asd.project.client.commonclient.persistence.PersistenceService;
 
 /**
  * Created by Marius on 19-04-16.
@@ -8,7 +12,9 @@ import com.google.inject.AbstractModule;
 public class StoreModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(IContact.class).to(ContactStore.class);
+        bind(IDatabase.class).to(Database.class);
+        bind(IPersistence.class).to(PersistenceService.class);
+        bind(IContactStore.class).to(ContactStore.class);
         bind(IMessageStore.class).to(MessageStore.class);
         bind(IMessageObserver.class).to(MessageStore.class);
     }

@@ -42,4 +42,23 @@ public class UnpackedMessage {
     public HanRoutingProtocol.Wrapper.Type getDataType() {
         return dataType;
     }
+
+    /**
+     * Checks if the data message inside this instance matches @classDescriptor
+     * @param classDescriptor ClassDescriptor of the class to check against.
+     * @param <T> GeneratedMessage
+     * @return True if the classes match, False if they don't
+     */
+    public <T extends GeneratedMessage> boolean matchDataMessage(final Class<T> classDescriptor) {
+        return dataMessage.getClass() == classDescriptor;
+    }
+
+    /**
+     * Checks if the data type inside this instance matches the @type
+     * @param type Type to check against
+     * @return True if the types match, False if they dont'.
+     */
+    public boolean matchDataType(HanRoutingProtocol.Wrapper.Type type) {
+        return dataType == type;
+    }
 }

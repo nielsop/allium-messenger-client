@@ -11,9 +11,8 @@ public class Contact {
     private String publicKey;
     private boolean online;
 
-    public Contact(String username, String publicKey) {
-        this.username = username;
-        this.publicKey = publicKey;
+    public Contact(String username, String publicKey)  {
+        this(username, publicKey, false);
     }
 
     // TODO test, remove

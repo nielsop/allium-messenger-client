@@ -20,7 +20,7 @@ import java.net.SocketException;
  *
  * @author Jevgeni Geursten
  */
-public class Connection {
+class Connection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
     private final IConnectionPipe connectionService;
