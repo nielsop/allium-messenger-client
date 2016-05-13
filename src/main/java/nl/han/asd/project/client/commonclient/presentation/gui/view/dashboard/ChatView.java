@@ -22,7 +22,7 @@ public class ChatView {
     private ScrollPane center = getCenter();
     private BorderPane bottom = getBottom();
     private JFXTextArea messageTextArea;
-    private JFXButton btn_sendMessage;
+    private JFXButton btnSendMessage;
     private HBox current;
 
     public ChatView() {
@@ -47,13 +47,13 @@ public class ChatView {
 
     private BorderPane getBottom() {
         BorderPane temp = PaneFactory.getBorderPane(new int[]{0, 0, 0, 0});
-        btn_sendMessage = new JFXButton("Send");
-        btn_sendMessage.setStyle(Styles.FX_BUTTON_RAISED);
-        btn_sendMessage.setPrefHeight(50);
+        btnSendMessage = new JFXButton("Send");
+        btnSendMessage.setStyle(Styles.FX_BUTTON_RAISED);
+        btnSendMessage.setPrefHeight(50);
         messageTextArea = new JFXTextArea();
         messageTextArea.setPrefHeight(50);
         temp.setCenter(messageTextArea);
-        temp.setRight(btn_sendMessage);
+        temp.setRight(btnSendMessage);
         return temp;
     }
 
@@ -93,8 +93,8 @@ public class ChatView {
         this.messageTextArea.setText(messageTextArea);
     }
 
-    public JFXButton getBtn_sendMessage() {
-        return btn_sendMessage;
+    public JFXButton getBtnSendMessage() {
+        return btnSendMessage;
     }
 
     public void setChatContent(VBox chatContent, String username) {
