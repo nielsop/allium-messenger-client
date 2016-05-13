@@ -61,14 +61,14 @@ public class MasterGatewayIT {
     @Test
     public void testRegisterClientSuccessful() {
         Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES,
-                gateway.register("meneer", VALID_PASSWORD).status);
+                gateway.register("meneer", VALID_PASSWORD).getStatus());
     }
 
     @Test
     public void testRegisterClientUsernameTaken() {
         String username = UUID.randomUUID().toString();
         gateway.register(username, VALID_PASSWORD);
-        Assert.assertEquals(gateway.register(username, VALID_PASSWORD).status,
+        Assert.assertEquals(gateway.register(username, VALID_PASSWORD).getStatus(),
                 HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME);
     }
 
@@ -76,7 +76,8 @@ public class MasterGatewayIT {
     @Test
     public void testLoginSuccessful() {
         gateway.register(VALID_USERNAME, VALID_PASSWORD);
-        Assert.assertTrue(gateway.authenticate(VALID_USERNAME, VALID_PASSWORD).status
+
+        Assert.assertTrue(gateway.authenticate(VALID_USERNAME, VALID_PASSWORD).getStatus()
                 == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
     }
 

@@ -53,12 +53,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     public LoginResponseWrapper authenticate(String username, String password) {
         HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
                 .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
-        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST,
-                getSocket());
-        HanRoutingProtocol.ClientLoginResponse response = request
-                .writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
-        return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(),
-                response.getStatus());
+        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST, getSocket());
+        HanRoutingProtocol.ClientLoginResponse response = request.writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
+        return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(), response.getStatus());
     }
 
     @Override
@@ -82,7 +79,11 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         HanRoutingProtocol.GraphUpdateResponse response = req
                 .writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class);
         UpdatedGraphResponseWrapper updatedGraphs = new UpdatedGraphResponseWrapper(response.getGraphUpdatesList());
-        setCurrentGraphVersion(updatedGraphs.getLast().newVersion);
+        try{
+            setCurrentGraphVersion(updatedGraphs.getLast().newVersion);
+        }catch(Exception e){
+
+        }
         return updatedGraphs;
     }
 
@@ -144,7 +145,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         if (connectionService == null) {
             // new byte[] { 0x00 } = public key that belongs to the cryptography service of the receiver
             //                          en/decryption is disabled for now, so initializing with an null-byte is sufficient.
-            connectionService = new ConnectionService(new byte[] { 0x00 });
+            connectionService = new ConnectionService(new byte[]{0x00});
         }
         try {
             connectionService.open(Configuration.getHostname(), Configuration.getPort());

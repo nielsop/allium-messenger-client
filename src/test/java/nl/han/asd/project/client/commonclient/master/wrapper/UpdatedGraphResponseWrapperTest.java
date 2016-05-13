@@ -55,39 +55,35 @@ public class UpdatedGraphResponseWrapperTest {
 
     @Test
     public void testUpdatedGraphWrapperCreationSavesNewVersion() {
-        UpdatedGraphResponseWrapper.UpdatedGraphWrapper updatedGraph1 = updatedGraphResponseWrapper.updatedGraphs
-                .get(0);
+        UpdatedGraphWrapper updatedGraph1 =
+                updatedGraphResponseWrapper.getUpdatedGraphs().get(0);
         Assert.assertEquals(updatedGraph1.newVersion, 1);
     }
 
     @Test
     public void testUpdatedGraphWrapperCreationSavesIsFullGraphTrue() {
-        UpdatedGraphResponseWrapper.UpdatedGraphWrapper updatedGraph1 = updatedGraphResponseWrapper.updatedGraphs
-                .get(0);
+        UpdatedGraphWrapper updatedGraph1 = updatedGraphResponseWrapper.getUpdatedGraphs().get(0);
         Assert.assertEquals(updatedGraph1.isFullGraph, false);
         //        Assert.assertEquals(updatedGraph1.isFullGraph, true);
     }
 
     @Test
     public void testUpdatedGraphWrapperCreationSavesIsFullGraphFalse() {
-        UpdatedGraphResponseWrapper.UpdatedGraphWrapper updatedGraph2 = updatedGraphResponseWrapper.updatedGraphs
-                .get(1);
+        UpdatedGraphWrapper updatedGraph2 = updatedGraphResponseWrapper.getUpdatedGraphs().get(1);
         Assert.assertEquals(updatedGraph2.isFullGraph, false);
     }
 
     @Test
     public void testUpdatedGraphWrapperCreationSavesAddedNodesList() {
-        UpdatedGraphResponseWrapper.UpdatedGraphWrapper updatedGraph1 = updatedGraphResponseWrapper.updatedGraphs
-                .get(0);
-        //        Assert.assertEquals(updatedGraph1.addedNodes.size(), 2);
+        UpdatedGraphWrapper updatedGraph1 = updatedGraphResponseWrapper.getUpdatedGraphs().get(0);
+//        Assert.assertEquals(updatedGraph1.addedNodes.size(), 2);
         Assert.assertEquals(updatedGraph1.addedNodes.size(), 0);
     }
 
     @Test
     public void testUpdatedGraphWrapperCreationSavesDeletedNodesList() {
-        UpdatedGraphResponseWrapper.UpdatedGraphWrapper updatedGraph2 = updatedGraphResponseWrapper.updatedGraphs
-                .get(1);
-        //        Assert.assertEquals(updatedGraph2.deletedNodes.size(), 2);
+        UpdatedGraphWrapper updatedGraph2 = updatedGraphResponseWrapper.getUpdatedGraphs().get(1);
+//        Assert.assertEquals(updatedGraph2.deletedNodes.size(), 2);
         Assert.assertEquals(updatedGraph2.deletedNodes.size(), 0);
     }
 

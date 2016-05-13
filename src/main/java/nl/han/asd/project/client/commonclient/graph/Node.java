@@ -9,7 +9,7 @@ import java.util.List;
  * @since 20-4-2016
  */
 public class Node {
-    List<Edge> adjacent;
+    private List<Edge> adjacent;
     private String id;
     private String ipAddress;
     private int port;
@@ -20,7 +20,7 @@ public class Node {
         this.ipAddress = ipAddress;
         this.port = port;
         this.publicKey = publicKey;
-        adjacent = new LinkedList<>();
+        this.adjacent = new LinkedList<>();
     }
 
     @Override

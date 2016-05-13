@@ -12,10 +12,12 @@ import org.junit.Test;
  */
 public class GraphTest {
     private Graph graph;
+    private HanRoutingProtocol.Node node;
 
     @Before
     public void setUp() throws Exception {
         graph = new Graph();
+        node = HanRoutingProtocol.Node.newBuilder().setPort(1337).setIPaddress("192.168.2.1").setId("NODE_1").setPublicKey("12345").build();
     }
 
     @Test
