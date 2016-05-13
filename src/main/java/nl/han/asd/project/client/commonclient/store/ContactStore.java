@@ -16,6 +16,7 @@ public class ContactStore implements IContactStore {
     }
 
     // TODO remove test contacts
+    @Override
     public void createTestContacts() {
         addContact("bram", "asdf4321");
         addContact("niels", "asdf4321");
@@ -47,6 +48,7 @@ public class ContactStore implements IContactStore {
         contactList.clear();
     }
 
+    @Override
     public ArrayList<Contact> getAllContacts() {
         return contactList;
     }
