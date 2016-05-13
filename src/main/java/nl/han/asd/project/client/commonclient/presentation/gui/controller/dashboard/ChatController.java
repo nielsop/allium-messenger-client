@@ -48,7 +48,6 @@ public class ChatController {
 
     private void setChat() {
         view.setChatContent(getChatPane(model.getSelectedContact()), model.getSelectedContact().getUsername());
-        model.setSelectedContact(model.getSelectedContact());
     }
 
     private VBox getChatPane(Contact contact) {

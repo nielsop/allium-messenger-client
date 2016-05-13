@@ -18,6 +18,6 @@ public class RegisterModel {
     }
 
     public void setStage(GUI.Page stage) {
-        gui.setScene(stage);
-    }
+        gui.setScene(stage); }
+
 }

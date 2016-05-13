@@ -43,7 +43,7 @@ public class ChatModelTest {
 
     @Ignore
     @Test
-    public void getMessages() throws Exception {
+    public void testSendMessage() throws Exception {
 
     }
 

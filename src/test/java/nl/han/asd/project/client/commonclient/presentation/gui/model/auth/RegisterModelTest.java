@@ -48,4 +48,9 @@ public class RegisterModelTest {
         testRegisterModel.getRegisterStatus(validUsername, invalidPassword);
     }
 
+    @Test (expected = NullPointerException.class)
+    public void testSetStageNull() throws Exception {
+        testRegisterModel.setStage(null);
+    }
+
 }

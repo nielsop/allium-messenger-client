@@ -36,15 +36,6 @@ public class PresentationLayer {
     private Contact currentUser;
     private String privateKey = "privateKey";
 
-    /**
-     * Constructs a presentation layer, using one given gateway.
-     *
-     * @param registration
-     */
-    public PresentationLayer(IRegistration registration) {
-        this.registration = registration;
-    }
-
     @Inject
     public PresentationLayer(IContactStore contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
         this.contacts = contact;
