@@ -4,25 +4,48 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import nl.han.asd.project.client.commonclient.CommonclientModule;
+import nl.han.asd.project.client.commonclient.login.ILogin;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
+import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.client.commonclient.store.IMessageObserver;
+import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.client.commonclient.utility.TestHelper;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Kenny on 18-4-2016.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class PresentationLayerTest {
 
+    @Mock
+    private IContactStore contacts;
+    @Mock
+    private IMessageBuilder messageBuilder;
+    @Mock
+    private IMessageObserver messageObserver;
+    @Mock
+    private IRegistration registration;
+    @Mock
+    private ILogin login;
+    @InjectMocks
     PresentationLayer pLayer;
 
     private String validUsername;
@@ -33,8 +56,6 @@ public class PresentationLayerTest {
     @Before
     public void initialize() {
         validUsername = TestHelper.createRandomValidUsername();
-        Injector injector = Guice.createInjector(new CommonclientModule());
-        pLayer = injector.getInstance(PresentationLayer.class);
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -56,4 +77,10 @@ public class PresentationLayerTest {
     public void testGetLoginRequestInvalidPassword() throws Exception {
         pLayer.loginRequest(validUsername, invalidPassword);
     }
+
+    /*@Test //TODO: How to mock method inside method?
+    public void testRegisterRequestGetWrongAnswer() throws Exception {
+        PresentationLayer pLayerSpy = spy(pLayer);
+        when(pLayerSpy.)
+    }*/
 }

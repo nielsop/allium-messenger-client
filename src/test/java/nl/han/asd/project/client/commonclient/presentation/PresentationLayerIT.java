@@ -58,12 +58,6 @@ public class PresentationLayerIT {
         assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.FAILED, pLayer.registerRequest(validUsername, invalidPassword));
     }
 
-    /*@Test //TODO: How to mock method inside method?
-    public void testRegisterRequestGetWrongAnswer() throws Exception {
-        PresentationLayer pLayerSpy = spy(pLayer);
-        when(pLayerSpy.)
-    }*/
-
     @Ignore("Login check if user exists and if correct password has been set, is not yet covered at master.")
     @Test
     public void testLoginRequestSucces() throws Exception {

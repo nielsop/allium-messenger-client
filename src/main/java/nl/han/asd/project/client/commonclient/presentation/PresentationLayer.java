@@ -76,9 +76,6 @@ public class PresentationLayer {
             case TAKEN_USERNAME:
                 LOGGER.info("Username already exists, registering failed.");
                 break;
-            default:
-                LOGGER.info("Default response. Something went wrong...");
-                break;
         }
         //Return the status
         return registerResponse.getStatus();
@@ -89,6 +86,7 @@ public class PresentationLayer {
     }
 
     public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) {
+        Validation.validateUserAndPass(username, password);
         LoginResponseWrapper loginResponse = login.login(username, password);
         LOGGER.info("User: \"" + username + "\" loginRequest status: " + loginResponse.getStatus().name());
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
