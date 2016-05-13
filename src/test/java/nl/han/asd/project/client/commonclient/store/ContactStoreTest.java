@@ -17,8 +17,8 @@ import static org.junit.Assert.assertEquals;
 public class ContactStoreTest {
     private IPersistence persistence;
     private ContactStore contactStore;
-    private ArrayList<Contact> singleContactArrayList = new ArrayList<>();
-    private ArrayList<Contact> multipleContactArrayList = new ArrayList<>();
+    private ArrayList<Contact> singleContactArrayList;
+    private ArrayList<Contact> multipleContactArrayList;
 
     // Test contactStore 1
     private String usernameContact1 = "testContact1";
@@ -40,6 +40,8 @@ public class ContactStoreTest {
     public void initialize() {
         persistence = Mockito.mock(IPersistence.class);
         contactStore = new ContactStore(persistence);
+        singleContactArrayList = new ArrayList<>();
+        multipleContactArrayList = new ArrayList<>();
 
         initializeTestContacts();
     }
@@ -52,7 +54,7 @@ public class ContactStoreTest {
     }
 
     private void initializeTestContacts() {
-        // Single contactStore in list
+        // Single ContactStore in list
         singleContactArrayList.add(new Contact(usernameContact1, publicKeyContact1));
 
         // Multiple contacts in list
@@ -82,6 +84,16 @@ public class ContactStoreTest {
         Contact selectedContact = contactStore.findContact(usernameContact3);
         assertEquals(usernameContact3, selectedContact.getUsername());
         assertEquals(publicKeyContact3, selectedContact.getPublicKey());
+    }
+
+    @Test
+    public void testFindContactGivesNullWhenNotExistsInList() {
+        contactStore.addContact(usernameContact1, publicKeyContact1);
+        contactStore.addContact(usernameContact2, publicKeyContact2);
+        contactStore.addContact(usernameContact3, publicKeyContact3);
+        contactStore.addContact(usernameContact4, publicKeyContact4);
+        Contact selectedContact = contactStore.findContact("testContact5");
+        assertEquals(null, selectedContact);
     }
 
     @Test
