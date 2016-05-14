@@ -57,6 +57,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
                         ByteString.copyFrom(encryptionService.getPublicKey())).build();
         RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST, getSocket());
         HanRoutingProtocol.ClientLoginResponse response = request.writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
+        //TODO: Response kan null zijn als er op de master niet ingelogd kan worden (wordt nu afgevangen op master). Controle voor response=null toevoegen?
         return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(), response.getStatus());
     }
 

@@ -39,6 +39,7 @@ public class LoginModelIT {
 
     @Test
     public void testGetLoginStatusSuccess() throws Exception {
+        //TODO: Register first, I guess, since it is now covered by the master.
         HanRoutingProtocol.ClientLoginResponse.Status loginStatus = testLoginModel.getLoginStatus(validUsername, validPassword);
         Assert.assertEquals(HanRoutingProtocol.ClientLoginResponse.Status.SUCCES, loginStatus);
     }
