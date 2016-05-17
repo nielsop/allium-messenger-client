@@ -16,7 +16,7 @@ public class LoginResponseWrapper {
     /**
      * Contains a list of all connected nodes.
      */
-    public List<HanRoutingProtocol.Node> nodeList;
+    public List<String> nodeList;
 
     /**
      * Stores the secret hash.
@@ -35,7 +35,7 @@ public class LoginResponseWrapper {
      * @param secretHash The secret hash.
      * @param status     The status of the login request.
      */
-    public LoginResponseWrapper(List<HanRoutingProtocol.Node> nodeList, String secretHash,
+    public LoginResponseWrapper(List<String> nodeList, String secretHash,
             HanRoutingProtocol.ClientLoginResponse.Status status) {
         this.nodeList = nodeList;
         this.secretHash = secretHash;
