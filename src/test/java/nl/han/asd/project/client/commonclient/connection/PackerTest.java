@@ -22,40 +22,21 @@ public class PackerTest {
     private Packer packer = null;
 
     @Before
-    public void InitPacker() {
+    public void initPacker() {
         final Injector injector = Guice.createInjector(new EncryptionModule());
         packer = new Packer(new CryptographyService(injector.getInstance(IEncryptionService.class)));
     }
 
     @Test
-    public void TestPacking() throws InvalidProtocolBufferException {
+    public void testPacking() throws InvalidProtocolBufferException {
         HanRoutingProtocol.Wrapper packedData = pack();
         UnpackedMessage unpackedData = unpack(packedData);
         HanRoutingProtocol.ClientLoginRequest wrapper = HanRoutingProtocol.ClientLoginRequest
                 .parseFrom(unpackedData.getData());
     }
 
-    public HanRoutingProtocol.Wrapper pack() {
-        // Simulate a builder..
-        HanRoutingProtocol.ClientLoginRequest.Builder builder = HanRoutingProtocol.ClientLoginRequest.newBuilder();
-        builder.setPublicKey(ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES));
-        builder.setUsername("test");
-        builder.setPassword("test");
-
-        // Pack..
-        HanRoutingProtocol.Wrapper packed = packer.pack(builder, packer.getMyPublicKey());
-
-        return packed;
-    }
-
-    public UnpackedMessage unpack(HanRoutingProtocol.Wrapper packed) {
-        UnpackedMessage unpacked = packer.unpack(packed);
-
-        return unpacked;
-    }
-
     @Test
-    public void TestUnpacking() throws InvalidProtocolBufferException {
+    public void testUnpacking() throws InvalidProtocolBufferException {
         HanRoutingProtocol.Wrapper packedData = pack();
         UnpackedMessage unpackedMessage = unpack(packedData);
 
@@ -66,6 +47,25 @@ public class PackerTest {
 
         HanRoutingProtocol.ClientLoginRequest clr = (HanRoutingProtocol.ClientLoginRequest) unpackedMessage
                 .getDataMessage().getParserForType().parseFrom(unpackedMessage.getData());
+    }
+
+    HanRoutingProtocol.Wrapper pack() {
+        // Simulate a builder..
+        HanRoutingProtocol.ClientLoginRequest.Builder builder = HanRoutingProtocol.ClientLoginRequest.newBuilder();
+        builder.setPublicKey(ByteString.copyFrom(packer.getMyPublicKey()));
+        builder.setUsername("test");
+        builder.setPassword("test");
+
+        // Pack..
+        HanRoutingProtocol.Wrapper packed = packer.pack(builder, packer.getMyPublicKey());
+
+        return packed;
+    }
+
+    UnpackedMessage unpack(HanRoutingProtocol.Wrapper packed) {
+        UnpackedMessage unpacked = packer.unpack(packed);
+
+        return unpacked;
     }
 
 }

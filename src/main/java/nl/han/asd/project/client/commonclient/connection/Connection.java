@@ -1,9 +1,5 @@
 package nl.han.asd.project.client.commonclient.connection;
 
-/**
- * Created by Marius on 25-04-16.
- */
-
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
@@ -28,10 +24,14 @@ class Connection {
     private Socket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
-    private static final Logger logger = LoggerFactory.getLogger(Connection.class);
 
     private int sleepTime = 25; // default
 
+    /**
+     * Initializes the class.
+     *
+     * @param service Instance of the ConnectionService masked as IConnectionPipe that is calling this method.
+     */
     public Connection(final IConnectionPipe service) {
         connectionService = service;
         inputStream = null;
@@ -46,65 +46,48 @@ class Connection {
      * @param hostName   Internet protocol address.
      * @param portNumber Port number to connect to.
      * @throws IllegalArgumentException A parameter has an invalid value.
-     * @throws SocketException          Connection or streams failed.
+     * @throws IOException          Connection or streams failed.
      */
-    public void open(final String hostName, final int portNumber) throws SocketException {
+    public void open(final String hostName, final int portNumber)
+            throws IOException {
         if (Validation.isValidAddress(hostName) && Validation.isValidPort(portNumber)) {
             try {
                 socket = new Socket(hostName, portNumber);
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
-                throw new SocketException("Couldn't connect to the given endpoint.");
+                throw new SocketException(
+                        "Couldn't connect to the given endpoint.");
             }
-            try {
-                outputStream = socket.getOutputStream();
-                inputStream = socket.getInputStream();
-            } catch (IOException e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new SocketException("An error occurred while opening the streams on the connected socket.");
-            }
+
+            outputStream = socket.getOutputStream();
+            inputStream = socket.getInputStream();
         } else {
-            throw new SocketException("Invalid hostname or portnumber specified!");
+            throw new SocketException(
+                    "Invalid hostname or port number specified!");
         }
     }
 
     /**
      * Writes data to the output stream.
+     *
      * @param wrapper Data wrapped inside the EncryptedWrapper class to be send over the socket.
-     * @throws SocketException Writing to stream failed.
-     * @throws IllegalArgumentException A parameter has an invalid value.
+     * @throws IOException Writing to stream failed.
      */
-    public void write(final HanRoutingProtocol.Wrapper wrapper) throws IllegalArgumentException, SocketException {
-        if (wrapper == null) {
-            logger.error("Parameter wrapper was null.");
-            throw new IllegalArgumentException("wrapper");
-        }
-
-        try {
+    public void write(final HanRoutingProtocol.Wrapper wrapper)
+            throws IOException {
             wrapper.writeDelimitedTo(outputStream);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new SocketException("An error occurred while trying to write data to the stream.");
-        }
     }
 
     /**
      * Reads data from the input stream.
+     *
      * @return An EncryptedWrapper that contains the real object.
-     * @throws SocketException Connection or streams failed.
+     * @throws IOException Reading to stream failed.
      */
-    public HanRoutingProtocol.Wrapper read() throws SocketException {
-        HanRoutingProtocol.Wrapper wrapper = null;
-        try {
-            synchronized (this) {
-                wrapper = HanRoutingProtocol.Wrapper.parseDelimitedFrom(inputStream);
-            }
-            if (isConnected()) {
-                socket.close();
-            }
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new SocketException("An error occurred while trying to read data from the stream.");
+    public HanRoutingProtocol.Wrapper read() throws IOException {
+        HanRoutingProtocol.Wrapper wrapper;
+        synchronized (this) {
+            wrapper = HanRoutingProtocol.Wrapper.parseDelimitedFrom(inputStream);
         }
         return wrapper;
     }
@@ -126,7 +109,7 @@ class Connection {
                     } catch (InterruptedException e) {
                         Thread.interrupted();
                         LOGGER.error(e.getMessage(), e);
-                    } catch (SocketException e) {
+                    } catch (IOException e) {
                         isRunning = false;
                         LOGGER.error(e.getMessage(), e);
                     }
@@ -152,12 +135,6 @@ class Connection {
      */
     public void close() throws IOException {
         isRunning = false;
-
-        if (outputStream != null)
-            outputStream.close();
-
-        if (inputStream != null)
-            inputStream.close();
 
         if (isConnected())
             socket.close();

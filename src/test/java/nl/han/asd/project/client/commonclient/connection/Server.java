@@ -27,7 +27,7 @@ class Server {
         packer = new Packer(new CryptographyService(injector.getInstance(IEncryptionService.class)));
     }
 
-    public void Start(final int port) throws IOException {
+    public void start(final int port) throws IOException {
         final ServerSocket serverSocket = new ServerSocket(port);
         Runnable runnable = () -> {
             try {
@@ -46,7 +46,7 @@ class Server {
         thread.start();
     }
 
-    public void Stop() {
+    public void stop() {
         isRunning = false;
     }
 

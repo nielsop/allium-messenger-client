@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.net.SocketException;
 
 /**
@@ -42,7 +43,7 @@ public final class ConnectionService implements IConnectionPipe {
         if (receiverPublicKey == null)
             throw new IllegalArgumentException("Public key cannot be empty.");
 
-        this.setReceiverPublicKey(receiverPublicKey);
+        this.receiverPublicKey = receiverPublicKey;
 
         if (connection.getSleepTime() != sleepTime) {
             connection.setSleepTime(sleepTime);
@@ -51,11 +52,11 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Initializes this class.
+     *
      * @param sleepTime Amount of time the asynchronous thread sleeps in between reads from the socket.
      * @param receiverPublicKey The public key of the receiver.
      * @param targetService An instance that implements IConnectionService. This instance will be used as callback
      *                      while reading asynchronous.
-     * @throws IOException
      */
     public ConnectionService(final int sleepTime, final byte[] receiverPublicKey,
             final IConnectionService targetService) {
@@ -71,6 +72,7 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Initializes this class.
+     *
      * @param receiverPublicKey The public key of the receiver.
      */
     public ConnectionService(final byte[] receiverPublicKey) {
@@ -79,10 +81,10 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Initializes this class.
+     *
      * @param receiverPublicKey The public key of the receiver.
      * @param targetService An instance that implements IConnectionService. This instance will be used as callback
      *                      while reading asynchronous.
-     * @throws IOException
      */
     public ConnectionService(final byte[] receiverPublicKey, final IConnectionService targetService) {
         this(DEFAULT_SLEEP_TIME, receiverPublicKey, targetService);
@@ -90,6 +92,7 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Reads data from the input stream.
+     *
      * @return A byte array containing the received data from the input stream, or null if no data was read.
      * @throws SocketException If there is no valid connection.
      */
@@ -98,12 +101,19 @@ public final class ConnectionService implements IConnectionPipe {
             throw new SocketException(INVALID_SOCKET_CONNECTION);
         }
 
-        HanRoutingProtocol.Wrapper wrapper = connection.read();
+        HanRoutingProtocol.Wrapper wrapper;
+        try {
+            wrapper = connection.read();
+        } catch (IOException e) {
+            LOGGER.error("Reading from stream failed.", e);
+            throw new SocketException("Could not read from stream.");
+        }
         return packer.unpack(wrapper);
     }
 
     /**
-     * Start reading asynchronous from the input stream.
+     * Start reading asynchronously from the input stream.
+     *
      * @throws SocketException
      */
     public void readAsync() throws SocketException {
@@ -140,7 +150,8 @@ public final class ConnectionService implements IConnectionPipe {
      * @return A protocol buffer (T) instance.
      * @throws SocketException An exception occurred while reading data from the stream.
      */
-    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor) throws SocketException {
+    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor)
+            throws SocketException, InvalidProtocolBufferException {
         UnpackedMessage unpackedMessage = this.read();
         if (unpackedMessage.getDataMessage().getClass() == classDescriptor) {
             try {
@@ -149,7 +160,11 @@ public final class ConnectionService implements IConnectionPipe {
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        return null;
+
+        throw new InvalidProtocolBufferException(String.format(
+                "Received protocol type didn't match supplied parameter. Expected %s but was %s.",
+                classDescriptor.getName(),
+                unpackedMessage.getDataMessage().getClass().getName()));
     }
 
     /**
@@ -162,8 +177,13 @@ public final class ConnectionService implements IConnectionPipe {
             throw new SocketException(INVALID_SOCKET_CONNECTION);
         }
 
-        HanRoutingProtocol.Wrapper wrapper = packer.pack(instance, getReceiverPublicKey());
-        connection.write(wrapper);
+        HanRoutingProtocol.Wrapper wrapper = packer.pack(instance, receiverPublicKey);
+        try {
+            connection.write(wrapper);
+        } catch (IOException e) {
+            LOGGER.error("Writing to stream failed.", e);
+            throw new SocketException("Could not write to stream.");
+        }
     }
 
     /**
@@ -186,7 +206,12 @@ public final class ConnectionService implements IConnectionPipe {
         connection.close();
     }
 
-    public byte[] getMyPublicKey() {
+    /**
+     * Returns the public key of the cryptography instance inside the packer class.
+     *
+     * @return Public key
+     */
+    byte[] getMyPublicKey() {
         return packer.getMyPublicKey();
     }
 
@@ -199,19 +224,18 @@ public final class ConnectionService implements IConnectionPipe {
         return connection.isConnected();
     }
 
+    /**
+     * Method is called whenever a read has occurred and readAsync was called
+     * to initialize the reading.
+     *
+     * @param wrapper Wrapper instance that will be unpacked and eventually send
+     *                to the IConnectionService.onReceiveRead method that
+     */
     @Override
     public void onReceiveRead(final HanRoutingProtocol.Wrapper wrapper) {
         if (service != null) {
             UnpackedMessage message = packer.unpack(wrapper);
             service.onReceiveRead(message);
         }
-    }
-
-    public byte[] getReceiverPublicKey() {
-        return this.receiverPublicKey;
-    }
-
-    public void setReceiverPublicKey(byte[] receiverPublicKey) {
-        this.receiverPublicKey = receiverPublicKey;
     }
 }

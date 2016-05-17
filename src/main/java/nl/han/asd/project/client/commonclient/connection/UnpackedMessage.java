@@ -4,8 +4,10 @@ import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 /**
- * An class that holds specific data about a message, an instance of this class is returned
+ * A class that holds specific data about a message, an instance of this class is returned
  * whenever data is read from the connected socket.
+ *
+ *  @author Jevgeni Geurtsen
  */
 public class UnpackedMessage {
     private final HanRoutingProtocol.Wrapper.Type dataType;
@@ -56,9 +58,9 @@ public class UnpackedMessage {
     /**
      * Checks if the data type inside this instance matches the @type
      * @param type Type to check against
-     * @return True if the types match, False if they dont'.
+     * @return True if the types match, False if they don't.
      */
-    public boolean matchDataType(HanRoutingProtocol.Wrapper.Type type) {
+    public boolean matchDataType(final HanRoutingProtocol.Wrapper.Type type) {
         return dataType == type;
     }
 }

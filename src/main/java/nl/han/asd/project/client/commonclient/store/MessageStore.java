@@ -20,10 +20,13 @@ public class MessageStore implements IMessageStore, IMessageObserver {
         Contact sender = contactStore.findContact(message.getSender());
         Contact receiver = contactStore.findContact(receiverUsername);
 
-        //TODO: implement persistence;
+        //TODO: implement persistence!
         //persistance.insert("message", new Message(text, sender, receiver, ...);
     }
 
+    @Override public void messageReceived(String confirmationId) {
+        //TODO: implement persistence!
+    }
 
     @Override
     public HanRoutingProtocol.Message findMessageByID(String identifier) {

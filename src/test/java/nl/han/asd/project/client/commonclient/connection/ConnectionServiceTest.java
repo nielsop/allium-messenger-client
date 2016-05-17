@@ -25,35 +25,33 @@ public class ConnectionServiceTest implements IConnectionService {
     }
 
     @BeforeClass
-    public static void InitServer() throws IOException {
+    public static void initServer() throws IOException {
         // setup the local server for testing purposes only, executing should happen before the class is initialized.
-        server.Start(10002);
+        server.start(10002);
     }
 
     @AfterClass
-    public static void StopServer() {
+    public static void stopServer() {
         // stop the local server after we ran all tests.
-        server.Stop();
+        server.stop();
     }
 
     @Before
-    public void InitConnectionService() throws IOException {
-        connectionService = new ConnectionService(EMPTY_PUBLICKEY_BYTES, this);
+    public void initConnectionService() throws IOException {
+        connectionService = new ConnectionService(server.getMyPublicKey(), this);
 
-        // set the public key of the server to our connection service
-        connectionService.setReceiverPublicKey(server.getMyPublicKey());
         // set the public key of the connection server to the server
         server.setReceiverPublicKey(connectionService.getMyPublicKey());
         connectionService.open("127.0.0.1", 10002);
     }
 
     @After
-    public void CloseConnectionService() throws IOException {
+    public void closeConnectionService() throws IOException {
         connectionService.close();
     }
 
     @Test
-    public void TestProtocol() throws InvalidProtocolBufferException, SocketException {
+    public void testProtocol() throws InvalidProtocolBufferException, SocketException {
         ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
         requestBuilder.setUsername("test");
         requestBuilder.setPassword("test");
@@ -69,41 +67,41 @@ public class ConnectionServiceTest implements IConnectionService {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void TestSleepTime() {
+    public void testSleepTime() {
         ConnectionService connection2 = new ConnectionService(-20,
                 EMPTY_PUBLICKEY_BYTES);
     }
 
     @Test(expected = SocketException.class)
-    public void TestHost() throws IOException {
+    public void testHost() throws IOException {
         ConnectionService connection2 = new ConnectionService(20,
                 EMPTY_PUBLICKEY_BYTES, this);
         connection2.open("127.0.", 10);
     }
 
     @Test(expected = SocketException.class)
-    public void TestPort() throws IOException {
+    public void testPort() throws IOException {
         ConnectionService connection2 = new ConnectionService(
                 EMPTY_PUBLICKEY_BYTES);
         connection2.open("127.0.0.1", -20);
     }
 
     @Test(expected = SocketException.class)
-    public void TestReadAsync() throws IOException {
+    public void testReadAsync() throws IOException {
         ConnectionService connection2 = new ConnectionService(
                 EMPTY_PUBLICKEY_BYTES);
         connection2.readAsync();
     }
 
     @Test(expected = SocketException.class)
-    public void TestStopReadyAsync() throws IOException {
+    public void testStopReadyAsync() throws IOException {
         ConnectionService connection2 = new ConnectionService(
                 EMPTY_PUBLICKEY_BYTES);
         connection2.stopReadAsync();
     }
 
     @Test
-    public void TestGenerics() throws SocketException, InvalidProtocolBufferException {
+    public void testGenerics() throws SocketException, InvalidProtocolBufferException {
         ClientLoginRequest.Builder builder = ClientLoginRequest.newBuilder();
         builder.setUsername("test");
         builder.setPassword("test");
@@ -115,44 +113,69 @@ public class ConnectionServiceTest implements IConnectionService {
     }
 
     @Test(expected = SocketException.class)
-    public void TestInvalidGeneric() throws IOException {
+    public void testInvalidGeneric() throws IOException {
         connectionService.close();
         ClientLoginResponse response = connectionService.readGeneric(ClientLoginResponse.class);
     }
 
     @Test(expected = SocketException.class)
-    public void TestWriteInvalid() throws IOException {
+    public void testWriteInvalid() throws IOException {
         connectionService.close();
         ClientLoginRequest.Builder builder = ClientLoginRequest.newBuilder();
         connectionService.write(builder);
     }
 
     @Test(expected = SocketException.class)
-    public void TestInvalidIP() throws IOException {
+    public void testInvalidIP() throws IOException {
         connectionService.open("127.1.1.", 1345);
     }
 
     @Test(expected = SocketException.class)
-    public void TestReadInvalid() throws IOException {
+    public void testReadInvalid() throws IOException {
         connectionService.close();
         connectionService.readGeneric(HanRoutingProtocol.ClientLoginRequest.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void TestInvalidConstructor() throws IOException {
+    public void testInvalidConstructor() throws IOException {
         ConnectionService service = new ConnectionService(25, null);
     }
 
     @Test
-    public void TestConnectedState() throws IOException {
+    public void testConnectedState() throws IOException {
         connectionService.close();
         assertEquals(false, connectionService.isConnected());
     }
 
     @Test
-    public void TestAsyncReadCall() throws SocketException {
+    public void testAsyncReadCall() throws SocketException {
         connectionService.readAsync();
         connectionService.stopReadAsync();
+    }
+
+    @Test(expected = SocketException.class)
+    public void testInvalidEndpoint() throws IOException
+    {
+        connectionService.open("192.1.1.1", 1001);
+    }
+
+    @Test(expected =  IllegalArgumentException.class)
+    public void testInvalidInstanceParameter() {
+        ConnectionService connectionService1 = new ConnectionService(EMPTY_PUBLICKEY_BYTES, null);
+    }
+
+
+    @Test(expected =  InvalidProtocolBufferException.class)
+    public void testExpectDifferentType()
+            throws SocketException, InvalidProtocolBufferException {
+        ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
+        requestBuilder.setUsername("test");
+        requestBuilder.setPassword("test");
+        requestBuilder.setPublicKey(ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES));
+
+        connectionService.write(requestBuilder);
+
+        connectionService.readGeneric(HanRoutingProtocol.Wrapper.class);
     }
 
     @Override
