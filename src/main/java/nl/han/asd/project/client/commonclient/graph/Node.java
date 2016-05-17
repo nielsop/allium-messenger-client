@@ -4,6 +4,7 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * @author Niels Bokmans
@@ -25,11 +26,26 @@ public class Node {
         this.adjacent = new HashMap<>();
     }
 
+    /**
+     * add an edge
+     * @param edge
+     */
     public void addEdge(HanRoutingProtocol.Edge edge){
-        adjacent.putIfAbsent(edge.getTargetNodeId(),new Edge(edge.getTargetNodeId(),edge.getWeight()));
+        adjacent.put(edge.getTargetNodeId(),new Edge(edge.getTargetNodeId(),edge.getWeight()));
     }
+
+    /**
+     *
+     * @param destinationNodeId
+     *      Contains the Id from the edge's destination node.
+     * @return
+     *      The edge that has been found with the destination node id.
+     */
     public Edge getEdge(String destinationNodeId){
-        return adjacent.get(destinationNodeId);
+        Edge edge = adjacent.get(destinationNodeId);
+        if(edge == null)
+            throw new NoSuchElementException();
+        return edge;
     }
 
     public Map<String, Edge> getAdjacent() {

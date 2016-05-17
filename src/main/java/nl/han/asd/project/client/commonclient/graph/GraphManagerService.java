@@ -7,8 +7,6 @@ import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphRespons
 public class GraphManagerService {
 
     private int currentGraphVersion;
-
-
     private Graph graph;
     private MasterGateway gateway;
 
@@ -19,14 +17,24 @@ public class GraphManagerService {
         currentGraphVersion = 0;
     }
 
+    /**
+     *
+     * @return the current graph version
+     */
     public int getCurrentGraphVersion() {
         return currentGraphVersion;
     }
 
-    public void setCurrentGraphVersion(int versionNumber) {
+    private void setCurrentGraphVersion(int versionNumber) {
         this.currentGraphVersion = versionNumber;
     }
 
+    /**
+     * This method processes the grapUpdates that are retrieved from the Master application.
+     * The addedNodes are iterated over twice.
+     * The first iteration assures that all node objects are made.
+     * The second iteration makes it possible to add the right edges to the right nodes.
+     */
     public void processGraphUpdates() {
         UpdatedGraphResponseWrapper updatedGraph = gateway.getUpdatedGraph(currentGraphVersion);
         if (updatedGraph.getLast().newVersion > currentGraphVersion) {
@@ -44,7 +52,10 @@ public class GraphManagerService {
         }
     }
 
-
+    /**
+     *
+     * @return the graph
+     */
     public Graph getGraph() {
         return graph;
     }
