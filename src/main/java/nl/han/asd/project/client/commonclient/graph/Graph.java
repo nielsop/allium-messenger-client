@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.graph;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -10,7 +11,7 @@ import java.util.NoSuchElementException;
  */
 public class Graph {
 
-    private HashMap<String,Node> vertexMap = new HashMap<>();
+    private Map<String,Node> vertexMap = new HashMap<>();
 
     public Node getNodeVertex(String nodeID) {
         Node vertex = vertexMap.get(nodeID);
