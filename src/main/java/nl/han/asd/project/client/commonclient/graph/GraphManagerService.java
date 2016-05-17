@@ -7,6 +7,8 @@ import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphRespons
 public class GraphManagerService {
 
     private int currentGraphVersion;
+
+
     private Graph graph;
     private MasterGateway gateway;
 
@@ -33,11 +35,18 @@ public class GraphManagerService {
             if (updatedGraph.getLast().isFullGraph) {
                 graph.resetGraph();
                 updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
+                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addEdgesToVertex(vertex));
             } else {
                 updatedGraph.getLast().deletedNodes.forEach(vertex -> graph.removeNodeVertex(vertex));
                 updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
+                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addEdgesToVertex(vertex));
             }
         }
+    }
+
+
+    public Graph getGraph() {
+        return graph;
     }
 
 }

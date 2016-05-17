@@ -1,7 +1,8 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import java.util.LinkedList;
-import java.util.List;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+
+import java.util.HashMap;
 
 /**
  * @author Niels Bokmans
@@ -9,7 +10,7 @@ import java.util.List;
  * @since 20-4-2016
  */
 public class Node {
-    private List<Edge> adjacent;
+    private HashMap<String,Edge> adjacent;
     private String id;
     private String ipAddress;
     private int port;
@@ -20,7 +21,7 @@ public class Node {
         this.ipAddress = ipAddress;
         this.port = port;
         this.publicKey = publicKey;
-        this.adjacent = new LinkedList<>();
+        this.adjacent = new HashMap<>();
     }
 
     @Override
@@ -31,6 +32,17 @@ public class Node {
     @Override
     public int hashCode() {
         return (id + "@" + ipAddress + ":" + port).hashCode();
+    }
+
+    public void addEdge(HanRoutingProtocol.Edge edge){
+        adjacent.putIfAbsent(edge.getTargetNodeId(),new Edge(edge.getTargetNodeId(),edge.getWeight()));
+    }
+    public Edge getEdge(String destinationNodeId){
+        return adjacent.get(destinationNodeId);
+    }
+
+    public HashMap<String, Edge> getAdjacent() {
+        return adjacent;
     }
 
     public String getIpAddress() {

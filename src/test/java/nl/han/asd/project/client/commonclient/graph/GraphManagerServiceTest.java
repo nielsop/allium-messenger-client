@@ -8,21 +8,15 @@ import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphWrapper;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-<<<<<<< HEAD
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-=======
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import org.junit.*;
-import org.junit.rules.Timeout;
->>>>>>> f8801a3a96fa9d70497bce083c7cb26138c7677b
-
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -77,7 +71,7 @@ public class GraphManagerServiceTest {
     }
 
     @Test
-    public void testCheckGraphVersion() throws Exception {
+    public void testProcessGraphFullGraph() throws Exception {
         List<HanRoutingProtocol.Node> addedNodes = new ArrayList<>();
         List<UpdatedGraphWrapper> updatedGraphs = new ArrayList<>();
 
@@ -128,5 +122,45 @@ public class GraphManagerServiceTest {
         when(masterGateway.getUpdatedGraph(anyInt())).thenReturn(updatedGraphResponseWrapper);
         when(updatedGraphResponseWrapper.getUpdatedGraphs()).thenReturn(updatedGraphs);
         graphManagerService.processGraphUpdates();
+        Assert.assertEquals(graphManagerService.getCurrentGraphVersion(),1);
+        Assert.assertEquals(graphManagerService.getGraph().getVertexMapSize(),3);
     }
+
+    @Test
+    public void testProcessGraphNotFullGraph() throws Exception {
+        List<HanRoutingProtocol.Node> addedNodes = new ArrayList<>();
+        List<UpdatedGraphWrapper> updatedGraphs = new ArrayList<>();
+
+
+        HanRoutingProtocol.Edge.Builder edge_1 = HanRoutingProtocol.Edge.newBuilder();
+        edge_1.setTargetNodeId("NODE_ID_2");
+        edge_1.setWeight(12);
+
+        HanRoutingProtocol.Edge.Builder edge_2 = HanRoutingProtocol.Edge.newBuilder();
+        edge_2.setTargetNodeId("NODE_ID_1");
+        edge_2.setWeight(6);
+
+        HanRoutingProtocol.Node.Builder node_1 = HanRoutingProtocol.Node.newBuilder();
+        node_1.setPort(1);
+        node_1.setIPaddress("192.168.2.1");
+        node_1.addEdge(edge_1);
+        node_1.setId("NODE_ID_1");
+        node_1.setPublicKey("123456789");
+        addedNodes.add(node_1.build());
+
+        HanRoutingProtocol.GraphUpdate.Builder graphUpdate = HanRoutingProtocol.GraphUpdate.newBuilder();
+        graphUpdate.addAllAddedNodes(addedNodes);
+        graphUpdate.setNewVersion(1);
+        graphUpdate.setIsFullGraph(false);
+
+        updatedGraphs.add(new UpdatedGraphWrapper(graphUpdate.build()));
+        updatedGraphResponseWrapper.setUpdatedGraphs(updatedGraphs);
+        when(updatedGraphResponseWrapper.getLast()).thenReturn(updatedGraphs.get(updatedGraphs.size() - 1));
+        when(masterGateway.getUpdatedGraph(anyInt())).thenReturn(updatedGraphResponseWrapper);
+        when(updatedGraphResponseWrapper.getUpdatedGraphs()).thenReturn(updatedGraphs);
+        graphManagerService.processGraphUpdates();
+        Assert.assertEquals(graphManagerService.getCurrentGraphVersion(),1);
+        Assert.assertEquals(graphManagerService.getGraph().getVertexMapSize(),1);
+    }
+
 }

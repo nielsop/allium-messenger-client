@@ -9,7 +9,7 @@ import java.util.HashMap;
  */
 public class Graph {
 
-    private HashMap<String,Node> vertexMap =
+    private HashMap<String,Node> vertexMap = new HashMap<>();
 
     public Node getNodeVertex(String nodeID) {
         Node vertex = vertexMap.get(nodeID);
@@ -28,10 +28,13 @@ public class Graph {
     }
 
     public void addNodeVertex(HanRoutingProtocol.Node vertex){
-
         Node node = new Node(vertex.getId(),vertex.getIPaddress(),vertex.getPort(),vertex.getPublicKeyBytes().toByteArray());
+        vertexMap.putIfAbsent(node.getId(),node);
+    }
 
-        vertexMap.putIfAbsent(node.getID(),node);
+    public void addEdgesToVertex(HanRoutingProtocol.Node vertex){
+        Node node = getNodeVertex(vertex.getId());
+        vertex.getEdgeList().forEach(edge -> node.addEdge(edge));
     }
 
     public void removeNodeVertex(HanRoutingProtocol.Node vertex) {
