@@ -25,7 +25,7 @@ public class UpdatedGraphResponseWrapper {
     /**
      * Contains all the updated graphs, differentiated by version.
      */
-    private List<UpdatedGraphWrapper> updatedGraphs = new ArrayList<>();
+    private List<UpdatedGraphWrapper> updatedGraphs;
 
     /**
      * Creates a new updated graph response wrapper from a list of ByteStrings containing the individual graph updates.
@@ -89,7 +89,7 @@ public class UpdatedGraphResponseWrapper {
                 throw new InvalidProtocolBufferException("Invalid class provided.");
             }
         }
-        return null;
+        throw new InvalidProtocolBufferException("Empty buffer");
     }
 
 }

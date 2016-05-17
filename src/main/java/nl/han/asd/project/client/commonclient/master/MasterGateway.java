@@ -82,7 +82,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         try{
             setCurrentGraphVersion(updatedGraphs.getLast().newVersion);
         }catch(Exception e){
-
+            LOGGER.error(e.getMessage(),e);
         }
         return updatedGraphs;
     }

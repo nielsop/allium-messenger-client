@@ -1,5 +1,8 @@
 package nl.han.asd.project.client.commonclient.graph;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Created by Julius on 26/04/16.
  */
@@ -21,13 +24,25 @@ public class Edge {
     }
 
     @Override
-    public boolean equals(Object anotherObj) {
-        return anotherObj instanceof Edge;
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Edge))
+            return false;
+        if (obj == this)
+            return true;
+
+        Edge edgeToCompare = (Edge) obj;
+        return new EqualsBuilder().
+                        append(destinationNodeId, edgeToCompare.destinationNodeId).
+                        append(weight, edgeToCompare.weight).
+                        isEquals();
     }
 
     @Override
     public int hashCode() {
-        return (destinationNodeId + "@" + weight).hashCode();
+        return new HashCodeBuilder(17, 31).
+                        append(destinationNodeId).
+                        append(weight).
+                        toHashCode();
     }
 
 

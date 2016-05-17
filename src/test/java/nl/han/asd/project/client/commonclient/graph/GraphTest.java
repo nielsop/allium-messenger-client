@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Base64;
+import java.util.NoSuchElementException;
 
 /**
  * @author Julius
@@ -50,7 +51,7 @@ public class GraphTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void testAddEdgesToVertexWhenNodeDoesNotExistInGraph() throws Exception {
         graph.resetGraph();
         graph.addEdgesToVertex(node);
@@ -90,7 +91,7 @@ public class GraphTest {
         Assert.assertEquals(nodeVertex.getEdge(EDGEDESTINATIONNODE),edgeNode1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void testExeptionWhenGetVertexMapSizeCantFindVertex() {
 
         graph.addNodeVertex(node);

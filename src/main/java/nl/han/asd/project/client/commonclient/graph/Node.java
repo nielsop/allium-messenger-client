@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.graph;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Niels Bokmans
@@ -10,7 +11,7 @@ import java.util.HashMap;
  * @since 20-4-2016
  */
 public class Node {
-    private HashMap<String,Edge> adjacent;
+    private Map<String,Edge> adjacent;
     private String id;
     private String ipAddress;
     private int port;
@@ -24,16 +25,6 @@ public class Node {
         this.adjacent = new HashMap<>();
     }
 
-    @Override
-    public boolean equals(Object anotherObj) {
-        return anotherObj instanceof Node;
-    }
-
-    @Override
-    public int hashCode() {
-        return (id + "@" + ipAddress + ":" + port).hashCode();
-    }
-
     public void addEdge(HanRoutingProtocol.Edge edge){
         adjacent.putIfAbsent(edge.getTargetNodeId(),new Edge(edge.getTargetNodeId(),edge.getWeight()));
     }
@@ -41,7 +32,7 @@ public class Node {
         return adjacent.get(destinationNodeId);
     }
 
-    public HashMap<String, Edge> getAdjacent() {
+    public Map<String, Edge> getAdjacent() {
         return adjacent;
     }
 
