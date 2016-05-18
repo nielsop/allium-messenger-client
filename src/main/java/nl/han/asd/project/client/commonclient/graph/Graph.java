@@ -43,4 +43,9 @@ public class Graph {
         vertexMap.remove(vertex.getId());
     }
 
+
+    public Map<String, Node> getVertexMap() {
+        return vertexMap;
+    }
+
 }

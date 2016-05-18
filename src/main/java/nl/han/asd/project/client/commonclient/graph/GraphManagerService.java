@@ -1,17 +1,19 @@
 package nl.han.asd.project.client.commonclient.graph;
 
 import com.google.inject.Inject;
-import nl.han.asd.project.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 
-public class GraphManagerService {
+import java.util.Map;
+
+public class GraphManagerService implements IGetVertices {
 
     private int currentGraphVersion;
     private Graph graph;
-    private MasterGateway gateway;
+    private IGetUpdatedGraph gateway;
 
     @Inject
-    public GraphManagerService(MasterGateway gateway) {
+    public GraphManagerService(IGetUpdatedGraph gateway) {
         graph = new Graph();
         this.gateway = gateway;
         currentGraphVersion = 0;
@@ -60,4 +62,12 @@ public class GraphManagerService {
         return graph;
     }
 
+    /**
+     *
+     * @return the vertices from the graph
+     */
+    @Override
+    public Map<String,Node> getVertices() {
+        return graph.getVertexMap();
+    }
 }

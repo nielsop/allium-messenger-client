@@ -44,6 +44,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
     public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
         //TODO check if contactReceiver contains latest data from master server.
+
         EncryptedMessage messageToSend = buildMessagePackage(messageText, contactReceiver, contactSender);
 
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
