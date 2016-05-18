@@ -42,7 +42,7 @@ public class LoginResponseWrapper {
         this.status = status;
     }
 
-    public List<HanRoutingProtocol.Node> getNodeList() {
+    public List<String> getNodeList() {
         return nodeList;
     }
 
