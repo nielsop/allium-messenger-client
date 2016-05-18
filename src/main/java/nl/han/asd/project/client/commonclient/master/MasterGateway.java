@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
@@ -25,13 +26,13 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     private static int currentGraphVersion = -1;
     private ConnectionService connectionService;
     private Socket socket;
-    private IEncryptionService encryptionService;
+    private CryptographyService cryptographyService;
     private String hostname = Configuration.getHostname();
     private int port = Configuration.getPort();
 
     @Inject
-    public MasterGateway(IEncryptionService encryptionService) {
-        this.encryptionService = encryptionService;
+    public MasterGateway(CryptographyService cryptographyService) {
+        this.cryptographyService = cryptographyService;
     }
 
     public void setConnectionData(String hostname, int port) {
@@ -54,7 +55,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     public LoginResponseWrapper authenticate(String username, String password) {
         HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
                 .setUsername(username).setPassword(password).setPublicKey(
-                        ByteString.copyFrom(encryptionService.getPublicKey())).build();
+                        ByteString.copyFrom(cryptographyService.getPublicKey())).build();
         RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST, getSocket());
         HanRoutingProtocol.ClientLoginResponse response = request.writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
         return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(), response.getStatus());
@@ -135,7 +136,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         if (connectionService == null) {
             // new byte[] { 0x00 } = public key that belongs to the cryptography service of the receiver
             //                          en/decryption is disabled for now, so initializing with an null-byte is sufficient.
-            connectionService = new ConnectionService(new byte[]{0x00});
+            connectionService = new ConnectionService(cryptographyService, new byte[]{0x00});
         }
         try {
             connectionService.open(Configuration.getHostname(), Configuration.getPort());

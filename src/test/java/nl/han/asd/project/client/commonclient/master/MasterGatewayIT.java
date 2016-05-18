@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
+import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -48,7 +49,7 @@ public class MasterGatewayIT {
                 e.printStackTrace();
             }
         }
-        gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
+        gateway = new MasterGateway(injector.getInstance(CryptographyService.class));
         gateway.setConnectionData(master.getHostName(), master.getPort(1337));
     }
 

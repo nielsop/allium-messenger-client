@@ -17,7 +17,7 @@ public class MessageProcessingServiceIT {
         master = CloudHostFactory.getCloudHost("master");
         master.setup();
 
-        connectionService = new ConnectionService(new byte[] { 0x00, 0x00 });
+        //connectionService = new ConnectionService(new byte[] { 0x00, 0x00 });
     }
 
     @After public void after() {

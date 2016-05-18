@@ -1,9 +1,11 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.lang.reflect.Field;

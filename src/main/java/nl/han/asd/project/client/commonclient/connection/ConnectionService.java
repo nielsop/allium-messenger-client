@@ -1,18 +1,15 @@
 package nl.han.asd.project.client.commonclient.connection;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
-import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.net.SocketException;
 
 /**
@@ -20,74 +17,28 @@ import java.net.SocketException;
  *
  * @author Jevgeni Geurtsen
  */
-public final class ConnectionService implements IConnectionPipe {
-    private static final int DEFAULT_SLEEP_TIME = 25; // 25ms
+public final class ConnectionService {
     private static final String INVALID_SOCKET_CONNECTION = "Socket has no valid or connection, or the valid connection was closed.";
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
     private Packer packer = null;
     private byte[] receiverPublicKey = null;
     private Connection connection = null;
-    private IConnectionService service = null;
 
     /**
      * Initializes this class.
      *
-     * @param sleepTime Amount of time the asynchronous thread sleeps in between reads from the socket.
+     * @param cryptographyService CryptographyService that should be injected.
      * @param receiverPublicKey The public key of the receiver.
      */
-    public ConnectionService(final int sleepTime, final byte[] receiverPublicKey) {
-        connection = new Connection(this);
-        Injector injector = Guice.createInjector(new EncryptionModule());
-        packer = new Packer(new CryptographyService(injector.getInstance(IEncryptionService.class)));
+    @AssistedInject
+    public ConnectionService(final CryptographyService cryptographyService, @Assisted final byte[] receiverPublicKey) {
+        connection = new Connection();
+        packer = new Packer(cryptographyService);
 
         if (receiverPublicKey == null)
             throw new IllegalArgumentException("Public key cannot be empty.");
 
         this.receiverPublicKey = receiverPublicKey;
-
-        if (connection.getSleepTime() != sleepTime) {
-            connection.setSleepTime(sleepTime);
-        }
-    }
-
-    /**
-     * Initializes this class.
-     *
-     * @param sleepTime Amount of time the asynchronous thread sleeps in between reads from the socket.
-     * @param receiverPublicKey The public key of the receiver.
-     * @param targetService An instance that implements IConnectionService. This instance will be used as callback
-     *                      while reading asynchronous.
-     */
-    public ConnectionService(final int sleepTime, final byte[] receiverPublicKey,
-            final IConnectionService targetService) {
-        this(sleepTime, receiverPublicKey);
-
-        if (targetService == null) {
-            throw new IllegalArgumentException(
-                    "You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
-        }
-
-        service = targetService;
-    }
-
-    /**
-     * Initializes this class.
-     *
-     * @param receiverPublicKey The public key of the receiver.
-     */
-    public ConnectionService(final byte[] receiverPublicKey) {
-        this(DEFAULT_SLEEP_TIME, receiverPublicKey);
-    }
-
-    /**
-     * Initializes this class.
-     *
-     * @param receiverPublicKey The public key of the receiver.
-     * @param targetService An instance that implements IConnectionService. This instance will be used as callback
-     *                      while reading asynchronous.
-     */
-    public ConnectionService(final byte[] receiverPublicKey, final IConnectionService targetService) {
-        this(DEFAULT_SLEEP_TIME, receiverPublicKey, targetService);
     }
 
     /**
@@ -109,37 +60,6 @@ public final class ConnectionService implements IConnectionPipe {
             throw new SocketException("Could not read from stream.");
         }
         return packer.unpack(wrapper);
-    }
-
-    /**
-     * Start reading asynchronously from the input stream.
-     *
-     * @throws SocketException
-     */
-    public void readAsync() throws SocketException {
-        if (!connection.isConnected()) {
-            throw new SocketException(INVALID_SOCKET_CONNECTION);
-        }
-        if (service == null) {
-            throw new IllegalArgumentException(
-                    "You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
-        }
-
-        // uses observer
-        connection.readAsync();
-    }
-
-    /**
-     * Stops reading asynchronously.
-     *
-     * @throws SocketException If there is no valid connection.
-     */
-    public void stopReadAsync() throws SocketException {
-        if (!connection.isConnected()) {
-            throw new SocketException(INVALID_SOCKET_CONNECTION);
-        }
-
-        connection.stopReadAsync();
     }
 
     /**
@@ -169,6 +89,7 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Writes data from the builder to the connection using the input stream.
+     *
      * @param instance Instance of the builder class of the protocol buffer.
      * @throws SocketException An exception occurred while writing the data.
      */
@@ -222,20 +143,5 @@ public final class ConnectionService implements IConnectionPipe {
      */
     public boolean isConnected() {
         return connection.isConnected();
-    }
-
-    /**
-     * Method is called whenever a read has occurred and readAsync was called
-     * to initialize the reading.
-     *
-     * @param wrapper Wrapper instance that will be unpacked and eventually send
-     *                to the IConnectionService.onReceiveRead method that
-     */
-    @Override
-    public void onReceiveRead(final HanRoutingProtocol.Wrapper wrapper) {
-        if (service != null) {
-            UnpackedMessage message = packer.unpack(wrapper);
-            service.onReceiveRead(message);
-        }
     }
 }

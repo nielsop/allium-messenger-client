@@ -50,7 +50,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
         builder.setEncryptedData(messageToSend.getEncryptedData());
 
-        connectionService = new ConnectionService(messageToSend.getPublicKey());
+        connectionService = new ConnectionService(cryptographyService, messageToSend.getPublicKey());
         try {
             connectionService.open(messageToSend.getIp(),messageToSend.getPort());
             connectionService.write(builder);

@@ -19,25 +19,18 @@ import java.net.SocketException;
 class Connection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
-    private final IConnectionPipe connectionService;
-    private volatile boolean isRunning;
     private Socket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
 
-    private int sleepTime = 25; // default
-
     /**
      * Initializes the class.
      *
-     * @param service Instance of the ConnectionService masked as IConnectionPipe that is calling this method.
      */
-    public Connection(final IConnectionPipe service) {
-        connectionService = service;
+    public Connection() {
         inputStream = null;
         outputStream = null;
         socket = null;
-        isRunning = false;
     }
 
     /**
@@ -93,75 +86,13 @@ class Connection {
     }
 
     /**
-     * Reads from the input stream on an asynchronous way.
-     * <b>Note that this method requires this class to be instantiated using any instance implementing IConnectionService. </b>
-     */
-    public void readAsync() {
-        if (!isRunning) {
-            isRunning = true;
-            Runnable readTask = () -> {
-                while (isRunning) {
-                    HanRoutingProtocol.Wrapper wrapper = null;
-                    try {
-                        wrapper = read();
-                        connectionService.onReceiveRead(wrapper);
-                        Thread.sleep(sleepTime);
-                    } catch (InterruptedException e) {
-                        Thread.interrupted();
-                        LOGGER.error(e.getMessage(), e);
-                    } catch (IOException e) {
-                        isRunning = false;
-                        LOGGER.error(e.getMessage(), e);
-                    }
-                }
-            };
-            Thread readThread = new Thread(readTask);
-            readThread.start();
-        }
-    }
-
-    /**
-     * Stops reading data asynchronously.
-     */
-    public void stopReadAsync() {
-        if (isRunning)
-            isRunning = false;
-    }
-
-    /**
      * Closes the sockets and their streams.
      *
      * @throws IOException Either the sockets or streams had trouble closing down.
      */
     public void close() throws IOException {
-        isRunning = false;
-
         if (isConnected())
             socket.close();
-    }
-
-    /**
-     * Returns the current sleep time. Sleep time represents the amount of milliseconds the asynchronous thread
-     * will sleep in between its process of reading data from the input stream.
-     *
-     * @return Current sleep time.
-     */
-    public int getSleepTime() {
-        return sleepTime;
-    }
-
-    /**
-     * Sets sleep time. Sleep time represents the amount of milliseconds the asynchronous thread
-     * will sleep in between its process of reading data from the input stream.
-     *
-     * @param sleepTime Amount of milliseconds needed to wait.
-     * @throws IllegalArgumentException A parameter has an invalid value.
-     */
-    public void setSleepTime(final int sleepTime) {
-        if (sleepTime < 0)
-            throw new IllegalArgumentException("Must be at least 1.");
-
-        this.sleepTime = sleepTime;
     }
 
     /**
