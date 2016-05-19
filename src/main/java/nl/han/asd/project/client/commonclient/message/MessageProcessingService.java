@@ -52,6 +52,7 @@ public class MessageProcessingService implements IReceiveMessage {
 
                 HanRoutingProtocol.Message message = HanRoutingProtocol.Message.parseFrom(wrapper.getData());
                 messageStore.addMessage(message, messageWrapper.getUsername());
+
             } else {
                 throw new InvalidProtocolBufferException(String.format("Packet didn't contain either MessageConfirmation or Message but %s.", wrapper.getType().name()));
             }
