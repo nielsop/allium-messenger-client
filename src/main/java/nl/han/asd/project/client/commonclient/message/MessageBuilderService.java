@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
@@ -18,7 +19,6 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MessageBuilderService implements IMessageBuilder {
@@ -42,51 +42,70 @@ public class MessageBuilderService implements IMessageBuilder {
         cryptographyService = new CryptographyService(injector.getInstance(IEncryptionService.class));
     }
 
-    public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
+    public <T extends GeneratedMessage> void sendMessage(T generatedMessage , Contact contactReceiver, Contact contactSender) {
         //TODO check if contactReceiver contains latest data from master server.
-        EncryptedMessage messageToSend = buildMessagePackage(messageText, contactReceiver, contactSender);
 
-        HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
-        builder.setEncryptedData(messageToSend.getEncryptedData());
+        HanRoutingProtocol.Wrapper wrapper = convertGeneratedMessageToWrapper(generatedMessage);
 
-        connectionService = new ConnectionService(messageToSend.getPublicKey());
-        try {
-            connectionService.open(messageToSend.getIp(),messageToSend.getPort());
-            connectionService.write(builder);
-        } catch (IOException e) {
-            LOGGER.error("Message could not be send due to connection problems.");
-        }
+        HanRoutingProtocol.MessageWrapper messageToSend = buildMessagePackage(wrapper, contactReceiver, contactSender);
+
+        //TODO: sendMessage.<..>
+
     }
 
-    private EncryptedMessage buildMessagePackage(String messageText, Contact contactReceiver, Contact contactSender) {
+    private <T extends GeneratedMessage> HanRoutingProtocol.Wrapper convertGeneratedMessageToWrapper(T generatedMessage){
+        HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
+
+        if(generatedMessage.getClass() == HanRoutingProtocol.Message.class){
+            wrapperBuilder.setType(HanRoutingProtocol.Wrapper.Type.MESSAGE);
+        }
+        else if(generatedMessage.getClass() == HanRoutingProtocol.MessageConfirmation.class){
+            wrapperBuilder.setType(HanRoutingProtocol.Wrapper.Type.MESSAGECONFIRMATION);
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
+
+        wrapperBuilder.setData(generatedMessage.toByteString());
+        return wrapperBuilder.build();
+    }
+
+
+    private HanRoutingProtocol.MessageWrapper buildMessagePackage(HanRoutingProtocol.Wrapper wrapper, Contact contactReceiver, Contact contactSender) {
         ArrayList<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
-        Message message = new Message(messageText, contactSender, contactReceiver);
         //TODO kijken of path of die nodes bevat anders gooi exep
-        ByteString firstLayer = buildFirstMessagePackageLayer(path.get(0), message);
+        ByteString firstLayer = buildFirstMessagePackageLayer(path.get(0), wrapper, contactReceiver);
         path.remove(0);
+
         return buildLastMessagePackageLayer(path.get(path.size() - 1), buildMessagePackageLayer(firstLayer, path));
     }
 
     /**
      * Deepest layer in final message package
      * @param node contains information about the next hop in path
-     * @param message contains information about the message typed by the client
+     * @param wrapper contains information about the message typed by the client
      * @return encrypted data from the first layer that is build
      */
-    private ByteString buildFirstMessagePackageLayer(Node node, Message message) {
-        HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
+    private ByteString buildFirstMessagePackageLayer(Node node, HanRoutingProtocol.Wrapper wrapper, Contact contactReceiver) {
+        HanRoutingProtocol.MessageWrapper.Builder messageWrapperBuilder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
-        builder.setUsername(message.getReceiver().getUsername());
-        builder.setIPaddress(node.getIpAddress());
-        builder.setPort(node.getPort());
-        builder.setEncryptedData(ByteString.copyFromUtf8(message.getText()));
-        return cryptographyService.encryptData(builder.build().toByteString(), node.getPublicKey());
+        messageWrapperBuilder.setUsername(contactReceiver.getUsername());
+        messageWrapperBuilder.setIPaddress(node.getIpAddress());
+        messageWrapperBuilder.setPort(node.getPort());
+        messageWrapperBuilder.setEncryptedData(wrapper.toByteString());
+
+        return cryptographyService.encryptData(messageWrapperBuilder.build().toByteString(), node.getPublicKey());
     }
 
-    private EncryptedMessage buildLastMessagePackageLayer(Node node, ByteString data) {
-        return new EncryptedMessage(null, node.getIpAddress(), node.getPort(),node.getPublicKey(), data);
+    private HanRoutingProtocol.MessageWrapper buildLastMessagePackageLayer(Node node, ByteString data) {
+        HanRoutingProtocol.MessageWrapper.Builder messageWrapperBuilder = HanRoutingProtocol.MessageWrapper.newBuilder();
+        messageWrapperBuilder.setIPaddress(node.getIpAddress());
+        messageWrapperBuilder.setPort(node.getPort());
+        messageWrapperBuilder.setEncryptedData(data);
+
+        return messageWrapperBuilder.build();
     }
 
     private ByteString buildMessagePackageLayer(ByteString message, ArrayList<Node> remainingPath) {

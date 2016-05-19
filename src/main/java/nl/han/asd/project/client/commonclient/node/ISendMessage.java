@@ -1,7 +1,8 @@
 package nl.han.asd.project.client.commonclient.node;
 
-import nl.han.asd.project.client.commonclient.message.EncryptedMessage;
+import com.google.protobuf.GeneratedMessage;
+import nl.han.asd.project.client.commonclient.store.Contact;
 
 public interface ISendMessage {
-    void sendMessage(EncryptedMessage message);
+    <T extends GeneratedMessage> void sendMessage(T message, Contact contactReciever, Contact contactSender);
 }
