@@ -11,7 +11,7 @@ import static org.apache.http.conn.util.InetAddressUtils.*;
  */
 public class Validation {
 
-    private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]*";
+    private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9_-]*";
 
     /**
      * Private constructor to prevent instantiation.
@@ -38,10 +38,14 @@ public class Validation {
      *             http://www.jguru.com/faq/view.jsp?EID=17521
      */
     public static boolean isValidPort(int port) {
-        return port >= 0 && port <= 65535;
+        return port >= 1024 && port <= 65535;
     }
 
-    public static boolean validateLoginData(String username, String password) {
+    /**
+     * This method calls the validation of the username and the validation of the password.
+     * This method returns true if both validation methods return true.
+     */
+    public static boolean validateCredentials(String username, String password) {
         return isValidUsername(username) && isValidPassword(password);
     }
 
@@ -53,11 +57,11 @@ public class Validation {
     private static boolean isValidUsername(String username) {
         if (username == null || username.isEmpty() || !username.matches(REGEX_ALPHANUMERIC)) {
             throw new IllegalArgumentException(
-                    "Ongeldige gebruikersnaam! Voer een gebruikersnaam van letters en cijfers in.");
+                    "Ongeldige gebruikersnaam! Voer een gebruikersnaam van letters, cijfers, streepjes en underscores in.");
         }
-        if (username.length() < 3 || username.length() > 12) {
+        if (username.length() < 3 || username.length() > 50) {
             throw new IllegalArgumentException(
-                    "Ongeldige gebruikersnaam! Voer een gebruikersnaam van minimaal 3 en maximaal 12 tekens in.");
+                    "Ongeldige gebruikersnaam! Voer een gebruikersnaam van minimaal 3 en maximaal 50 tekens in.");
         }
         return true;
     }
@@ -69,11 +73,12 @@ public class Validation {
      */
     private static boolean isValidPassword(String password) {
         if (password == null || password.isEmpty() || !password.matches(REGEX_ALPHANUMERIC)) {
-            throw new IllegalArgumentException("Ongeldige wachtwoord! Voer een wachtwoord van letters en cijfers in.");
+            throw new IllegalArgumentException("Ongeldige wachtwoord! Voer een "
+                    + "wachtwoord van letters, cijfers, streepjes en underscores in.");
         }
-        if (password.length() < 8 || password.length() > 16) {
+        if (password.length() < 8 || password.length() > 40) {
             throw new IllegalArgumentException(
-                    "Ongeldige wachtwoord! Voer een wachtwoord van minimaal 8 en maximaal 12 tekens in.");
+                    "Ongeldige wachtwoord! Voer een wachtwoord van minimaal 8 en maximaal 40 tekens in.");
         }
         return true;
     }
