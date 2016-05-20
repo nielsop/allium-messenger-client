@@ -42,15 +42,15 @@ public class MessageBuilderService implements IMessageBuilder {
         cryptographyService = new CryptographyService(injector.getInstance(IEncryptionService.class));
     }
 
-    public <T extends GeneratedMessage> void sendMessage(T generatedMessage , Contact contactReceiver, Contact contactSender) {
+    public <T extends GeneratedMessage> void sendMessage(T generatedMessage , Contact contactReceiver) {
         //TODO check if contactReceiver contains latest data from master server.
 
 
         HanRoutingProtocol.Wrapper wrapper = convertGeneratedMessageToWrapper(generatedMessage);
 
-        HanRoutingProtocol.MessageWrapper messageToSend = buildMessagePackage(wrapper, contactReceiver, contactSender);
+        HanRoutingProtocol.MessageWrapper messageToSend = buildMessagePackage(wrapper, contactReceiver);
 
-        //TODO: sendMessage.<..>
+        sendMessage.sendMessage(messageToSend,contactReceiver);
 
     }
 
@@ -72,7 +72,7 @@ public class MessageBuilderService implements IMessageBuilder {
     }
 
 
-    private HanRoutingProtocol.MessageWrapper buildMessagePackage(HanRoutingProtocol.Wrapper wrapper, Contact contactReceiver, Contact contactSender) {
+    private HanRoutingProtocol.MessageWrapper buildMessagePackage(HanRoutingProtocol.Wrapper wrapper, Contact contactReceiver) {
         ArrayList<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
         //TODO kijken of path of die nodes bevat anders gooi exep
@@ -98,6 +98,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
         return cryptographyService.encryptData(messageWrapperBuilder.build().toByteString(), node.getPublicKey());
     }
+
 
     private HanRoutingProtocol.MessageWrapper buildLastMessagePackageLayer(Node node, ByteString data) {
         HanRoutingProtocol.MessageWrapper.Builder messageWrapperBuilder = HanRoutingProtocol.MessageWrapper.newBuilder();

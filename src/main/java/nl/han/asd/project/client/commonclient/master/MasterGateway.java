@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.master;
 
 import com.google.inject.Inject;
+import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Base64;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
     //TODO: missing: IWebService from Master
@@ -52,7 +52,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     @Override
     public LoginResponseWrapper authenticate(String username, String password) {
         HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
-                .setUsername(username).setPassword(password).setPublicKey(getPublicKey()).build();
+                .setUsername(username).setPassword(password).setPublicKey(ByteString.copyFrom(getPublicKey())).build();
         RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST,
                 getSocket());
         HanRoutingProtocol.ClientLoginResponse response = request
@@ -118,8 +118,8 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
      *
      * @return The public key.
      */
-    private String getPublicKey() {
-        return Base64.getEncoder().encodeToString(encryptionService.getPublicKey());
+    private byte[] getPublicKey() {
+        return encryptionService.getPublicKey();
     }
 
     /**

@@ -1,15 +1,20 @@
 package nl.han.asd.project.client.commonclient.node;
 
-import nl.han.asd.project.client.commonclient.message.EncryptedMessage;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import com.google.inject.Inject;
+import com.google.protobuf.GeneratedMessage;
+import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import nl.han.asd.project.client.commonclient.store.Contact;
 
 public class NodeGateway implements ISendMessage {
-    @Override
-    public void sendMessage(EncryptedMessage message) {
-        HanRoutingProtocol.MessageWrapper.Builder request = HanRoutingProtocol.MessageWrapper.newBuilder();
 
-        request.setIPaddress(message.getIp());
-        request.setPort(message.getPort());
-        request.setEncryptedData(message.getEncryptedData());
+    private ConnectionService connectionService = null;
+
+    @Inject
+    public NodeGateway(){
+    }
+
+    @Override
+    public <T extends GeneratedMessage> void sendMessage(T message, Contact contactReciever) {
+
     }
 }

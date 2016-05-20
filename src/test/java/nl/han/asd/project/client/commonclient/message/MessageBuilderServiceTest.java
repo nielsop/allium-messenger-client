@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import com.google.protobuf.ByteString;
+import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.graph.Node;
@@ -10,6 +11,7 @@ import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +19,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import java.net.SocketException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -40,8 +45,13 @@ public class MessageBuilderServiceTest {
     @InjectMocks
     private MessageBuilderService messageBuilderService;
 
+    @Mock
+    private ConnectionService connectionService;
+
     IGetPath pathDeterminationService = Mockito
             .mock(PathDeterminationService.class);
+
+
 
     @Before
     public void setUp() throws Exception {
@@ -57,11 +67,25 @@ public class MessageBuilderServiceTest {
         ArrayList<Node> path = new ArrayList<Node>(Arrays.asList(new Node("NODE_ID_1","192.168.2.1",1234,"123456789".getBytes()), new Node("NODE_ID_2","192.168.2.2",1234,"123456789".getBytes()), new Node("NODE_ID_3","192.168.2.3",1234,"123456789".getBytes())));
         Byte[] encryptedData = new Byte[]{0,1,0,1};
 
+
         Mockito.when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(path);
         Mockito.when(encrypt.encryptData(Mockito.any(ByteString.class),Mockito.any(byte[].class))).thenReturn(ByteString.copyFromUtf8("data"));
         Mockito.when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(path);
-        messageBuilderService.sendMessage("hallo 124",contactReciever,contactSender);
-	}
+
+        HanRoutingProtocol.Message.Builder messageBuilder = HanRoutingProtocol.Message.newBuilder();
+        messageBuilder.setId(UUID.randomUUID().toString());
+        messageBuilder.setTimeSent(Instant.now().getEpochSecond());
+        messageBuilder.setSender(contactSender.getUsername());
+        messageBuilder.setText("This is a message");
+
+        messageBuilderService.sendMessage(messageBuilder.build(),contactReciever);
+
+        try {
+            Mockito.verify(connectionService).write(any(HanRoutingProtocol.MessageWrapper.Builder.class));
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 

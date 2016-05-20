@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.*;
@@ -56,7 +57,8 @@ public class ConnectionServiceTest implements IConnectionService {
         ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
         requestBuilder.setUsername("test");
         requestBuilder.setPassword("test");
-        requestBuilder.setPublicKey("test");
+        requestBuilder.setPublicKey(ByteString.copyFrom(new byte[] {0x00}));
+
 
         connectionService.write(requestBuilder);
 
@@ -101,7 +103,7 @@ public class ConnectionServiceTest implements IConnectionService {
         ClientLoginRequest.Builder builder = ClientLoginRequest.newBuilder();
         builder.setUsername("test");
         builder.setPassword("test");
-        builder.setPublicKey("xxxx");
+        builder.setPublicKey(ByteString.copyFrom(new byte[] {0x00}));
         connectionService.write(builder);
 
         ClientLoginResponse response = connectionService.readGeneric(ClientLoginResponse.class);

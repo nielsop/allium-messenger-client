@@ -21,15 +21,15 @@ public class UpdatedGraphResponseWrapperTest {
     @BeforeClass
     public static void setupTestClass() {
         HanRoutingProtocol.Node node1 = HanRoutingProtocol.Node.newBuilder().setId("Node-1").setIPaddress("127.0.0.1")
-                .setPort(1337).setPublicKey("0x00").build();
+                .setPort(1337).setPublicKey(ByteString.copyFrom(new byte[] {0x00})).build();
         HanRoutingProtocol.Node node2 = HanRoutingProtocol.Node.newBuilder().setId("Node-2").setIPaddress("127.0.0.2")
-                .setPort(1337).setPublicKey("0x00").build();
+                .setPort(1337).setPublicKey(ByteString.copyFrom(new byte[] {0x00})).build();
         HanRoutingProtocol.Node node3 = HanRoutingProtocol.Node.newBuilder().setId("Node-3").setIPaddress("127.0.0.3")
-                .setPort(1337).setPublicKey("0x00").build();
+                .setPort(1337).setPublicKey(ByteString.copyFrom(new byte[] {0x00})).build();
         HanRoutingProtocol.Node node4 = HanRoutingProtocol.Node.newBuilder().setId("Node-4").setIPaddress("127.0.0.4")
-                .setPort(1337).setPublicKey("0x00").build();
+                .setPort(1337).setPublicKey(ByteString.copyFrom(new byte[] {0x00})).build();
         HanRoutingProtocol.Node node5 = HanRoutingProtocol.Node.newBuilder().setId("Node-5").setIPaddress("127.0.0.5")
-                .setPort(1337).setPublicKey("0x00").build();
+                .setPort(1337).setPublicKey(ByteString.copyFrom(new byte[] {0x00})).build();
 
         /*
         HanRoutingProtocol.GraphUpdate graphUpdate1 = HanRoutingProtocol.GraphUpdate.newBuilder().
