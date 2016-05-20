@@ -15,6 +15,11 @@ import javafx.scene.paint.Paint;
  * Created by Marius on 19-04-16.
  */
 public class PaneFactory {
+
+    private PaneFactory(){
+        
+    }
+
     public static GridPane getGridPane(Pos alignment, int[] padding) {
         GridPane pane = new GridPane();
         pane.setAlignment(alignment);
