@@ -1,19 +1,15 @@
 package nl.han.asd.project.client.commonclient.message;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
-import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
@@ -23,23 +19,22 @@ import java.util.ArrayList;
 
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
+    private final IEncryptionService encryptionService;
     public IGetPath getPath;
     public ISendMessage sendMessage;
     public IMessageStore messageStore;
     private ConnectionService connectionService = null;
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
     public IEncrypt encrypt;
-    public CryptographyService cryptographyService;
 
     @Inject
     public MessageBuilderService(IGetPath getPath, IEncrypt encrypt, ISendMessage sendMessage,
-            IMessageStore messageStore) {
+            IMessageStore messageStore,IEncryptionService encryptionService) {
         this.getPath = getPath;
         this.encrypt = encrypt;
         this.sendMessage = sendMessage;
         this.messageStore = messageStore;
-        final Injector injector = Guice.createInjector(new EncryptionModule());
-        cryptographyService = new CryptographyService(injector.getInstance(IEncryptionService.class));
+        this.encryptionService = encryptionService;
     }
 
     public <T extends GeneratedMessage> void sendMessage(T generatedMessage , Contact contactReceiver) {
@@ -96,7 +91,7 @@ public class MessageBuilderService implements IMessageBuilder {
         messageWrapperBuilder.setPort(node.getPort());
         messageWrapperBuilder.setEncryptedData(wrapper.toByteString());
 
-        return cryptographyService.encryptData(messageWrapperBuilder.build().toByteString(), node.getPublicKey());
+        return ByteString.copyFrom(encryptionService.encryptData(messageWrapperBuilder.build().toByteArray(), node.getPublicKey()));
     }
 
 
@@ -122,8 +117,8 @@ public class MessageBuilderService implements IMessageBuilder {
 
         remainingPath.remove(0);
 
-        ByteString encryptedMessage = cryptographyService
-                .encryptData(builder.build().toByteString(), node.getPublicKey());
+        ByteString encryptedMessage = ByteString.copyFrom(encryptionService
+                .encryptData(builder.build().toByteArray(), node.getPublicKey()));
         return buildMessagePackageLayer(encryptedMessage, remainingPath);
     }
 }
