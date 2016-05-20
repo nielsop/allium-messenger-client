@@ -26,9 +26,10 @@ public class LoginResponseWrapperTest {
     public static void setupTestClass() {
         nodeList = new ArrayList<>();
 
-        nodeList.add("NODE_1");
-        nodeList.add("NODE_2");
-        nodeList.add("NODE_3");
+        nodeList.add("Node-1");
+        nodeList.add("Node-2");
+        nodeList.add("Node-3");
+
     }
 
     @Test

@@ -18,6 +18,7 @@ public class LoginResponseWrapper {
      */
     private List<String> nodeList;
 
+
     /**
      * Stores the secret hash.
      */
