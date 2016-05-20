@@ -26,19 +26,7 @@ public class Contact {
     public String getUsername() {
         return username;
     }
-
-    public Node[] getConnectedNodes() throws NoConnectedNodesException {
-        if (connectedNodes == null || connectedNodes.length <= 0) {
-            throw new NoConnectedNodesException("The connected Nodes from the contact are not set");
-        }
-        return connectedNodes;
-
-    }
-
-    public void setConnectedNodes(Node[] connectedNodes) {
-        this.connectedNodes = connectedNodes;
-    }
-
+    
     public String getPublicKey() {
         return publicKey;
     }

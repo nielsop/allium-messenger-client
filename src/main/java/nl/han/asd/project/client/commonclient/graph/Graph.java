@@ -2,6 +2,7 @@ package nl.han.asd.project.client.commonclient.graph;
 
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -9,10 +10,10 @@ import java.util.HashMap;
  */
 public class Graph {
 
-    private HashMap<String, Node> vertexMap = new HashMap<String, Node>();
+    private HashMap<String, Node> graph = new HashMap<>();
 
     public Node getNodeVertex(String nodeID) {
-        Node vertex = vertexMap.get(nodeID);
+        Node vertex = graph.get(nodeID);
         if (vertex == null) {
             throw new IllegalArgumentException("Node vertex with ID " + nodeID + " does not exist in the Graph");
         }
@@ -20,21 +21,26 @@ public class Graph {
     }
 
     public int getVertexMapSize() {
-        return vertexMap.size();
+        return graph.size();
     }
 
     public void resetGraph() {
-        vertexMap = new HashMap<String, Node>();
+        graph = new HashMap<String, Node>();
     }
 
     public void addNodeVertex(HanRoutingProtocol.Node vertex) {
         Node node = new Node(vertex.getId(), vertex.getIPaddress(), vertex.getPort(),
                 vertex.getPublicKey().toByteArray());
-        vertexMap.putIfAbsent(node.getId(), node);
+        graph.putIfAbsent(node.getId(), node);
+    }
+
+    public void addNodeVertex(Node vertex) {
+        graph.putIfAbsent(vertex.getId(), vertex);
     }
 
     public void removeNodeVertex(HanRoutingProtocol.Node vertex) {
-        vertexMap.remove(vertex.getId());
+        graph.remove(vertex.getId());
     }
+
 
 }

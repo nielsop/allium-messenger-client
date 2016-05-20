@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Base64;
+import java.util.List;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
     //TODO: missing: IWebService from Master
@@ -88,12 +88,12 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     }
 
     @Override
-    public ClientGroupResponseWrapper getClientGroup() {
+    public List<HanRoutingProtocol.Client> getClientGroup() {
         HanRoutingProtocol.ClientRequest clientRequest = HanRoutingProtocol.ClientRequest.newBuilder().build();
         RequestWrapper req = new RequestWrapper(clientRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREQUEST,
                 getSocket());
         HanRoutingProtocol.ClientResponse clientResponse = req.writeAndRead(HanRoutingProtocol.ClientResponse.class);
-        return new ClientGroupResponseWrapper(clientResponse.getClientsList());
+        return clientResponse.getClientsList();
     }
 
     /**

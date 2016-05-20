@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -94,8 +95,8 @@ public class MasterGatewayIT {
 
     @Test
     public void testGetClientGroupSuccessful() {
-        ClientGroupResponseWrapper response = gateway.getClientGroup();
-        Assert.assertTrue(response.clientGroup.size() >= 0);
+        List<HanRoutingProtocol.Client> list = gateway.getClientGroup();
+        Assert.assertTrue(list.size() >= 0);
     }
     /* */
 }
