@@ -3,7 +3,6 @@ package nl.han.asd.project.client.commonclient.presentation.gui.model;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.presentation.gui.GUI;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.ContactStore;
 
 import java.util.ArrayList;
 
@@ -17,7 +16,7 @@ public class DashboardModel {
 
     public DashboardModel(GUI gui) {
         this.gui = gui;
-        currentUser = ContactStore.getCurrentUser();
+        currentUser = gui.pLayer.getCurrentUser();
     }
 
     public GUI getGUI() {

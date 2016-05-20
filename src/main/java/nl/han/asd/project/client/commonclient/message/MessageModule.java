@@ -7,6 +7,7 @@ import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.node.NodeGateway;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
+import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.client.commonclient.store.MessageStore;
 
 /**
@@ -17,5 +18,8 @@ public class MessageModule extends AbstractModule {
     protected void configure() {
         bind(IGetPath.class).to(PathDeterminationService.class);
         bind(IEncrypt.class).to(CryptographyService.class);
+        bind(IMessageStore.class).to(MessageStore.class);
+        bind(ISendMessage.class).to(NodeGateway.class);
+        bind(IMessageBuilder.class).to(MessageBuilderService.class);
     }
 }

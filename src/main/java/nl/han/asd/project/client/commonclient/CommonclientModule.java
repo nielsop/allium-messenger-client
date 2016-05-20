@@ -8,7 +8,7 @@ import nl.han.asd.project.client.commonclient.message.MessageModule;
 import nl.han.asd.project.client.commonclient.node.NodeModule;
 import nl.han.asd.project.client.commonclient.path.PathModule;
 import nl.han.asd.project.client.commonclient.persistence.PersistenceModule;
-import nl.han.asd.project.client.commonclient.scripting.ScriptModule;
+import nl.han.asd.project.client.commonclient.store.StoreModule;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 
 /**
@@ -24,7 +24,7 @@ public class CommonclientModule extends AbstractModule {
         this.install(new NodeModule());
         this.install(new PathModule());
         this.install(new PersistenceModule());
+        this.install(new StoreModule());
         this.install(new EncryptionModule());
-        this.install(new ScriptModule());
     }
 }
