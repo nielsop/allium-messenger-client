@@ -30,4 +30,12 @@ public class Message {
     public String getText() {
         return text;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public long getMessageDateTime() {
+        return messageDateTime;
+    }
 }

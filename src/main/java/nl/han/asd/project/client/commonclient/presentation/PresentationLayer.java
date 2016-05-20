@@ -42,8 +42,7 @@ public class PresentationLayer {
     }
 
     @Inject
-    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver,
-            IRegistration registration, ILogin login) {
+    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
         this.contact = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
@@ -62,7 +61,7 @@ public class PresentationLayer {
         //Get registering response
         RegisterResponseWrapper registerResponse = registration.register(username, password);
         //In every other case, do something.
-        switch (registerResponse.status) {
+        switch (registerResponse.getStatus()) {
             case SUCCES:
                 LOGGER.info("Registering worked!");
                 break;
@@ -77,7 +76,7 @@ public class PresentationLayer {
                 break;
         }
         //Return the status
-        return registerResponse.status;
+        return registerResponse.getStatus();
     }
 
     public Contact getCurrentUser() {
@@ -86,10 +85,10 @@ public class PresentationLayer {
 
     public HanRoutingProtocol.ClientLoginResponse.Status login(String username, String password) {
         LoginResponseWrapper loginResponse = login.login(username, password);
-        LOGGER.info("User: \"" + username + "\" login status: " + loginResponse.status.name());
-        if (loginResponse.status == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
+        LOGGER.info("User: \"" + username + "\" login status: " + loginResponse.getStatus().name());
+        if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
             currentUser = new Contact(username, privateKey, true);
         }
-        return loginResponse.status;
+        return loginResponse.getStatus();
     }
 }

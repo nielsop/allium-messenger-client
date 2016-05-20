@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Julius on 15/04/16.
@@ -44,7 +45,7 @@ import java.util.ArrayList;
         //Node[] selfMadePath = {new Node(),new Node(),new Node()};
 
         int minimunNodes = 3;
-        ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
+        List<Node> generatePath = pathDeterminationService.getPath(3, contact);
 
         Assert.assertEquals(minimunNodes, generatePath.size());
     }
@@ -58,7 +59,7 @@ Checking if generatedPath contains Node objects
                 new Node("NODE_ID_2", "192.168.2.9", 1234, "123456789".getBytes()),
                 new Node("NODE_ID_3", "192.168.2.10", 1234, "123456789".getBytes()) };
 
-        ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
+        List<Node> generatePath = pathDeterminationService.getPath(3, contact);
 
         for (int i = 0; i < selfMadePath.length; i++) {
             Assert.assertEquals(selfMadePath[i], generatePath.get(i));
@@ -70,7 +71,7 @@ Checking if error is trown when miniumHops is negative number
 */
     @Test(expected = IllegalArgumentException.class)
     public void whenMinimunHopsIsNegativeThrowError() {
-        ArrayList<Node> generatePath = pathDeterminationService.getPath(-1, contact);
+        List<Node> generatePath = pathDeterminationService.getPath(-1, contact);
     }
 
     /*
@@ -78,7 +79,7 @@ Checking if error is trown when miniumHops is negative number
      */
     @Test
     public void firstNodeInPathIsAConnectedNodeFromHostClient() {
-        ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
+        List<Node> generatePath = pathDeterminationService.getPath(3, contact);
         Node[] contactConnectedNodes = new Node[0];
         try {
             contactConnectedNodes = contact.getConnectedNodes();

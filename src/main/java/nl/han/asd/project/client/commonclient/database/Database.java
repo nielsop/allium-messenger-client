@@ -6,7 +6,7 @@ import javax.inject.Inject;
 
 public class Database implements IDatabase {
 
-    public IPersistence persistence;
+    private IPersistence persistence;
 
     @Inject
     public Database(IPersistence persistence) {

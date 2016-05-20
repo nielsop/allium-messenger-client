@@ -40,6 +40,7 @@ public class CryptographyService implements IEncrypt, IDecrypt, IPublicKey {
     return data;
     }
 
+    @Override
     public byte[] getPublicKey() {
         return new byte[] {};
     }

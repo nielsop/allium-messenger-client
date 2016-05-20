@@ -7,6 +7,7 @@ import com.google.protobuf.ByteString;
  * @version 1.0
  * @since 29/04/16
  */
+@FunctionalInterface
 public interface IEncrypt {
     ByteString encryptData(ByteString data, byte[] publicKey);
 }

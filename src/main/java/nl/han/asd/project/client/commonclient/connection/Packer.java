@@ -27,11 +27,9 @@ public class Packer {
     /**
      * Packs a builder inside an EncryptedWrapper message.
      * @param originalBuilder Any Builder from the protocol buffer class.
-     * @param recieverPublicKey The public key that should be included inside the EncryptedWrapper message.
      * @return The byte array that represents the EncryptedWrapper.
      */
-    public HanRoutingProtocol.Wrapper pack(final GeneratedMessage.Builder originalBuilder,
-            final byte[] recieverPublicKey) {
+    public HanRoutingProtocol.Wrapper pack(final GeneratedMessage.Builder originalBuilder) {
         HanRoutingProtocol.Wrapper.Builder builder = HanRoutingProtocol.Wrapper.newBuilder();
 
         HanRoutingProtocol.Wrapper.Type type = protocolMessageDescriptorToWrapperType(

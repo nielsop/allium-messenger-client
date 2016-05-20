@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 public class MessageProcessingService implements IReceiveMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
-    public IMessageStore messageStore;
+    private IMessageStore messageStore;
 
-    public IDecrypt decrypt;
+    private IDecrypt decrypt;
 
     @Inject
     public MessageProcessingService(IMessageStore messageStore) {
