@@ -8,7 +8,7 @@ import org.junit.Test;
  * Created by Jevgeni on 13-4-2016.
  */
 public class ReceiveMessageTest {
-    public final MessageProcessingService mpService = new MessageProcessingService(null);
+    public final MessageProcessingService mpService = new MessageProcessingService();
 
     @Test
     public void ProcessReceivedMessage() {

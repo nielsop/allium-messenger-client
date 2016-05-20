@@ -11,7 +11,6 @@ import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -21,33 +20,28 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MessageBuilderService implements IMessageBuilder {
+public class MessageBuilderService {
     private static final int MINIMAL_HOPS = 3;
-    public IGetPath getPath;
+    public static IGetPath getPath;
     public ISendMessage sendMessage;
-    public IMessageStore messageStore;
-    private ConnectionService connectionService = null;
+    private static ConnectionService connectionService = null;
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
     public IEncrypt encrypt;
-    public CryptographyService cryptographyService;
+    public static CryptographyService cryptographyService;
 
     @Inject
-    public MessageBuilderService(IGetPath getPath, IEncrypt encrypt, ISendMessage sendMessage,
-            IMessageStore messageStore) {
+    public MessageBuilderService(IGetPath getPath, IEncrypt encrypt, ISendMessage sendMessage) {
         this.getPath = getPath;
         this.encrypt = encrypt;
         this.sendMessage = sendMessage;
-        this.messageStore = messageStore;
         final Injector injector = Guice.createInjector(new EncryptionModule());
         cryptographyService = new CryptographyService(injector.getInstance(IEncryptionService.class));
     }
 
-    public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
+    public static void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
         //TODO check if contactReceiver contains latest data from master server.
         EncryptedMessage messageToSend = buildMessagePackage(messageText, contactReceiver, contactSender);
-
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
-
         builder.setEncryptedData(messageToSend.getEncryptedData());
 
         connectionService = new ConnectionService(messageToSend.getPublicKey());
@@ -59,7 +53,7 @@ public class MessageBuilderService implements IMessageBuilder {
         }
     }
 
-    private EncryptedMessage buildMessagePackage(String messageText, Contact contactReceiver, Contact contactSender) {
+    private static EncryptedMessage buildMessagePackage(String messageText, Contact contactReceiver, Contact contactSender) {
         ArrayList<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
         Message message = new Message(messageText, contactSender, contactReceiver);
@@ -75,7 +69,7 @@ public class MessageBuilderService implements IMessageBuilder {
      * @param message contains information about the message typed by the client
      * @return encrypted data from the first layer that is build
      */
-    private ByteString buildFirstMessagePackageLayer(Node node, Message message) {
+    private static ByteString buildFirstMessagePackageLayer(Node node, Message message) {
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
         builder.setUsername(message.getReceiver().getUsername());
@@ -85,11 +79,11 @@ public class MessageBuilderService implements IMessageBuilder {
         return cryptographyService.encryptData(builder.build().toByteString(), node.getPublicKey());
     }
 
-    private EncryptedMessage buildLastMessagePackageLayer(Node node, ByteString data) {
+    private static EncryptedMessage buildLastMessagePackageLayer(Node node, ByteString data) {
         return new EncryptedMessage(null, node.getIpAddress(), node.getPort(),node.getPublicKey(), data);
     }
 
-    private ByteString buildMessagePackageLayer(ByteString message, ArrayList<Node> remainingPath) {
+    private static ByteString buildMessagePackageLayer(ByteString message, ArrayList<Node> remainingPath) {
         if (remainingPath.size() == 1) {
             return message;
         }

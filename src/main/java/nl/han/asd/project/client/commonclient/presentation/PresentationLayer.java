@@ -4,10 +4,7 @@ import nl.han.asd.project.client.commonclient.login.ILogin;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.IContact;
-import nl.han.asd.project.client.commonclient.store.IMessageObserver;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +21,6 @@ public class PresentationLayer {
     private static final Logger LOGGER = LoggerFactory.getLogger(PresentationLayer.class);
 
     //TODO: android app? desktop app?
-    public IContact contact;
-    public IMessageBuilder messageBuilder;
-    public IMessageObserver messageObserver;
     public IRegistration registration;
     public ILogin login;
     private Contact currentUser;
@@ -42,11 +36,7 @@ public class PresentationLayer {
     }
 
     @Inject
-    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver,
-            IRegistration registration, ILogin login) {
-        this.contact = contact;
-        this.messageBuilder = messageBuilder;
-        this.messageObserver = messageObserver;
+    public PresentationLayer(IRegistration registration, ILogin login) {
         this.registration = registration;
         this.login = login;
     }
@@ -78,10 +68,6 @@ public class PresentationLayer {
         }
         //Return the status
         return registerResponse.status;
-    }
-
-    public Contact getCurrentUser() {
-        return currentUser;
     }
 
     public HanRoutingProtocol.ClientLoginResponse.Status login(String username, String password) {

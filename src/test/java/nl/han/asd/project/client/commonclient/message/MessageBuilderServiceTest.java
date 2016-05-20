@@ -9,7 +9,6 @@ import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,8 +33,6 @@ public class MessageBuilderServiceTest {
     IEncrypt encrypt = Mockito.mock(CryptographyService.class);
     @Mock
     ISendMessage sendMessage;
-    @Mock
-    IMessageStore messageStore;
 
     @InjectMocks
     private MessageBuilderService messageBuilderService;
@@ -45,7 +42,7 @@ public class MessageBuilderServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,sendMessage,messageStore);
+        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,sendMessage);
     }
 
     @Test
