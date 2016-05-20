@@ -1,9 +1,14 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
-public interface IMessageStore {
-    public void addMessage(HanRoutingProtocol.Message message);
+import java.util.List;
 
-    public void findMessage(HanRoutingProtocol.Message message);
+public interface IMessageStore {
+    void addMessage(HanRoutingProtocol.Message message);
+
+    void findMessage(HanRoutingProtocol.Message message);
+
+    List<Message> getMessagesAfterDate(String date);
 }

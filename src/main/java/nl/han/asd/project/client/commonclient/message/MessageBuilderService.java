@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MessageBuilderService implements IMessageBuilder {
+    private static MessageBuilderService instance = null;
     private static final int MINIMAL_HOPS = 3;
     public IGetPath getPath;
     public ISendMessage sendMessage;
@@ -40,6 +41,18 @@ public class MessageBuilderService implements IMessageBuilder {
         this.messageStore = messageStore;
         final Injector injector = Guice.createInjector(new EncryptionModule());
         cryptographyService = new CryptographyService(injector.getInstance(IEncryptionService.class));
+        instance = this;
+    }
+
+    private MessageBuilderService() {
+
+    }
+
+    public static MessageBuilderService getInstance() {
+        if (instance == null) {
+            instance = new MessageBuilderService();
+        }
+        return instance;
     }
 
     public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
