@@ -17,7 +17,7 @@ import javafx.scene.paint.Paint;
 public class PaneFactory {
 
     private PaneFactory(){
-        
+
     }
 
     public static GridPane getGridPane(Pos alignment, int[] padding) {
