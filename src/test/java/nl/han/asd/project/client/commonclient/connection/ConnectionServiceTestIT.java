@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
  * Created by Jevgeni on 15-4-2016.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ConnectionServiceTest {
+public class ConnectionServiceTestIT {
 
     private static Server server = new Server();
     private final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
@@ -35,7 +35,7 @@ public class ConnectionServiceTest {
 
     private CryptographyService cryptographyService;
 
-    public ConnectionServiceTest() {
+    public ConnectionServiceTestIT() {
     }
 
     @BeforeClass
