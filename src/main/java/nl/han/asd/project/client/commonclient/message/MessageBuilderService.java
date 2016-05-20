@@ -10,7 +10,6 @@ import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
-    private final IEncryptionService encryptionService;
     public IGetPath getPath;
     public ISendMessage sendMessage;
     public IMessageStore messageStore;
@@ -29,12 +27,11 @@ public class MessageBuilderService implements IMessageBuilder {
 
     @Inject
     public MessageBuilderService(IGetPath getPath, IEncrypt encrypt, ISendMessage sendMessage,
-            IMessageStore messageStore,IEncryptionService encryptionService) {
+            IMessageStore messageStore) {
         this.getPath = getPath;
         this.encrypt = encrypt;
         this.sendMessage = sendMessage;
         this.messageStore = messageStore;
-        this.encryptionService = encryptionService;
     }
 
     public <T extends GeneratedMessage> void sendMessage(T generatedMessage , Contact contactReceiver) {
@@ -91,7 +88,7 @@ public class MessageBuilderService implements IMessageBuilder {
         messageWrapperBuilder.setPort(node.getPort());
         messageWrapperBuilder.setEncryptedData(wrapper.toByteString());
 
-        return ByteString.copyFrom(encryptionService.encryptData(messageWrapperBuilder.build().toByteArray(), node.getPublicKey()));
+        return encrypt.encryptData(messageWrapperBuilder.build().toByteString(), node.getPublicKey());
     }
 
 
@@ -117,8 +114,8 @@ public class MessageBuilderService implements IMessageBuilder {
 
         remainingPath.remove(0);
 
-        ByteString encryptedMessage = ByteString.copyFrom(encryptionService
-                .encryptData(builder.build().toByteArray(), node.getPublicKey()));
+        ByteString encryptedMessage = encrypt
+                .encryptData(builder.build().toByteString(), node.getPublicKey());
         return buildMessagePackageLayer(encryptedMessage, remainingPath);
     }
 }
