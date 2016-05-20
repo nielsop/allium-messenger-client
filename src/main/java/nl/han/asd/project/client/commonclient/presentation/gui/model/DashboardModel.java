@@ -41,4 +41,3 @@ public class DashboardModel {
 //        gui.pLayer.sendMessage(message);
     }
 }
-        

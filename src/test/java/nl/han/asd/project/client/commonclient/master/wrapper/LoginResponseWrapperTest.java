@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.master.wrapper;
 
-import com.google.protobuf.ByteString;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -21,17 +20,15 @@ public class LoginResponseWrapperTest {
      * this.status = status;
      */
     private static final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
-    private static List<HanRoutingProtocol.Node> nodeList;
+    private static List<String> nodeList;
 
     @BeforeClass
     public static void setupTestClass() {
         nodeList = new ArrayList<>();
-        nodeList.add(HanRoutingProtocol.Node.newBuilder().setId("Node-1").setIPaddress("127.0.0.1").setPort(1337)
-                .setPublicKey(ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES)).build());
-        nodeList.add(HanRoutingProtocol.Node.newBuilder().setId("Node-2").setIPaddress("127.0.0.2").setPort(1337)
-                .setPublicKey(ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES)).build());
-        nodeList.add(HanRoutingProtocol.Node.newBuilder().setId("Node-3").setIPaddress("127.0.0.3").setPort(1337)
-                .setPublicKey(ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES)).build());
+
+        nodeList.add("NODE_1");
+        nodeList.add("NODE_2");
+        nodeList.add("NODE_3");
     }
 
     @Test
