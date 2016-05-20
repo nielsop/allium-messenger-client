@@ -48,7 +48,6 @@ public class MessageBuilderServiceTest {
         messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,sendMessage,messageStore);
     }
 
-
     //TODO: SetConnectedNodes has been removed.
 //    @Test
 //    public void sendMessageTest(){
