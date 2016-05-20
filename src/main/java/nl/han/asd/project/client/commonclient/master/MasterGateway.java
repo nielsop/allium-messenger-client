@@ -53,6 +53,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
     @Override
     public LoginResponseWrapper authenticate(String username, String password) {
+        Validation.validateCredentials(username, password);
         HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder().setUsername(username).setPassword(password)
                 .setPublicKey(ByteString.copyFrom(encryptionService.getPublicKey())).build();
         RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST, getSocket());
@@ -62,16 +63,11 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
     @Override
     public RegisterResponseWrapper register(String username, String password) {
-        try {
-            Validation.validateCredentials(username, password);
-            HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder().setUsername(username).setPassword(password).build();
-            RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREGISTERREQUEST, getSocket());
-            HanRoutingProtocol.ClientRegisterResponse response = req.writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);
-            return new RegisterResponseWrapper(response.getStatus());
-        } catch (Exception E) {
-            LOGGER.error(E.getMessage(), E);
-            return new RegisterResponseWrapper(HanRoutingProtocol.ClientRegisterResponse.Status.FAILED);
-        }
+        Validation.validateCredentials(username, password);
+        HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder().setUsername(username).setPassword(password).build();
+        RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREGISTERREQUEST, getSocket());
+        HanRoutingProtocol.ClientRegisterResponse response = req.writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);
+        return new RegisterResponseWrapper(response.getStatus());
     }
 
     @Override
@@ -163,5 +159,4 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
             }
         }
     }
-
 }

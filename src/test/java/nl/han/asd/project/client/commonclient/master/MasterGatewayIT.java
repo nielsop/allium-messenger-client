@@ -21,8 +21,8 @@ import java.util.UUID;
  */
 public class MasterGatewayIT {
 
-    private static final String VALID_USERNAME = "Nielsje41";
-    private static final String VALID_PASSWORD = "wachtwoord";
+    private static final String VALID_USERNAME = "valid_username";
+    private static final String VALID_PASSWORD = "valid_password";
     private CloudHost master;
     private MasterGateway gateway;
 
@@ -64,8 +64,6 @@ public class MasterGatewayIT {
     @Test
     public void testRegisterClientSameUsernameFails() {
         String username = UUID.randomUUID().toString();
-        System.out.println(username);
-        System.out.println(username.length());
         Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES,
                 gateway.register(username, VALID_PASSWORD).status);
         Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME,
@@ -97,5 +95,4 @@ public class MasterGatewayIT {
         ClientGroupResponseWrapper response = gateway.getClientGroup();
         Assert.assertTrue(response.clientGroup.size() >= 0);
     }
-    /* */
 }
