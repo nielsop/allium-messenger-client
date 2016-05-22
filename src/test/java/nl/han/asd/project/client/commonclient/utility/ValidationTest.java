@@ -3,9 +3,11 @@ package nl.han.asd.project.client.commonclient.utility;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.Assert;
 import org.junit.Test;
+import org.reflections.util.Utils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -128,6 +130,21 @@ public class ValidationTest {
     @Test
     public void testValidationRegisterRightCharsSucces() {
         assertTrue(Validation.validateCredentials(VALID_USERNAME_3CHARS, VALID_PASSWORD_RIGHT_CHARS));
+    }
+
+    @Test
+    public void testValidationClassIsFinal(){
+        assertTrue(Modifier.isFinal(Validation.class.getModifiers()));
+    }
+
+    @Test
+    public void testValidationClassHasOnly1ConstructorAndItIsPrivate(){
+        try {
+            final Constructor constructor = Validation.class.getDeclaredConstructor();
+            assertTrue(!constructor.isAccessible() && Validation.class.getDeclaredConstructors().length == 1);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 }
 
