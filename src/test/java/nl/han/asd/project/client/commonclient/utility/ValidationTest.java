@@ -70,43 +70,43 @@ public class ValidationTest {
 
     /* Testing validating username */
     @Test (expected =  IllegalArgumentException.class)
-    public void testMasterGatewayRegister2CharsUsernameFailed() {
+    public void testValidationRegister2CharsUsernameFailed() {
         Validation.validateCredentials(INVALID_USERNAME_2CHARS, VALID_PASSWORD_8CHARS);
     }
 
     @Test
-    public void testMasterGatewayRegister3CharsUsernameSuccess() {
+    public void testValidationRegister3CharsUsernameSuccess() {
         assertTrue(Validation.validateCredentials(VALID_USERNAME_3CHARS, VALID_PASSWORD_8CHARS));
     }
 
     @Test
-    public void testMasterGatewayRegister40CharsUsernameSuccess() {
+    public void testValidationRegister40CharsUsernameSuccess() {
         assertTrue(Validation.validateCredentials(VALID_USERNAME_40CHARS, VALID_PASSWORD_8CHARS));
     }
 
     @Test (expected =  IllegalArgumentException.class)
-    public void testMasterGatewayRegister41CharsUsernameFailed() {
+    public void testValidationRegister41CharsUsernameFailed() {
         Validation.validateCredentials(INVALID_USERNAME_41CHARS, VALID_PASSWORD_8CHARS);
     }
 
     @Test
-    public void testMasterGatewayRegisterUsernameWithRightChars() {
+    public void testValidationRegisterUsernameWithRightChars() {
         assertTrue(Validation.validateCredentials(VALID_USERNAME_RIGHT_CHARS, VALID_PASSWORD_8CHARS));
     }
 
     @Test (expected = IllegalArgumentException.class)
-    public void testMasterGatewayRegisterUsernameWithWrongChars() {
+    public void testValidationRegisterUsernameWithWrongChars() {
         Validation.validateCredentials(INVALID_USERNAME_WRONG_CHARS, VALID_PASSWORD_8CHARS);
     }
 
     /* Testing validating password */
     @Test (expected = IllegalArgumentException.class)
-    public void testMasterGatewayRegister7CharsPasswordFailed() {
+    public void testValidationRegister7CharsPasswordFailed() {
         Validation.validateCredentials(VALID_USERNAME_3CHARS, INVALID_PASSWORD_7CHARS);
     }
 
     @Test
-    public void testMasterGatewayRegister8CharsPasswordSuccess() {
+    public void testValidationRegister8CharsPasswordSuccess() {
         assertTrue(Validation.validateCredentials(VALID_USERNAME_3CHARS, VALID_PASSWORD_8CHARS));
     }
 
@@ -116,17 +116,17 @@ public class ValidationTest {
     }
 
     @Test (expected = IllegalArgumentException.class)
-    public void testMasterGatewayRegister41CharsPasswordFailed() {
+    public void testValidationRegister41CharsPasswordFailed() {
         Validation.validateCredentials(VALID_USERNAME_3CHARS, INVALID_PASSWORD_41CHARS);
     }
 
     @Test (expected = IllegalArgumentException.class)
-    public void testMasterGatewayRegisterWrongCharsFailed() {
+    public void testValidationRegisterWrongCharsFailed() {
         Validation.validateCredentials(VALID_USERNAME_3CHARS, INVALID_PASSWORD_WRONG_CHARS);
     }
 
     @Test
-    public void testMasterGatewayRegisterRightCharsSucces() {
+    public void testValidationRegisterRightCharsSucces() {
         assertTrue(Validation.validateCredentials(VALID_USERNAME_3CHARS, VALID_PASSWORD_RIGHT_CHARS));
     }
 }
