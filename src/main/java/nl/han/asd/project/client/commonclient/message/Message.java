@@ -30,4 +30,12 @@ public class Message {
     public String getText() {
         return text;
     }
+
+    public long getMessageDateTime() {
+        return messageDateTime;
+    }
+
+    public void setMessageDateTime(long messageDateTime) {
+        this.messageDateTime = messageDateTime;
+    }
 }

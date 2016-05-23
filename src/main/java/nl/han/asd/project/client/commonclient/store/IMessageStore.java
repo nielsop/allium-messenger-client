@@ -10,5 +10,5 @@ public interface IMessageStore {
 
     void findMessage(HanRoutingProtocol.Message message);
 
-    List<Message> getMessagesAfterDate(String date);
+    List<Message> getMessagesAfterDate(long dateTime);
 }

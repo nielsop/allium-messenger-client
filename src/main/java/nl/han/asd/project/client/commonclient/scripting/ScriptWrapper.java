@@ -23,17 +23,16 @@ public class ScriptWrapper implements IScriptWrapper {
 
     public boolean sendMessage(String username, String message) {
         try {
-            Contact receiver = contactStore.findContact(username);
-            messageBuilderService.sendMessage(message, receiver, contactStore.getCurrentUser());
+            messageBuilderService.sendMessage(message, contactStore.findContact(username), contactStore.getCurrentUser());
             return true;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             return false;
         }
     }
 
-    public SimpleMessage[] getReceivedMessages(String date) {
-        List<Message> receivedMessages = messageStore.getMessagesAfterDate(date);
+    public SimpleMessage[] getReceivedMessages(long dateTime) {
+        List<Message> receivedMessages = messageStore.getMessagesAfterDate(dateTime);
         SimpleMessage[] messages = new SimpleMessage[receivedMessages.size()];
         for (int i = 0; i < messages.length; i++) {
             messages[i].message = receivedMessages.get(i).getText();

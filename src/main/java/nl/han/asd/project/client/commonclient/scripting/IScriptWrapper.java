@@ -8,7 +8,7 @@ package nl.han.asd.project.client.commonclient.scripting;
 public interface IScriptWrapper {
     boolean sendMessage(String username, String message);
 
-    SimpleMessage[] getReceivedMessages(String date);
+    SimpleMessage[] getReceivedMessages(long dateTime);
 
     void printUI(UIMessageType type, String message);
 
