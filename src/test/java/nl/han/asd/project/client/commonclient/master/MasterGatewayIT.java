@@ -65,9 +65,9 @@ public class MasterGatewayIT {
     public void testRegisterClientSameUsernameFails() {
         String username = UUID.randomUUID().toString();
         Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES,
-                gateway.register(username, VALID_PASSWORD).status);
+                gateway.register(username, VALID_PASSWORD).getStatus());
         Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME,
-                gateway.register(username, VALID_PASSWORD).status);
+                gateway.register(username, VALID_PASSWORD).getStatus());
     }
 
     /* Login of clients on master server */

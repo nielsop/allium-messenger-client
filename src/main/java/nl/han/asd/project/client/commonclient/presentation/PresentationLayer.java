@@ -62,7 +62,7 @@ public class PresentationLayer {
      */
     //TODO: Use validation in a better way?
     public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password) {
-        Validation.validateUserAndPass(username, password);
+        Validation.validateCredentials(username, password);
         //Get registering response
         RegisterResponseWrapper registerResponse = registration.register(username, password);
         //In every other case, do something.
@@ -86,7 +86,7 @@ public class PresentationLayer {
     }
 
     public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) {
-        Validation.validateUserAndPass(username, password);
+        Validation.validateCredentials(username, password);
         LoginResponseWrapper loginResponse = login.login(username, password);
         LOGGER.info("User: \"" + username + "\" loginRequest status: " + loginResponse.getStatus().name());
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
