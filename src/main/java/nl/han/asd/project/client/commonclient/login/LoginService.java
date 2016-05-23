@@ -27,7 +27,7 @@ public class LoginService implements ILogin {
     @Override
     public LoginResponseWrapper login(String username, String password) {
         // DO NOT REMOVE, YET!
-        if (Validation.validateLoginData(username, password))
+        if (Validation.validateCredentials(username, password))
             return masterGateway.authenticate(username, password);
         else
             return null;

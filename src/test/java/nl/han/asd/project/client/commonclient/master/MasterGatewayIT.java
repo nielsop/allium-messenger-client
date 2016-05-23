@@ -21,8 +21,8 @@ import java.util.UUID;
  */
 public class MasterGatewayIT {
 
-    private static final String VALID_USERNAME = "Nielsje41";
-    private static final String VALID_PASSWORD = "wachtwoord";
+    private static final String VALID_USERNAME = "valid_username";
+    private static final String VALID_PASSWORD = "valid_password";
     private CloudHost master;
     private MasterGateway gateway;
 
@@ -36,7 +36,7 @@ public class MasterGatewayIT {
                 new Socket(master.getHostName(), master.getPort(1337));
                 break;
             } catch (IOException e) {
-                System.out.println("Trying again in 2 seconds");
+                System.out.println("Trying again in two seconds");
             }
 
             try {
@@ -50,7 +50,7 @@ public class MasterGatewayIT {
     }
 
     @After
-    public void aster() {
+    public void after() {
         master.teardown();
     }
 
@@ -62,11 +62,12 @@ public class MasterGatewayIT {
     }
 
     @Test
-    public void testRegisterClientUsernameTaken() {
+    public void testRegisterClientSameUsernameFails() {
         String username = UUID.randomUUID().toString();
-        gateway.register(username, VALID_PASSWORD);
-        Assert.assertEquals(gateway.register(username, VALID_PASSWORD).getStatus(),
-                HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME);
+        Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES,
+                gateway.register(username, VALID_PASSWORD).getStatus());
+        Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME,
+                gateway.register(username, VALID_PASSWORD).getStatus());
     }
 
     /* Login of clients on master server */
@@ -89,11 +90,9 @@ public class MasterGatewayIT {
 
     /* Get active client group from master server */
 
-    @Test
-    @Ignore("To be fixed")
+    @Test @Ignore("Has to be fixed.") //TODO: Fix test?
     public void testGetClientGroupSuccessful() {
         ClientGroupResponseWrapper response = gateway.getClientGroup();
         Assert.assertTrue(response.getClientGroup().size() >= 0);
     }
-    /* */
 }
