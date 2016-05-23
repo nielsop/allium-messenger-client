@@ -20,8 +20,6 @@ import java.net.Socket;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
 
-    //TODO: missing: IWebService from Master
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterGateway.class);
     private static int currentGraphVersion = -1;
     private ConnectionService connectionService;
@@ -51,8 +49,15 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         return socket;
     }
 
+    /**
+     * This method authenticates a user to the master application with the given credentials.
+     * @param username the username to be authenticated.
+     * @param password the password belonging to the username.
+     * @return a wrapper which is the response of the authentication process. For the specific details of the LoginResponseWrapper,
+     *          check the LoginResponseWrapper class.
+     */
     @Override
-    public LoginResponseWrapper authenticate(String username, String password) throws IllegalArgumentException  {
+    public LoginResponseWrapper authenticate(String username, String password) throws IllegalArgumentException {
         Validation.validateCredentials(username, password);
         HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder().setUsername(username).setPassword(password)
                 .setPublicKey(ByteString.copyFrom(encryptionService.getPublicKey())).build();
@@ -62,8 +67,17 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(), response.getStatus());
     }
 
+    /**
+     * This method registers a user at the master application with the given credentials.
+     * @param username the username to be registered.
+     * @param password the password to be registered with the username.
+     * @param passwordRepeat repeat the password to guarantee the user he inserted the password he really wanted to use.
+     * @return a wrapper which is the response of the registration process. For the specific details of the RegisterResponseWrapper,,
+     *          check the RegisterResponseWrapper class.
+     * @throws IllegalArgumentException
+     */
     @Override
-    public RegisterResponseWrapper register(String username, String password, String passwordRepeat) throws IllegalArgumentException  {
+    public RegisterResponseWrapper register(String username, String password, String passwordRepeat) throws IllegalArgumentException {
         Validation.validateCredentials(username, password);
         Validation.PasswordsEqual(password, passwordRepeat);
         HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder().setUsername(username).setPassword(password).build();
@@ -93,7 +107,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
     /**
      * Returns the current graph version.
-     *
      * @return The current graph version.
      */
     public int getCurrentGraphVersion() {
@@ -102,7 +115,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
     /**
      * Sets the current graph version.
-     *
      * @param newVersion The new graph version.
      */
     private void setCurrentGraphVersion(int newVersion) {
@@ -111,7 +123,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
     /**
      * Returns the connection.
-     *
      * @return The connection
      */
     private ConnectionService getConnection() {
@@ -142,7 +153,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
     /**
      * Checks if the connection is open.
-     *
      * @return <tt>true</tt> if the connection is open, <tt>false</tt> if the connection is not.
      */
     private boolean isConnectionOpen() {
