@@ -6,10 +6,7 @@ import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrappe
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
-import nl.han.asd.project.client.commonclient.store.IMessageObserver;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.store.*;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,19 +23,18 @@ public class PresentationLayer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(PresentationLayer.class);
 
-    private IContactStore contacts;
-    private IMessageStore messages;
+    private IContactStore contactStore;
+    private IMessageStore messageStore;
     private IMessageBuilder messageBuilder;
     private IMessageObserver messageObserver;
     private IRegistration registration;
     private ILogin login;
-    private Contact currentUser;
     private String privateKey = "privateKey";
 
     @Inject
-    public PresentationLayer(IContactStore contact, IMessageStore messages, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
-        this.contacts = contact;
-        this.messages = messages;
+    public PresentationLayer(IContactStore contactStore, IMessageStore messageStore, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
+        this.contactStore = contactStore;
+        this.messageStore = messageStore;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
         this.registration = registration;
@@ -50,7 +46,7 @@ public class PresentationLayer {
 
     // TODO remove test method
     private void createTestContacts() {
-        contacts.createTestContacts();
+        contactStore.createTestContacts();
     }
 
     /**
@@ -80,31 +76,36 @@ public class PresentationLayer {
         return registerResponse.getStatus();
     }
 
-    public Contact getCurrentUser() {
-        return currentUser;
-    }
-
     public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) throws IllegalArgumentException  {
         LoginResponseWrapper loginResponse = login.login(username, password);
         LOGGER.info("User: \"" + username + "\" loginRequest status: " + loginResponse.getStatus().name());
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-            currentUser = new Contact(username, privateKey, true);
+            contactStore.setCurrentUser(new Contact(username, privateKey, true));
         }
         return loginResponse.getStatus();
     }
 
     public List<Message> getMessages(String contact) {
-        LOGGER.info("Find messages for user: " + contact);
-        return messages.getMessages(contact);
+        LOGGER.info("Find messages from user: " + contact);
+        return messageStore.getMessages(contact);
+    }
+
+    public Contact getCurrentUser() {
+        LOGGER.info("Find the current user");
+        return contactStore.getCurrentUser();
     }
 
     public List<Contact> getContacts() {
-        LOGGER.info("Find contacts");
-        return contacts.getAllContacts();
+        LOGGER.info("Find all contacts");
+        return contactStore.getAllContacts();
+    }
+
+    public void addMessage(Message message) {
+        messageStore.addMessage(message);
     }
 
     public void sendMessage(Message message) {
-        LOGGER.info(message.getSender() + " sends to " + message.getReceiver() + "the following massage:\n" + message.getText());
-        messages.sendMessage(message);
+        LOGGER.info(message.getSender().getUsername() + " sends to " + message.getReceiver().getUsername() + " the following massage: " + message.getText());
+        messageStore.addMessage(message);
     }
 }

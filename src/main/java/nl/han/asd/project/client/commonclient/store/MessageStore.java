@@ -5,10 +5,14 @@ import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageStore implements IMessageStore, IMessageObserver {
     public IPersistence persistence;
+
+    //for testing purposes
+    ArrayList<Message> messages = new ArrayList<>();
 
     @Inject
     public MessageStore(IPersistence persistence) {
@@ -16,22 +20,26 @@ public class MessageStore implements IMessageStore, IMessageObserver {
     }
 
     @Override
-    public void addMessage(HanRoutingProtocol.Message message) {
-        //TODO: implement!
+    public void addMessage(Message message) {
+        messages.add(message);
     }
 
     @Override
-    public void findMessage(HanRoutingProtocol.Message message) {
+    public void findMessage(Message message) {
         //TODO: implement!
     }
 
     @Override
     public List<Message> getMessages(String contact) {
-        return null;
-    }
-
-    @Override
-    public void sendMessage(Message message) {
-
+        ArrayList<Message> msgs = new ArrayList<>();
+        for (Message msg : messages) {
+            if (msg.getReceiver().getUsername().equals(contact)) {
+                msgs.add(msg);
+            }
+            else if (msg.getSender().getUsername().equals(contact)) {
+                msgs.add(msg);
+            }
+        }
+        return msgs;
     }
 }

@@ -14,5 +14,9 @@ public interface IContactStore {
 
     Contact findContact(String username);
 
+    Contact getCurrentUser();
+
+    void  setCurrentUser(Contact currentUser);
+
     void deleteAllContacts();
 }
