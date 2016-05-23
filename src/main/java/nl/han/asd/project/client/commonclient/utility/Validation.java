@@ -9,15 +9,15 @@ import static org.apache.http.conn.util.InetAddressUtils.*;
 /**
  * Provides validation methods.
  */
-public class Validation {
+public final class Validation {
 
-    private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]*";
+    private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9_-]*";
 
     /**
      * Private constructor to prevent instantiation.
      */
     private Validation() {
-
+        throw new UnsupportedOperationException("You may not instantiate this class.");
     }
 
     /**
@@ -38,10 +38,17 @@ public class Validation {
      *             http://www.jguru.com/faq/view.jsp?EID=17521
      */
     public static boolean isValidPort(int port) {
-        return port >= 0 && port <= 65535;
+        return port >= 1024 && port <= 65535;
     }
 
-    public static boolean validateLoginData(String username, String password) {
+    /**
+     * This method calls the validation of the username and the validation of the password.
+     * This method returns true if both validation methods return true.
+     * @param username the username to validate.
+     * @param password the password to validate.
+     * @return boolean if validated or not.
+     */
+    public static boolean validateCredentials(String username, String password) {
         return isValidUsername(username) && isValidPassword(password);
     }
 
@@ -53,11 +60,11 @@ public class Validation {
     private static boolean isValidUsername(String username) {
         if (username == null || username.isEmpty() || !username.matches(REGEX_ALPHANUMERIC)) {
             throw new IllegalArgumentException(
-                    "Ongeldige gebruikersnaam! Voer een gebruikersnaam van letters en cijfers in.");
+                    "Invalid username! Username may only consist of digits, numbers, underscores and dashes.");
         }
-        if (username.length() < 3 || username.length() > 12) {
+        if (username.length() < 3 || username.length() > 40) {
             throw new IllegalArgumentException(
-                    "Ongeldige gebruikersnaam! Voer een gebruikersnaam van minimaal 3 en maximaal 12 tekens in.");
+                    "Invalid username! Username length should be between 3 and 40 characters.");
         }
         return true;
     }
@@ -67,15 +74,16 @@ public class Validation {
      * @param password The password to check.
      * @return <tt>true</tt> if it's a valid password, <tt>false</tt> otherwise.
      */
+    //TODO: Better password regex.
     private static boolean isValidPassword(String password) {
         if (password == null || password.isEmpty() || !password.matches(REGEX_ALPHANUMERIC)) {
-            throw new IllegalArgumentException("Ongeldige wachtwoord! Voer een wachtwoord van letters en cijfers in.");
-        }
-        if (password.length() < 8 || password.length() > 16) {
             throw new IllegalArgumentException(
-                    "Ongeldige wachtwoord! Voer een wachtwoord van minimaal 8 en maximaal 12 tekens in.");
+                    "Invalid username! Username may only consist of digits, numbers, underscores and dashes.");
+        }
+        if (password.length() < 8 || password.length() > 40) {
+            throw new IllegalArgumentException(
+                    "Invalid password! Passwordt length should be between 8 and 40 characters.");
         }
         return true;
     }
-
 }
