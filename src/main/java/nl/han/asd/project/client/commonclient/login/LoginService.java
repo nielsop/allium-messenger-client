@@ -20,7 +20,7 @@ public class LoginService implements ILogin {
 
     private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]";
     private static final String REGEX_ALPHANUMERICSPECIAL = "^(?=(?:\\D*?\\d){8,32}(?!.*?\\d))[a-zA-Z0-9@\\#$%&*()_+\\]\\[';:?.,!^-]+$";
-    private MasterGateway masterGateway = null;
+    public MasterGateway masterGateway = null;
     private ISetConnectedNodes setConnectedNodes;
     private IAuthentication authentication;
 
