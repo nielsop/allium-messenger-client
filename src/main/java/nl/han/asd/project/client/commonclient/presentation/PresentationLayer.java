@@ -56,7 +56,6 @@ public class PresentationLayer {
      * @param username username given by user.
      * @param password password given by user.
      */
-    //TODO: Use validation in a better way?
     public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IllegalArgumentException  {
         //Get registering response
         RegisterResponseWrapper registerResponse = registration.register(username, password, passwordRepeat);
