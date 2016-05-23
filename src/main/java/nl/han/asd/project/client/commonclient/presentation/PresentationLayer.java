@@ -10,7 +10,6 @@ import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageObserver;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +36,9 @@ public class PresentationLayer {
     private String privateKey = "privateKey";
 
     @Inject
-    public PresentationLayer(IContactStore contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
+    public PresentationLayer(IContactStore contact, IMessageStore messages, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
         this.contacts = contact;
+        this.messages = messages;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
         this.registration = registration;
@@ -61,10 +61,9 @@ public class PresentationLayer {
      * @param password password given by user.
      */
     //TODO: Use validation in a better way?
-    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password) {
-        Validation.validateCredentials(username, password);
+    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IllegalArgumentException  {
         //Get registering response
-        RegisterResponseWrapper registerResponse = registration.register(username, password);
+        RegisterResponseWrapper registerResponse = registration.register(username, password, passwordRepeat);
         //In every other case, do something.
         switch (registerResponse.getStatus()) {
             case SUCCES:
@@ -85,8 +84,7 @@ public class PresentationLayer {
         return currentUser;
     }
 
-    public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) {
-        Validation.validateCredentials(username, password);
+    public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) throws IllegalArgumentException  {
         LoginResponseWrapper loginResponse = login.login(username, password);
         LOGGER.info("User: \"" + username + "\" loginRequest status: " + loginResponse.getStatus().name());
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {

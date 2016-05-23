@@ -52,7 +52,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     }
 
     @Override
-    public LoginResponseWrapper authenticate(String username, String password) {
+    public LoginResponseWrapper authenticate(String username, String password) throws IllegalArgumentException  {
         Validation.validateCredentials(username, password);
         HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder().setUsername(username).setPassword(password)
                 .setPublicKey(ByteString.copyFrom(encryptionService.getPublicKey())).build();
@@ -63,8 +63,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     }
 
     @Override
-    public RegisterResponseWrapper register(String username, String password) {
+    public RegisterResponseWrapper register(String username, String password, String passwordRepeat) throws IllegalArgumentException  {
         Validation.validateCredentials(username, password);
+        Validation.PasswordsEqual(password, passwordRepeat);
         HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder().setUsername(username).setPassword(password).build();
         RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREGISTERREQUEST, getSocket());
         HanRoutingProtocol.ClientRegisterResponse response = req.writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);

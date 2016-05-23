@@ -7,5 +7,5 @@ import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWra
  */
 public interface IRegistration {
 
-    RegisterResponseWrapper register(String username, String password);
+    RegisterResponseWrapper register(String username, String password, String passwordRepeat);
 }
