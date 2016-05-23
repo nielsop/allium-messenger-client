@@ -58,9 +58,7 @@ public class PresentationLayer {
      * @param password password given by user.
      */
     public HanRoutingProtocol.ClientRegisterResponse.Status register(String username, String password) {
-        //Get registering response
         RegisterResponseWrapper registerResponse = registration.register(username, password);
-        //In every other case, do something.
         switch (registerResponse.getStatus()) {
             case SUCCES:
                 LOGGER.info("Registering worked!");
@@ -75,7 +73,6 @@ public class PresentationLayer {
                 LOGGER.info("Default response. Something went wrong...");
                 break;
         }
-        //Return the status
         return registerResponse.getStatus();
     }
 
@@ -83,9 +80,15 @@ public class PresentationLayer {
         return currentUser;
     }
 
+    /**
+     * Logs in and returns a login status. This login status is wrapped inside a loginResponseWrapper.
+     * @param username the username to log in.
+     * @param password the password belonging to the username.
+     * @return the login status, received from the loginResponseWrapper.
+     */
     public HanRoutingProtocol.ClientLoginResponse.Status login(String username, String password) {
         LoginResponseWrapper loginResponse = login.login(username, password);
-        LOGGER.info("User: \"" + username + "\" login status: " + loginResponse.getStatus().name());
+        LOGGER.info(String.format("User '%S' has login status '%S'.", username, loginResponse.getStatus().name()));
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
             currentUser = new Contact(username, privateKey, true);
         }
