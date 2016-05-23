@@ -24,7 +24,7 @@ class Server {
 
     public Server() {
         final Injector injector = Guice.createInjector(new EncryptionModule());
-        packer = new Packer(new CryptographyService(injector.getInstance(IEncryptionService.class)));
+        packer = new Packer(injector.getInstance(IEncryptionService.class));
     }
 
     public void Start(final int port) throws IOException {

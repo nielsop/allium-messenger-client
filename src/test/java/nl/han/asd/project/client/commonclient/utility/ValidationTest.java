@@ -3,7 +3,6 @@ package nl.han.asd.project.client.commonclient.utility;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.Assert;
 import org.junit.Test;
-import org.reflections.util.Utils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

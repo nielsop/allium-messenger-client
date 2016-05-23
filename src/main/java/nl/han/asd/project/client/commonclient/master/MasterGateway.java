@@ -1,9 +1,12 @@
 package nl.han.asd.project.client.commonclient.master;
 
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
@@ -17,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Properties;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
 
@@ -28,9 +32,9 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     private String hostname = Configuration.getHostname();
     private int port = Configuration.getPort();
 
-    @Inject
-    public MasterGateway(IEncryptionService encryptionService) {
-        this.encryptionService = encryptionService;
+    public MasterGateway(final Properties properties, final IConnectionServiceFactory connectionServiceFactory) {
+        String publicKeyFileName = properties.getProperty("masterPublicKey");
+        this.connectionService = connectionServiceFactory.create(new byte[] { 0x00 });
     }
 
     public void setConnectionData(String hostname, int port) {
@@ -127,7 +131,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         if (connectionService == null) {
             // new byte[] { 0x00 } = public key that belongs to the cryptography service of the receiver
             //                          en/decryption is disabled for now, so initializing with an null-byte is sufficient.
-            connectionService = new ConnectionService(new byte[] { 0x00 });
+            connectionService = new ConnectionService(null, new  byte[] { 0x00 });
         }
         try {
             connectionService.open(Configuration.getHostname(), Configuration.getPort());

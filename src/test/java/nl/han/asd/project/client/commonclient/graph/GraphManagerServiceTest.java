@@ -4,14 +4,18 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
+import nl.han.asd.project.client.commonclient.connection.ConnectionModule;
+import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import org.junit.*;
 import org.junit.rules.Timeout;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Properties;
 
 /**
  * Created by Julius on 25/04/16.
@@ -27,7 +31,7 @@ public class GraphManagerServiceTest {
     public void setUp() throws Exception {
         master = CloudHostFactory.getCloudHost("master");
         master.setup();
-        Injector injector = Guice.createInjector(new EncryptionModule());
+        Injector injector = Guice.createInjector(new ConnectionModule());
         while (true) {
             try {
                 new Socket(master.getHostName(), master.getPort(1337));
@@ -42,7 +46,8 @@ public class GraphManagerServiceTest {
                 e.printStackTrace();
             }
         }
-        MasterGateway gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
+        MasterGateway gateway = new MasterGateway(
+                Mockito.mock(Properties.class), injector.getInstance(IConnectionServiceFactory.class));
         gateway.setConnectionData(master.getHostName(), master.getPort(1337));
         graphManagerService = new GraphManagerService(gateway);
     }

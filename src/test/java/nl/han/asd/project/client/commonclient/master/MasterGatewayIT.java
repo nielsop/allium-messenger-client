@@ -4,14 +4,18 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
+import nl.han.asd.project.client.commonclient.connection.ConnectionModule;
+import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.*;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -30,7 +34,7 @@ public class MasterGatewayIT {
     public void setup() {
         master = CloudHostFactory.getCloudHost("master");
         master.setup();
-        Injector injector = Guice.createInjector(new EncryptionModule());
+        Injector injector = Guice.createInjector(new ConnectionModule());
         while (true) {
             try {
                 new Socket(master.getHostName(), master.getPort(1337));
@@ -45,7 +49,7 @@ public class MasterGatewayIT {
                 e.printStackTrace();
             }
         }
-        gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
+        gateway = new MasterGateway(Mockito.mock(Properties.class), injector.getInstance(IConnectionServiceFactory.class));
         gateway.setConnectionData(master.getHostName(), master.getPort(1337));
     }
 
