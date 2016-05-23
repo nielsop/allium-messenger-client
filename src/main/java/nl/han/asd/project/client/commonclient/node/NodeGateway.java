@@ -10,6 +10,6 @@ public class NodeGateway implements ISendMessage {
 
         request.setIPaddress(message.getIp());
         request.setPort(message.getPort());
-        request.setEncryptedData(message.getEncryptedData());
+        request.setData(message.getEncryptedData());
     }
 }
