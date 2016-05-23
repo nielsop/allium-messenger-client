@@ -1,12 +1,8 @@
 package nl.han.asd.project.client.commonclient.utility;
 
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.reflections.util.Utils;
-
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 
 import static org.junit.Assert.*;
@@ -37,52 +33,52 @@ public class ValidationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsUsernameEmpty() {
-        Validation.validateLoginData(INVALID_USERNAME_EMPTY, VALID_PASSWORD);
+        Validation.validateCredentials(INVALID_USERNAME_EMPTY, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsPasswordEmpty() {
-        Validation.validateLoginData(VALID_USERNAME, INVALID_PASSWORD_EMPTY);
+        Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_EMPTY);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsUsernameTooLong() {
-        Validation.validateLoginData(INVALID_USERNAME_TOO_LONG, VALID_PASSWORD);
+        Validation.validateCredentials(INVALID_USERNAME_TOO_LONG, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsPasswordTooLong() {
-        Validation.validateLoginData(VALID_USERNAME, INVALID_PASSWORD_TOO_LONG);
+        Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_TOO_LONG);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsUsernameTooShort() {
-        Validation.validateLoginData(INVALID_USERNAME_TOO_SHORT, VALID_PASSWORD);
+        Validation.validateCredentials(INVALID_USERNAME_TOO_SHORT, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsPasswordTooShort() {
-        Validation.validateLoginData(VALID_USERNAME, INVALID_PASSWORD_TOO_SHORT);
+        Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_TOO_SHORT);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUsernameContainsForbiddenCharacters() {
-        Validation.validateLoginData(INVALID_USERNAME_FORBIDDEN_CHARACTERS, VALID_PASSWORD);
+        Validation.validateCredentials(INVALID_USERNAME_FORBIDDEN_CHARACTERS, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPasswordContainsForbiddenCharacters() {
-        Validation.validateLoginData(VALID_USERNAME, INVALID_PASSWORD_FORBIDDEN_CHARACTERS);
+        Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_FORBIDDEN_CHARACTERS);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsUsernameNull() {
-        Validation.validateLoginData(INVALID_USERNAME_NULL, VALID_PASSWORD);
+        Validation.validateCredentials(INVALID_USERNAME_NULL, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIsPasswordNull() {
-        Validation.validateLoginData(VALID_USERNAME, INVALID_PASSWORD_NULL);
+        Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_NULL);
     }
 
     private static final String VALID_USERNAME_3CHARS = "OKE";
