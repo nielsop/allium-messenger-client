@@ -20,8 +20,6 @@ import java.net.Socket;
 
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
 
-    //TODO: missing: IWebService from Master
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterGateway.class);
     private static int currentGraphVersion = -1;
     private ConnectionService connectionService;

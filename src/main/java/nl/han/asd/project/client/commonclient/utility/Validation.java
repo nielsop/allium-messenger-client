@@ -44,6 +44,9 @@ public final class Validation {
     /**
      * This method calls the validation of the username and the validation of the password.
      * This method returns true if both validation methods return true.
+     * @param username the username to validate.
+     * @param password the password to validate.
+     * @return boolean if validated or not.
      */
     public static boolean validateCredentials(String username, String password) {
         return isValidUsername(username) && isValidPassword(password);
