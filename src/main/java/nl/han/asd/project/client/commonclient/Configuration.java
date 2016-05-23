@@ -24,6 +24,7 @@ public class Configuration {
 
     public static int getPort() {
         try {
+            LOGGER.info("User dir: " + System.getProperty("user.dir"));
             FileInputStream inputStream = new FileInputStream("application.properties");
             final Properties properties = new Properties();
             properties.load(inputStream);
