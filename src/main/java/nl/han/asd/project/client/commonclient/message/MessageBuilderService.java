@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
@@ -48,7 +49,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
-        builder.setEncryptedData(messageToSend.getEncryptedData());
+        builder.setData(messageToSend.getEncryptedData());
 
         connectionService = new ConnectionService(messageToSend.getPublicKey());
         try {
@@ -60,7 +61,7 @@ public class MessageBuilderService implements IMessageBuilder {
     }
 
     private EncryptedMessage buildMessagePackage(String messageText, Contact contactReceiver, Contact contactSender) {
-        ArrayList<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
+        List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
         Message message = new Message(messageText, contactSender, contactReceiver);
         //TODO kijken of path of die nodes bevat anders gooi exep
@@ -81,7 +82,7 @@ public class MessageBuilderService implements IMessageBuilder {
         builder.setUsername(message.getReceiver().getUsername());
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
-        builder.setEncryptedData(ByteString.copyFromUtf8(message.getText()));
+        builder.setData(ByteString.copyFromUtf8(message.getText()));
         return cryptographyService.encryptData(builder.build().toByteString(), node.getPublicKey());
     }
 
@@ -89,7 +90,7 @@ public class MessageBuilderService implements IMessageBuilder {
         return new EncryptedMessage(null, node.getIpAddress(), node.getPort(),node.getPublicKey(), data);
     }
 
-    private ByteString buildMessagePackageLayer(ByteString message, ArrayList<Node> remainingPath) {
+    private ByteString buildMessagePackageLayer(ByteString message, List<Node> remainingPath) {
         if (remainingPath.size() == 1) {
             return message;
         }
@@ -98,7 +99,7 @@ public class MessageBuilderService implements IMessageBuilder {
         Node node = remainingPath.get(0);
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
-        builder.setEncryptedData(message);
+        builder.setData(message);
 
         remainingPath.remove(0);
 
