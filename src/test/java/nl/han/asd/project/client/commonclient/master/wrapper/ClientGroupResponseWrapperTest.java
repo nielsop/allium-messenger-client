@@ -29,7 +29,7 @@ public class ClientGroupResponseWrapperTest {
     @Test
     public void testNewClientGroupResponse() {
         ClientGroupResponseWrapper responseWrapper = new ClientGroupResponseWrapper(clients);
-        Assert.assertTrue(responseWrapper.clientGroup.size() > 0);
+        Assert.assertTrue(responseWrapper.getClientGroup().size() > 0);
     }
 
 }

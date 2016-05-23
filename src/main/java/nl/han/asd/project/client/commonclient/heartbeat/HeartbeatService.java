@@ -14,7 +14,7 @@ import java.net.SocketException;
 
 public class HeartbeatService implements IConnectionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeartbeatService.class);
-    public IHeartbeat heartbeat;
+    private IHeartbeat heartbeat;
     protected volatile boolean isRunning = true;
     protected ConnectionService connectionService = null;
 
@@ -23,7 +23,7 @@ public class HeartbeatService implements IConnectionService {
         connectionService.open(hostName, portNumber);
     }
 
-    public void Start() {
+    public void start() {
         HanRoutingProtocol.ClientHeartbeat.Builder builder = HanRoutingProtocol.ClientHeartbeat.newBuilder();
         builder.setUsername("test");
         builder.setSecretHash("x");
@@ -43,7 +43,7 @@ public class HeartbeatService implements IConnectionService {
         heartbeatThread.start();
     }
 
-    public void Stop() throws IOException {
+    public void stop() throws IOException {
         isRunning = false;
         connectionService.close();
     }

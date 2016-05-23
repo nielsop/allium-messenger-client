@@ -20,16 +20,17 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
-    public IGetPath getPath;
-    public ISendMessage sendMessage;
-    public IMessageStore messageStore;
+    private IGetPath getPath;
+    private ISendMessage sendMessage;
+    private IMessageStore messageStore;
     private ConnectionService connectionService = null;
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
-    public IEncrypt encrypt;
-    public CryptographyService cryptographyService;
+    private IEncrypt encrypt;
+    private CryptographyService cryptographyService;
 
     @Inject
     public MessageBuilderService(IGetPath getPath, IEncrypt encrypt, ISendMessage sendMessage,
@@ -55,12 +56,12 @@ public class MessageBuilderService implements IMessageBuilder {
             connectionService.open(messageToSend.getIp(),messageToSend.getPort());
             connectionService.write(builder);
         } catch (IOException e) {
-            LOGGER.error("Message could not be send due to connection problems.");
+            LOGGER.error("Message could not be send due to connection problems.", e);
         }
     }
 
     private EncryptedMessage buildMessagePackage(String messageText, Contact contactReceiver, Contact contactSender) {
-        ArrayList<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
+        List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
         Message message = new Message(messageText, contactSender, contactReceiver);
         //TODO kijken of path of die nodes bevat anders gooi exep
@@ -89,7 +90,7 @@ public class MessageBuilderService implements IMessageBuilder {
         return new EncryptedMessage(null, node.getIpAddress(), node.getPort(),node.getPublicKey(), data);
     }
 
-    private ByteString buildMessagePackageLayer(ByteString message, ArrayList<Node> remainingPath) {
+    private ByteString buildMessagePackageLayer(ByteString message, List<Node> remainingPath) {
         if (remainingPath.size() == 1) {
             return message;
         }

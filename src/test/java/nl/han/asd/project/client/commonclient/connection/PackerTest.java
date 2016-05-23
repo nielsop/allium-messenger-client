@@ -43,7 +43,7 @@ public class PackerTest {
         builder.setPassword("test");
 
         // Pack..
-        HanRoutingProtocol.Wrapper packed = packer.pack(builder, packer.getMyPublicKey());
+        HanRoutingProtocol.Wrapper packed = packer.pack(builder);
 
         return packed;
     }

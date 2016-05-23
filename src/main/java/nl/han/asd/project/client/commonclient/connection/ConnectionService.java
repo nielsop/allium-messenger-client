@@ -162,7 +162,7 @@ public final class ConnectionService implements IConnectionPipe {
             throw new SocketException(INVALID_SOCKET_CONNECTION);
         }
 
-        HanRoutingProtocol.Wrapper wrapper = packer.pack(instance, getReceiverPublicKey());
+        HanRoutingProtocol.Wrapper wrapper = packer.pack(instance);
         connection.write(wrapper);
     }
 
