@@ -7,5 +7,5 @@ package nl.han.asd.project.client.commonclient.node;
  * @version 1.0
  * @since 10-5-2016
  */
-public class NodeConnection implements IConnectionListner {
+public class NodeConnection implements IConnectionListener {
 }

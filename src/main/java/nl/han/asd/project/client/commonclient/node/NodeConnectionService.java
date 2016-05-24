@@ -5,10 +5,10 @@ import nl.han.asd.project.client.commonclient.message.IReceiveMessage;
 
 public class NodeConnectionService implements ISetConnectedNodes, ISendData {
     private IReceiveMessage receiveMessage;
-    private IConnectionListner nodeConnection;
+    private IConnectionListener nodeConnection;
 
     @Inject
-    public NodeConnectionService(IReceiveMessage receiveMessage, IConnectionListner nodeConnection) {
+    public NodeConnectionService(IReceiveMessage receiveMessage, IConnectionListener nodeConnection) {
         this.receiveMessage = receiveMessage;
         this.nodeConnection = nodeConnection;
     }
