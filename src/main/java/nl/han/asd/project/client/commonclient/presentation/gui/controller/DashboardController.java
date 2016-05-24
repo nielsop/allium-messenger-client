@@ -36,7 +36,7 @@ public class DashboardController {
 
 
     public void selectContact(Contact contact) {
-//        paneChat.setContact(contactStore);
+//        paneChat.setContact(contact);
     }
 
     public ContactController getContactController() {

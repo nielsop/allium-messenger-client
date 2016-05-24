@@ -6,15 +6,13 @@ import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrappe
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.CurrentUser;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.client.commonclient.store.IContact;
 import nl.han.asd.project.client.commonclient.store.IMessageObserver;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.List;
 
 /**
  * Android/Desktop application
@@ -25,11 +23,13 @@ public class PresentationLayer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PresentationLayer.class);
 
-    public IContactStore contactStore;
+    //TODO: android app? desktop app?
+    public IContact contact;
     public IMessageBuilder messageBuilder;
     public IMessageObserver messageObserver;
     public IRegistration registration;
     public ILogin login;
+    private Contact currentUser;
     private String privateKey = "privateKey";
 
     /**
@@ -42,8 +42,9 @@ public class PresentationLayer {
     }
 
     @Inject
-    public PresentationLayer(IContactStore contactStore, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
-        this.contactStore = contactStore;
+    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver,
+            IRegistration registration, ILogin login) {
+        this.contact = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
         this.registration = registration;
@@ -79,37 +80,16 @@ public class PresentationLayer {
         return registerResponse.status;
     }
 
+    public Contact getCurrentUser() {
+        return currentUser;
+    }
+
     public HanRoutingProtocol.ClientLoginResponse.Status login(String username, String password) {
         LoginResponseWrapper loginResponse = login.login(username, password);
         LOGGER.info("User: \"" + username + "\" login status: " + loginResponse.status.name());
         if (loginResponse.status == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-            contactStore.setCurrentUser(new CurrentUser(username, privateKey, loginResponse.secretHash));
+            currentUser = new Contact(username, privateKey, true);
         }
         return loginResponse.status;
-    }
-
-    public Contact getCurrentUser() {
-        return contactStore.getCurrentUser();
-    }
-
-    // Contact functions
-    public void addContact(String username) {
-        contactStore.addContact(username);
-    }
-
-    public void deleteContact(String username) {
-        contactStore.deleteContact(username);
-    }
-
-    public void deleteAllContacts() {
-        contactStore.deleteAllContacts();
-    }
-
-    public List<Contact> getAllContacts() {
-        return contactStore.getAllContacts();
-    }
-
-    public Contact findContact(String username) {
-        return findContact(username);
     }
 }

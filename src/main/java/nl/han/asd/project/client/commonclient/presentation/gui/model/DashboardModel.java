@@ -28,7 +28,7 @@ public class DashboardModel {
     }
 
     public ArrayList<Message> getMessages(Contact contact) {
-//        return gui.pLayer.getMessages(contactStore);
+//        return gui.pLayer.getMessages(contact);
         return null;
     }
 

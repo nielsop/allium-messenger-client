@@ -8,7 +8,7 @@ import com.google.inject.AbstractModule;
 public class StoreModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(IContactStore.class).to(ContactStore.class);
+        bind(IContact.class).to(ContactStore.class);
         bind(IMessageStore.class).to(MessageStore.class);
         bind(IMessageObserver.class).to(MessageStore.class);
     }
