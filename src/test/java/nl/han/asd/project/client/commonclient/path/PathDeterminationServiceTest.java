@@ -1,9 +1,7 @@
 package nl.han.asd.project.client.commonclient.path;
 
-import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
-import nl.han.asd.project.client.commonclient.store.Contact;
+import java.util.ArrayList;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,14 +11,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
+import nl.han.asd.project.client.commonclient.graph.Node;
+import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
+import nl.han.asd.project.client.commonclient.master.IGetdGraphUpdates;
+import nl.han.asd.project.client.commonclient.store.Contact;
 
 /**
  * Created by Julius on 15/04/16.
  */
-@RunWith(MockitoJUnitRunner.class) public class PathDeterminationServiceTest {
+@RunWith(MockitoJUnitRunner.class)
+public class PathDeterminationServiceTest {
     @Mock
-    IGetUpdatedGraph updatedGraphMock;
+    IGetdGraphUpdates updatedGraphMock;
 
     @Mock
     IGetClientGroup clientGroupMock;
@@ -37,7 +39,7 @@ import java.util.ArrayList;
     }
 
     /*
-    Comparing self created path with a pathDeterminationService generated path
+     * Comparing self created path with a pathDeterminationService generated path
      */
     @Test
     public void whenMiniumHops() {
@@ -50,8 +52,8 @@ import java.util.ArrayList;
     }
 
     /*
-Checking if generatedPath contains Node objects
- */
+     * Checking if generatedPath contains Node objects
+     */
     @Test
     public void checkIfGeneratedPathContainsNodes() {
         Node[] selfMadePath = { new Node("NODE_ID_1", "192.168.2.8", 1234, "123456789".getBytes()),
@@ -66,8 +68,8 @@ Checking if generatedPath contains Node objects
     }
 
     /*
-Checking if error is trown when miniumHops is negative number
-*/
+     * Checking if error is thrown when miniumHops is negative number
+     */
     @Test(expected = IllegalArgumentException.class)
     public void whenMinimunHopsIsNegativeThrowError() {
         ArrayList<Node> generatePath = pathDeterminationService.getPath(-1, contact);
@@ -87,11 +89,6 @@ Checking if error is trown when miniumHops is negative number
         }
         Assert.assertTrue(inArray(generatePath.get(0), contactConnectedNodes));
     }
-
-    //    @Test
-    //    public void clientHostConnectedNodesAreUpdatedIfLastUpdateIsExpired() {
-    //        throw new NotImplementedException();
-    //    }
 
     private boolean inArray(Node needle, Node[] haystack) {
         for (Node n : haystack) {

@@ -1,14 +1,13 @@
 package nl.han.asd.project.client.commonclient.login;
 
-import nl.han.asd.project.client.commonclient.utility.Validation;
+import static org.mockito.Mockito.mock;
+
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author Niels Bokmans
- * @version 1.0
- * @since 18-4-2016
- */
+import nl.han.asd.project.client.commonclient.master.IAuthentication;
+import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
+
 public class LoginServiceTest {
 
     /* Valid credentials */
@@ -26,58 +25,62 @@ public class LoginServiceTest {
     private static final String INVALID_USERNAME_NULL = null;
     private static final String INVALID_PASSWORD_NULL = null;
 
+    private ISetConnectedNodes setConnectedNodesMock;
+    private IAuthentication authenticationMock;
+
+    private ILogin login;
+
     @Before
     public void setUp() {
+        setConnectedNodesMock = mock(ISetConnectedNodes.class);
+        authenticationMock = mock(IAuthentication.class);
+
+        login = new LoginService(setConnectedNodesMock, authenticationMock);
+    }
+
+    @Test(expected = IllegalUsernameException.class)
+    public void testIsUsernameEmpty() throws Exception {
+        login.login(INVALID_USERNAME_EMPTY, VALID_PASSWORD);
+    }
+
+    @Test(expected = IllegalPasswordException.class)
+    public void testIsPasswordEmpty() throws Exception {
+        login.login(VALID_USERNAME, INVALID_PASSWORD_EMPTY);
+    }
+
+    @Test(expected = IllegalUsernameException.class)
+    public void testIsUsernameTooLong() throws Exception {
+        login.login(INVALID_USERNAME_TOO_LONG, VALID_PASSWORD);
+    }
+
+    @Test(expected = IllegalPasswordException.class)
+    public void testIsPasswordTooLong() throws Exception {
+        login.login(VALID_USERNAME, INVALID_PASSWORD_TOO_LONG);
+    }
+
+    @Test(expected = IllegalUsernameException.class)
+    public void testIsUsernameTooShort() throws Exception {
+        login.login(INVALID_USERNAME_TOO_SHORT, VALID_PASSWORD);
+    }
+
+    @Test(expected = IllegalPasswordException.class)
+    public void testIsPasswordTooShort() throws Exception {
+        login.login(VALID_USERNAME, INVALID_PASSWORD_TOO_SHORT);
+    }
+
+    @Test(expected = IllegalUsernameException.class)
+    public void testUsernameContainsForbiddenCharacters() throws Exception {
+        login.login(INVALID_USERNAME_FORBIDDEN_CHARACTERS, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testIsUsernameEmpty() {
-        Validation.validateCredentials(INVALID_USERNAME_EMPTY, VALID_PASSWORD);
+    public void testIsUsernameNull() throws Exception {
+        login.login(INVALID_USERNAME_NULL, VALID_PASSWORD);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testIsPasswordEmpty() {
-        Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_EMPTY);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testIsUsernameTooLong() {
-        Validation.validateCredentials(INVALID_USERNAME_TOO_LONG, VALID_PASSWORD);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testIsPasswordTooLong() {
-        Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_TOO_LONG);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testIsUsernameTooShort() {
-        Validation.validateCredentials(INVALID_USERNAME_TOO_SHORT, VALID_PASSWORD);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testIsPasswordTooShort() {
-        Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_TOO_SHORT);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testUsernameContainsForbiddenCharacters() {
-        Validation.validateCredentials(INVALID_USERNAME_FORBIDDEN_CHARACTERS, VALID_PASSWORD);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testPasswordContainsForbiddenCharacters() {
-        Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_FORBIDDEN_CHARACTERS);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testIsUsernameNull() {
-        Validation.validateCredentials(INVALID_USERNAME_NULL, VALID_PASSWORD);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testIsPasswordNull() {
-        Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_NULL);
+    public void testIsPasswordNull() throws Exception {
+        login.login(VALID_USERNAME, INVALID_PASSWORD_NULL);
     }
 
 }

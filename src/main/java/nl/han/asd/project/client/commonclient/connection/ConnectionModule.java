@@ -4,10 +4,17 @@ import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
- * Created by Jevgeni on 18-5-2016.
+ * Bind the connection implementations to the
+ * interfaces.
+ *
+ * @version 1.0
  */
 public class ConnectionModule extends AbstractModule {
-    @Override protected void configure() {
-        install(new FactoryModuleBuilder().build(IConnectionServiceFactory.class));
+
+    @Override
+    protected void configure() {
+        install(new FactoryModuleBuilder().implement(IConnectionService.class, ConnectionService.class)
+                .build(IConnectionServiceFactory.class));
     }
+
 }

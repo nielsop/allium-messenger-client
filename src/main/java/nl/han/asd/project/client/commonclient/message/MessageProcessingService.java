@@ -1,24 +1,26 @@
 package nl.han.asd.project.client.commonclient.message;
 
-import com.google.inject.Inject;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
+
+import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+import nl.han.asd.project.protocol.HanRoutingProtocol.MessageWrapper;
 
 public class MessageProcessingService implements IReceiveMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
     public IMessageStore messageStore;
 
-    public IDecrypt decrypt;
+    public IEncryptionService encryptionService;
 
     @Inject
-    public MessageProcessingService(IMessageStore messageStore) {
+    public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService) {
         this.messageStore = messageStore;
+        this.encryptionService = encryptionService;
     }
 
     @Override
@@ -27,16 +29,8 @@ public class MessageProcessingService implements IReceiveMessage {
         messageStore.addMessage(message);
     }
 
-    private HanRoutingProtocol.Message decryptEncryptedMessage(HanRoutingProtocol.MessageWrapper encryptedMessage) {
-        ByteString messageBuffer = decrypt.decryptData(encryptedMessage.getEncryptedData());
-        HanRoutingProtocol.Message message = null;
-        try {
-            message = HanRoutingProtocol.Message.parseFrom(messageBuffer);
-        } catch (InvalidProtocolBufferException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return message;
+    private HanRoutingProtocol.Message decryptEncryptedMessage(MessageWrapper encryptedMessage) {
+        return null;
     }
 
-    //TODO peelMessagePacket / Pakket uitpakken
 }

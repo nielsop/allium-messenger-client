@@ -1,152 +1,323 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
-import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.SocketException;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Builder;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Type;
 
 /**
- * Provides a connection service using sockets such as reading and writing data.
+ * {@link IConnectionService} implementation.
  *
- * @author Jevgeni Geurtsen
+ * <p>
+ * This implementation aims to restrict the concurrent number
+ * of open socket connections within a single instance of itself.
+ *
+ * <p>
+ * This functionally can however be overwritten for time-critical
+ * messages using the {@link IConnectionService#write(Wrapper, long, TimeUnit)}
+ * and {@link IConnectionService#writeAndRead(Wrapper, long, TimeUnit)} for writing
+ * without reading and writing while expecting a response respectively.
+ *
+ * @version 1.0
  */
-public final class ConnectionService {
-    private static final String INVALID_SOCKET_CONNECTION = "Socket has no valid or connection, or the valid connection was closed.";
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
-    private Packer packer = null;
-    private byte[] receiverPublicKey = null;
-    private Connection connection = null;
+public class ConnectionService implements IConnectionService {
+    private Semaphore mutex;
+
+    private IEncryptionService encryptionService;
+
+    private String host;
+    private int port;
+
+    private Socket socket;
+
+    private byte[] publicKeyBytes;
 
     /**
-     * Initializes this class.
+     * Create a new ConnectionService instance used
+     * to handle the communication with the specified host.
      *
-     * @param encryptionService IEncryptionService that should be injected.
-     * @param receiverPublicKey The public key of the receiver.
+     * <p>
+     * Note that this method does not check the validity
+     * of the provided hostname or port.
+     *
+     * @param host to-be-conencted to host
+     * @param port port to use during connection
+     *
+     * @throws IllegalArgumentException if host is null
      */
     @AssistedInject
-    public ConnectionService(final IEncryptionService encryptionService, @Assisted final byte[] receiverPublicKey) {
-        connection = new Connection();
-        packer = new Packer(encryptionService);
+    public ConnectionService(@Assisted String host, @Assisted int port) {
+        this.host = Check.notNull(host, "host");
+        this.port = port;
 
-        if (receiverPublicKey == null)
-            throw new IllegalArgumentException("Public key cannot be empty.");
+        encryptionService = null;
 
-        this.receiverPublicKey = receiverPublicKey;
+        mutex = new Semaphore(1);
     }
 
     /**
-     * Reads data from the input stream.
+     * Create a new ConnectionService instance used
+     * to handle the communication with the specified host.
      *
-     * @return A byte array containing the received data from the input stream, or null if no data was read.
-     * @throws SocketException If there is no valid connection.
+     * <p>
+     * Note that this method does not check the validity
+     * of the provided hostname or port.
+     *
+     * @param encryptionService service used to en-/decrypt messages
+     * @param host to-be-connected to host
+     * @param port port to use during connection
+     * @param publicKeyBytes public key of the to-be-connected to host
+     *
+     * @throws IllegalArgumentException if encryptionService, host
+     *          and/or publicKeyBytes is null
      */
-    private UnpackedMessage read() throws SocketException {
-        if (!connection.isConnected()) {
-            throw new SocketException(INVALID_SOCKET_CONNECTION);
+    @AssistedInject
+    public ConnectionService(IEncryptionService encryptionService, @Assisted String host, @Assisted int port,
+            @Assisted byte[] publicKeyBytes) {
+        this.encryptionService = Check.notNull(encryptionService, "encryptionService");
+        this.host = Check.notNull(host, "host");
+        this.port = port;
+        this.publicKeyBytes = Check.notNull(publicKeyBytes, "publicKeyBytes");
+
+        mutex = new Semaphore(1);
+    }
+
+    /**
+     * Create a new ConnectionService instance used
+     * to handle the communication with the specified host.
+     *
+     * <p>
+     * Note that this method does not check the validity
+     * of the provided hostname or port.
+     *
+     * <p>
+     * The functionally provided by this constructor is functionally
+     * equal to:
+     *
+     * <pre>
+     *  IEncryptionService encryptionService = ...;
+     *  String host = ...;
+     *  int port = ...;
+     *
+     *  byte[] publicKeyBytes = null;
+     *  File publicKeyFile = new File(publicKeyFilePath);
+     *
+     *  try (FileInputStream fileInputStream = new FileInputStream(publicKeyFile)) {
+     *      DataInputStream dataInputStream = new DataInputStream(fileInputStream);
+     *      publicKeyBytes = new byte[(int) publicKeyFile.length()];
+     *      dataInputStream.readFully(publicKeyBytes);
+     *  }
+     *
+     *  new ConnectionService(encryptionService, host, port, publicKeyBytes);
+     * </pre>
+     *
+     * @param encryptionService service used to en-/decrypt messages
+     * @param host to-be-connected to host
+     * @param port port to use during connection
+     * @param publicKeyFile byte file containing the hosts public key
+     *
+     * @throws IllegalArgumentException if encryptionService, host
+     *          and/or publicKeyBytes is null
+     * @throws IOException if an IOException occurs during the publicKeyFile read
+     */
+    @AssistedInject
+    public ConnectionService(IEncryptionService encryptionService, @Assisted String host, @Assisted int port,
+            @Assisted File publicKeyFile) throws IOException {
+        this.encryptionService = Check.notNull(encryptionService, "encryptionService");
+        this.host = Check.notNull(host, "host");
+        this.port = port;
+
+        Check.notNull(publicKeyFile, "publicKeyFile");
+        try (FileInputStream fileInputStream = new FileInputStream(publicKeyFile)) {
+            DataInputStream dataInputStream = new DataInputStream(fileInputStream);
+
+            publicKeyBytes = new byte[(int) publicKeyFile.length()];
+            dataInputStream.readFully(publicKeyBytes);
         }
 
-        HanRoutingProtocol.Wrapper wrapper;
+        mutex = new Semaphore(1);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <T extends GeneratedMessage> Wrapper wrap(T message, Type type) {
+        Check.notNull(message, "message");
+        Check.notNull(type, "type");
+
+        Builder wrapperBuilder = Wrapper.newBuilder();
+        wrapperBuilder.setType(type);
+
+        if (encryptionService != null) {
+            byte[] encryptedMessage = encryptionService.encryptData(publicKeyBytes, message.toByteArray());
+            wrapperBuilder.setData(ByteString.copyFrom(encryptedMessage));
+        } else {
+            wrapperBuilder.setData(message.toByteString());
+        }
+
+        return wrapperBuilder.build();
+    }
+
+    private <T extends GeneratedMessage> void writeSocket(T wrapper) throws IOException {
+        if (socket == null) {
+            socket = new Socket(host, port);
+        }
+
         try {
-            wrapper = connection.read();
-
-            if (wrapper == null)
-                throw new NullPointerException("Wrapper cannot be null.");
-        } catch (IOException | NullPointerException e) {
-            LOGGER.error("Reading from stream failed.", e);
-            throw new SocketException("Could not read from stream.");
-        }
-        return packer.unpack(wrapper);
-    }
-
-    /**
-     * Synchronously read a the input stream. Then converts the results into an instance of @classDescriptor.
-     *
-     * @param classDescriptor The class the data needs to be converted from.
-     * @param <T>             Protocol buffer class.
-     * @return A protocol buffer (T) instance.
-     * @throws SocketException An exception occurred while reading data from the stream.
-     */
-    public <T extends GeneratedMessage> T readGeneric(final Class<T> classDescriptor)
-            throws SocketException, InvalidProtocolBufferException {
-        UnpackedMessage unpackedMessage = this.read();
-        if (unpackedMessage.getDataMessage().getClass() == classDescriptor) {
-            try {
-                return (T) unpackedMessage.getDataMessage().getParserForType().parseFrom(unpackedMessage.getData());
-            } catch (InvalidProtocolBufferException e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new SocketException("Failed to parse data from the input stream.");
+            wrapper.writeDelimitedTo(socket.getOutputStream());
+        } finally {
+            if (!mutex.hasQueuedThreads()) {
+                socket.close();
+                socket = null;
             }
-        }
 
-        throw new InvalidProtocolBufferException(String.format(
-                "Received protocol type didn't match supplied parameter. Expected %s but was %s.",
-                classDescriptor.getName(),
-                unpackedMessage.getDataMessage().getClass().getName()));
+            mutex.release();
+        }
     }
 
-    /**
-     * Writes data from the builder to the connection using the input stream.
-     *
-     * @param instance Instance of the builder class of the protocol buffer.
-     * @throws SocketException An exception occurred while writing the data.
-     */
-    public <T extends GeneratedMessage.Builder> void write(final T instance) throws SocketException {
-        if (!connection.isConnected()) {
-            throw new SocketException(INVALID_SOCKET_CONNECTION);
-        }
+    private <T extends GeneratedMessage> void writeNewSocket(T wrapper) throws IOException {
+        Socket localSocket = new Socket(host, port);
 
-        HanRoutingProtocol.Wrapper wrapper = packer.pack(instance, receiverPublicKey);
         try {
-            connection.write(wrapper);
-        } catch (IOException e) {
-            LOGGER.error("Writing to stream failed.", e);
-            throw new SocketException("Could not write to stream.");
+            wrapper.writeDelimitedTo(localSocket.getOutputStream());
+        } finally {
+            localSocket.close();
         }
     }
 
-    /**
-     * Opens a connection to a hostname and port combination.
-     *
-     * @param hostName   Internet protocol address.
-     * @param portNumber Port number to connect to.
-     * @throws IOException If we couldn't connect to the hostname.
-     */
-    public void open(final String hostName, final int portNumber) throws IOException {
-        connection.open(hostName, portNumber);
+    /** {@inheritDoc} */
+    @Override
+    public <T extends GeneratedMessage> void write(T wrapper, long timeout, TimeUnit unit)
+            throws IOException, MessageNotSendException {
+        Check.notNull(wrapper, "wrapper");
+
+        try {
+            if (mutex.tryAcquire(timeout, unit)) {
+                writeSocket(wrapper);
+            } else {
+                writeNewSocket(wrapper);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().isInterrupted();
+            throw new MessageNotSendException(e);
+        }
     }
 
-    /**
-     * Closes the existing connection.
-     *
-     * @throws IOException
-     */
-    public void close() throws IOException {
-        connection.close();
+    /** {@inheritDoc} */
+    @Override
+    public <T extends GeneratedMessage> void write(T wrapper) throws IOException, MessageNotSendException {
+        Check.notNull(wrapper, "wrapper");
+
+        try {
+            mutex.acquire();
+        } catch (InterruptedException e) {
+            Thread.currentThread().isInterrupted();
+            throw new MessageNotSendException(e);
+        }
+
+        writeSocket(wrapper);
     }
 
-    /**
-     * Returns the public key of the cryptography instance inside the packer class.
-     *
-     * @return Public key
-     */
-    byte[] getMyPublicKey() {
-        return packer.getMyPublicKey();
+    private <T extends GeneratedMessage> GeneratedMessage writeAndReadSocket(T wrapper) throws IOException {
+        if (socket == null) {
+            socket = new Socket(host, port);
+        }
+
+        Wrapper responseWrapper = null;
+        try {
+            wrapper.writeDelimitedTo(socket.getOutputStream());
+            responseWrapper = Wrapper.parseDelimitedFrom(socket.getInputStream());
+
+            if (encryptionService == null) {
+                return Parser.parseFrom(responseWrapper);
+            } else {
+                byte[] decryptedData = encryptionService.decryptData(responseWrapper.getData().toByteArray());
+
+                Builder wrapperBuilder = Wrapper.newBuilder();
+                wrapperBuilder.setType(responseWrapper.getType());
+                wrapperBuilder.setData(ByteString.copyFrom(decryptedData));
+
+                return Parser.parseFrom(wrapperBuilder.build());
+            }
+        } finally {
+            if (!mutex.hasQueuedThreads()) {
+                socket.close();
+                socket = null;
+            }
+
+            mutex.release();
+        }
     }
 
-    /**
-     * Checks whether the connection is alive or not.
-     *
-     * @return True if connected, False if disconnected.
-     */
-    public boolean isConnected() {
-        return connection.isConnected();
+    private <T extends GeneratedMessage> GeneratedMessage writeAndReadNewSocket(T wrapper)
+            throws InterruptedException, IOException {
+        Socket localSocket = new Socket(host, port);
+
+        Wrapper responseWrapper = null;
+        try {
+            wrapper.writeDelimitedTo(socket.getOutputStream());
+            responseWrapper = Wrapper.parseDelimitedFrom(socket.getInputStream());
+
+            if (encryptionService == null) {
+                return Parser.parseFrom(responseWrapper);
+            } else {
+                byte[] decryptedData = encryptionService.decryptData(responseWrapper.getData().toByteArray());
+
+                Builder wrapperBuilder = Wrapper.newBuilder();
+                wrapperBuilder.setType(responseWrapper.getType());
+                wrapperBuilder.setData(ByteString.copyFrom(decryptedData));
+
+                return Parser.parseFrom(wrapperBuilder.build());
+            }
+        } finally {
+            localSocket.close();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <T extends GeneratedMessage> GeneratedMessage writeAndRead(T wrapper, long timeout, TimeUnit unit)
+            throws IOException, MessageNotSendException {
+        Check.notNull(wrapper, "wrapper");
+
+        try {
+            if (mutex.tryAcquire(timeout, unit)) {
+                return writeAndReadSocket(wrapper);
+            } else {
+                return writeAndReadNewSocket(wrapper);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().isInterrupted();
+            throw new MessageNotSendException(e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <T extends GeneratedMessage> GeneratedMessage writeAndRead(T wrapper)
+            throws IOException, MessageNotSendException {
+        Check.notNull(wrapper, "wrapper");
+
+        try {
+            mutex.acquire();
+        } catch (InterruptedException e) {
+            Thread.currentThread().isInterrupted();
+            throw new MessageNotSendException(e);
+        }
+
+        return writeAndReadSocket(wrapper);
     }
 }

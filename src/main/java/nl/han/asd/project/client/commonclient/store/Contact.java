@@ -7,6 +7,7 @@ import nl.han.asd.project.client.commonclient.graph.Node;
  */
 public class Contact {
     private String username;
+    private String secretHash;;
     private Node[] connectedNodes;
     private String publicKey;
     private boolean online;
@@ -49,5 +50,13 @@ public class Contact {
 
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public String getSecretHash() {
+        return secretHash;
+    }
+
+    public void setSecretHash(String secretHash) {
+        this.secretHash = secretHash;
     }
 }

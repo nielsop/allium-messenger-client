@@ -1,91 +1,79 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
+
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.junit.*;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
 
-import java.io.IOException;
-import java.net.SocketException;
-
-import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
-import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
-import static org.junit.Assert.assertEquals;
-
-/**
- * Created by Jevgeni on 15-4-2016.
- */
 public class ConnectionServiceTestIT {
 
-    private static Server server = new Server();
-    private final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
-    private ConnectionService connectionService = null;
-
-
-    @BeforeClass
-    public static void InitServer() throws IOException {
-        // setup the local server for testing purposes only, executing should happen before the class is initialized.
-        server.Start(10002);
-    }
-
-    @AfterClass
-    public static void StopServer() {
-        // stop the local server after we ran all tests.
-        server.Stop();
-    }
+    private IConnectionService connectionService = null;
 
     @Before
-    public void InitConnectionService() throws IOException {
-        final Injector injector = Guice.createInjector(new EncryptionModule());
-        connectionService = new ConnectionService(injector.getInstance(IEncryptionService.class),
-                server.getMyPublicKey());
+    public void setup() throws IOException {
+        final Injector injector = Guice.createInjector(new EncryptionModule(), new ConnectionModule());
 
-        // set the public key of the connection server to the server
-        server.setReceiverPublicKey(connectionService.getMyPublicKey());
-        connectionService.open("127.0.0.1", 10002);
-    }
-
-    @After
-    public void CloseConnectionService() throws IOException {
-        connectionService.close();
+        IConnectionServiceFactory factory = injector.getInstance(IConnectionServiceFactory.class);
+        connectionService = factory.create("127.0.0.1", 10002);
     }
 
     @Test
-    public void TestValidConnection() throws InvalidProtocolBufferException, SocketException {
+    public void testProtocol() throws Exception {
+
+        Thread t = new Thread(() -> {
+            ServerSocket serverSocket = null;
+            Socket socket = null;
+            try {
+                serverSocket = new ServerSocket(10002);
+                socket = serverSocket.accept();
+
+                ClientLoginResponse.Builder responseBuilder = ClientLoginResponse.newBuilder();
+                responseBuilder.setStatus(ClientLoginResponse.Status.SUCCES);
+
+                Wrapper wrapper = connectionService.wrap(responseBuilder.build(), Wrapper.Type.CLIENTLOGINRESPONSE);
+
+                wrapper.writeDelimitedTo(socket.getOutputStream());
+
+            } catch (Exception e) {
+            } finally {
+                try {
+                    serverSocket.close();
+                } catch (Exception e) {
+                }
+
+                try {
+                    socket.close();
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        t.setDaemon(true);
+        t.start();
+
         ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
-        requestBuilder.setUsername("test");
-        requestBuilder.setPassword("test");
-        requestBuilder.setPublicKey(ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES));
+        requestBuilder.setUsername("username");
+        requestBuilder.setPassword("password");
+        requestBuilder.setPublicKey(ByteString.EMPTY);
 
-        connectionService.write(requestBuilder);
+        Wrapper wrapper = connectionService.wrap(requestBuilder.build(), Wrapper.Type.CLIENTLOGINREQUEST);
 
-        ClientLoginResponse response = connectionService.readGeneric(HanRoutingProtocol.ClientLoginResponse.class);
-        assertEquals(response.getSecretHash(),
-                String.format("%s:%s", requestBuilder.getUsername(), requestBuilder.getPassword()));
+        ClientLoginResponse response = (ClientLoginResponse) connectionService.writeAndRead(wrapper);
         assertEquals(response.getStatus(), ClientLoginResponse.Status.SUCCES);
 
-    }
-
-    @Test
-    public void TestInvalidConnection()
-            throws SocketException, InvalidProtocolBufferException {
-        // The Server class only supports ClientLoginRequests, hence it should deny every other class
-        HanRoutingProtocol.GraphUpdateRequest.Builder graphUpdateRequestBuilder = HanRoutingProtocol.GraphUpdateRequest.newBuilder();
-        graphUpdateRequestBuilder.setCurrentVersion(1000);
-
-        connectionService.write(graphUpdateRequestBuilder);
-
-        try {
-            HanRoutingProtocol.GraphUpdateResponse graphUpdateResponse = connectionService
-                    .readGeneric(HanRoutingProtocol.GraphUpdateResponse.class);
-            Assert.fail("readGeneric should fail.");
-        }
-        catch (SocketException se) { }
-
-        Assert.assertEquals(false, connectionService.isConnected());
+        t.join();
     }
 }

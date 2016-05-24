@@ -3,21 +3,17 @@ package nl.han.asd.project.client.commonclient.master;
 import java.io.IOException;
 
 import nl.han.asd.project.client.commonclient.connection.MessageNotSendException;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
 
-/**
- * Interface defining the authentication methods.
- *
- * @version 1.0
- */
-public interface IAuthentication {
+public interface IGetdGraphUpdates {
 
     /**
-     * Send the login request to the server returning the received
-     * response.
+     * Send the graph update request to the server
+     * returning the received response.
      *
-     * @param request the request to be send to the master application
+     * @param request the request to be send to the master
+     *          application
      *
      * @return the response received from the server
      *
@@ -30,5 +26,5 @@ public interface IAuthentication {
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    ClientLoginResponse login(ClientLoginRequest request) throws IOException, MessageNotSendException;
+    public GraphUpdateResponse getUpdatedGraph(GraphUpdateRequest request) throws IOException, MessageNotSendException;
 }

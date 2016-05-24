@@ -2,7 +2,7 @@ package nl.han.asd.project.client.commonclient.path;
 
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
+import nl.han.asd.project.client.commonclient.master.IGetdGraphUpdates;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +13,11 @@ import java.util.Random;
 
 public class PathDeterminationService implements IGetPath {
     private static final Logger LOGGER = LoggerFactory.getLogger(PathDeterminationService.class);
-    public IGetUpdatedGraph graphUpdates;
+    public IGetdGraphUpdates graphUpdates;
     public IGetClientGroup clientGroup;
 
     @Inject
-    public PathDeterminationService(IGetUpdatedGraph graphUpdates, IGetClientGroup clientGroup) {
+    public PathDeterminationService(IGetdGraphUpdates graphUpdates, IGetClientGroup clientGroup) {
         this.graphUpdates = graphUpdates;
         this.clientGroup = clientGroup;
     }

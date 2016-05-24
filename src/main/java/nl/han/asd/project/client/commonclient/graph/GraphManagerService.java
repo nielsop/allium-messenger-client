@@ -1,8 +1,16 @@
 package nl.han.asd.project.client.commonclient.graph;
 
+import java.io.IOException;
+
 import com.google.inject.Inject;
+import com.google.protobuf.InvalidProtocolBufferException;
+
+import nl.han.asd.project.client.commonclient.connection.MessageNotSendException;
+import nl.han.asd.project.client.commonclient.connection.Parser;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
-import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdate;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
 
 public class GraphManagerService {
 
@@ -22,20 +30,30 @@ public class GraphManagerService {
     }
 
     public void setCurrentGraphVersion(int versionNumber) {
-        this.currentGraphVersion = versionNumber;
+        currentGraphVersion = versionNumber;
     }
 
-    public void processGraphUpdates() {
-        UpdatedGraphResponseWrapper updatedGraph = gateway.getUpdatedGraph(currentGraphVersion);
-        if (updatedGraph.getLast().newVersion > currentGraphVersion) {
-            setCurrentGraphVersion(updatedGraph.getLast().newVersion);
+    private GraphUpdate getLastUpdate(GraphUpdateResponse response) throws InvalidProtocolBufferException {
+        int lastId = response.getGraphUpdatesCount() - 1;
+        return (GraphUpdate) Parser.parseFrom(response.getGraphUpdates(lastId).toByteArray(), GraphUpdate.class);
+    }
 
-            if (updatedGraph.getLast().isFullGraph) {
+    public void processGraphUpdates() throws IOException, MessageNotSendException {
+        GraphUpdateRequest.Builder requestBuilder = GraphUpdateRequest.newBuilder();
+        requestBuilder.setCurrentVersion(currentGraphVersion);
+
+        GraphUpdateResponse graphUpdateResponse = gateway.getUpdatedGraph(requestBuilder.build());
+        GraphUpdate lastGraphUpdate = getLastUpdate(graphUpdateResponse);
+
+        if (lastGraphUpdate.getNewVersion() > currentGraphVersion) {
+            setCurrentGraphVersion(lastGraphUpdate.getNewVersion());
+
+            if (lastGraphUpdate.getIsFullGraph()) {
                 graph.resetGraph();
-                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
+                lastGraphUpdate.getAddedNodesList().forEach(graph::addNodeVertex);
             } else {
-                updatedGraph.getLast().deletedNodes.forEach(vertex -> graph.removeNodeVertex(vertex));
-                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
+                lastGraphUpdate.getDeletedNodesList().forEach(graph::removeNodeVertex);
+                lastGraphUpdate.getAddedNodesList().forEach(graph::addNodeVertex);
             }
         }
     }

@@ -1,43 +1,34 @@
 package nl.han.asd.project.client.commonclient.master;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.xebialabs.overcast.host.CloudHost;
-import nl.han.asd.project.client.commonclient.Configuration;
-import nl.han.asd.project.client.commonclient.connection.ConnectionModule;
-import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
-import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.util.Properties;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(MasterGateway.class)
+import org.junit.Test;
+
+import nl.han.asd.project.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
+
 public class MasterGatewayTest {
+    @Test
+    public void testName() throws Exception {
+        String host = "localhost";
+        int port = 1024;
 
-    //TODO: Create valuable tests, if possible. All tests that were here, were no IT's, so they are moved.
+        Properties properties = new Properties();
+        properties.setProperty("master-server-host", host);
+        properties.setProperty("master-server-port", Integer.toString(port));
 
-    private MasterGateway gateway;
+        IConnectionService connectionServiceMock = mock(IConnectionService.class);
 
-    @Before
-    public void setup(){
-        Injector injector = Guice.createInjector(new ConnectionModule());
-        gateway = new MasterGateway(Mockito.mock(Properties.class), injector.getInstance(IConnectionServiceFactory.class));
-    }
+        IConnectionServiceFactory connectionServiceFactoryMock = mock(IConnectionServiceFactory.class);
+        when(connectionServiceFactoryMock.create(eq(host), eq(port))).thenReturn(connectionServiceMock);
 
-    @Test (expected = IllegalArgumentException.class)
-    public void testMasterGatewayGetSocketWithPort65536OutOfRange() {
-        gateway.setConnectionData(Configuration.getHostname(), 65536);
-        gateway.getSocket();
+        new MasterGateway(properties, connectionServiceFactoryMock);
+
+        verify(connectionServiceFactoryMock).create(eq(host), eq(port));
     }
 }
