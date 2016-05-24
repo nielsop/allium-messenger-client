@@ -44,11 +44,8 @@ public class CommonClientGateway {
     }
 
     @Inject
-<<<<<<< HEAD:src/main/java/nl/han/asd/project/client/commonclient/presentation/PresentationLayer.java
-    public PresentationLayer(IContactStore contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
-=======
-    public CommonClientGateway(IContactStore contact, IMessageBuilder messageBuilder, IMessageStoreObserver messageObserver, IRegistration registration, ILogin login, ISendMessage sendMessage) {
->>>>>>> 216ca724b9ce4c876d8cf35ecd3e0d63a55cf91f:src/main/java/nl/han/asd/project/client/commonclient/presentation/CommonClientGateway.java
+    public CommonClientGateway(IContactStore contact, IMessageBuilder messageBuilder,
+            IMessageStoreObserver messageObserver, IRegistration registration, ILogin login, ISendMessage sendMessage) {
         this.contact = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
