@@ -22,8 +22,7 @@ class Worker implements Runnable {
         this.publicKey = publicKey;
     }
 
-    @Override
-    public void run() {
+    @Override public void run() {
         InputStream input = null;
         OutputStream output = null;
 
@@ -41,25 +40,27 @@ class Worker implements Runnable {
                                 .parseFrom(message.getData());
                         HanRoutingProtocol.ClientLoginResponse.Builder builder = HanRoutingProtocol.ClientLoginResponse
                                 .newBuilder();
-                        builder.setSecretHash(String.format("%s:%s", request.getUsername(), request.getPassword()));
+                        builder.setSecretHash(String.format("%s:%s", request.getUsername(),
+                                request.getPassword()));
                         builder.setStatus(HanRoutingProtocol.ClientLoginResponse.Status
                                 .valueOf(HanRoutingProtocol.ClientLogoutResponse.Status.SUCCES_VALUE));
 
-                        System.out.println("Request processed as 'protocol' request.");
+                        System.out.println(
+                                "Request processed as 'protocol' request (gave answer).");
                         wrapper = packer.pack(builder, this.publicKey);
-                    } catch (InvalidProtocolBufferException e) {
-                        System.out.println("Request processed as 'normal' request.");
-                    }
 
-                    wrapper.writeDelimitedTo(output);
+                        wrapper.writeDelimitedTo(output);
+                    } catch (InvalidProtocolBufferException e) {
+
+                        System.out.println(
+                                "Request processed as 'normal' request (close connection).");
+                    }
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            output.close();
-            input.close();
             clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();

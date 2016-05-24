@@ -55,7 +55,7 @@ public class ConnectionServiceTestIT {
     }
 
     @Test
-    public void TestProtocol() throws InvalidProtocolBufferException, SocketException {
+    public void TestValidConnection() throws InvalidProtocolBufferException, SocketException {
         ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
         requestBuilder.setUsername("test");
         requestBuilder.setPassword("test");
@@ -68,5 +68,24 @@ public class ConnectionServiceTestIT {
                 String.format("%s:%s", requestBuilder.getUsername(), requestBuilder.getPassword()));
         assertEquals(response.getStatus(), ClientLoginResponse.Status.SUCCES);
 
+    }
+
+    @Test
+    public void TestInvalidConnection()
+            throws SocketException, InvalidProtocolBufferException {
+        // The Server class only supports ClientLoginRequests, hence it should deny every other class
+        HanRoutingProtocol.GraphUpdateRequest.Builder graphUpdateRequestBuilder = HanRoutingProtocol.GraphUpdateRequest.newBuilder();
+        graphUpdateRequestBuilder.setCurrentVersion(1000);
+
+        connectionService.write(graphUpdateRequestBuilder);
+
+        try {
+            HanRoutingProtocol.GraphUpdateResponse graphUpdateResponse = connectionService
+                    .readGeneric(HanRoutingProtocol.GraphUpdateResponse.class);
+            Assert.fail("readGeneric should fail.");
+        }
+        catch (SocketException se) { }
+
+        Assert.assertEquals(false, connectionService.isConnected());
     }
 }

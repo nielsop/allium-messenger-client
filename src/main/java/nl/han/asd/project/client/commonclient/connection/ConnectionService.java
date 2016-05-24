@@ -56,7 +56,10 @@ public final class ConnectionService {
         HanRoutingProtocol.Wrapper wrapper;
         try {
             wrapper = connection.read();
-        } catch (IOException e) {
+
+            if (wrapper == null)
+                throw new NullPointerException("Wrapper cannot be null.");
+        } catch (IOException | NullPointerException e) {
             LOGGER.error("Reading from stream failed.", e);
             throw new SocketException("Could not read from stream.");
         }
@@ -64,7 +67,7 @@ public final class ConnectionService {
     }
 
     /**
-     * Synchronously (blocking) read a the input stream. Then converts the results into an instance of @classDescriptor.
+     * Synchronously read a the input stream. Then converts the results into an instance of @classDescriptor.
      *
      * @param classDescriptor The class the data needs to be converted from.
      * @param <T>             Protocol buffer class.
@@ -79,6 +82,7 @@ public final class ConnectionService {
                 return (T) unpackedMessage.getDataMessage().getParserForType().parseFrom(unpackedMessage.getData());
             } catch (InvalidProtocolBufferException e) {
                 LOGGER.error(e.getMessage(), e);
+                throw new SocketException("Failed to parse data from the input stream.");
             }
         }
 

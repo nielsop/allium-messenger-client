@@ -54,7 +54,7 @@ class Packer {
         builder.setType(type);
 
         byte[] buffer = originalBuilder.build().toByteArray();
-        buffer = encryptionService.encryptData(buffer, receiverPublicKey);
+        buffer = encryptionService.encryptData(receiverPublicKey, buffer);
         builder.setData(ByteString.copyFrom(buffer));
 
         return builder.build();

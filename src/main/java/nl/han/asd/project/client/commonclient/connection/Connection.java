@@ -105,7 +105,8 @@ class Connection {
      * @return False if closed, True if open.
      */
     public boolean isConnected() {
-        return socket != null && socket.isConnected() && !socket.isClosed();
+        // remove method; just read/write and throw exception if fails
+        return socket != null && !socket.isClosed();
     }
 
 }
