@@ -16,7 +16,7 @@ public interface IContactStore {
 
     Contact getCurrentUser();
 
-    void  setCurrentUser(Contact currentUser);
+    void setCurrentUser(Contact currentUser);
 
     void deleteAllContacts();
 }

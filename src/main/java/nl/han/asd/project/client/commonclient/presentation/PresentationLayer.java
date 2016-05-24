@@ -107,4 +107,8 @@ public class PresentationLayer {
         LOGGER.info(message.getSender().getUsername() + " sends to " + message.getReceiver().getUsername() + " the following massage: " + message.getText());
         messageStore.addMessage(message);
     }
+
+    public void deleteContact(String username) {
+        contactStore.deleteContact(username);
+    }
 }
