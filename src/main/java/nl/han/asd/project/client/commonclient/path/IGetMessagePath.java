@@ -2,9 +2,9 @@ package nl.han.asd.project.client.commonclient.path;
 
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import java.util.List;
 
-import java.util.ArrayList;
-
+@FunctionalInterface
 public interface IGetMessagePath {
-    ArrayList<Node> getPath(int minHops, Contact contactReciever);
+    List<Node> getPath(int minHops, Contact contactReciever);
 }

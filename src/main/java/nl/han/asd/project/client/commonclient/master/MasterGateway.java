@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.Socket;
 
-public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
+public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
     //TODO: missing: IWebService from Master
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterGateway.class);
@@ -82,7 +82,7 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         HanRoutingProtocol.GraphUpdateResponse response = req
                 .writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class);
         UpdatedGraphResponseWrapper updatedGraphs = new UpdatedGraphResponseWrapper(response.getGraphUpdatesList());
-        setCurrentGraphVersion(updatedGraphs.getLast().newVersion);
+        setCurrentGraphVersion(updatedGraphs.getLast().getNewVersion());
         return updatedGraphs;
     }
 

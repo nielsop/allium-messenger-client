@@ -3,17 +3,13 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
-import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Julius
@@ -22,27 +18,21 @@ import java.util.ArrayList;
  */
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
-    private final IGetMessagePath getPath;
-    private final ISendMessage sendMessage;
-    private final IMessageStore messageStore;
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
-    private final IEncrypt encrypt;
+    private IGetMessagePath getPath;
+    private IEncryptionService encryptionService;
 
     @Inject
-    public MessageBuilderService(IGetMessagePath getPath, IEncrypt encrypt, ISendMessage sendMessage,
-                                 IMessageStore messageStore) {
+    public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService) {
         this.getPath = getPath;
-        this.encrypt = encrypt;
-        this.sendMessage = sendMessage;
-        this.messageStore = messageStore;
+        this.encryptionService = encryptionService;
     }
 
-    public <T extends GeneratedMessage> void sendMessage(T generatedMessage , Contact contactReceiver) throws IndexOutOfBoundsException {
+    public <T extends GeneratedMessage> HanRoutingProtocol.MessageWrapper buildMessage(T generatedMessage , Contact contactReceiver) throws IndexOutOfBoundsException {
         //TODO check if contactReceiver contains latest data from master server.
 
         HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
         wrapperBuilder.setData(generatedMessage.toByteString());
-        ArrayList<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
+        List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
         if(generatedMessage.getClass() == HanRoutingProtocol.Message.class){
             wrapperBuilder.setType(HanRoutingProtocol.Wrapper.Type.MESSAGE);
@@ -54,12 +44,10 @@ public class MessageBuilderService implements IMessageBuilder {
             throw new IllegalArgumentException();
         }
 
-        ByteString firstLayer = buildFirstMessagePackageLayer(path.get(0), wrapperBuilder.build(), contactReceiver);
+        byte[] firstLayer = buildFirstMessagePackageLayer(path.get(0), wrapperBuilder.build(), contactReceiver);
         path.remove(0);
 
-        HanRoutingProtocol.MessageWrapper messageToSend = buildLastMessagePackageLayer(path.get(path.size() - 1), buildMessagePackageLayer(firstLayer, path));
-
-        sendMessage.sendMessage(messageToSend,contactReceiver);
+        return buildLastMessagePackageLayer(path.get(path.size() - 1), buildMessagePackageLayer(firstLayer, path));
 
     }
 
@@ -69,29 +57,28 @@ public class MessageBuilderService implements IMessageBuilder {
      * @param wrapper contains information about the message that needs to be send.
      * @return encrypted data from the first layer that is build
      */
-    private ByteString buildFirstMessagePackageLayer(Node node, HanRoutingProtocol.Wrapper wrapper, Contact contactReceiver) {
+    private byte[] buildFirstMessagePackageLayer(Node node, HanRoutingProtocol.Wrapper wrapper, Contact contactReceiver) {
         HanRoutingProtocol.MessageWrapper.Builder messageWrapperBuilder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
         messageWrapperBuilder.setUsername(contactReceiver.getUsername());
         messageWrapperBuilder.setIPaddress(node.getIpAddress());
         messageWrapperBuilder.setPort(node.getPort());
         messageWrapperBuilder.setEncryptedData(wrapper.toByteString());
-
-        return encrypt.encryptData(messageWrapperBuilder.build().toByteString(), node.getPublicKey());
+        return encryptionService.encryptData(messageWrapperBuilder.build().toByteArray(), node.getPublicKey());
     }
 
 
-    private HanRoutingProtocol.MessageWrapper buildLastMessagePackageLayer(Node node, ByteString data) {
+    private HanRoutingProtocol.MessageWrapper buildLastMessagePackageLayer(Node node, byte[] data) {
         HanRoutingProtocol.MessageWrapper.Builder messageWrapperBuilder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
         messageWrapperBuilder.setIPaddress(node.getIpAddress());
         messageWrapperBuilder.setPort(node.getPort());
-        messageWrapperBuilder.setEncryptedData(data);
+        messageWrapperBuilder.setEncryptedData(ByteString.copyFrom(data));
 
         return messageWrapperBuilder.build();
     }
 
-    private ByteString buildMessagePackageLayer(ByteString message, ArrayList<Node> remainingPath) {
+    private byte[] buildMessagePackageLayer(byte[] message, List<Node> remainingPath) {
         if (remainingPath.size() == 1) {
             return message;
         }
@@ -100,12 +87,13 @@ public class MessageBuilderService implements IMessageBuilder {
         Node node = remainingPath.get(0);
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
-        builder.setEncryptedData(message);
+        builder.setEncryptedData(ByteString.copyFrom(message));
 
         remainingPath.remove(0);
 
-        ByteString encryptedMessage = encrypt
-                .encryptData(builder.build().toByteString(), node.getPublicKey());
+        byte[] encryptedMessage = encryptionService
+                .encryptData(node.getPublicKey(),builder.build().toByteArray());
+
         return buildMessagePackageLayer(encryptedMessage, remainingPath);
     }
 }

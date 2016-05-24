@@ -5,9 +5,10 @@ import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
+import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.IContact;
-import nl.han.asd.project.client.commonclient.store.IMessageObserver;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.client.commonclient.store.IMessageStoreObserver;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +20,17 @@ import javax.inject.Inject;
  * <p>
  * Leave empty until we know what to do with it
  */
-public class PresentationLayer {
+public class CommonClientGateway {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PresentationLayer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
     //TODO: android app? desktop app?
-    public IContact contact;
+    public IContactStore contact;
     public IMessageBuilder messageBuilder;
-    public IMessageObserver messageObserver;
+    public IMessageStoreObserver messageObserver;
     public IRegistration registration;
     public ILogin login;
+    private ISendMessage sendMessage;
     private Contact currentUser;
     private String privateKey = "privateKey";
 
@@ -37,18 +39,18 @@ public class PresentationLayer {
      *
      * @param registration
      */
-    public PresentationLayer(IRegistration registration) {
+    public CommonClientGateway(IRegistration registration) {
         this.registration = registration;
     }
 
     @Inject
-    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver,
-            IRegistration registration, ILogin login) {
+    public CommonClientGateway(IContactStore contact, IMessageBuilder messageBuilder, IMessageStoreObserver messageObserver, IRegistration registration, ILogin login, ISendMessage sendMessage) {
         this.contact = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
         this.registration = registration;
         this.login = login;
+        this.sendMessage = sendMessage;
     }
 
     /**
@@ -59,10 +61,8 @@ public class PresentationLayer {
      * @param password password given by user.
      */
     public HanRoutingProtocol.ClientRegisterResponse.Status register(String username, String password) {
-        //Get registering response
         RegisterResponseWrapper registerResponse = registration.register(username, password);
-        //In every other case, do something.
-        switch (registerResponse.status) {
+        switch (registerResponse.getStatus()) {
             case SUCCES:
                 LOGGER.info("Registering worked!");
                 break;
@@ -76,20 +76,25 @@ public class PresentationLayer {
                 LOGGER.info("Default response. Something went wrong...");
                 break;
         }
-        //Return the status
-        return registerResponse.status;
+        return registerResponse.getStatus();
     }
 
     public Contact getCurrentUser() {
         return currentUser;
     }
 
+    /**
+     * Logs in and returns a login status. This login status is wrapped inside a loginResponseWrapper.
+     * @param username the username to log in.
+     * @param password the password belonging to the username.
+     * @return the login status, received from the loginResponseWrapper.
+     */
     public HanRoutingProtocol.ClientLoginResponse.Status login(String username, String password) {
         LoginResponseWrapper loginResponse = login.login(username, password);
-        LOGGER.info("User: \"" + username + "\" login status: " + loginResponse.status.name());
-        if (loginResponse.status == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
+        LOGGER.info(String.format("User '%S' has login status '%S'.", username, loginResponse.getStatus().name()));
+        if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
             currentUser = new Contact(username, privateKey, true);
         }
-        return loginResponse.status;
+        return loginResponse.getStatus();
     }
 }

@@ -17,17 +17,19 @@ import java.util.List;
 public class ClientGroupResponseWrapperTest {
 
     private static List<HanRoutingProtocol.Client> clients;
+    private static final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
 
     @BeforeClass
     public static void setupTestClass() {
         clients = new ArrayList<>();
-        clients.add(HanRoutingProtocol.Client.newBuilder().setUsername("Nielsje41").setPublicKey(ByteString.copyFrom(new byte[] {0x00})).build());
+        clients.add(HanRoutingProtocol.Client.newBuilder().setUsername("Nielsje41").setPublicKey(
+                ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES)).build());
     }
 
     @Test
     public void testNewClientGroupResponse() {
         ClientGroupResponseWrapper responseWrapper = new ClientGroupResponseWrapper(clients);
-        Assert.assertTrue(responseWrapper.clientGroup.size() > 0);
+        Assert.assertTrue(responseWrapper.getClientGroup().size() > 0);
     }
 
 }

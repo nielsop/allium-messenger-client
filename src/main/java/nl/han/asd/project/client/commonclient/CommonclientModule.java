@@ -10,6 +10,8 @@ import nl.han.asd.project.client.commonclient.path.PathModule;
 import nl.han.asd.project.client.commonclient.persistence.PersistenceModule;
 import nl.han.asd.project.client.commonclient.store.StoreModule;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.commonservices.encryption.EncryptionService;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 
 /**
  * Created by Marius on 19-04-16.
@@ -26,5 +28,6 @@ public class CommonclientModule extends AbstractModule {
         this.install(new PersistenceModule());
         this.install(new StoreModule());
         this.install(new EncryptionModule());
+        this.bind(IEncryptionService.class).to(EncryptionService.class);
     }
 }
