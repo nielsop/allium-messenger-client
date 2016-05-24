@@ -23,17 +23,16 @@ import java.util.ArrayList;
 
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
     public IGetPath getPath;
     public ISendMessage sendMessage;
     public IMessageStore messageStore;
-    private ConnectionService connectionService = null;
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
     public IEncrypt encrypt;
     public CryptographyService cryptographyService;
+    private ConnectionService connectionService = null;
 
     @Inject
-    public MessageBuilderService(IGetPath getPath, IEncrypt encrypt, ISendMessage sendMessage,
-            IMessageStore messageStore) {
+    public MessageBuilderService(IGetPath getPath, IEncrypt encrypt, ISendMessage sendMessage, IMessageStore messageStore) {
         this.getPath = getPath;
         this.encrypt = encrypt;
         this.sendMessage = sendMessage;
@@ -48,11 +47,11 @@ public class MessageBuilderService implements IMessageBuilder {
 
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
-        builder.setEncryptedData(messageToSend.getEncryptedData());
+        builder.setData(messageToSend.getEncryptedData());
 
         connectionService = new ConnectionService(messageToSend.getPublicKey());
         try {
-            connectionService.open(messageToSend.getIp(),messageToSend.getPort());
+            connectionService.open(messageToSend.getIp(), messageToSend.getPort());
             connectionService.write(builder);
         } catch (IOException e) {
             LOGGER.error("Message could not be send due to connection problems.");
@@ -81,12 +80,12 @@ public class MessageBuilderService implements IMessageBuilder {
         builder.setUsername(message.getReceiver().getUsername());
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
-        builder.setEncryptedData(ByteString.copyFromUtf8(message.getText()));
+        builder.setData(ByteString.copyFromUtf8(message.getText()));
         return cryptographyService.encryptData(builder.build().toByteString(), node.getPublicKey());
     }
 
     private EncryptedMessage buildLastMessagePackageLayer(Node node, ByteString data) {
-        return new EncryptedMessage(null, node.getIpAddress(), node.getPort(),node.getPublicKey(), data);
+        return new EncryptedMessage(null, node.getIpAddress(), node.getPort(), node.getPublicKey(), data);
     }
 
     private ByteString buildMessagePackageLayer(ByteString message, ArrayList<Node> remainingPath) {
@@ -98,12 +97,11 @@ public class MessageBuilderService implements IMessageBuilder {
         Node node = remainingPath.get(0);
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
-        builder.setEncryptedData(message);
+        builder.setData(message);
 
         remainingPath.remove(0);
 
-        ByteString encryptedMessage = cryptographyService
-                .encryptData(builder.build().toByteString(), node.getPublicKey());
+        ByteString encryptedMessage = cryptographyService.encryptData(builder.build().toByteString(), node.getPublicKey());
         return buildMessagePackageLayer(encryptedMessage, remainingPath);
     }
 }

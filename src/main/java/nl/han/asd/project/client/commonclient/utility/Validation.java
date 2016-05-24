@@ -26,8 +26,7 @@ public final class Validation {
      * @return <tt>true</tt> if the address is valid, <tt>false</tt> otherwise.
      */
     public static boolean isValidAddress(String address) {
-        return isIPv4Address(address) || isIPv6Address(address) || isIPv6StdAddress(address)
-                || isIPv6HexCompressedAddress(address);
+        return isIPv4Address(address) || isIPv6Address(address) || isIPv6StdAddress(address) || isIPv6HexCompressedAddress(address);
     }
 
     /**
@@ -59,12 +58,10 @@ public final class Validation {
      */
     private static boolean isValidUsername(String username) {
         if (username == null || username.isEmpty() || !username.matches(REGEX_ALPHANUMERIC)) {
-            throw new IllegalArgumentException(
-                    "Invalid username! Username may only consist of digits, numbers, underscores and dashes.");
+            throw new IllegalArgumentException("Invalid username! Username may only consist of digits, numbers, underscores and dashes.");
         }
         if (username.length() < 3 || username.length() > 40) {
-            throw new IllegalArgumentException(
-                    "Invalid username! Username length should be between 3 and 40 characters.");
+            throw new IllegalArgumentException("Invalid username! Username length should be between 3 and 40 characters.");
         }
         return true;
     }
@@ -77,12 +74,10 @@ public final class Validation {
     //TODO: Better password regex.
     private static boolean isValidPassword(String password) {
         if (password == null || password.isEmpty() || !password.matches(REGEX_ALPHANUMERIC)) {
-            throw new IllegalArgumentException(
-                    "Invalid username! Username may only consist of digits, numbers, underscores and dashes.");
+            throw new IllegalArgumentException("Invalid username! Username may only consist of digits, numbers, underscores and dashes.");
         }
         if (password.length() < 8 || password.length() > 40) {
-            throw new IllegalArgumentException(
-                    "Invalid password! Passwordt length should be between 8 and 40 characters.");
+            throw new IllegalArgumentException("Invalid password! Passwordt length should be between 8 and 40 characters.");
         }
         return true;
     }

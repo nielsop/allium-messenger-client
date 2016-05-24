@@ -35,8 +35,7 @@ public class LoginResponseWrapper {
      * @param secretHash The secret hash.
      * @param status     The status of the login request.
      */
-    public LoginResponseWrapper(List<String> nodeList, String secretHash,
-            HanRoutingProtocol.ClientLoginResponse.Status status) {
+    public LoginResponseWrapper(List<String> nodeList, String secretHash, HanRoutingProtocol.ClientLoginResponse.Status status) {
         this.nodeList = nodeList;
         this.secretHash = secretHash;
         this.status = status;

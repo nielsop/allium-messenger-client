@@ -25,7 +25,7 @@ public class LoginController {
             else if (view.getPassword().length() < 8)
                 view.setStatus("Password is too short! At least 8 characters.");
             else {
-                switch(model.getLoginStatus(view.getUsername(), view.getPassword())) {
+                switch (model.getLoginStatus(view.getUsername(), view.getPassword())) {
                     case SUCCES:
                         setStage(GUI.Page.DASHBOARD);
                         break;

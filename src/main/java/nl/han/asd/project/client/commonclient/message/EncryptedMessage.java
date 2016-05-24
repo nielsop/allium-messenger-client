@@ -7,11 +7,11 @@ import com.google.protobuf.ByteString;
  */
 public class EncryptedMessage {
 
+    private final byte[] publicKey;
     private String username;
     private String ip;
     private int port;
     private ByteString encryptedData;
-    private final byte[] publicKey;
 
     public EncryptedMessage(String username, String ip, int port, byte[] publicKey, ByteString encryptedData) {
         this.username = username;

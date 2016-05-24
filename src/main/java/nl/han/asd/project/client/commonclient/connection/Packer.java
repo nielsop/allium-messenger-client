@@ -30,12 +30,10 @@ public class Packer {
      * @param recieverPublicKey The public key that should be included inside the EncryptedWrapper message.
      * @return The byte array that represents the EncryptedWrapper.
      */
-    public HanRoutingProtocol.Wrapper pack(final GeneratedMessage.Builder originalBuilder,
-            final byte[] recieverPublicKey) {
+    public HanRoutingProtocol.Wrapper pack(final GeneratedMessage.Builder originalBuilder, final byte[] recieverPublicKey) {
         HanRoutingProtocol.Wrapper.Builder builder = HanRoutingProtocol.Wrapper.newBuilder();
 
-        HanRoutingProtocol.Wrapper.Type type = protocolMessageDescriptorToWrapperType(
-                originalBuilder.getDescriptorForType());
+        HanRoutingProtocol.Wrapper.Type type = protocolMessageDescriptorToWrapperType(originalBuilder.getDescriptorForType());
         builder.setType(type);
 
         byte[] buffer = originalBuilder.build().toByteArray();
@@ -71,8 +69,7 @@ public class Packer {
             if (descriptor.getName().equalsIgnoreCase(name)) {
                 try {
                     //nl.han.asd.project.protocol.HanRoutingProtocol$ClientLoginRequest
-                    String internalName = String
-                            .format("%s$%s", HanRoutingProtocol.class.getCanonicalName(), descriptor.getName());
+                    String internalName = String.format("%s$%s", HanRoutingProtocol.class.getCanonicalName(), descriptor.getName());
                     Field defaultInstanceField = Class.forName(internalName).getDeclaredField("DEFAULT_INSTANCE");
                     defaultInstanceField.setAccessible(true);
                     Object defaultInstanceValue = defaultInstanceField.get(null);
@@ -90,8 +87,7 @@ public class Packer {
      * @param classDescriptor The descriptor type of a builder.
      * @return The EncryptedWrapper.Type that is equivalent to the descriptor type.
      */
-    private HanRoutingProtocol.Wrapper.Type protocolMessageDescriptorToWrapperType(
-            final Descriptors.Descriptor classDescriptor) {
+    private HanRoutingProtocol.Wrapper.Type protocolMessageDescriptorToWrapperType(final Descriptors.Descriptor classDescriptor) {
         String name = classDescriptor.getFullName();
         String capitalizedCleanName = name.toUpperCase();
         return HanRoutingProtocol.Wrapper.Type.valueOf(capitalizedCleanName);

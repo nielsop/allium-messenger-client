@@ -28,8 +28,7 @@ public class Graph {
     }
 
     public void addNodeVertex(HanRoutingProtocol.Node vertex) {
-        Node node = new Node(vertex.getId(), vertex.getIPaddress(), vertex.getPort(),
-                vertex.getPublicKey().toByteArray());
+        Node node = new Node(vertex.getId(), vertex.getIPaddress(), vertex.getPort(), vertex.getPublicKey().toByteArray());
         vertexMap.putIfAbsent(node.getId(), node);
     }
 
