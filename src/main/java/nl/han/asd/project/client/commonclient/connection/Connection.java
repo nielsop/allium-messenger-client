@@ -123,8 +123,8 @@ public class Connection {
                         connectionService.onReceiveRead(wrapper);
                         Thread.sleep(sleepTime);
                     } catch (InterruptedException e) {
-                        Thread.interrupted();
                         LOGGER.error(e.getMessage(), e);
+                        Thread.interrupted();
                     } catch (SocketException e) {
                         isRunning = false;
                         LOGGER.error(e.getMessage(), e);

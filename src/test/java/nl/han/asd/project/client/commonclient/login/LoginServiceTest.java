@@ -1,14 +1,27 @@
 package nl.han.asd.project.client.commonclient.login;
 
+import nl.han.asd.project.client.commonclient.master.IAuthentication;
+import nl.han.asd.project.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
+import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 import nl.han.asd.project.client.commonclient.utility.Validation;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.ArrayList;
 
 /**
  * @author Niels Bokmans
  * @version 1.0
  * @since 18-4-2016
  */
+@RunWith(MockitoJUnitRunner.class)
 public class LoginServiceTest {
 
     /* Valid credentials */
@@ -79,5 +92,4 @@ public class LoginServiceTest {
     public void testIsPasswordNull() {
         Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_NULL);
     }
-
 }

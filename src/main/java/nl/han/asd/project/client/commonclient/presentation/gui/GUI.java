@@ -12,7 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.han.asd.project.client.commonclient.CommonclientModule;
-import nl.han.asd.project.client.commonclient.presentation.PresentationLayer;
+import nl.han.asd.project.client.commonclient.presentation.CommonClientGateway;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.DashboardController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.auth.LoginController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.auth.RegisterController;
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 public class GUI extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(GUI.class);
-    public PresentationLayer pLayer;
+    public CommonClientGateway pLayer;
     private Stage stage;
     private Scene scene;
 
@@ -75,7 +75,7 @@ public class GUI extends Application {
     }
 
     @Inject
-    public void setPresentationLayer(PresentationLayer pLayer) {
+    public void setPresentationLayer(CommonClientGateway pLayer) {
         this.pLayer = pLayer;
     }
 

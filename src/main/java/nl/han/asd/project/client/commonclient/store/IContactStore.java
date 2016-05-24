@@ -38,16 +38,16 @@ public interface IContactStore {
     void deleteAllContacts();
 
     /**
-     * Getter for currentUser.
-     *
-     * @return current user that is logged in
-     */
-    Contact getCurrentUser();
-
-    /**
      * Setter for currentUser.
      *
      * @param currentUser the current user that is logged in
      */
     void setCurrentUser(CurrentUser currentUser);
+
+    /**
+     * Getter for currentUser.
+     *
+     * @return current user that is logged in
+     */
+    Contact getCurrentUser();
 }

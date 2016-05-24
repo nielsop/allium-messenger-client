@@ -51,11 +51,17 @@ public class ContactStore implements IContactStore {
         contactList.clear();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Contact getCurrentUser() {
         return currentUser.getAsContact();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCurrentUser(CurrentUser currentUser) {
         this.currentUser = Check.notNull(currentUser, "currentUser");
