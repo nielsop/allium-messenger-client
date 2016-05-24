@@ -5,7 +5,7 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
 
-public class MessageStore implements IMessageStore, IMessageObserver {
+public class MessageStore implements IMessageStore, IMessageStoreObserver {
     private IPersistence persistence;
 
     @Inject

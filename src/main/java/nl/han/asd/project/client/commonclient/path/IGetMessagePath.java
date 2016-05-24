@@ -7,6 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @FunctionalInterface
-public interface IGetPath {
+public interface IGetMessagePath {
     List<Node> getPath(int minHops, Contact contactReciever);
 }

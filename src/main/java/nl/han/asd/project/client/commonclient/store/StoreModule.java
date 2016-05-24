@@ -10,6 +10,6 @@ public class StoreModule extends AbstractModule {
     protected void configure() {
         bind(IContactStore.class).to(ContactStore.class);
         bind(IMessageStore.class).to(MessageStore.class);
-        bind(IMessageObserver.class).to(MessageStore.class);
+        bind(IMessageStoreObserver.class).to(MessageStore.class);
     }
 }
