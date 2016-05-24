@@ -13,8 +13,6 @@ import javax.inject.Inject;
  */
 public class LoginService implements ILogin {
 
-    private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]";
-    private static final String REGEX_ALPHANUMERICSPECIAL = "^(?=(?:\\D*?\\d){8,32}(?!.*?\\d))[a-zA-Z0-9@\\#$%&*()_+\\]\\[';:?.,!^-]+$";
     private MasterGateway masterGateway = null;
     private ISetConnectedNodes setConnectedNodes;
     private IAuthentication authentication;
@@ -24,11 +22,9 @@ public class LoginService implements ILogin {
         this.setConnectedNodes = setConnectedNodes;
         this.authentication = authentication;
         this.masterGateway = gateway;
-        //Injector injector = Guice.createInjector(new EncryptionModule());
-        //this.masterGateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
-        //this.masterGateway.setConnectionData(Configuration.HOSTNAME, Configur);
     }
 
+    @Override
     public LoginResponseWrapper login(String username, String password) {
         // DO NOT REMOVE, YET!
         if (Validation.validateCredentials(username, password))

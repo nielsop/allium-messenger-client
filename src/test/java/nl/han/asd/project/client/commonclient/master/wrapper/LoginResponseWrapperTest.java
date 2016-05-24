@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.master.wrapper;
 
-import com.google.protobuf.ByteString;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -30,27 +29,28 @@ public class LoginResponseWrapperTest {
         nodeList.add("Node-1");
         nodeList.add("Node-2");
         nodeList.add("Node-3");
+
     }
 
     @Test
     public void testLoginWrapperCreationSavesNodes() {
         final LoginResponseWrapper responseWrapper = new LoginResponseWrapper(nodeList, "SUPER-SECRET-HASH-123",
                 HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
-        Assert.assertEquals(responseWrapper.nodeList.size(), 3);
+        Assert.assertEquals(responseWrapper.getNodeList().size(), 3);
     }
 
     @Test
     public void testLoginWrapperCreationSavesSecretHash() {
         final LoginResponseWrapper responseWrapper = new LoginResponseWrapper(nodeList, "SUPER-SECRET-HASH-123",
                 HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
-        Assert.assertEquals(responseWrapper.secretHash, "SUPER-SECRET-HASH-123");
+        Assert.assertEquals(responseWrapper.getSecretHash(), "SUPER-SECRET-HASH-123");
     }
 
     @Test
     public void testLoginWrapperCreationSavesStatus() {
         final LoginResponseWrapper responseWrapper = new LoginResponseWrapper(nodeList, "SUPER-SECRET-HASH-123",
                 HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
-        Assert.assertEquals(responseWrapper.status, HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
+        Assert.assertEquals(responseWrapper.getStatus(), HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
     }
 
 }

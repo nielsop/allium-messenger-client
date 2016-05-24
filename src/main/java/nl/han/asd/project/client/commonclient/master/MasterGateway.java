@@ -21,7 +21,6 @@ import java.net.Socket;
 public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterGateway.class);
-    private static int currentGraphVersion = -1;
     private ConnectionService connectionService;
     private Socket socket;
     private IEncryptionService encryptionService;
@@ -75,7 +74,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
 
         HanRoutingProtocol.GraphUpdateResponse response = req.writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class);
         UpdatedGraphResponseWrapper updatedGraphs = new UpdatedGraphResponseWrapper(response.getGraphUpdatesList());
-        setCurrentGraphVersion(updatedGraphs.getLast().newVersion);
         return updatedGraphs;
     }
 
@@ -87,23 +85,6 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         return new ClientGroupResponseWrapper(clientResponse.getClientsList());
     }
 
-    /**
-     * Returns the current graph version.
-     *
-     * @return The current graph version.
-     */
-    public int getCurrentGraphVersion() {
-        return currentGraphVersion;
-    }
-
-    /**
-     * Sets the current graph version.
-     *
-     * @param newVersion The new graph version.
-     */
-    private void setCurrentGraphVersion(int newVersion) {
-        currentGraphVersion = newVersion;
-    }
 
     /**
      * Returns the connection.

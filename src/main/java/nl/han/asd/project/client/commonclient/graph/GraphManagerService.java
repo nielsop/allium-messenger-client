@@ -27,15 +27,15 @@ public class GraphManagerService {
 
     public void processGraphUpdates() {
         UpdatedGraphResponseWrapper updatedGraph = gateway.getUpdatedGraph(currentGraphVersion);
-        if (updatedGraph.getLast().newVersion > currentGraphVersion) {
-            setCurrentGraphVersion(updatedGraph.getLast().newVersion);
+        if (updatedGraph.getLast().getNewVersion() > currentGraphVersion) {
+            setCurrentGraphVersion(updatedGraph.getLast().getNewVersion());
 
-            if (updatedGraph.getLast().isFullGraph) {
+            if (updatedGraph.getLast().isFullGraph()) {
                 graph.resetGraph();
-                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
+                updatedGraph.getLast().getAddedNodes().forEach(vertex -> graph.addNodeVertex(vertex));
             } else {
-                updatedGraph.getLast().deletedNodes.forEach(vertex -> graph.removeNodeVertex(vertex));
-                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
+                updatedGraph.getLast().getDeletedNodes().forEach(vertex -> graph.removeNodeVertex(vertex));
+                updatedGraph.getLast().getAddedNodes().forEach(vertex -> graph.addNodeVertex(vertex));
             }
         }
     }

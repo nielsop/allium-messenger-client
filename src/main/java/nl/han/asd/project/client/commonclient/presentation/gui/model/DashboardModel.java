@@ -29,12 +29,12 @@ public class DashboardModel {
 
     public ArrayList<Message> getMessages(Contact contact) {
 //        return gui.pLayer.getMessages(contact);
-        return null;
+        return new ArrayList<>();
     }
 
     public ArrayList<Contact> getContacts() {
 //        return gui.pLayer.getContacts();
-        return null;
+        return new ArrayList<>();
     }
 
     public void sendMessage(Message message) {

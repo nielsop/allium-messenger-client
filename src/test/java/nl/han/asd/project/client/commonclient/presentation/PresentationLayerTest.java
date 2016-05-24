@@ -28,7 +28,7 @@ public class PresentationLayerTest {
                 ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
-        assertEquals(registerResponse.status, pLayer.register("username", "password"));
+        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
     }
 
     @Test
@@ -37,7 +37,7 @@ public class PresentationLayerTest {
                 ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
-        assertEquals(registerResponse.status, pLayer.register("username", "password"));
+        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
     }
 
     @Test
@@ -47,6 +47,6 @@ public class PresentationLayerTest {
                         .getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
         pLayer = new PresentationLayer(registration);
-        assertEquals(registerResponse.status, pLayer.register("username", "password"));
+        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
     }
 }

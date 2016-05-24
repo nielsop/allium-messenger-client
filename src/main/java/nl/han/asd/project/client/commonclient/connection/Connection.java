@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -124,8 +123,8 @@ public class Connection {
                         connectionService.onReceiveRead(wrapper);
                         Thread.sleep(sleepTime);
                     } catch (InterruptedException e) {
-                        Thread.interrupted();
                         LOGGER.error(e.getMessage(), e);
+                        Thread.interrupted();
                     } catch (SocketException e) {
                         isRunning = false;
                         LOGGER.error(e.getMessage(), e);

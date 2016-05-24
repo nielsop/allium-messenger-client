@@ -11,7 +11,7 @@ public class RegisterResponseWrapper {
     /**
      * Stores the status of the register request.
      */
-    public HanRoutingProtocol.ClientRegisterResponse.Status status;
+    private HanRoutingProtocol.ClientRegisterResponse.Status status;
 
     /**
      * Creates a new RegisterResponseWrapper request
@@ -20,5 +20,9 @@ public class RegisterResponseWrapper {
      */
     public RegisterResponseWrapper(HanRoutingProtocol.ClientRegisterResponse.Status status) {
         this.status = status;
+    }
+
+    public HanRoutingProtocol.ClientRegisterResponse.Status getStatus() {
+        return status;
     }
 }

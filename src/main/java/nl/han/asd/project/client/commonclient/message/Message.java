@@ -11,7 +11,7 @@ public class Message {
     private String text;
     private Contact sender;
     private Contact receiver;
-    private long messageDateTime;
+    private long messageTimestamp;
 
     public Message(String text, Contact sender, Contact receiver) {
         this.text = text;
@@ -29,5 +29,13 @@ public class Message {
 
     public String getText() {
         return text;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public long getMessageTimestamp() {
+        return messageTimestamp;
     }
 }

@@ -27,6 +27,8 @@ public class ContactController {
     }
 
     private void onActions() {
+        //not implemented yet
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     private void fillContactList() {

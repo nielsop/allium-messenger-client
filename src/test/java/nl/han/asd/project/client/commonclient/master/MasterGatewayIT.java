@@ -58,16 +58,16 @@ public class MasterGatewayIT {
     @Test
     public void testRegisterClientSuccessful() {
         Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES,
-                gateway.register("meneer", VALID_PASSWORD).status);
+                gateway.register("meneer", VALID_PASSWORD).getStatus());
     }
 
     @Test
     public void testRegisterClientSameUsernameFails() {
         String username = UUID.randomUUID().toString();
         Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES,
-                gateway.register(username, VALID_PASSWORD).status);
+                gateway.register(username, VALID_PASSWORD).getStatus());
         Assert.assertEquals(HanRoutingProtocol.ClientRegisterResponse.Status.TAKEN_USERNAME,
-                gateway.register(username, VALID_PASSWORD).status);
+                gateway.register(username, VALID_PASSWORD).getStatus());
     }
 
     /* Login of clients on master server */
@@ -75,7 +75,7 @@ public class MasterGatewayIT {
     public void testLoginSuccessful() {
         gateway.register(VALID_USERNAME, VALID_PASSWORD);
 
-        Assert.assertTrue(gateway.authenticate(VALID_USERNAME, VALID_PASSWORD).status
+        Assert.assertTrue(gateway.authenticate(VALID_USERNAME, VALID_PASSWORD).getStatus()
                 == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES);
     }
 
@@ -93,6 +93,6 @@ public class MasterGatewayIT {
     @Test @Ignore("Has to be fixed.") //TODO: Fix test?
     public void testGetClientGroupSuccessful() {
         ClientGroupResponseWrapper response = gateway.getClientGroup();
-        Assert.assertTrue(response.clientGroup.size() >= 0);
+        Assert.assertTrue(response.getClientGroup().size() >= 0);
     }
 }
