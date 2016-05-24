@@ -3,11 +3,15 @@ package nl.han.asd.project.client.commonclient.database;
 import com.google.inject.AbstractModule;
 
 /**
- * Created by Marius on 19-04-16.
+ *
+ *
+ * @author Niels Bokmans
+ * @version 1.0
+ * @since 24-5-2016
  */
 public class DatabaseModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(IDatabase.class).to(Database.class);
+        bind(IDatabase.class).to(HyperSQLDatabase.class);
     }
 }

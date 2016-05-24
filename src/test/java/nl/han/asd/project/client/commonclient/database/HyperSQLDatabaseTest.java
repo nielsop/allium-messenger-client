@@ -17,62 +17,62 @@ import java.util.UUID;
  * @version 1.0
  * @since 22-5-2016
  */
-public class DatabaseConnectionTest {
+public class HyperSQLDatabaseTest {
 
-    private DatabaseConnection connection;
+    private IDatabase database;
 
     @Before
     public void setupTestSuite() throws SQLException, NoSuchAlgorithmException {
-        connection = new DatabaseConnection("test", "test123");
-        connection.resetDatabase();
+        database = new HyperSQLDatabase("test", "test123");
+        database.resetDatabase();
     }
 
     @Test
     public void testResetDatabaseAcceptsSuccessfulAndAcceptsNewInserts() throws SQLException {
-        ResultSet contactsBefore = connection.select("SELECT * FROM Contact");
-        connection.executeQuery("INSERT INTO Contact (username) VALUES ('Test')");
-        ResultSet contactsAfter = connection.select("SELECT * FROM Contact");
+        ResultSet contactsBefore = database.select("SELECT * FROM Contact");
+        database.query("INSERT INTO Contact (username) VALUES ('Test')");
+        ResultSet contactsAfter = database.select("SELECT * FROM Contact");
         Assert.assertFalse(contactsBefore.next());
         Assert.assertTrue(contactsAfter.next());
     }
 
     @Test
     public void testResetDatabaseSuccessful() throws SQLException {
-        ResultSet messages = connection.select("SELECT * FROM Message");
-        ResultSet contacts = connection.select("SELECT * FROM Contact");
+        ResultSet messages = database.select("SELECT * FROM Message");
+        ResultSet contacts = database.select("SELECT * FROM Contact");
         Assert.assertFalse(contacts.next());
         Assert.assertFalse(messages.next());
     }
 
     @Test
-    public void testExecuteQuerySuccessful() throws SQLException {
-        Assert.assertTrue(connection.executeQuery("INSERT INTO Contact(username) VALUES ('Test')"));
+    public void testQuerySuccessful() throws SQLException {
+        Assert.assertTrue(database.query("INSERT INTO Contact(username) VALUES ('Test')"));
     }
 
     @Test(expected = SQLIntegrityConstraintViolationException.class)
-    public void testExecuteQueryPrimaryKeyViolation() throws SQLException {
-        connection.executeQuery("INSERT INTO Contact(username) VALUES ('Test')");
-        connection.executeQuery("INSERT INTO Contact(username) VALUES ('Test')");
+    public void testQueryPrimaryKeyViolation() throws SQLException {
+        database.query("INSERT INTO Contact(username) VALUES ('Test')");
+        database.query("INSERT INTO Contact(username) VALUES ('Test')");
     }
 
     @Test
     public void testSelectSuccessful() throws SQLException {
         String randomUsername = UUID.randomUUID().toString().substring(0, 12);
-        connection.executeQuery("INSERT INTO Contact(username) VALUES ('" + randomUsername + "')");
-        ResultSet result = connection.select("SELECT * FROM Contact");
+        database.query("INSERT INTO Contact(username) VALUES ('" + randomUsername + "')");
+        ResultSet result = database.select("SELECT * FROM Contact");
         result.next();
         Assert.assertEquals(result.getObject(2), randomUsername);
     }
 
     @Test
     public void testIsDatabaseConnectionOpen() throws SQLException {
-        Assert.assertTrue(connection.isOpen());
+        Assert.assertTrue(database.isOpen());
     }
 
     @Test
     public void testCanDatabaseConnectionBeClosed() throws SQLException {
-        connection.stop();
-        Assert.assertFalse(connection.isOpen());
+        database.stop();
+        Assert.assertFalse(database.isOpen());
     }
 
 }

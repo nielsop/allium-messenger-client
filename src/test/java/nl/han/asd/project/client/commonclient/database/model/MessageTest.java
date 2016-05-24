@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.database.model;
 
+import nl.han.asd.project.client.commonclient.Configuration;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -7,6 +8,7 @@ import org.mockito.Mockito;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -27,6 +29,7 @@ public class MessageTest {
     private static final String PRIMARY_USERNAME = "TestUsername";
     private static final String SECONDARY_USERNAME = "TestUsername2";
     private static final Date DATE = new Date();
+    private static final Timestamp TIMESTAMP = new Timestamp(DATE.getTime());
     private static final String PRIMARY_MESSAGE = "Testmessage";
     private static final String SECONDARY_MESSAGE = "Testmessage2";
     private static final String PRIMARY_MESSAGE_TOSTRING =
@@ -65,7 +68,7 @@ public class MessageTest {
         final ResultSet set = Mockito.mock(ResultSet.class);
         Mockito.when(set.getObject(1)).thenReturn(1);
         Mockito.when(set.getObject(2)).thenReturn(PRIMARY_USERNAME);
-        Mockito.when(set.getObject(3)).thenReturn(DATE);
+        Mockito.when(set.getTimestamp(3)).thenReturn(TIMESTAMP);
         Mockito.when(set.getObject(4)).thenReturn(PRIMARY_MESSAGE);
         final Message messageFromDatabase = Message.fromDatabase(set);
         Assert.assertEquals(message, messageFromDatabase);

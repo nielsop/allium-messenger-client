@@ -1,11 +1,13 @@
 package nl.han.asd.project.client.commonclient.database.model;
 
+import nl.han.asd.project.client.commonclient.Configuration;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -34,12 +36,12 @@ public class Message {
     public static Message fromDatabase(ResultSet result) {
         try {
             final int id = (Integer) result.getObject(1);
-            Object obj = result.getObject(2);
             final Contact sender = Contact.fromDatabase(result.getObject(2));
-            final Date timestamp = (Date) result.getObject(3);
             final String message = (String) result.getObject(4);
+            final Date timestamp = Configuration.TIMESTAMP_FORMAT
+                    .parse(Configuration.TIMESTAMP_FORMAT.format(result.getTimestamp(3)));
             return new Message(id, sender, timestamp, message);
-        } catch (SQLException e) {
+        } catch (SQLException | ParseException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
@@ -76,12 +78,11 @@ public class Message {
         }
         final Message otherMessage = (Message) anotherObject;
         return getId() == otherMessage.getId() && getSender().equals(otherMessage.getSender()) && getText()
-                .equalsIgnoreCase(otherMessage.getText()) && getTimestamp().equals(otherMessage.getTimestamp());
+                .equalsIgnoreCase(otherMessage.getText());
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(getId()).append(getSender()).append(getText()).append(getTimestamp())
-                .toHashCode();
+        return new HashCodeBuilder(17, 37).append(getId()).append(getSender()).append(getText()).toHashCode();
     }
 }
