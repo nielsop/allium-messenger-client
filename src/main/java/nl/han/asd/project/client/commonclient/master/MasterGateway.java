@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.Socket;
 
-public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
+public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterGateway.class);
     private ConnectionService connectionService;

@@ -1,24 +1,25 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
+import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MessageProcessingService implements IReceiveMessage {
+public class MessageProcessingService implements IReceiveMessage,ISendMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
     private IMessageStore messageStore;
 
-    private IDecrypt decrypt;
+    private IEncryptionService encryptionService;
 
     @Inject
-    public MessageProcessingService(IMessageStore messageStore) {
+    public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService) {
         this.messageStore = messageStore;
+        this.encryptionService = encryptionService;
     }
 
     @Override
@@ -28,7 +29,7 @@ public class MessageProcessingService implements IReceiveMessage {
     }
 
     private HanRoutingProtocol.Message decryptEncryptedMessage(HanRoutingProtocol.MessageWrapper encryptedMessage) {
-        ByteString messageBuffer = decrypt.decryptData(encryptedMessage.getData());
+        byte[] messageBuffer = encryptionService.decryptData(encryptedMessage.getEncryptedData().toByteArray());
         HanRoutingProtocol.Message message = null;
         try {
             message = HanRoutingProtocol.Message.parseFrom(messageBuffer);
@@ -36,6 +37,11 @@ public class MessageProcessingService implements IReceiveMessage {
             LOGGER.error(e.getMessage(), e);
         }
         return message;
+    }
+
+    @Override
+    public void sendMessage(EncryptedMessage message) {
+
     }
 
     //TODO peelMessagePacket / Pakket uitpakken

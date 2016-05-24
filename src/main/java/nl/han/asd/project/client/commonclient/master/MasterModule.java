@@ -10,7 +10,7 @@ public class MasterModule extends AbstractModule {
     protected void configure() {
         bind(IHeartbeat.class).to(MasterGateway.class);
         bind(IGetClientGroup.class).to(MasterGateway.class);
-        bind(IGetUpdatedGraph.class).to(MasterGateway.class);
+        bind(IGetGraphUpdates.class).to(MasterGateway.class);
         bind(IAuthentication.class).to(MasterGateway.class);
         bind(IRegistration.class).to(MasterGateway.class);
         bind(MasterGateway.class);

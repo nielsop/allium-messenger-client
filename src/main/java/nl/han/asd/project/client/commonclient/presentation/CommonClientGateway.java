@@ -5,9 +5,10 @@ import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
+import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.IContact;
-import nl.han.asd.project.client.commonclient.store.IMessageObserver;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.client.commonclient.store.IMessageStoreObserver;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +20,17 @@ import javax.inject.Inject;
  * <p>
  * Leave empty until we know what to do with it
  */
-public class PresentationLayer {
+public class CommonClientGateway {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PresentationLayer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
     //TODO: android app? desktop app?
-    public IContact contact;
+    public IContactStore contact;
     public IMessageBuilder messageBuilder;
-    public IMessageObserver messageObserver;
+    public IMessageStoreObserver messageObserver;
     public IRegistration registration;
     public ILogin login;
+    private ISendMessage sendMessage;
     private Contact currentUser;
     private String privateKey = "privateKey";
 
@@ -37,17 +39,18 @@ public class PresentationLayer {
      *
      * @param registration
      */
-    public PresentationLayer(IRegistration registration) {
+    public CommonClientGateway(IRegistration registration) {
         this.registration = registration;
     }
 
     @Inject
-    public PresentationLayer(IContact contact, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
+    public CommonClientGateway(IContactStore contact, IMessageBuilder messageBuilder, IMessageStoreObserver messageObserver, IRegistration registration, ILogin login, ISendMessage sendMessage) {
         this.contact = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
         this.registration = registration;
         this.login = login;
+        this.sendMessage = sendMessage;
     }
 
     /**
