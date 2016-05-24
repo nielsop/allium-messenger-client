@@ -5,6 +5,6 @@ import nl.han.asd.project.client.commonclient.store.Contact;
 
 import java.util.ArrayList;
 
-public interface IGetPath {
+public interface IGetMessagePath {
     ArrayList<Node> getPath(int minHops, Contact contactReciever);
 }

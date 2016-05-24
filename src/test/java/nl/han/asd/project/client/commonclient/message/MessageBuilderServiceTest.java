@@ -1,93 +1,216 @@
 package nl.han.asd.project.client.commonclient.message;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
-import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
-import nl.han.asd.project.client.commonclient.path.IGetPath;
-import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
+import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import java.net.SocketException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 /**
- * Created by Julius on 15/04/16.
+ * @author Julius
+ * @version 2.0
+ * @since 15/04/1996
  */
+@RunWith(MockitoJUnitRunner.class)
 public class MessageBuilderServiceTest {
 
     @Mock
-    IGetUpdatedGraph updatedGraphMock;
-    @Mock
-    IEncrypt encrypt = Mockito.mock(CryptographyService.class);
-    @Mock
-    ISendMessage sendMessage;
-    @Mock
-    IMessageStore messageStore;
+    private IGetUpdatedGraph updatedGraphMock;
 
-    @InjectMocks
+    @Mock
+    private ISendMessage sendMessage;
+
+    @Mock
+    private IMessageStore messageStore;
+
+    @Mock
+    private IGetMessagePath pathDeterminationService;
+
     private MessageBuilderService messageBuilderService;
+    private IEncrypt encrypt;
 
-    @Mock
-    private ConnectionService connectionService;
-
-    IGetPath pathDeterminationService = Mockito
-            .mock(PathDeterminationService.class);
-
+    private UUID MESSAGEID;
+    private String CONTACTRECIEVERUSERNAME = "Bob";
+    private Contact CONTACTRECIEVER;
+    private ArrayList<Node> PATH;
 
 
     @Before
     public void setUp() throws Exception {
+        Injector injector = Guice.createInjector(new EncryptionModule());
+        encrypt = new CryptographyService(injector.getInstance(IEncryptionService.class));
+
         messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,sendMessage,messageStore);
+
+        MESSAGEID = UUID.randomUUID();
+
+        CONTACTRECIEVER = Mockito.mock(Contact.class);
+
+        PATH = new ArrayList<>(Arrays.asList(new Node("NODE_ID_1","192.168.2.1",1234,"123456789".getBytes()), new Node("NODE_ID_2","192.168.2.2",1234,"123456789".getBytes()), new Node("NODE_ID_3","192.168.2.3",1234,"123456789".getBytes())));
+
+        when(CONTACTRECIEVER.getUsername()).thenReturn(CONTACTRECIEVERUSERNAME);
+
+        when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(PATH);
     }
 
     @Test
     public void sendMessageTest(){
-        Contact contactReciever = new Contact("julius","1234");
-        Contact contactSender = new Contact("bram","123456");
-        contactReciever.setConnectedNodes(new Node[]{new Node("NODE_ID_1","192.168.2.8",1234,"123456789".getBytes()),new Node("NODE_ID_2","192.168.2.9",1234,"123456789".getBytes()),new Node("NODE_ID_3","192.168.2.10",1234,"123456789".getBytes())});
 
-        ArrayList<Node> path = new ArrayList<Node>(Arrays.asList(new Node("NODE_ID_1","192.168.2.1",1234,"123456789".getBytes()), new Node("NODE_ID_2","192.168.2.2",1234,"123456789".getBytes()), new Node("NODE_ID_3","192.168.2.3",1234,"123456789".getBytes())));
-        Byte[] encryptedData = new Byte[]{0,1,0,1};
+        GeneratedMessage message = makeMessage();
+        List<Node> path = new ArrayList<>(PATH.size());
+        path.addAll(PATH);
+
+        messageBuilderService.sendMessage(message,CONTACTRECIEVER);
 
 
-        Mockito.when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(path);
-        Mockito.when(encrypt.encryptData(Mockito.any(ByteString.class),Mockito.any(byte[].class))).thenReturn(ByteString.copyFromUtf8("data"));
-        Mockito.when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(path);
+        HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
+        wrapperBuilder.setType(HanRoutingProtocol.Wrapper.Type.MESSAGE);
 
-        HanRoutingProtocol.Message.Builder messageBuilder = HanRoutingProtocol.Message.newBuilder();
-        messageBuilder.setId(UUID.randomUUID().toString());
-        messageBuilder.setTimeSent(Instant.now().getEpochSecond());
-        messageBuilder.setSender(contactSender.getUsername());
-        messageBuilder.setText("This is a message");
 
-        messageBuilderService.sendMessage(messageBuilder.build(),contactReciever);
+        wrapperBuilder.setData(message.toByteString());
 
-        try {
-            Mockito.verify(connectionService).write(any(HanRoutingProtocol.MessageWrapper.Builder.class));
-        } catch (SocketException e) {
-            e.printStackTrace();
+        HanRoutingProtocol.MessageWrapper.Builder endPointMessageWrapper = HanRoutingProtocol.MessageWrapper.newBuilder();
+        endPointMessageWrapper.setIPaddress(path.get(0).getIpAddress());
+        endPointMessageWrapper.setPort(path.get(0).getPort());
+        endPointMessageWrapper.setUsername(CONTACTRECIEVER.getUsername());
+        endPointMessageWrapper.setEncryptedData(wrapperBuilder.build().toByteString()); // enc
+
+        for(int i = 1; i < path.size(); i++){
+            HanRoutingProtocol.MessageWrapper.Builder messageWrapperBuilder = HanRoutingProtocol.MessageWrapper.newBuilder();
+
+            messageWrapperBuilder.setIPaddress(path.get(i).getIpAddress());
+            messageWrapperBuilder.setPort(path.get(i).getPort());
+            messageWrapperBuilder.setEncryptedData(endPointMessageWrapper.build().toByteString()); // enc
+
+            endPointMessageWrapper = messageWrapperBuilder;
+
         }
+
+        Mockito.verify(sendMessage,times(1)).sendMessage(eq(endPointMessageWrapper.build()),eq(CONTACTRECIEVER));
     }
 
+    @Test
+    public void setSendMessage2hops(){
+        PATH = new ArrayList<>(Arrays.asList(new Node("NODE_ID_1-last-node-in-path","192.168.2.1",1234,"123456789".getBytes()), new Node("NODE_ID_2","192.168.2.2",1234,"123456789".getBytes())));
 
+        List<Node> path = new ArrayList<>(PATH.size());
+        path.addAll(PATH);
+        pathDeterminationService = Mockito.mock(IGetMessagePath.class);
+
+        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,sendMessage,messageStore);
+
+
+        when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(PATH);
+
+        GeneratedMessage message = makeMessage();
+
+        messageBuilderService.sendMessage(message,CONTACTRECIEVER);
+
+
+        HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
+        wrapperBuilder.setType(HanRoutingProtocol.Wrapper.Type.MESSAGE);
+
+        wrapperBuilder.setData(message.toByteString());
+
+        HanRoutingProtocol.MessageWrapper.Builder endPointMessageWrapper = HanRoutingProtocol.MessageWrapper.newBuilder();
+        endPointMessageWrapper.setIPaddress(path.get(0).getIpAddress());
+        endPointMessageWrapper.setPort(path.get(0).getPort());
+        endPointMessageWrapper.setUsername(CONTACTRECIEVER.getUsername());
+        endPointMessageWrapper.setEncryptedData(wrapperBuilder.build().toByteString());
+
+        HanRoutingProtocol.MessageWrapper.Builder secondDeepestLayer = HanRoutingProtocol.MessageWrapper.newBuilder();
+
+        secondDeepestLayer.setIPaddress(path.get(1).getIpAddress());
+        secondDeepestLayer.setPort(path.get(1).getPort());
+        secondDeepestLayer.setEncryptedData(endPointMessageWrapper.build().toByteString());
+
+        Mockito.verify(sendMessage,times(1)).sendMessage(eq(secondDeepestLayer.build()),eq(CONTACTRECIEVER));
+
+    }
+
+    @Test (expected = IndexOutOfBoundsException.class)
+    public void whenThereIsNoNodesInPathThrowIndexOutOfBoundsException(){
+        PATH = new ArrayList<>();
+
+        pathDeterminationService = Mockito.mock(IGetMessagePath.class);
+
+        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,sendMessage,messageStore);
+
+        when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(PATH);
+        GeneratedMessage message = makeMessage();
+
+        messageBuilderService.sendMessage(message,CONTACTRECIEVER);
+
+    }
+
+    @Test
+    public void sendConfirmationMessageTest(){
+
+        messageBuilderService.sendMessage(makeMessageConfirmation(),CONTACTRECIEVER);
+
+        Mockito.verify(sendMessage,times(1)).sendMessage(any(GeneratedMessage.class),eq(CONTACTRECIEVER));
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void throwExeptionWhenWrongMessageIsUsed(){
+        messageBuilderService.sendMessage(makeWrongMessage(),CONTACTRECIEVER);
+    }
+
+    private HanRoutingProtocol.Message makeMessage(){
+        HanRoutingProtocol.Message.Builder messageBuilder = HanRoutingProtocol.Message.newBuilder();
+
+        messageBuilder.setText("This is a message");
+        messageBuilder.setSender("Alice");
+        messageBuilder.setTimeSent(Instant.now().getEpochSecond());
+        messageBuilder.setId(MESSAGEID.toString());
+
+        return messageBuilder.build();
+    }
+
+    private HanRoutingProtocol.MessageConfirmation makeMessageConfirmation(){
+        HanRoutingProtocol.MessageConfirmation.Builder messageConfirmation = HanRoutingProtocol.MessageConfirmation.newBuilder();
+
+        messageConfirmation.setConfirmationId(MESSAGEID.toString());
+
+        return messageConfirmation.build();
+    }
+
+    private HanRoutingProtocol.MessageWrapper makeWrongMessage(){
+        HanRoutingProtocol.MessageWrapper.Builder messageWrapperBuilder = HanRoutingProtocol.MessageWrapper.newBuilder();
+
+        messageWrapperBuilder.setEncryptedData(ByteString.copyFrom("data".getBytes()));
+        messageWrapperBuilder.setPort(1337);
+        messageWrapperBuilder.setIPaddress("192.168.2.14");
+
+        return messageWrapperBuilder.build();
+    }
 
     @After
     public void tearDown() throws Exception {

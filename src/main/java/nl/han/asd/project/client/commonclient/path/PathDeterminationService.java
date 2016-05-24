@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class PathDeterminationService implements IGetPath {
+public class PathDeterminationService implements IGetMessagePath {
     private static final Logger LOGGER = LoggerFactory.getLogger(PathDeterminationService.class);
     public IGetUpdatedGraph graphUpdates;
     public IGetClientGroup clientGroup;

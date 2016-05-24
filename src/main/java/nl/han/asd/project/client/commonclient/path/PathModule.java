@@ -8,6 +8,6 @@ import com.google.inject.AbstractModule;
 public class PathModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(IGetPath.class).to(PathDeterminationService.class);
+        bind(IGetMessagePath.class).to(PathDeterminationService.class);
     }
 }
