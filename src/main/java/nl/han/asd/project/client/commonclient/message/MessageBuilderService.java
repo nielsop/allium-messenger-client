@@ -9,7 +9,7 @@ import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
-import nl.han.asd.project.client.commonclient.path.IGetPath;
+import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
-    public IGetPath getPath;
+    public IGetMessagePath getPath;
     public ISendMessage sendMessage;
     public IMessageStore messageStore;
     private ConnectionService connectionService = null;
@@ -32,7 +32,7 @@ public class MessageBuilderService implements IMessageBuilder {
     public CryptographyService cryptographyService;
 
     @Inject
-    public MessageBuilderService(IGetPath getPath, IEncrypt encrypt, ISendMessage sendMessage,
+    public MessageBuilderService(IGetMessagePath getPath, IEncrypt encrypt, ISendMessage sendMessage,
             IMessageStore messageStore) {
         this.getPath = getPath;
         this.encrypt = encrypt;

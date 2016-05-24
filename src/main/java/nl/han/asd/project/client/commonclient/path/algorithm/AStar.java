@@ -10,12 +10,14 @@ import java.util.*;
 /**
  * Created by Jevgeni on 19-5-2016.
  */
-public class AStar {
+public class AStar implements IPathFind {
 
     private final Graph graph;
+    private final Map<String, Node> vertices;
 
-    public AStar(Graph graph) {
-        this.graph = graph;
+    public AStar(Map<String, Node> vertices) {
+        //this.graph = graph;
+        this.vertices = vertices;
     }
 
     // extend comparator.
@@ -29,25 +31,15 @@ public class AStar {
         }
     }
 
-    /**
-     * Implements the A-star algorithm and returns the path from source to destination
-     *
-     * @param source        the source nodeid
-     * @param destination   the destination nodeid
-     * @return the path from source to destination
-     */
-    public List<String> aStar(String source, String destination) {
-        /**
-         * http://stackoverflow.com/questions/20344041/why-does-priority-queue-has-default-initial-capacity-of-11
-         */
+    @Override
+    public List<Node> findPath(Node sourceNode, Node destination) {
         final Queue<Node> openQueue = new PriorityQueue<Node>(11, new NodeComparator());
 
-        Node sourceNode = graph.getNodeVertex(source);
         sourceNode.setDistanceToSource(0);
         sourceNode.calcF(destination);
         openQueue.add(sourceNode);
 
-        final Map<String, String> path = new HashMap<String, String>();
+        final Map<String, Node> path = new HashMap<>();
         final Set<Node> closedList = new HashSet<Node>();
 
         while (!openQueue.isEmpty()) {
@@ -71,7 +63,7 @@ public class AStar {
                     neighbor.setDistanceToSource(tentativeG);
                     neighbor.calcF(destination);
 
-                    path.put(neighbor.getId(), node.getId());
+                    path.put(neighbor.getId(), node);
                     if (!openQueue.contains(neighbor)) {
                         openQueue.add(neighbor);
                     }
@@ -82,12 +74,13 @@ public class AStar {
         return null;
     }
 
-    private List<String> path(Map<String, String> path, String destination) {
+    private List<Node> path(Map<String, Node> path, Node destination) {
         assert path != null;
         assert destination != null;
 
-        final List<String> pathList = new ArrayList<String>();
+        final List<Node> pathList = new ArrayList<>();
         pathList.add(destination);
+
         while (path.containsKey(destination)) {
             destination = path.get(destination);
             pathList.add(destination);

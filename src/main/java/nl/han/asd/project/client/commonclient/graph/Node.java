@@ -57,7 +57,7 @@ public class Node {
     }
 
 
-    public void calcF(String destination) {
+    public void calcF(Node destination) {
         double h = findDistanceToDestination(destination);
         this.f = distanceToSource + h; // f = g + h
     }
@@ -74,9 +74,9 @@ public class Node {
         this.distanceToSource = value;
     }
 
-    private double findDistanceToDestination(String id) {
+    private double findDistanceToDestination(Node destination) {
         for (Edge edge : edges) {
-            if (edge.getDestinationId() == id) {
+            if (edge.getDestinationId() == destination.getId()) {
                 return edge.getDistance();
             }
         }

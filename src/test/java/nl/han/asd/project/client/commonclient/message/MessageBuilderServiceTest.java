@@ -1,27 +1,19 @@
 package nl.han.asd.project.client.commonclient.message;
 
-import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
-import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
-import nl.han.asd.project.client.commonclient.path.IGetPath;
+import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
-import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 
 /**
  * Created by Julius on 15/04/16.
@@ -40,7 +32,7 @@ public class MessageBuilderServiceTest {
     @InjectMocks
     private MessageBuilderService messageBuilderService;
 
-    IGetPath pathDeterminationService = Mockito
+    IGetMessagePath pathDeterminationService = Mockito
             .mock(PathDeterminationService.class);
 
     @Before
