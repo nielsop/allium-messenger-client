@@ -8,7 +8,7 @@ public interface IContactStore {
 
     void addContact(String username, String publicKey);
 
-    void deleteContact(String username);
+    void removeContact(String username);
 
     ArrayList<Contact> getAllContacts();
 

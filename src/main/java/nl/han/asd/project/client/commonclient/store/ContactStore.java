@@ -33,7 +33,7 @@ public class ContactStore implements IContactStore {
     }
 
     @Override
-    public void deleteContact(String username) {
+    public void removeContact(String username) {
         for (Contact contact : contactList) {
             if (contact.getUsername().equals(username)) {
                 contactList.remove(contact);

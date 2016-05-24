@@ -99,7 +99,7 @@ public class ContactStoreTest {
     @Test
     public void testDeleteSingleContactFromList() {
         addTestContacts();
-        contactStore.deleteContact(usernameContact2);
+        contactStore.removeContact(usernameContact2);
         Contact selectedContact = contactStore.findContact(usernameContact2);
         assertEquals(null, selectedContact);
         assertEquals(3, contactStore.getAllContacts().size());

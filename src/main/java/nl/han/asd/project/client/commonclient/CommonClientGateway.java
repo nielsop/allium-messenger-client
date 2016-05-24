@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.presentation;
+package nl.han.asd.project.client.commonclient;
 
 import nl.han.asd.project.client.commonclient.login.ILogin;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
@@ -19,9 +19,9 @@ import java.util.List;
  * <p/>
  * Leave empty until we know what to do with it
  */
-public class PresentationLayer {
+public class CommonClientGateway {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(PresentationLayer.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
@@ -32,7 +32,7 @@ public class PresentationLayer {
     private String privateKey = "privateKey";
 
     @Inject
-    public PresentationLayer(IContactStore contactStore, IMessageStore messageStore, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
+    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
         this.contactStore = contactStore;
         this.messageStore = messageStore;
         this.messageBuilder = messageBuilder;
@@ -108,7 +108,7 @@ public class PresentationLayer {
         messageStore.addMessage(message);
     }
 
-    public void deleteContact(String username) {
-        contactStore.deleteContact(username);
+    public void removeContact(String username) {
+        contactStore.removeContact(username);
     }
 }
