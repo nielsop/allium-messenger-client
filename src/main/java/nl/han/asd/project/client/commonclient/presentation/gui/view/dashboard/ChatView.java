@@ -35,7 +35,7 @@ public class ChatView {
     private HBox getTop() {
         HBox top = getHBox(0, new int[]{5, 5, 5, 5}, "");
         top.setStyle("-fx-font-weight: bold; -fx-font-size: 15px;");
-        top.getChildren().add(new Label("Klik op een contact om te chatten."));
+        top.getChildren().add(new Label("Klik op een contactStore om te chatten."));
         return top;
     }
 

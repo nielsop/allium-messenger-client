@@ -53,7 +53,7 @@ public class ChatController {
 
     private VBox getChatPane(Contact contact) {
         VBox vBox = getVBox(0, new int[]{0, 0, 0, 0}, "");
-//        for (Message message : paneDashboard.getMessages(contact)) {
+//        for (Message message : paneDashboard.getMessages(contactStore)) {
 //            addMessageToChat(message, vBox, false);
 //        }
         return vBox;
