@@ -2,13 +2,14 @@ package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
 import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MessageProcessingService implements IReceiveMessage {
+public class MessageProcessingService implements IReceiveMessage,ISendMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
     private IMessageStore messageStore;
@@ -36,6 +37,11 @@ public class MessageProcessingService implements IReceiveMessage {
             LOGGER.error(e.getMessage(), e);
         }
         return message;
+    }
+
+    @Override
+    public void sendMessage(EncryptedMessage message) {
+
     }
 
     //TODO peelMessagePacket / Pakket uitpakken

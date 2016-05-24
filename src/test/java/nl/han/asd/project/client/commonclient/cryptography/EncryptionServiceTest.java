@@ -8,8 +8,8 @@ import org.junit.Test;
 /**
  * Created by Julius on 18/04/16.
  */
-public class CryptographyServiceTest {
-    private CryptographyService cryptographyService;
+public class EncryptionServiceTest {
+    private EncryptionService encryptionService;
 
     @Before
     public void setUp() throws Exception {

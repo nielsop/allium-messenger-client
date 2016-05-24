@@ -8,7 +8,7 @@ import com.google.inject.AbstractModule;
 public class NodeModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(ISendMessage.class).to(NodeGateway.class);
+        bind(ISendData.class).to(NodeConnectionService.class);
         bind(ISetConnectedNodes.class).to(NodeConnectionService.class);
     }
 }

@@ -7,7 +7,7 @@ import nl.han.asd.project.commonservices.encryption.IEncryptionService;
  * @version 1.0
  * @since 29-4-2016
  */
-public class CryptographyService implements IEncryptionService {
+public class EncryptionService implements IEncryptionService {
 
 
     /**
