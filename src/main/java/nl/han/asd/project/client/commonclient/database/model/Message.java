@@ -75,7 +75,7 @@ public class Message {
             return false;
         }
         final Message otherMessage = (Message) anotherObject;
-        return getId() == otherMessage.getId() && getSender().equals(otherMessage.getSender()) && getText().equals(otherMessage.getText());
+        return getId() == otherMessage.getId();
     }
 
     @Override
