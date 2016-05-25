@@ -24,8 +24,7 @@ public class CommonClientGateway {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
-    //TODO: android app? desktop app?
-    public IContactStore contact;
+    public IContactStore contactStore;
     public IMessageBuilder messageBuilder;
     public IMessageStoreObserver messageObserver;
     public IRegistration registration;
@@ -44,9 +43,9 @@ public class CommonClientGateway {
     }
 
     @Inject
-    public CommonClientGateway(IContactStore contact, IMessageBuilder messageBuilder,
+    public CommonClientGateway(IContactStore contactStore, IMessageBuilder messageBuilder,
             IMessageStoreObserver messageObserver, IRegistration registration, ILogin login, ISendMessage sendMessage) {
-        this.contact = contact;
+        this.contactStore = contactStore;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
         this.registration = registration;
