@@ -5,6 +5,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
+import nl.han.asd.project.client.commonclient.cryptography.IEncrypt;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.path.IGetPath;
@@ -17,24 +19,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
     public IGetPath getPath;
     public ISendMessage sendMessage;
     public IMessageStore messageStore;
-    public IEncryptionService encryptionService;
     private ConnectionService connectionService = null;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
+    public IEncrypt encrypt;
+    public CryptographyService cryptographyService;
 
     @Inject
-    public MessageBuilderService(IGetPath getPath, ISendMessage sendMessage, IMessageStore messageStore) {
+    public MessageBuilderService(IGetPath getPath, IEncrypt encrypt, ISendMessage sendMessage,
+            IMessageStore messageStore) {
         this.getPath = getPath;
+        this.encrypt = encrypt;
         this.sendMessage = sendMessage;
         this.messageStore = messageStore;
         final Injector injector = Guice.createInjector(new EncryptionModule());
-        encryptionService = injector.getInstance(IEncryptionService.class);
+        cryptographyService = new CryptographyService(injector.getInstance(IEncryptionService.class));
     }
 
     public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
@@ -47,7 +53,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
         connectionService = new ConnectionService(messageToSend.getPublicKey());
         try {
-            connectionService.open(messageToSend.getIp(), messageToSend.getPort());
+            connectionService.open(messageToSend.getIp(),messageToSend.getPort());
             connectionService.write(builder);
         } catch (IOException e) {
             LOGGER.error("Message could not be send due to connection problems.");
@@ -66,8 +72,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
     /**
      * Deepest layer in final message package
-     *
-     * @param node    contains information about the next hop in path
+     * @param node contains information about the next hop in path
      * @param message contains information about the message typed by the client
      * @return encrypted data from the first layer that is build
      */
@@ -78,11 +83,11 @@ public class MessageBuilderService implements IMessageBuilder {
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
         builder.setData(ByteString.copyFromUtf8(message.getText()));
-        return ByteString.copyFrom(encryptionService.encryptData(builder.build().toByteArray(), node.getPublicKey()));
+        return cryptographyService.encryptData(builder.build().toByteString(), node.getPublicKey());
     }
 
     private EncryptedMessage buildLastMessagePackageLayer(Node node, ByteString data) {
-        return new EncryptedMessage(null, node.getIpAddress(), node.getPort(), node.getPublicKey(), data);
+        return new EncryptedMessage(null, node.getIpAddress(), node.getPort(),node.getPublicKey(), data);
     }
 
     private ByteString buildMessagePackageLayer(ByteString message, List<Node> remainingPath) {
@@ -98,7 +103,8 @@ public class MessageBuilderService implements IMessageBuilder {
 
         remainingPath.remove(0);
 
-        ByteString encryptedMessage = ByteString.copyFrom(encryptionService.encryptData(builder.build().toByteArray(), node.getPublicKey()));
+        ByteString encryptedMessage = cryptographyService
+                .encryptData(builder.build().toByteString(), node.getPublicKey());
         return buildMessagePackageLayer(encryptedMessage, remainingPath);
     }
 }
