@@ -63,7 +63,7 @@ public class MessageBuilderService implements IMessageBuilder {
     private EncryptedMessage buildMessagePackage(String messageText, Contact contactReceiver, Contact contactSender) {
         List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
-        Message message = new Message(messageText, contactSender, contactReceiver);
+        Message message = new Message(messageText, contactSender, contactReceiver, System.currentTimeMillis());
         //TODO kijken of path of die nodes bevat anders gooi exep
         ByteString firstLayer = buildFirstMessagePackageLayer(path.get(0), message);
         path.remove(0);

@@ -13,10 +13,11 @@ public class Message {
     private Contact receiver;
     private long messageDateTime;
 
-    public Message(String text, Contact sender, Contact receiver) {
+    public Message(String text, Contact sender, Contact receiver, long messageDateTime) {
         this.text = text;
         this.sender = sender;
         this.receiver = receiver;
+        this.messageDateTime = messageDateTime;
     }
 
     public Contact getReceiver() {
@@ -29,5 +30,9 @@ public class Message {
 
     public String getText() {
         return text;
+    }
+
+    public long getDateTime() {
+        return messageDateTime;
     }
 }

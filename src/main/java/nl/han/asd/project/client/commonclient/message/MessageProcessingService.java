@@ -38,7 +38,7 @@ public class MessageProcessingService implements IReceiveMessage {
         } catch (InvalidProtocolBufferException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new Message(message.getText(), contactStore.findContact(message.getSender()), contactStore.getCurrentUser());
+        return new Message(message.getText(), contactStore.findContact(message.getSender()), contactStore.getCurrentUser(), System.currentTimeMillis());
     }
 
     //TODO peelMessagePacket / Pakket uitpakken

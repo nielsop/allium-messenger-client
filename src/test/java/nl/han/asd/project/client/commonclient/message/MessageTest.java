@@ -24,7 +24,7 @@ public class MessageTest {
     @Before
     public void setUp(){
         testdata = "testdata";
-        message = new Message(testdata,contactSender,contactReceiver);
+        message = new Message(testdata,contactSender,contactReceiver, System.currentTimeMillis());
     }
 
     @Test
