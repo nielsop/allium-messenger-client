@@ -4,16 +4,16 @@ import java.util.List;
 
 public interface IContactStore {
     /**
-     * Adds new contactStore into contactstore.
-     *  @param username username of contactStore
+     * Adds new contact into contactstore.
+     *  @param username username of contact
      *
      */
     void addContact(String username);
 
     /**
-     * Removes contactStore from contactstore.
+     * Removes contact from contactstore.
      *
-     * @param username username of to be deleted contactStore
+     * @param username username of to be deleted contact
      */
     void deleteContact(String username);
 
@@ -25,9 +25,9 @@ public interface IContactStore {
     List<Contact> getAllContacts();
 
     /**
-     * Finds a contactStore in the contactstore by username.
+     * Finds a contact in the contactstore by username.
      *
-     * @param username username of contactStore.
+     * @param username username of contact.
      * @return <tt>Contact</tt> if found, <tt>null</tt> otherwise.
      */
     Contact findContact(String username);
