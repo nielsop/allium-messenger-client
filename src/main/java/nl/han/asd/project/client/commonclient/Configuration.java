@@ -51,16 +51,4 @@ public class Configuration {
         return "";
     }
 
-    public static String generateKey(String username, String password) {
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance(DATABASE_ENCRYPTION_ALGORITHM);
-            return String.format("%064x",
-                    new java.math.BigInteger(1, messageDigest.digest((username + password).getBytes())))
-                    .substring(0, 32);
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return "";
-    }
-
 }

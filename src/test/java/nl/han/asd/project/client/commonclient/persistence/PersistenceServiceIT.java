@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +21,15 @@ import java.util.Map;
  * @version 1.0
  * @since 24-5-2016
  */
-@RunWith(MockitoJUnitRunner.class) public class PersistenceServiceTest {
+@RunWith(MockitoJUnitRunner.class)
+public class PersistenceServiceIT {
 
-    private IPersistence persistenceService;
     private static final Contact CONTACT_1 = new Contact("Testcontact");
     private static final Contact CONTACT_2 = new Contact("Testcontact2");
     private static final Message TEST_MESSAGE_1 = new Message(-1, CONTACT_1, new Date(), "Testmessage");
     private static final Message TEST_MESSAGE_2 = new Message(-1, CONTACT_1, new Date(), "Testmessage2");
     private static final Message TEST_MESSAGE_3 = new Message(-1, CONTACT_2, new Date(), "Testmessage3");
+    private IPersistence persistenceService;
 
     @Before
     public void setupTest() throws SQLException {
@@ -86,7 +86,7 @@ import java.util.Map;
         persistenceService.saveMessage(TEST_MESSAGE_1);
         persistenceService.saveMessage(TEST_MESSAGE_2);
         persistenceService.saveMessage(TEST_MESSAGE_3);
-        final Map<Contact, ArrayList<Message>> contactMessagesMap = persistenceService.getAllMessagesPerContact();
+        final Map<Contact, List<Message>> contactMessagesMap = persistenceService.getAllMessagesPerContact();
         Assert.assertEquals(2, contactMessagesMap.size());
         Assert.assertEquals(2, contactMessagesMap.get(CONTACT_1).size());
     }

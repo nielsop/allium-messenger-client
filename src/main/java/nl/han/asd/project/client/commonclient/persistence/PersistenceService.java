@@ -48,8 +48,8 @@ public class PersistenceService implements IPersistence {
     }
 
     @Override
-    public Map<Contact, ArrayList<Message>> getAllMessagesPerContact() throws SQLException {
-        final Map<Contact, ArrayList<Message>> contactMessagesHashMap = new HashMap<>();
+    public Map<Contact, List<Message>> getAllMessagesPerContact() throws SQLException {
+        final Map<Contact, List<Message>> contactMessagesHashMap = new HashMap<>();
         ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message");
         while (selectMessagesResult.next()) {
             final Message message = Message.fromDatabase(selectMessagesResult);

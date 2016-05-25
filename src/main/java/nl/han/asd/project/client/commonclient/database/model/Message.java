@@ -38,8 +38,7 @@ public class Message {
             final int id = (Integer) result.getObject(1);
             final Contact sender = Contact.fromDatabase(result.getObject(2));
             final String message = (String) result.getObject(4);
-            final Date timestamp = Configuration.TIMESTAMP_FORMAT
-                    .parse(Configuration.TIMESTAMP_FORMAT.format(result.getTimestamp(3)));
+            final Date timestamp = Configuration.TIMESTAMP_FORMAT.parse(Configuration.TIMESTAMP_FORMAT.format(result.getTimestamp(3)));
             return new Message(id, sender, timestamp, message);
         } catch (SQLException | ParseException e) {
             LOGGER.error(e.getMessage(), e);
@@ -66,19 +65,17 @@ public class Message {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("Message[sender=").append(sender.getUsername()).append(", timestamp=").append(timestamp)
-                .append(", text=").append(text).append("]");
+        sb.append("Message[sender=").append(sender.getUsername()).append(", timestamp=").append(timestamp).append(", text=").append(text).append("]");
         return sb.toString();
     }
 
     @Override
     public boolean equals(Object anotherObject) {
-        if (!(anotherObject instanceof Message)) {
+        if (anotherObject == null || !(anotherObject instanceof Message)) {
             return false;
         }
         final Message otherMessage = (Message) anotherObject;
-        return getId() == otherMessage.getId() && getSender().equals(otherMessage.getSender()) && getText()
-                .equalsIgnoreCase(otherMessage.getText());
+        return getId() == otherMessage.getId() && getSender().equals(otherMessage.getSender()) && getText().equals(otherMessage.getText());
     }
 
     @Override

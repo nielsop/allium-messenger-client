@@ -1,7 +1,10 @@
 package nl.han.asd.project.client.commonclient.database;
 
-import nl.han.asd.project.client.commonclient.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 
 /**
@@ -13,10 +16,11 @@ import java.sql.*;
  */
 public class HyperSQLDatabase implements IDatabase {
 
-    private Connection connection;
-
     private static final String DATABASE_USERNAME = "sa";
+    private static final String ENCRYPTION_ALGORITHM = "SHA-256";
     private static final String DATABASE_PASSWORD = "e1Gu3vX7";
+    private static final Logger LOGGER = LoggerFactory.getLogger(HyperSQLDatabase.class);
+    private Connection connection;
 
     /**
      * Creates a new HyperSQL Database connection. Creates the database if none exists for this user.
@@ -25,9 +29,8 @@ public class HyperSQLDatabase implements IDatabase {
      * @throws SQLException if a database access error occurs.
      */
     public HyperSQLDatabase(String username, String password) throws SQLException {
-        connection = DriverManager.getConnection(
-                "jdbc:hsqldb:" + username + "_db;crypt_key=" + Configuration.generateKey(username, password)
-                        + ";crypt_type=AES", DATABASE_USERNAME, DATABASE_PASSWORD);
+        final String key = generateKey(username, password);
+        connection = DriverManager.getConnection("jdbc:hsqldb:" + username + "_db;crypt_key=" + key + ";crypt_type=AES", DATABASE_USERNAME, DATABASE_PASSWORD);
         initializeDatabase();
     }
 
@@ -83,5 +86,15 @@ public class HyperSQLDatabase implements IDatabase {
     @Override
     public boolean isOpen() throws SQLException {
         return connection != null && !connection.isClosed();
+    }
+
+    private static String generateKey(String username, String password) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance(ENCRYPTION_ALGORITHM);
+            return String.format("%064x", new java.math.BigInteger(1, messageDigest.digest((username + password).getBytes()))).substring(0, 32);
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return "";
     }
 }

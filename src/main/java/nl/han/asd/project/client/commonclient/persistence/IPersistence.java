@@ -21,7 +21,7 @@ public interface IPersistence {
     /**
      * Deletes a message from the database.
      * @param id The id of the message to remove from the database.
-     * @return <tt>true</tt> if the message was deleted successfully, <tt>false</tt> otheriwse.
+     * @return <tt>true</tt> if the message was deleted successfully, <tt>false</tt> otherwise.
      * @throws SQLException if a database access error occurs.
      */
     boolean deleteMessage(final int id) throws SQLException;
@@ -46,7 +46,7 @@ public interface IPersistence {
      * @return A map of all messages, separated per contact.
      * @throws SQLException if a database access error occurs.
      */
-    Map<Contact, ArrayList<Message>> getAllMessagesPerContact() throws SQLException;
+    Map<Contact, List<Message>> getAllMessagesPerContact() throws SQLException;
 
     /**
      * Adds a contact to the database.

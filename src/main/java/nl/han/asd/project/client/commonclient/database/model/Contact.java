@@ -15,12 +15,12 @@ public class Contact {
         this.username = username;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
     public static Contact fromDatabase(Object contactObj) {
         return new Contact((String) contactObj);
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class Contact {
 
     @Override
     public boolean equals(Object anotherObject) {
-        if (!(anotherObject instanceof Contact)) {
+        if (anotherObject == null || !(anotherObject instanceof Contact)) {
             return false;
         }
         Contact contact = (Contact) anotherObject;
