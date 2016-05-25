@@ -41,7 +41,7 @@ public class MessageProcessingService implements IReceiveMessage,ISendMessage {
 
     @Override
     public void sendMessage(EncryptedMessage message) {
-
+        throw new UnsupportedOperationException();
     }
 
     //TODO peelMessagePacket / Pakket uitpakken

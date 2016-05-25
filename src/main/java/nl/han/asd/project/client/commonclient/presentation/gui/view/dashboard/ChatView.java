@@ -19,41 +19,40 @@ public class ChatView {
     private BorderPane borderPane;
     private HBox top;
     private ScrollPane center = getCenter();
-    private BorderPane bottom = getBottom();
     private TextArea newMessage;
     private Button sendNewMessage;
+    private BorderPane bottom = getBottom();
     private HBox current;
 
     public ChatView() {
         setTop();
-        borderPane = PaneFactory.getBorderPane(new int[]{0, 0, 0, 0});
+        borderPane = PaneFactory.getBorderPane(new int[] { 0, 0, 0, 0 });
         borderPane.setStyle("-fx-background-color: #EEE; -fx-background: #EEE;");
         borderPane.setTop(top);
         borderPane.setCenter(center);
         borderPane.setBottom(bottom);
     }
-    
-    private void setTop(){
-        top = getHBox(0, new int[]{5, 5, 5, 5}, "");
+
+    private void setTop() {
+        top = getHBox(0, new int[] { 5, 5, 5, 5 }, "");
         top.setStyle("-fx-font-weight: bold; -fx-font-size: 15px;");
         top.getChildren().add(new Label("Klik op een contact om te chatten."));
     }
 
     private ScrollPane getCenter() {
         String style = "-fx-background-color:transparent; -fx-background: #EEE;";
-        ScrollPane center = getScrollPane(true, true, null, null, style);
-        return center;
+        return getScrollPane(true, true, null, null, style);
     }
 
     private BorderPane getBottom() {
-        BorderPane bottom = PaneFactory.getBorderPane(new int[]{0, 0, 0, 0});
+        BorderPane borderPaneBottom = PaneFactory.getBorderPane(new int[] { 0, 0, 0, 0 });
         sendNewMessage = new Button("send");
         sendNewMessage.setPrefHeight(50);
         newMessage = new TextArea();
         newMessage.setPrefHeight(50);
-        bottom.setCenter(newMessage);
-        bottom.setRight(sendNewMessage);
-        return bottom;
+        borderPaneBottom.setCenter(newMessage);
+        borderPaneBottom.setRight(sendNewMessage);
+        return borderPaneBottom;
     }
 
     public BorderPane getBorderPane() {
@@ -106,7 +105,9 @@ public class ChatView {
     }
 
     public void setSelectedMessage(HBox hBox) {
-        if (current != null) current.setStyle("-fx-background-color: #EEE;");
+        if (current != null) {
+            current.setStyle("-fx-background-color: #EEE;");
+        }
         hBox.setStyle("-fx-background-color: #DDD;");
         current = hBox;
     }
@@ -116,6 +117,7 @@ public class ChatView {
     }
 
     public void setExitedMessage(HBox hBox) {
-        if (hBox != current) hBox.setStyle("-fx-background-color: #EEE;");
+        if (hBox != current)
+            hBox.setStyle("-fx-background-color: #EEE;");
     }
 }

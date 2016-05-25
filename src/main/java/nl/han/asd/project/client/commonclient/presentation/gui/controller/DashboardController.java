@@ -34,9 +34,7 @@ public class DashboardController {
         view.setBorderPaneContent(navController.getHBox(), contactController.getBorderPane(), chatController.getBorderPane());
     }
 
-
     public void selectContact(Contact contact) {
-//        paneChat.setContact(contact);
     }
 
     public ContactController getContactController() {
