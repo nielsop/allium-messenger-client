@@ -7,6 +7,7 @@ import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWra
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStoreObserver;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -14,13 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Android/Desktop application
  * <p>
  * Leave empty until we know what to do with it
  */
-public class CommonClientGateway {
+public class CommonClientGateway implements ICommonClient{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
@@ -30,7 +32,6 @@ public class CommonClientGateway {
     public IRegistration registration;
     public ILogin login;
     private ISendMessage sendMessage;
-    private Contact currentUser;
     private String privateKey = "privateKey";
 
     /**
@@ -54,12 +55,9 @@ public class CommonClientGateway {
     }
 
     /**
-     * PaneRegister a user on the master application with the given credentials.
-     * Use the MasterGateway to register a user.
-     *
-     * @param username username given by user.
-     * @param password password given by user.
+     * {@inheritDoc}
      */
+    @Override
     public HanRoutingProtocol.ClientRegisterResponse.Status register(String username, String password) {
         RegisterResponseWrapper registerResponse = registration.register(username, password);
         switch (registerResponse.getStatus()) {
@@ -79,22 +77,57 @@ public class CommonClientGateway {
         return registerResponse.getStatus();
     }
 
-    public Contact getCurrentUser() {
-        return currentUser;
-    }
-
     /**
-     * Logs in and returns a login status. This login status is wrapped inside a loginResponseWrapper.
-     * @param username the username to log in.
-     * @param password the password belonging to the username.
-     * @return the login status, received from the loginResponseWrapper.
+     * {@inheritDoc}
      */
+    @Override
     public HanRoutingProtocol.ClientLoginResponse.Status login(String username, String password) {
         LoginResponseWrapper loginResponse = login.login(username, password);
         LOGGER.info(String.format("User '%S' has login status '%S'.", username, loginResponse.getStatus().name()));
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-            currentUser = new Contact(username, privateKey, true);
+            contactStore.setCurrentUser(new CurrentUser(username, privateKey, loginResponse.getSecretHash()));
         }
         return loginResponse.getStatus();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Contact getCurrentUser() {
+        return contactStore.getCurrentUser();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Contact> getContacts() {
+        return contactStore.getAllContacts();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeContact(String username) {
+        contactStore.removeContact(username);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addContact(String username) {
+        contactStore.addContact(username);
+    }
+
+    //TODO: Implement method. Delete all in memory user data.
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void logout() {
+        contactStore.deleteAllContacts();
     }
 }

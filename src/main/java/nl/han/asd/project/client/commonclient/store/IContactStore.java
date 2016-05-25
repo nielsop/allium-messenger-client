@@ -15,7 +15,7 @@ public interface IContactStore {
      *
      * @param username username of to be deleted contact
      */
-    void deleteContact(String username);
+    void removeContact(String username);
 
     /**
      * Retrieves all contacts of current user.
