@@ -35,15 +35,15 @@ public class CommonClientGateway {
     /**
      * Constructs a presentation layer, using one given gateway.
      *
-     * @param registration
+     * @param registration an instance of the implementation of the registration interface.
      */
     public CommonClientGateway(IRegistration registration) {
         this.registration = registration;
     }
 
     @Inject
-    public CommonClientGateway(IContactStore contact, IMessageBuilder messageBuilder,
-            IMessageStoreObserver messageObserver, IRegistration registration, ILogin login, ISendMessage sendMessage) {
+    public CommonClientGateway(IContactStore contact, IMessageBuilder messageBuilder, IMessageStoreObserver messageObserver, IRegistration registration, ILogin login,
+            ISendMessage sendMessage) {
         this.contact = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
@@ -58,6 +58,7 @@ public class CommonClientGateway {
      *
      * @param username username given by user.
      * @param password password given by user.
+     * @return The status of the register request.
      */
     public HanRoutingProtocol.ClientRegisterResponse.Status register(String username, String password) {
         RegisterResponseWrapper registerResponse = registration.register(username, password);
