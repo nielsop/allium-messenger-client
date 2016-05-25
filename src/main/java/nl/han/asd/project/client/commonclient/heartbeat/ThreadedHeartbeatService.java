@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.han.asd.project.client.commonclient.connection.MessageNotSendException;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.master.IHeartbeat;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.commonservices.internal.utility.Check;
@@ -66,7 +66,7 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
                 if (isRunning) {
                     try {
                         heartbeat.sendHeartbeat(buildheartbeat());
-                    } catch (IOException | MessageNotSendException e) {
+                    } catch (IOException | MessageNotSentException e) {
                         LOGGER.debug(e.getMessage(), e);
                     }
                 }

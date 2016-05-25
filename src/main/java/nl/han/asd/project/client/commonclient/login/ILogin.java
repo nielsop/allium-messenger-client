@@ -2,7 +2,7 @@ package nl.han.asd.project.client.commonclient.login;
 
 import java.io.IOException;
 
-import nl.han.asd.project.client.commonclient.connection.MessageNotSendException;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
 /**
@@ -33,9 +33,14 @@ public interface ILogin {
      *          in {@link UserCheck#checkPassword(String)}
      * @throws InvalidCredentialsException if the username - password
      *          combination is invalid
-     * @throws IOException
-     * @throws MessageNotSendException
+     * @throws IOException if the function was unable to send
+     *          the wrapper due to a socket related
+     *          exception
+     * @throws MessageNotSendException if the connection service
+     *          was unable to send the message. Note that
+     *          this exception is not thrown on Socket related
+     *          exceptions. See IOException.
      */
     Contact login(String username, String password)
-            throws InvalidCredentialsException, IOException, MessageNotSendException;
+            throws InvalidCredentialsException, IOException, MessageNotSentException;
 }

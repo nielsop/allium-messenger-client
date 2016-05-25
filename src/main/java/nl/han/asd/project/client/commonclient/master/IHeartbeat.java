@@ -2,7 +2,7 @@ package nl.han.asd.project.client.commonclient.master;
 
 import java.io.IOException;
 
-import nl.han.asd.project.client.commonclient.connection.MessageNotSendException;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientHeartbeat;
 
 /**
@@ -24,5 +24,5 @@ public interface IHeartbeat {
      * @throws MessageNotSendException if the method
      *          was unable to send the message
      */
-    void sendHeartbeat(ClientHeartbeat heartbeat) throws IOException, MessageNotSendException;
+    void sendHeartbeat(ClientHeartbeat heartbeat) throws IOException, MessageNotSentException;
 }

@@ -2,7 +2,7 @@ package nl.han.asd.project.client.commonclient.master;
 
 import java.io.IOException;
 
-import nl.han.asd.project.client.commonclient.connection.MessageNotSendException;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 
@@ -30,5 +30,5 @@ public interface IAuthentication {
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    ClientLoginResponse login(ClientLoginRequest request) throws IOException, MessageNotSendException;
+    ClientLoginResponse login(ClientLoginRequest request) throws IOException, MessageNotSentException;
 }

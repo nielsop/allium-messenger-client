@@ -6,7 +6,6 @@ import nl.han.asd.project.client.commonclient.connection.ConnectionModule;
 import nl.han.asd.project.client.commonclient.database.DatabaseModule;
 import nl.han.asd.project.client.commonclient.login.LoginModule;
 import nl.han.asd.project.client.commonclient.master.MasterModule;
-import nl.han.asd.project.client.commonclient.node.NodeModule;
 import nl.han.asd.project.client.commonclient.path.PathModule;
 import nl.han.asd.project.client.commonclient.persistence.PersistenceModule;
 import nl.han.asd.project.client.commonclient.store.StoreModule;
@@ -22,7 +21,6 @@ public class CommonclientModule extends AbstractModule {
         install(new DatabaseModule());
         install(new LoginModule());
         install(new MasterModule());
-        install(new NodeModule());
         install(new PathModule());
         install(new PersistenceModule());
         install(new StoreModule());

@@ -2,7 +2,7 @@ package nl.han.asd.project.client.commonclient.master;
 
 import java.io.IOException;
 
-import nl.han.asd.project.client.commonclient.connection.MessageNotSendException;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
 
@@ -30,5 +30,5 @@ public interface IRegistration {
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    ClientRegisterResponse register(ClientRegisterRequest request) throws IOException, MessageNotSendException;
+    ClientRegisterResponse register(ClientRegisterRequest request) throws IOException, MessageNotSentException;
 }

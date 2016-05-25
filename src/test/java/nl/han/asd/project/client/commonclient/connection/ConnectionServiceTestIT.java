@@ -76,4 +76,10 @@ public class ConnectionServiceTestIT {
 
         t.join();
     }
+
+    @Test
+    public void connectionModuleTest() throws Exception {
+        Injector injector = Guice.createInjector(new ConnectionModule());
+        injector.getInstance(IConnectionServiceFactory.class);
+    }
 }

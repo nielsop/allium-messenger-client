@@ -1,7 +1,9 @@
 package nl.han.asd.project.client.commonclient.path;
 
-import java.util.ArrayList;
-
+import nl.han.asd.project.client.commonclient.graph.Node;
+import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
+import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,10 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
-import nl.han.asd.project.client.commonclient.store.Contact;
+import java.util.List;
 
 /**
  * Created by Julius on 15/04/16.
@@ -39,28 +38,28 @@ public class PathDeterminationServiceTest {
     }
 
     /*
-     * Comparing self created path with a pathDeterminationService generated path
+    Comparing self created path with a pathDeterminationService generated path
      */
     @Test
     public void whenMiniumHops() {
         //Node[] selfMadePath = {new Node(),new Node(),new Node()};
 
         int minimunNodes = 3;
-        ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
+        List<Node> generatePath = pathDeterminationService.getPath(3, contact);
 
         Assert.assertEquals(minimunNodes, generatePath.size());
     }
 
     /*
-     * Checking if generatedPath contains Node objects
-     */
+    Checking if generatedPath contains Node objects
+    */
     @Test
     public void checkIfGeneratedPathContainsNodes() {
         Node[] selfMadePath = { new Node("NODE_ID_1", "192.168.2.8", 1234, "123456789".getBytes()),
                 new Node("NODE_ID_2", "192.168.2.9", 1234, "123456789".getBytes()),
                 new Node("NODE_ID_3", "192.168.2.10", 1234, "123456789".getBytes()) };
 
-        ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
+        List<Node> generatePath = pathDeterminationService.getPath(3, contact);
 
         for (int i = 0; i < selfMadePath.length; i++) {
             Assert.assertEquals(selfMadePath[i], generatePath.get(i));
@@ -68,11 +67,11 @@ public class PathDeterminationServiceTest {
     }
 
     /*
-     * Checking if error is thrown when miniumHops is negative number
-     */
+    Checking if error is trown when miniumHops is negative number
+    */
     @Test(expected = IllegalArgumentException.class)
     public void whenMinimunHopsIsNegativeThrowError() {
-        ArrayList<Node> generatePath = pathDeterminationService.getPath(-1, contact);
+        List<Node> generatePath = pathDeterminationService.getPath(-1, contact);
     }
 
     /*
@@ -80,7 +79,7 @@ public class PathDeterminationServiceTest {
      */
     @Test
     public void firstNodeInPathIsAConnectedNodeFromHostClient() {
-        ArrayList<Node> generatePath = pathDeterminationService.getPath(3, contact);
+        List<Node> generatePath = pathDeterminationService.getPath(3, contact);
         Node[] contactConnectedNodes = new Node[0];
         try {
             contactConnectedNodes = contact.getConnectedNodes();
@@ -89,6 +88,11 @@ public class PathDeterminationServiceTest {
         }
         Assert.assertTrue(inArray(generatePath.get(0), contactConnectedNodes));
     }
+
+    //    @Test
+    //    public void clientHostConnectedNodesAreUpdatedIfLastUpdateIsExpired() {
+    //        throw new NotImplementedException();
+    //    }
 
     private boolean inArray(Node needle, Node[] haystack) {
         for (Node n : haystack) {

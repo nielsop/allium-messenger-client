@@ -4,9 +4,8 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import nl.han.asd.project.client.commonclient.connection.MessageNotSendException;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
-import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
@@ -28,14 +27,14 @@ public class LoginService implements ILogin {
      * @param authentication the authentication interface
      */
     @Inject
-    public LoginService(ISetConnectedNodes setConnectedNodes, IAuthentication authentication) {
+    public LoginService(IAuthentication authentication) {
         this.authentication = Check.notNull(authentication, "authentication");
     }
 
     /** {@inheritDoc} */
     @Override
     public Contact login(String username, String password)
-            throws InvalidCredentialsException, IOException, MessageNotSendException {
+            throws InvalidCredentialsException, IOException, MessageNotSentException {
         UserCheck.checkUsername(username);
         UserCheck.checkPassword(password);
 

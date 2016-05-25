@@ -2,10 +2,15 @@ package nl.han.asd.project.client.commonclient.master;
 
 import java.io.IOException;
 
-import nl.han.asd.project.client.commonclient.connection.MessageNotSendException;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
 
+/**
+ * Interface defining the graph update methods.
+ *
+ * @version 1.0
+ */
 public interface IGetGraphUpdates {
 
     /**
@@ -26,5 +31,5 @@ public interface IGetGraphUpdates {
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    public GraphUpdateResponse getUpdatedGraph(GraphUpdateRequest request) throws IOException, MessageNotSendException;
+    public GraphUpdateResponse getUpdatedGraph(GraphUpdateRequest request) throws IOException, MessageNotSentException;
 }

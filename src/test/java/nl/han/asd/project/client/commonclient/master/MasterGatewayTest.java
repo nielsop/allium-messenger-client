@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -59,6 +60,17 @@ public class MasterGatewayTest {
     @Test(expected = IllegalArgumentException.class)
     public void constructorNullFactory() throws Exception {
         new MasterGateway(properties, null);
+    }
+
+    @Test
+    public void constructorWithKey() throws Exception {
+        String keyFileLocation = ".";
+
+        properties.setProperty("master-server-keyfile", keyFileLocation);
+
+        when(connectionServiceFactoryMock.create(eq(host), eq(port))).thenReturn(connectionServiceMock);
+        new MasterGateway(properties, connectionServiceFactoryMock);
+        verify(connectionServiceFactoryMock).create(eq(host), eq(port), eq(new File(keyFileLocation)));
     }
 
     @Test

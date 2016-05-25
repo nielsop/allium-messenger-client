@@ -10,7 +10,7 @@ import com.google.protobuf.GeneratedMessage;
 
 import nl.han.asd.project.client.commonclient.connection.IConnectionService;
 import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
-import nl.han.asd.project.client.commonclient.connection.MessageNotSendException;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Client;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientHeartbeat;
@@ -112,7 +112,7 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
 
     /** {@inheritDoc} */
     @Override
-    public ClientRegisterResponse register(ClientRegisterRequest request) throws IOException, MessageNotSendException {
+    public ClientRegisterResponse register(ClientRegisterRequest request) throws IOException, MessageNotSentException {
         Check.notNull(request, "request");
 
         Wrapper wrapper = connectionService.wrap(request, Type.CLIENTREGISTERREQUEST);
@@ -121,7 +121,7 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
 
     /** {@inheritDoc} */
     @Override
-    public void sendHeartbeat(ClientHeartbeat heartbeat) throws IOException, MessageNotSendException {
+    public void sendHeartbeat(ClientHeartbeat heartbeat) throws IOException, MessageNotSentException {
         Check.notNull(heartbeat, "heartbeat");
 
         Wrapper wrapper = connectionService.wrap(heartbeat, Type.CLIENTHEARTBEAT);
@@ -130,7 +130,7 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
 
     /** {@inheritDoc} */
     @Override
-    public ClientLoginResponse login(ClientLoginRequest request) throws IOException, MessageNotSendException {
+    public ClientLoginResponse login(ClientLoginRequest request) throws IOException, MessageNotSentException {
         Check.notNull(request, "request");
 
         Wrapper wrapper = connectionService.wrap(request, Type.CLIENTLOGINREQUEST);
@@ -141,7 +141,7 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
 
     /** {@inheritDoc} */
     @Override
-    public GraphUpdateResponse getUpdatedGraph(GraphUpdateRequest request) throws IOException, MessageNotSendException {
+    public GraphUpdateResponse getUpdatedGraph(GraphUpdateRequest request) throws IOException, MessageNotSentException {
         Check.notNull(request, "request");
 
         Wrapper wrapper = connectionService.wrap(request, Type.GRAPHUPDATEREQUEST);
@@ -152,7 +152,7 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
 
     /** {@inheritDoc} */
     @Override
-    public Client getClientGroup(ClientRequest request) throws IOException, MessageNotSendException {
+    public Client getClientGroup(ClientRequest request) throws IOException, MessageNotSentException {
         Check.notNull(request, "request");
 
         Wrapper wrapper = connectionService.wrap(request, Type.CLIENTREQUEST);
@@ -160,4 +160,5 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
 
         return Check.isInstance(response, Client.class, "response");
     }
+
 }

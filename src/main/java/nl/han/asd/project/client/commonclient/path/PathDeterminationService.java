@@ -9,12 +9,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-public class PathDeterminationService implements IGetPath {
+public class PathDeterminationService implements IGetMessagePath {
     private static final Logger LOGGER = LoggerFactory.getLogger(PathDeterminationService.class);
-    public IGetGraphUpdates graphUpdates;
-    public IGetClientGroup clientGroup;
+    private IGetGraphUpdates graphUpdates;
+    private IGetClientGroup clientGroup;
 
     @Inject
     public PathDeterminationService(IGetGraphUpdates graphUpdates, IGetClientGroup clientGroup) {
@@ -23,7 +24,7 @@ public class PathDeterminationService implements IGetPath {
     }
 
     @Override
-    public ArrayList<Node> getPath(int minHops, Contact contactOntvanger) {
+    public List<Node> getPath(int minHops, Contact contactOntvanger) {
         if (minHops < 1) {
             throw new IllegalArgumentException("The minimum amount of Hops should be more than 0");
         }

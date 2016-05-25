@@ -201,7 +201,7 @@ public class ConnectionService implements IConnectionService {
     /** {@inheritDoc} */
     @Override
     public <T extends GeneratedMessage> void write(T wrapper, long timeout, TimeUnit unit)
-            throws IOException, MessageNotSendException {
+            throws IOException, MessageNotSentException {
         Check.notNull(wrapper, "wrapper");
 
         try {
@@ -212,20 +212,20 @@ public class ConnectionService implements IConnectionService {
             }
         } catch (InterruptedException e) {
             Thread.currentThread().isInterrupted();
-            throw new MessageNotSendException(e);
+            throw new MessageNotSentException(e);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public <T extends GeneratedMessage> void write(T wrapper) throws IOException, MessageNotSendException {
+    public <T extends GeneratedMessage> void write(T wrapper) throws IOException, MessageNotSentException {
         Check.notNull(wrapper, "wrapper");
 
         try {
             mutex.acquire();
         } catch (InterruptedException e) {
             Thread.currentThread().isInterrupted();
-            throw new MessageNotSendException(e);
+            throw new MessageNotSentException(e);
         }
 
         writeSocket(wrapper);
@@ -290,7 +290,7 @@ public class ConnectionService implements IConnectionService {
     /** {@inheritDoc} */
     @Override
     public <T extends GeneratedMessage> GeneratedMessage writeAndRead(T wrapper, long timeout, TimeUnit unit)
-            throws IOException, MessageNotSendException {
+            throws IOException, MessageNotSentException {
         Check.notNull(wrapper, "wrapper");
 
         try {
@@ -301,21 +301,21 @@ public class ConnectionService implements IConnectionService {
             }
         } catch (InterruptedException e) {
             Thread.currentThread().isInterrupted();
-            throw new MessageNotSendException(e);
+            throw new MessageNotSentException(e);
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public <T extends GeneratedMessage> GeneratedMessage writeAndRead(T wrapper)
-            throws IOException, MessageNotSendException {
+            throws IOException, MessageNotSentException {
         Check.notNull(wrapper, "wrapper");
 
         try {
             mutex.acquire();
         } catch (InterruptedException e) {
             Thread.currentThread().isInterrupted();
-            throw new MessageNotSendException(e);
+            throw new MessageNotSentException(e);
         }
 
         return writeAndReadSocket(wrapper);

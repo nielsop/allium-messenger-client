@@ -50,13 +50,13 @@ public interface IConnectionService {
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
      *          exception
-     * @throws MessageNotSendException if the connection service
+     * @throws MessageNotSenException if the connection service
      *          was unable to send the message. Note that
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
     public <T extends GeneratedMessage> void write(T wrapper, long timeout, TimeUnit unit)
-            throws IOException, MessageNotSendException;
+            throws IOException, MessageNotSentException;
 
     /**
      * Transmit the provided message to the host.
@@ -73,12 +73,12 @@ public interface IConnectionService {
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
      *          exception
-     * @throws MessageNotSendException if the connection service
+     * @throws MessageNotSenException if the connection service
      *          was unable to send the message. Note that
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    public <T extends GeneratedMessage> void write(T wrapper) throws IOException, MessageNotSendException;
+    public <T extends GeneratedMessage> void write(T wrapper) throws IOException, MessageNotSentException;
 
     /**
      * Transmit the provided message to the host and wait for the
@@ -103,13 +103,13 @@ public interface IConnectionService {
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
      *          exception
-     * @throws MessageNotSendException if the connection service
+     * @throws MessageNotSenException if the connection service
      *          was unable to send the message. Note that
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
     public <T extends GeneratedMessage> GeneratedMessage writeAndRead(T wrapper, long timeout, TimeUnit unit)
-            throws IOException, MessageNotSendException;
+            throws IOException, MessageNotSentException;
 
     /**
      * Transmit the provided message to the host and wait for the
@@ -127,11 +127,11 @@ public interface IConnectionService {
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
      *          exception
-     * @throws MessageNotSendException if the connection service
+     * @throws MessageNotSenException if the connection service
      *          was unable to send the message. Note that
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
     public <T extends GeneratedMessage> GeneratedMessage writeAndRead(T wrapper)
-            throws IOException, MessageNotSendException;
+            throws IOException, MessageNotSentException;
 }

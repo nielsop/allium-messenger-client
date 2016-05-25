@@ -2,7 +2,7 @@ package nl.han.asd.project.client.commonclient.master;
 
 import java.io.IOException;
 
-import nl.han.asd.project.client.commonclient.connection.MessageNotSendException;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Client;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRequest;
 
@@ -26,5 +26,5 @@ public interface IGetClientGroup {
      *          while preparing to send/sending the request
      * @throws MessageNotSendException
      */
-    public Client getClientGroup(ClientRequest request) throws IOException, MessageNotSendException;
+    public Client getClientGroup(ClientRequest request) throws IOException, MessageNotSentException;
 }

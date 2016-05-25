@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
-import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 
 public class LoginServiceTest {
 
@@ -17,7 +16,6 @@ public class LoginServiceTest {
     private static final String INVALID_USERNAME_EMPTY = "";
     private static final String INVALID_PASSWORD_EMPTY = "";
     private static final String INVALID_USERNAME_FORBIDDEN_CHARACTERS = "Test^Username";
-    private static final String INVALID_PASSWORD_FORBIDDEN_CHARACTERS = "Test^Password";
     private static final String INVALID_USERNAME_TOO_LONG = ""; // Aanname dat de maximum lengte van een username 12 tekens is.
     private static final String INVALID_PASSWORD_TOO_LONG = ""; // Aanname dat de maximum lengte van een password 16 tekens is.
     private static final String INVALID_USERNAME_TOO_SHORT = ""; // Aanname dat de minimum lengte van een username 3 tekens is.
@@ -25,17 +23,15 @@ public class LoginServiceTest {
     private static final String INVALID_USERNAME_NULL = null;
     private static final String INVALID_PASSWORD_NULL = null;
 
-    private ISetConnectedNodes setConnectedNodesMock;
     private IAuthentication authenticationMock;
 
     private ILogin login;
 
     @Before
     public void setUp() {
-        setConnectedNodesMock = mock(ISetConnectedNodes.class);
         authenticationMock = mock(IAuthentication.class);
 
-        login = new LoginService(setConnectedNodesMock, authenticationMock);
+        login = new LoginService(authenticationMock);
     }
 
     @Test(expected = IllegalUsernameException.class)
