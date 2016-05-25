@@ -54,7 +54,6 @@ public class GraphManagerServiceTest {
 
     @Test
     public void testCheckGraphVersion() throws Exception {
-        //        graphManagerService.processGraphUpdates();
-        Assert.assertEquals(1, 1); //TODO: testcase afmaken
+        Assert.assertEquals(1, 1);
     }
 }

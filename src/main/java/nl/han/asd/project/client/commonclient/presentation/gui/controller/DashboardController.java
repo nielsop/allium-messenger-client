@@ -35,6 +35,7 @@ public class DashboardController {
     }
 
     public void selectContact(Contact contact) {
+        throw new UnsupportedOperationException();
     }
 
     public ContactController getContactController() {

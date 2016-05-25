@@ -23,8 +23,6 @@ import javax.inject.Inject;
 public class CommonClientGateway {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
-
-    //TODO: android app? desktop app?
     public IContactStore contact;
     public IMessageBuilder messageBuilder;
     public IMessageStoreObserver messageObserver;

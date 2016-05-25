@@ -74,7 +74,6 @@ public final class Validation {
      * @param password The password to check.
      * @return <tt>true</tt> if it's a valid password, <tt>false</tt> otherwise.
      */
-    //TODO: Better password regex.
     private static boolean isValidPassword(String password) {
         if (password == null || password.isEmpty() || !password.matches(REGEX_ALPHANUMERIC)) {
             throw new IllegalArgumentException(

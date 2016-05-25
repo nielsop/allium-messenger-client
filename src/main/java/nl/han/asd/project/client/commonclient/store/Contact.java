@@ -16,7 +16,6 @@ public class Contact {
         this.publicKey = publicKey;
     }
 
-    // TODO test, remove
     public Contact(String username, String publicKey, boolean online) {
         this.username = username;
         this.publicKey = publicKey;

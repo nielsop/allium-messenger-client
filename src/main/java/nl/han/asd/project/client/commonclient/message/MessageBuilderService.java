@@ -25,7 +25,6 @@ public class MessageBuilderService implements IMessageBuilder {
     }
 
     public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
-        //TODO check if contactReceiver contains latest data from master server.
         EncryptedMessage messageToSend = buildMessagePackage(messageText, contactReceiver, contactSender);
 
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
@@ -37,7 +36,6 @@ public class MessageBuilderService implements IMessageBuilder {
         List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
         Message message = new Message(messageText, contactSender, contactReceiver);
-        //TODO kijken of path of die nodes bevat anders gooi exep
         byte[] firstLayer = buildFirstMessagePackageLayer(path.get(0), message);
         path.remove(0);
         return buildLastMessagePackageLayer(path.get(path.size() - 1), buildMessagePackageLayer(firstLayer, path));
