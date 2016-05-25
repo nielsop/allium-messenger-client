@@ -6,7 +6,10 @@ import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrappe
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.*;
+import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.client.commonclient.store.IMessageObserver;
+import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
