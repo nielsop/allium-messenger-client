@@ -111,4 +111,9 @@ public class CommonClientGateway {
     public void removeContact(String username) {
         contactStore.removeContact(username);
     }
+
+    //TODO: Implement method. Delete all in memory user data.
+    public void logout() {
+
+    }
 }
