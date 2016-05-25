@@ -29,7 +29,7 @@ public class MessageProcessingService implements IReceiveMessage,ISendMessage {
     }
 
     private HanRoutingProtocol.Message decryptEncryptedMessage(HanRoutingProtocol.MessageWrapper encryptedMessage) {
-        byte[] messageBuffer = encryptionService.decryptData(encryptedMessage.getEncryptedData().toByteArray());
+        byte[] messageBuffer = encryptionService.decryptData(encryptedMessage.getData().toByteArray());
         HanRoutingProtocol.Message message = null;
         try {
             message = HanRoutingProtocol.Message.parseFrom(messageBuffer);

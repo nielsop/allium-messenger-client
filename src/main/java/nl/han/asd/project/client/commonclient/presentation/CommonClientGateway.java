@@ -44,7 +44,8 @@ public class CommonClientGateway {
     }
 
     @Inject
-    public CommonClientGateway(IContactStore contact, IMessageBuilder messageBuilder, IMessageStoreObserver messageObserver, IRegistration registration, ILogin login, ISendMessage sendMessage) {
+    public CommonClientGateway(IContactStore contact, IMessageBuilder messageBuilder,
+            IMessageStoreObserver messageObserver, IRegistration registration, ILogin login, ISendMessage sendMessage) {
         this.contact = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
