@@ -3,3 +3,4 @@ target/*
 sh.exe.stackdump
 *.iml
 pLayer.log
+Logger.log
