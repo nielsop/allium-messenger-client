@@ -49,27 +49,30 @@ public class PathDeterminationService implements IGetMessagePath {
         List<Node> listOfNodes = new ArrayList<>(mapVertices.values());
         Node startNode = getRandomConnectedNode(listOfNodes);
 
-        HanRoutingProtocol.Client receiver = getClientFromContact(contactReceiver);
+        HanRoutingProtocol.Client receiver = getClientFromContact(
+                contactReceiver);
         String nodeId = getRandomConnectedNode(receiver.getConnectedNodesList());
         Node endNode = nodeIdentifierToNodeFromGraph(mapVertices, nodeId);
 
         return calculatePath(mapVertices, startNode, endNode);
     }
 
-    private List<Node> calculatePath(Map<String, Node> vertices, Node startNode, Node endNode)
-    {
+    private List<Node> calculatePath(Map<String, Node> vertices, Node startNode,
+            Node endNode) {
         IPathFind pathFinder = new AStar(vertices);
         return pathFinder.findPath(startNode, endNode);
     }
 
-    private Node nodeIdentifierToNodeFromGraph(Map<String, Node> mapOfNodes, String identifier) {
+    private Node nodeIdentifierToNodeFromGraph(Map<String, Node> mapOfNodes,
+            String identifier) {
         for (Map.Entry<String, Node> entry : mapOfNodes.entrySet()) {
             if (entry.getKey() == identifier)
                 return entry.getValue();
         }
 
         LOGGER.error("Couldn't find matching identifier in the map.");
-        throw new RuntimeException("Couldn't find matching identifier in the map.");
+        throw new RuntimeException(
+                "Couldn't find matching identifier in the map.");
     }
 
     private <T> T getRandomConnectedNode(List<T> nodeList) throws Exception {
