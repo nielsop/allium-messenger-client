@@ -6,7 +6,7 @@ import nl.han.asd.project.client.commonclient.connection.MessageNotSendException
 import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
 
-public interface IGetdGraphUpdates {
+public interface IGetGraphUpdates {
 
     /**
      * Send the graph update request to the server

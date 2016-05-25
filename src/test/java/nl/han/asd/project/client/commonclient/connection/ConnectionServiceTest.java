@@ -160,7 +160,7 @@ public class ConnectionServiceTest {
     }
 
     @Test
-    public void writeTimoutNewSocket() throws Exception {
+    public void writeTimeoutNewSocket() throws Exception {
         ConnectionService connectionService = new ConnectionService("localhost", 1024);
 
         Socket socketMock1 = mock(Socket.class);
@@ -211,7 +211,7 @@ public class ConnectionServiceTest {
     }
 
     @Test
-    public void writeTimoutExistingSocket() throws Exception {
+    public void writeTimeoutExistingSocket() throws Exception {
         ConnectionService connectionService = new ConnectionService("localhost", 1024);
 
         Socket socketMock1 = mock(Socket.class);
@@ -245,7 +245,7 @@ public class ConnectionServiceTest {
     }
 
     @Test
-    public void writeTimoutReopenSocket() throws Exception {
+    public void writeTimeoutReopenSocket() throws Exception {
         ConnectionService connectionService = new ConnectionService("localhost", 1024);
 
         Socket socketMock1 = mock(Socket.class);
@@ -285,7 +285,7 @@ public class ConnectionServiceTest {
     }
 
     @Test
-    public void writeAndReadTimoutExistingSocket() throws Exception {
+    public void writeAndReadTimeoutExistingSocket() throws Exception {
         ConnectionService connectionService = new ConnectionService("localhost", 1024);
 
         Socket socketMock1 = mock(Socket.class);

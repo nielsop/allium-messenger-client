@@ -47,12 +47,12 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
         }
     }
 
-    private class HeartbeatSender extends Thread {
+    public class HeartbeatSender extends Thread {
         private volatile boolean isRunning = true;
 
         private Contact contact;
 
-        HeartbeatSender(Contact contact) {
+        protected HeartbeatSender(Contact contact) {
             this.contact = contact;
         }
 
@@ -73,7 +73,7 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
             }
         }
 
-        ClientHeartbeat buildheartbeat() {
+        private ClientHeartbeat buildheartbeat() {
             Builder clientHeartbeatBuilder = ClientHeartbeat.newBuilder();
 
             clientHeartbeatBuilder.setUsername(contact.getUsername());
@@ -148,16 +148,14 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
     public void startHeartbeatFor(Contact contact) {
         Check.notNull(contact, "contact");
 
-        HeartbeatSender heartbeatSender = activeHeartbeats.get(contact.getUsername());
-
-        if (heartbeatSender != null) {
+        if (activeHeartbeats.containsKey(contact.getUsername())) {
             return;
         }
 
         Thread heartbeatThread = new HeartbeatSender(contact);
         heartbeatThread.start();
 
-        activeHeartbeats.put(contact.getUsername(), heartbeatSender);
+        activeHeartbeats.put(contact.getUsername(), (HeartbeatSender) heartbeatThread);
     }
 
     /**

@@ -7,16 +7,16 @@ package nl.han.asd.project.client.commonclient.connection;
  *
  * @version 1.0
  */
-public class MessageNotSendException extends Exception {
+public class MessageNotSentException extends Exception {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Construct a MessageNotSendException
+     * Construct a MessageNotSentException
      * with the specified Throwable.
      *
      * @param throwable the exception that was thrown
      */
-    public MessageNotSendException(Throwable throwable) {
+    public MessageNotSentException(Throwable throwable) {
         super(throwable);
     }
 }

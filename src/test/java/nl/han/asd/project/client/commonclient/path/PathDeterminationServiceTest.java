@@ -13,7 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.master.IGetdGraphUpdates;
+import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
 /**
@@ -22,7 +22,7 @@ import nl.han.asd.project.client.commonclient.store.Contact;
 @RunWith(MockitoJUnitRunner.class)
 public class PathDeterminationServiceTest {
     @Mock
-    IGetdGraphUpdates updatedGraphMock;
+    IGetGraphUpdates updatedGraphMock;
 
     @Mock
     IGetClientGroup clientGroupMock;

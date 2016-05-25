@@ -37,7 +37,7 @@ import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Type;
  *
  * @version 1.0
  */
-public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication, IGetClientGroup, IGetdGraphUpdates {
+public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication, IGetClientGroup, IGetGraphUpdates {
 
     private enum PropertyValues {
         MASTER_SERVER_HOST("master-server-host", false), MASTER_SERVER_PORT("master-server-port", false),
@@ -95,6 +95,7 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
      */
     @Inject
     public MasterGateway(Properties properties, IConnectionServiceFactory connectionServiceFactory) throws IOException {
+        Check.notNull(properties, "properties");
         Check.notNull(connectionServiceFactory, "connectionServiceFactory");
 
         String host = PropertyValues.MASTER_SERVER_HOST.get(properties);
