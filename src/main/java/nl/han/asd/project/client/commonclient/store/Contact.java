@@ -2,15 +2,17 @@ package nl.han.asd.project.client.commonclient.store;
 
 import nl.han.asd.project.client.commonclient.graph.Node;
 
-/**
- * Created by Marius on 25-04-16.
- */
 public class Contact {
     private String username;
     private Node[] connectedNodes;
     private String publicKey;
     private boolean online;
 
+    /**
+     * Creates a new contact with a username and a publicKey
+     * @param username username
+     * @param publicKey publicKey
+     */
     public Contact(String username, String publicKey) {
         this.username = username;
         this.publicKey = publicKey;
