@@ -26,17 +26,19 @@ public class CommonClientGateway {
     private IContactStore contactStore;
     private IMessageStore messageStore;
     private IMessageBuilder messageBuilder;
-    private IMessageObserver messageObserver;
+    private IMessageStoreObserver messageStoreObserver;
     private IRegistration registration;
     private ILogin login;
     private String privateKey = "privateKey";
+    private String publicKey = "publicKey";
+    private String secretHash = "secretHash";
 
     @Inject
-    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IMessageBuilder messageBuilder, IMessageObserver messageObserver, IRegistration registration, ILogin login) {
+    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IMessageBuilder messageBuilder, IMessageStoreObserver messageStoreObserver, IRegistration registration, ILogin login) {
         this.contactStore = contactStore;
         this.messageStore = messageStore;
         this.messageBuilder = messageBuilder;
-        this.messageObserver = messageObserver;
+        this.messageStoreObserver = messageStoreObserver;
         this.registration = registration;
         this.login = login;
 
@@ -79,7 +81,7 @@ public class CommonClientGateway {
         LoginResponseWrapper loginResponse = login.login(username, password);
         LOGGER.info("User: \"" + username + "\" loginRequest status: " + loginResponse.getStatus().name());
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-            contactStore.setCurrentUser(new Contact(username, privateKey, true));
+            contactStore.setCurrentUser(new CurrentUser(username, publicKey, secretHash));
         }
         return loginResponse.getStatus();
     }
@@ -89,7 +91,7 @@ public class CommonClientGateway {
         return messageStore.getMessagesFromUser(contact);
     }
 
-    public Contact getCurrentUser() {
+    public CurrentUser getCurrentUser() {
         LOGGER.info("Find the current user");
         return contactStore.getCurrentUser();
     }

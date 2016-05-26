@@ -52,7 +52,7 @@ public class GraphManagerServiceTest {
 
     }
 
-    @Test
+    @Test @Ignore("To be implemented")
     public void testCheckGraphVersion() throws Exception {
         //        graphManagerService.processGraphUpdates();
         Assert.assertEquals(1, 1); //TODO: testcase afmaken

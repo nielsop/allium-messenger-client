@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.master.wrapper;
 
-import com.google.protobuf.ByteString;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -30,6 +29,7 @@ public class LoginResponseWrapperTest {
         nodeList.add("Node-1");
         nodeList.add("Node-2");
         nodeList.add("Node-3");
+
     }
 
     @Test

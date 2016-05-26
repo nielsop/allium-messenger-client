@@ -2,22 +2,19 @@ package nl.han.asd.project.client.commonclient.message;
 
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-/**
- * Created by Marius on 25-04-16.
- */
 public class Message {
     private String id;
 
     private String text;
     private Contact sender;
     private Contact receiver;
-    private long messageDateTime;
+    private long messageTimestamp;
 
-    public Message(String text, Contact sender, Contact receiver, long messageDateTime) {
+    public Message(String text, Contact sender, Contact receiver, long messageTimestamp) {
         this.text = text;
         this.sender = sender;
         this.receiver = receiver;
-        this.messageDateTime = messageDateTime;
+        this.messageTimestamp = messageTimestamp;
     }
 
     public Contact getReceiver() {
@@ -32,7 +29,11 @@ public class Message {
         return text;
     }
 
-    public long getDateTime() {
-        return messageDateTime;
+    public String getId() {
+        return id;
+    }
+
+    public long getMessageTimestamp() {
+        return messageTimestamp;
     }
 }

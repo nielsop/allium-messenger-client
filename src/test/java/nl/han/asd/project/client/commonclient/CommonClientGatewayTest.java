@@ -6,10 +6,7 @@ import nl.han.asd.project.client.commonclient.login.ILogin;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
-import nl.han.asd.project.client.commonclient.store.IMessageObserver;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.store.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +18,17 @@ public class CommonClientGatewayTest {
     private IContactStore contactStore;
     private IMessageStore messageStore;
     private IMessageBuilder messageBuilder;
-    private IMessageObserver messageObserver;
+    private IMessageStoreObserver messageStoreObserver;
     private IRegistration registration;
     private ILogin login;
 
     private String emptyPublicKey = "";
+    private String privateKey = "";
+    private String secretHash = "";
     private Contact contact1 = new Contact("FirstUser", emptyPublicKey);
+    private CurrentUser user1 = new CurrentUser("FirstUser", privateKey, secretHash);
     private Contact contact2 = new Contact("SecondUser", emptyPublicKey);
+    private CurrentUser user2 = new CurrentUser("SecondUser", privateKey, secretHash);
 
     @Before
     public void setup() {
@@ -36,11 +37,11 @@ public class CommonClientGatewayTest {
         contactStore = injector.getInstance(IContactStore.class);
         messageStore = injector.getInstance(IMessageStore.class);
         messageBuilder = injector.getInstance(IMessageBuilder.class);
-        messageObserver = injector.getInstance(IMessageObserver.class);
+        messageStoreObserver = injector.getInstance(IMessageStoreObserver.class);
         registration = injector.getInstance(IRegistration.class);
         login = injector.getInstance(ILogin.class);
 
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, messageBuilder, messageObserver, registration, login);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, messageBuilder, messageStoreObserver, registration, login);
     }
 
     @Test
@@ -59,10 +60,10 @@ public class CommonClientGatewayTest {
 
     @Test
     public void testGetCurrentUserAfterSettingNewUserInContactStore() {
-        contactStore.setCurrentUser(contact1);
-        Assert.assertTrue(commonClientGateway.getCurrentUser() == contact1);
-        contactStore.setCurrentUser(contact2);
-        Assert.assertTrue(commonClientGateway.getCurrentUser() == contact2);
+        contactStore.setCurrentUser(user1);
+        Assert.assertTrue(commonClientGateway.getCurrentUser() == user1);
+        contactStore.setCurrentUser(user2);
+        Assert.assertTrue(commonClientGateway.getCurrentUser() == user2);
     }
 
     @Test

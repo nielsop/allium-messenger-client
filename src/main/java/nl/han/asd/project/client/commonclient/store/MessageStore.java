@@ -8,8 +8,8 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageStore implements IMessageStore, IMessageObserver {
-    public IPersistence persistence;
+public class MessageStore implements IMessageStore, IMessageStoreObserver {
+    private IPersistence persistence;
 
     //for testing purposes
     ArrayList<Message> messages = new ArrayList<>();

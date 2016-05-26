@@ -9,11 +9,14 @@ import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
-import nl.han.asd.project.client.commonclient.store.IMessageObserver;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.store.IMessageStoreObserver;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -27,7 +30,7 @@ public class CommonClientGatewayIT {
     private IContactStore contactStore;
     private IMessageStore messageStore;
     private IMessageBuilder messageBuilder;
-    private IMessageObserver messageObserver;
+    private IMessageStoreObserver messageStoreObserver;
     private IEncryptionService encryptionService;
     private IRegistration registration;
     private ILogin login;
@@ -36,28 +39,27 @@ public class CommonClientGatewayIT {
     private String validPassword = "validPassword";
 
     @Before
-    public void setup(){
+    public void setup() {
         createCloudHost();
         Injector injector = Guice.createInjector(new CommonclientModule());
         contactStore = injector.getInstance(IContactStore.class);
         messageStore = injector.getInstance(IMessageStore.class);
         messageBuilder = injector.getInstance(IMessageBuilder.class);
-        messageObserver = injector.getInstance(IMessageObserver.class);
+        messageStoreObserver = injector.getInstance(IMessageStoreObserver.class);
         registration = injector.getInstance(IRegistration.class);
         login = injector.getInstance(ILogin.class);
 
-        commonClientGateway =
-                new CommonClientGateway(contactStore, messageStore, messageBuilder,
-                        messageObserver, registration, login);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, messageBuilder, messageStoreObserver, registration, login);
     }
 
     @After
-    public void after(){
+    public void after() {
         master.teardown();
     }
 
-    @Test @Ignore("Fix?")
-    public void testRegisterRequestSuccessful(){
+    @Test
+    @Ignore("Fix?")
+    public void testRegisterRequestSuccessful() {
         //ClientRegisterResponse.Status result = ClientRegisterResponse.Status.SUCCES;
         //Assert.assertEquals(result, commonClientGateway.registerRequest(validUsername, validPassword, validPassword));
         commonClientGateway.registerRequest(validUsername, validPassword, validPassword);

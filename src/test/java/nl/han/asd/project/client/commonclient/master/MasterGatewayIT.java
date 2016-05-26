@@ -93,6 +93,6 @@ public class MasterGatewayIT {
     @Test @Ignore("Has to be fixed.") //TODO: Fix test?
     public void testGetClientGroupSuccessful() {
         ClientGroupResponseWrapper response = gateway.getClientGroup();
-        Assert.assertTrue(response.clientGroup.size() >= 0);
+        Assert.assertTrue(response.getClientGroup().size() >= 0);
     }
 }
