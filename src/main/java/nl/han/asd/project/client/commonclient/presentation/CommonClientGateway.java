@@ -128,6 +128,6 @@ public class CommonClientGateway implements ICommonClient{
      */
     @Override
     public void logout() {
-        contactStore.deleteAllContacts();
+        contactStore.deleteAllContactsInMemory();
     }
 }

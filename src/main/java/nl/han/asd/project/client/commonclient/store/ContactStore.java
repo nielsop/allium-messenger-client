@@ -38,7 +38,7 @@ public class ContactStore implements IContactStore {
         try {
             persistence.addContact(username);
         } catch (SQLException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -53,7 +53,7 @@ public class ContactStore implements IContactStore {
                 try {
                     persistence.deleteContact(username);
                 } catch (SQLException e) {
-                    LOGGER.error(e.getMessage());
+                    LOGGER.error(e.getMessage(), e);
                 }
                 break;
             }
@@ -64,7 +64,7 @@ public class ContactStore implements IContactStore {
      * {@inheritDoc}
      */
     @Override
-    public void deleteAllContacts() {
+    public void deleteAllContactsInMemory() {
         contactList.clear();
     }
 
@@ -97,13 +97,11 @@ public class ContactStore implements IContactStore {
      * Refills the contacts in the database and stores them into the contact list.
      */
     private void refreshContactList() {
-        deleteAllContacts();
+        contactList.clear();
         try {
-            persistence.getContacts().forEach(contact -> {
-                contactList.add(new Contact(contact.getUsername()));
-            });
+            persistence.getContacts().forEach(contact -> contactList.add(new Contact(contact.getUsername())));
         } catch (SQLException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

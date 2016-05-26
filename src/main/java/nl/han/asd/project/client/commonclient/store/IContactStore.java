@@ -33,9 +33,9 @@ public interface IContactStore {
     Contact findContact(String username);
 
     /**
-     * Deletes all the contacts in the contactstore.
+     * Deletes all the contacts in the contactstore memory.
      */
-    void deleteAllContacts();
+    void deleteAllContactsInMemory();
 
     /**
      * Setter for currentUser.

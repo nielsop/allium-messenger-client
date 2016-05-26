@@ -63,6 +63,8 @@ public interface IPersistence {
      */
     boolean deleteContact(final String username) throws SQLException;
 
+    boolean deleteAllContacts() throws SQLException;
+
     /**
      * Returns a list of all contacts.
      * @return A list of all contacts.
