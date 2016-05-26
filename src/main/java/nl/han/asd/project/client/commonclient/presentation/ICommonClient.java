@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface ICommonClient {
     /**
-     * PaneRegister a user on the master application with the given credentials.
+     * Registers a user on the master application with the given credentials.
      * Use the MasterGateway to register a user.
      *
      * @param username username given by user.
