@@ -25,7 +25,7 @@ public class RegisterView {
 
     public RegisterView() {
         //Set gridPane
-        gridPane = PaneFactory.getGridPane(Pos.CENTER, new int[]{25, 25, 25, 25});
+        gridPane = PaneFactory.getGridPane(Pos.CENTER, new int[] { 25, 25, 25, 25 });
         setTitle();
         setLabels();
         setInputFields();

@@ -35,8 +35,7 @@ public class PaneFactory {
         return pane;
     }
 
-    public static ScrollPane getScrollPane(boolean fitWidth, boolean fitHeight, int[] width, int[] height,
-                                           String style) {
+    public static ScrollPane getScrollPane(boolean fitWidth, boolean fitHeight, int[] width, int[] height, String style) {
         ScrollPane pane = new ScrollPane();
         pane.setFitToWidth(fitWidth);
         pane.setFitToHeight(fitHeight);

@@ -5,7 +5,6 @@ import nl.han.asd.project.client.commonclient.database.model.Contact;
 import nl.han.asd.project.client.commonclient.database.model.Message;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +62,8 @@ public interface IPersistence {
      * @throws SQLException if a database access error occurs.
      */
     boolean deleteContact(final String username) throws SQLException;
+
+    boolean deleteAllContacts() throws SQLException;
 
     /**
      * Returns a list of all contacts.

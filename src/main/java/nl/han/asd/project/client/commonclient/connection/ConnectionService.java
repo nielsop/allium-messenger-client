@@ -56,8 +56,7 @@ public final class ConnectionService implements IConnectionPipe {
      *                      while reading asynchronous.
      * @throws IOException
      */
-    public ConnectionService(final int sleepTime, final byte[] receiverPublicKey,
-            final IConnectionService targetService) {
+    public ConnectionService(final int sleepTime, final byte[] receiverPublicKey, final IConnectionService targetService) {
         this(sleepTime, receiverPublicKey);
 
         if (targetService == null) {

@@ -11,7 +11,7 @@ public class DashboardView {
     private BorderPane borderPane;
 
     public DashboardView() {
-        borderPane = PaneFactory.getBorderPane(new int[]{0, 0, 0, 0});
+        borderPane = PaneFactory.getBorderPane(new int[] { 0, 0, 0, 0 });
         borderPane.setStyle("-fx-background-color: #FFF; -fx-background: #FFF;");
     }
 
