@@ -9,6 +9,6 @@ public interface IMessageStore {
 
     void findMessage(Message message);
 
-    List<Message> getMessages(String contact);
+    List<Message> getMessagesFromUser(String contact);
 }
 

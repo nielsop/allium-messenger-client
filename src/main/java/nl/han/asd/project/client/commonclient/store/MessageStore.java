@@ -30,7 +30,7 @@ public class MessageStore implements IMessageStore, IMessageObserver {
     }
 
     @Override
-    public List<Message> getMessages(String contact) {
+    public List<Message> getMessagesFromUser(String contact) {
         ArrayList<Message> msgs = new ArrayList<>();
         for (Message msg : messages) {
             if (msg.getReceiver().getUsername().equals(contact)) {

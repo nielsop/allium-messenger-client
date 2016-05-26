@@ -27,7 +27,7 @@ public class ContactStore implements IContactStore {
         addContact("dennis", "asdf4321");
     }
 
-    @Override
+    @Override //TODO: Should not be possible to add already existing userNames?
     public void addContact(String username, String publicKey) {
         contactList.add(new Contact(username, publicKey));
     }

@@ -84,9 +84,9 @@ public class CommonClientGateway {
         return loginResponse.getStatus();
     }
 
-    public List<Message> getMessages(String contact) {
+    public List<Message> getMessagesFromUser(String contact) {
         LOGGER.info("Find messages from user: " + contact);
-        return messageStore.getMessages(contact);
+        return messageStore.getMessagesFromUser(contact);
     }
 
     public Contact getCurrentUser() {
