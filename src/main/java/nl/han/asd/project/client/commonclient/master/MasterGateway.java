@@ -28,6 +28,11 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
     private String hostname = Configuration.getHostname();
     private int port = Configuration.getPort();
 
+    /**
+     * Constructs the MasterGateway.
+     * Gets an instance of the encryption service using Guice dependency injection.
+     * @param encryptionService
+     */
     @Inject
     public MasterGateway(IEncryptionService encryptionService) {
         this.encryptionService = encryptionService;
@@ -38,6 +43,11 @@ public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegist
         this.port = port;
     }
 
+    /**
+     * Gets the socket if there already was a connection.
+     * It creates a new socket if there is no socket or the previous has been closed.
+     * @return Socket socket.
+     */
     public Socket getSocket() {
         if (socket == null || socket.isClosed()) {
             try {
