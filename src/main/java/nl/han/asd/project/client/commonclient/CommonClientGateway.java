@@ -104,6 +104,7 @@ public class CommonClientGateway {
     }
 
     public void sendMessage(Message message) {
+        //TODO: Actually send message to a user
         LOGGER.info(message.getSender().getUsername() + " sends to " + message.getReceiver().getUsername() + " the following massage: " + message.getText());
         messageStore.addMessage(message);
     }
