@@ -17,6 +17,7 @@ public interface ICommonClient {
      *
      * @param username username given by user.
      * @param password password given by user.
+     * @return the register status, received from the registerResponseWrapper.
      */
     HanRoutingProtocol.ClientRegisterResponse.Status register(String username, String password);
 

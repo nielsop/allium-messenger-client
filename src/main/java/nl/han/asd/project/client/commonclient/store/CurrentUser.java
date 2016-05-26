@@ -49,7 +49,7 @@ public class CurrentUser {
      *
      * @return current user that is logged in
      */
-    public Contact getAsContact() {
+    public Contact getCurrentUserAsContact() {
         return contact;
     }
 }

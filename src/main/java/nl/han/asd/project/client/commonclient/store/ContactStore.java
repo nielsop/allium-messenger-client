@@ -73,7 +73,7 @@ public class ContactStore implements IContactStore {
      */
     @Override
     public Contact getCurrentUser() {
-        return currentUser.getAsContact();
+        return currentUser.getCurrentUserAsContact();
     }
 
     /**
