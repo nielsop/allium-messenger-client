@@ -6,11 +6,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author Julius
- * @version 1.0
- * @since 29/04/16
- */
 public class GraphTest {
     private static final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
     private Graph graph;

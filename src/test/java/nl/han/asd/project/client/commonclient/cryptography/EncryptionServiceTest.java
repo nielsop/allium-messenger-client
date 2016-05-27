@@ -5,9 +5,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * Created by Julius on 18/04/16.
- */
 public class EncryptionServiceTest {
     private EncryptionService encryptionService;
 

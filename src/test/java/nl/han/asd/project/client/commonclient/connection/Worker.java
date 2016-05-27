@@ -8,9 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-/**
- * Created by Jevgeni on 26-4-2016.
- */
 class Worker implements Runnable {
     private Socket clientSocket = null;
     private Packer packer = null;

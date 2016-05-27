@@ -9,6 +9,8 @@ import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -21,6 +23,7 @@ import java.util.UUID;
  */
 public class MasterGatewayIT {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MasterGatewayIT.class);
     private static final String VALID_USERNAME = "valid_username";
     private static final String VALID_PASSWORD = "valid_password";
     private CloudHost master;
@@ -42,7 +45,7 @@ public class MasterGatewayIT {
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
         gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));

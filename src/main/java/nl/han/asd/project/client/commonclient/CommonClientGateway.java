@@ -52,34 +52,30 @@ public class CommonClientGateway {
     }
 
     /**
-     * PaneRegister a user on the master application with the given credentials.
+     * Register a user on the master application with the given credentials.
      * Use the MasterGateway to register a user.
      *
      * @param username username given by user.
      * @param password password given by user.
+     * @param passwordRepeat repeated password given by the user.
+     * @return RegisterResponse.status
+     * @throws IllegalArgumentException
      */
     public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IllegalArgumentException  {
-        //Get registering response
         RegisterResponseWrapper registerResponse = registration.register(username, password, passwordRepeat);
-        //In every other case, do something.
         switch (registerResponse.getStatus()) {
             case SUCCES:
-                LOGGER.info("Registering worked!");
                 break;
             case FAILED:
-                LOGGER.info("Registering failed!");
                 break;
             case TAKEN_USERNAME:
-                LOGGER.info("Username already exists, registering failed.");
                 break;
         }
-        //Return the status
         return registerResponse.getStatus();
     }
 
     public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) throws IllegalArgumentException  {
         LoginResponseWrapper loginResponse = login.login(username, password);
-        LOGGER.info("User: \"" + username + "\" loginRequest status: " + loginResponse.getStatus().name());
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
             contactStore.setCurrentUser(new CurrentUser(username, publicKey, secretHash));
         }
@@ -87,17 +83,14 @@ public class CommonClientGateway {
     }
 
     public List<Message> getMessagesFromUser(String contact) {
-        LOGGER.info("Find messages from user: " + contact);
         return messageStore.getMessagesFromUser(contact);
     }
 
     public CurrentUser getCurrentUser() {
-        LOGGER.info("Find the current user");
         return contactStore.getCurrentUser();
     }
 
     public List<Contact> getContacts() {
-        LOGGER.info("Find all contacts");
         return contactStore.getAllContacts();
     }
 
@@ -107,7 +100,6 @@ public class CommonClientGateway {
 
     public void sendMessage(Message message) {
         //TODO: Actually send message to a user
-        LOGGER.info(message.getSender().getUsername() + " sends to " + message.getReceiver().getUsername() + " the following massage: " + message.getText());
         messageStore.addMessage(message);
     }
 

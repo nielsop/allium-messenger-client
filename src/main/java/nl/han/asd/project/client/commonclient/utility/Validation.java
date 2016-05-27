@@ -88,11 +88,10 @@ public final class Validation {
      * @param passwordRepeat The password to check.
      * @return <tt>true</tt> if it's a valid password, <tt>false</tt> otherwise.
      */
-    public static boolean PasswordsEqual(String password, String passwordRepeat) {
+    public static boolean passwordsEqual(String password, String passwordRepeat) {
         if (password.equals(passwordRepeat)) {
             return true;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("The passwords are not the same.");
         }
     }

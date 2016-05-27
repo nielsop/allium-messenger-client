@@ -13,9 +13,6 @@ import org.junit.rules.Timeout;
 import java.io.IOException;
 import java.net.Socket;
 
-/**
- * Created by Julius on 25/04/16.
- */
 public class GraphManagerServiceTest {
 
     @Rule

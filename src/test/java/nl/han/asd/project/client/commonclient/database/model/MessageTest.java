@@ -11,13 +11,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-/**
- *
- *
- * @author Niels Bokmans
- * @version 1.0
- * @since 23-5-2016
- */
 public class MessageTest {
 
     private static Message message;

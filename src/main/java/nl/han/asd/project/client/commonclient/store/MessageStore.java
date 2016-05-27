@@ -2,17 +2,14 @@ package nl.han.asd.project.client.commonclient.store;
 
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MessageStore implements IMessageStore, IMessageStoreObserver {
+    List<Message> messages = new ArrayList<>();
     private IPersistence persistence;
-
-    //for testing purposes
-    ArrayList<Message> messages = new ArrayList<>();
 
     @Inject
     public MessageStore(IPersistence persistence) {
@@ -31,12 +28,11 @@ public class MessageStore implements IMessageStore, IMessageStoreObserver {
 
     @Override
     public List<Message> getMessagesFromUser(String contact) {
-        ArrayList<Message> msgs = new ArrayList<>();
+        List<Message> msgs = new ArrayList<>();
         for (Message msg : messages) {
             if (msg.getReceiver().getUsername().equals(contact)) {
                 msgs.add(msg);
-            }
-            else if (msg.getSender().getUsername().equals(contact)) {
+            } else if (msg.getSender().getUsername().equals(contact)) {
                 msgs.add(msg);
             }
         }

@@ -14,7 +14,7 @@ public interface IContactStore {
     void addContact(String username, String publicKey);
 
     /**
-     * Removes contact from contactstore.
+     * Removes contact from contactStore.
      *
      * @param username username of to be deleted contact
      */
