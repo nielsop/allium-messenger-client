@@ -15,6 +15,6 @@ public class RegisterResponseWrapperTest {
     public void testRegisterWrapperCreationSavesStatus() {
         final RegisterResponseWrapper registerResponseWrapper = new RegisterResponseWrapper(
                 HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES);
-        Assert.assertEquals(registerResponseWrapper.status, HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES);
+        Assert.assertEquals(registerResponseWrapper.getStatus(), HanRoutingProtocol.ClientRegisterResponse.Status.SUCCES);
     }
 }

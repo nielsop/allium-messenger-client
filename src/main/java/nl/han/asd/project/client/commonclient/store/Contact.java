@@ -3,7 +3,9 @@ package nl.han.asd.project.client.commonclient.store;
 import nl.han.asd.project.client.commonclient.graph.Node;
 
 /**
- * Created by Marius on 25-04-16.
+ *
+ *
+ * @version 1.0
  */
 public class Contact {
     private String username;
@@ -11,11 +13,14 @@ public class Contact {
     private String publicKey;
     private boolean online;
 
-    public Contact(String username, String publicKey)  {
+    public Contact(String username, String publicKey) {
         this(username, publicKey, false);
     }
 
-    // TODO test, remove
+    public Contact(String username) {
+        this.username = username;
+    }
+
     public Contact(String username, String publicKey, boolean online) {
         this.username = username;
         this.publicKey = publicKey;
@@ -28,7 +33,7 @@ public class Contact {
 
     public Node[] getConnectedNodes() throws NoConnectedNodesException {
         if (connectedNodes == null || connectedNodes.length <= 0) {
-            throw new NoConnectedNodesException("The connected Nodes from the contact are not set");
+            throw new NoConnectedNodesException("The connected Nodes from the contactStore are not set");
         }
         return connectedNodes;
 

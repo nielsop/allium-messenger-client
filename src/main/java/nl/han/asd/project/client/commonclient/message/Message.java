@@ -12,7 +12,7 @@ public class Message extends PersistenceObject {
     private String text;
     private Contact sender;
     private Contact receiver;
-    private long messageDateTime;
+    private long messageTimestamp;
 
     public Message() {}
 
@@ -34,6 +34,7 @@ public class Message extends PersistenceObject {
         return text;
     }
 
+
     public void setText(String value) {
         this.text = value;
     }
@@ -44,5 +45,13 @@ public class Message extends PersistenceObject {
 
     public void setReceiver(Contact receiver) {
         this.receiver = receiver;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public long getMessageTimestamp() {
+        return messageTimestamp;
     }
 }

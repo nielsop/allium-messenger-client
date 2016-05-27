@@ -25,7 +25,16 @@ public class UpdatedGraphResponseWrapper {
     /**
      * Contains all the updated graphs, differentiated by version.
      */
-    public List<UpdatedGraphWrapper> updatedGraphs = new ArrayList<>();
+    private List<UpdatedGraphWrapper> updatedGraphs;
+
+    /**
+     *
+     * Returns the updated graph.
+     * @return updatedGraph
+     */
+    public List<UpdatedGraphWrapper> getUpdatedGraphs(){
+        return updatedGraphs;
+    }
 
     /**
      * Creates a new updated graph response wrapper from a list of ByteStrings containing the individual graph updates.
@@ -33,10 +42,10 @@ public class UpdatedGraphResponseWrapper {
      * @param graphUpdates The graph updates
      */
     public UpdatedGraphResponseWrapper(List<ByteString> graphUpdates) {
+        updatedGraphs = new ArrayList<>();
         graphUpdates.forEach(graphUpdate -> {
             try {
-                updatedGraphs
-                        .add(new UpdatedGraphWrapper(readGeneric(HanRoutingProtocol.GraphUpdate.class, graphUpdate)));
+                updatedGraphs.add(new UpdatedGraphWrapper(readGeneric(HanRoutingProtocol.GraphUpdate.class, graphUpdate)));
             } catch (SocketException | InvalidProtocolBufferException e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -63,8 +72,7 @@ public class UpdatedGraphResponseWrapper {
      * @throws InvalidProtocolBufferException Throws a InvalidProtocolBufferException incase the wrong protocol buffer
      *                                        is being used to parse the message.
      */
-    private <T extends GeneratedMessage> T readGeneric(Class<T> classDescriptor, ByteString b)
-            throws SocketException, InvalidProtocolBufferException {
+    private <T extends GeneratedMessage> T readGeneric(Class<T> classDescriptor, ByteString b) throws SocketException, InvalidProtocolBufferException {
         byte[] buffer = b.toByteArray();
         if (buffer != null) {
             try {
@@ -89,22 +97,22 @@ public class UpdatedGraphResponseWrapper {
         /**
          * Stores the new version.
          */
-        public int newVersion;
+        private int newVersion;
 
         /**
          * Stores whether or not the graph is a full graph.
          */
-        public boolean isFullGraph;
+        private boolean isFullGraph;
 
         /**
          * Contains a list of all nodes that were added to the graph this version.
          */
-        public List<HanRoutingProtocol.Node> addedNodes;
+        private List<HanRoutingProtocol.Node> addedNodes;
 
         /**
          * Contains a list of all nodes taht were deleted from the graph this version.
          */
-        public List<HanRoutingProtocol.Node> deletedNodes;
+        private List<HanRoutingProtocol.Node> deletedNodes;
 
         /**
          * Creates a new UpdatedGraphWrapper.
@@ -116,6 +124,22 @@ public class UpdatedGraphResponseWrapper {
             this.isFullGraph = graphUpdate.getIsFullGraph();
             this.addedNodes = graphUpdate.getAddedNodesList();
             this.deletedNodes = graphUpdate.getDeletedNodesList();
+        }
+
+        public int getNewVersion() {
+            return newVersion;
+        }
+
+        public boolean isFullGraph() {
+            return isFullGraph;
+        }
+
+        public List<HanRoutingProtocol.Node> getAddedNodes() {
+            return addedNodes;
+        }
+
+        public List<HanRoutingProtocol.Node> getDeletedNodes() {
+            return deletedNodes;
         }
     }
 

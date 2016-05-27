@@ -20,26 +20,33 @@ public class LoginController {
 
     private void onActions() {
         view.getLoginButton().setOnAction(e -> {
-            if (view.getUsername().length() < 3)
-                view.setStatus("Username is too short! At least 3 characters.");
-            else if (view.getPassword().length() < 8)
-                view.setStatus("Password is too short! At least 8 characters.");
-            else {
-                switch(model.getLoginStatus(view.getUsername(), view.getPassword())) {
-                    case SUCCES:
-                        setStage(GUI.Page.DASHBOARD);
-                        break;
-                    case INVALID_COMBINATION:
-                        view.setStatus("Username or password is incorrect!");
-                        break;
-                    case FAILED:
-                        view.setStatus("Error while logging in, please try again!");
-                        break;
-                }
-            }
+            handleLoginViewActions(view);
         });
 
         view.getRegisterButton().setOnAction(e -> setStage(GUI.Page.REGISTER));
+    }
+
+    private void handleLoginViewActions(LoginView view){
+        if (view.getUsername().length() < 3)
+            view.setStatus("Username is too short! At least 3 characters.");
+        else if (view.getPassword().length() < 8)
+            view.setStatus("Password is too short! At least 8 characters.");
+        else {
+            switch(model.getLoginStatus(view.getUsername(), view.getPassword())) {
+                case SUCCES:
+                    setStage(GUI.Page.DASHBOARD);
+                    break;
+                case INVALID_COMBINATION:
+                    view.setStatus("Username or password is incorrect!");
+                    break;
+                case FAILED:
+                    view.setStatus("Error while logging in, please try again!");
+                    break;
+                default:
+                    view.setStatus("Something went wrong");
+                    break;
+            }
+        }
     }
 
     public GridPane getGridPane() {

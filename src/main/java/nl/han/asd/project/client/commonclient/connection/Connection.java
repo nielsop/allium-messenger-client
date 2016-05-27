@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -90,6 +89,7 @@ class Connection {
     }
 
     /**
+
      * Closes the sockets and their streams.
      *
      * @throws IOException Either the sockets or streams had trouble closing down.

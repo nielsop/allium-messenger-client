@@ -4,7 +4,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
-import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -43,7 +42,7 @@ public class GraphManagerServiceTest {
                 e.printStackTrace();
             }
         }
-        MasterGateway gateway = new MasterGateway(injector.getInstance(CryptographyService.class));
+        MasterGateway gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
         gateway.setConnectionData(master.getHostName(), master.getPort(1337));
         graphManagerService = new GraphManagerService(gateway);
     }

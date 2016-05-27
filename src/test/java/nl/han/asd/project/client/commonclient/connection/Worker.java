@@ -46,7 +46,7 @@ class Worker implements Runnable {
                                 .valueOf(HanRoutingProtocol.ClientLogoutResponse.Status.SUCCES_VALUE));
 
                         System.out.println("Request processed as 'protocol' request.");
-                        wrapper = packer.pack(builder, this.publicKey);
+                        wrapper = packer.pack(builder, publicKey);
                     } catch (InvalidProtocolBufferException e) {
                         System.out.println("Request processed as 'normal' request.");
                     }

@@ -3,7 +3,6 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
-import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.store.MessageStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -27,17 +26,16 @@ public class MessageProcessingServiceTest {
 
     @Mock private MessageStore messageStore;
 
-    private CryptographyService cryptographyService;
+    private IEncryptionService encryptionService;
 
     private MessageProcessingService messageProcessingService;
 
     @Before public void initService() {
         final Injector injector = Guice.createInjector(new EncryptionModule());
 
-        cryptographyService = new CryptographyService(injector.getInstance(IEncryptionService.class));
-
+        encryptionService = injector.getInstance(IEncryptionService.class);
         messageProcessingService = new MessageProcessingService(messageStore,
-                cryptographyService);
+                encryptionService);
     }
 
     @Test public void testWithMessageWrapper() {
@@ -117,8 +115,8 @@ public class MessageProcessingServiceTest {
         messageWrapperBuilder.setUsername("Alice");
 
         // encrypt it with our public key, thus only we can decrypt it (must be same instance, see initSerivce).
-        ByteString encryptedData = cryptographyService
-                .encryptData(message, cryptographyService.getPublicKey());
+        ByteString encryptedData = ByteString.copyFrom(encryptionService
+                .encryptData(message.toByteArray(), encryptionService.getPublicKey()));
 
         messageWrapperBuilder.setEncryptedData(encryptedData);
 

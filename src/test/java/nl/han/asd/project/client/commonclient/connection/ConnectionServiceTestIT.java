@@ -5,7 +5,6 @@ import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
 import nl.han.asd.project.client.commonclient.message.EncryptedMessage;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -33,7 +32,7 @@ public class ConnectionServiceTestIT {
     private final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
     private ConnectionService connectionService = null;
 
-    private CryptographyService cryptographyService;
+    private IEncryptionService cryptographyService;
 
     public ConnectionServiceTestIT() {
     }

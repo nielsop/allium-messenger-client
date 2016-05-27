@@ -4,7 +4,8 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
+import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,18 +28,19 @@ public final class ConnectionService {
     /**
      * Initializes this class.
      *
-     * @param cryptographyService CryptographyService that should be injected.
+     * @param encryptionService IEncryptionService that should be injected.
      * @param receiverPublicKey The public key of the receiver.
      */
     @AssistedInject
-    public ConnectionService(final CryptographyService cryptographyService, @Assisted final byte[] receiverPublicKey) {
+    public ConnectionService(final IEncryptionService encryptionService, @Assisted final byte[] receiverPublicKey) {
         connection = new Connection();
-        packer = new Packer(cryptographyService);
+        packer = new Packer(encryptionService);
 
         if (receiverPublicKey == null)
             throw new IllegalArgumentException("Public key cannot be empty.");
 
         this.receiverPublicKey = receiverPublicKey;
+
     }
 
     /**

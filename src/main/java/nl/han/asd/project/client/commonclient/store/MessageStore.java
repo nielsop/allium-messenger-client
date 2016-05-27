@@ -5,12 +5,12 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
 
-public class MessageStore implements IMessageStore, IMessageObserver {
+public class MessageStore implements IMessageStore, IMessageStoreObserver {
     private IPersistence persistence;
-    private ContactStore contactStore;
+    private IContactStore contactStore;
 
     @Inject
-    public MessageStore(IPersistence persistence, ContactStore contactStore) {
+    public MessageStore(IPersistence persistence, IContactStore contactStore) {
         this.persistence = persistence;
         this.contactStore = contactStore;
     }

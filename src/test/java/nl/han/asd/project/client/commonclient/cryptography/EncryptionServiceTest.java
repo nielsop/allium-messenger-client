@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.cryptography;
 
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,8 +9,8 @@ import org.junit.Test;
 /**
  * Created by Julius on 18/04/16.
  */
-public class CryptographyServiceTest {
-    private CryptographyService cryptographyService;
+public class EncryptionServiceTest {
+    private IEncryptionService encryptionService;
 
     @Before
     public void setUp() throws Exception {

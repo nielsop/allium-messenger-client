@@ -16,7 +16,7 @@ public class ClientGroupResponseWrapper {
     /**
      * Contains the group of clients.
      */
-    public List<HanRoutingProtocol.Client> clientGroup;
+    private List<HanRoutingProtocol.Client> clientGroup;
 
     /**
      * Creates a new ClientGroupResponseWrapper object containing the clients in an easy to access list.
@@ -25,5 +25,9 @@ public class ClientGroupResponseWrapper {
      */
     public ClientGroupResponseWrapper(List<HanRoutingProtocol.Client> clientGroup) {
         this.clientGroup = clientGroup;
+    }
+
+    public List<HanRoutingProtocol.Client> getClientGroup() {
+        return clientGroup;
     }
 }

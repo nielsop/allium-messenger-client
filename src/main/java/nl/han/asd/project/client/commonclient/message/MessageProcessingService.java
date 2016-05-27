@@ -3,8 +3,10 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.cryptography.IDecrypt;
+import nl.han.asd.project.client.commonclient.node.ISendData;
+import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +16,10 @@ import org.slf4j.LoggerFactory;
  *
  *  @author Jevgeni Geurtsen
  */
-public class MessageProcessingService implements IReceiveMessage {
+public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
     private final IMessageStore messageStore;
-    private final IDecrypt decrypt;
+    private final IEncryptionService encryptionService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
 
@@ -25,11 +27,11 @@ public class MessageProcessingService implements IReceiveMessage {
      * Initialises the class.
      *
      * @param messageStore Instance of IMessageStore.
-     * @param decrypt Instance of IDecrypt
+     * @param encryptionService Instance of IEncryptionService
      */
-    @Inject public MessageProcessingService(IMessageStore messageStore, IDecrypt decrypt) {
+    @Inject public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService) {
         this.messageStore = messageStore;
-        this.decrypt = decrypt;
+        this.encryptionService = encryptionService;
     }
 
     /**
@@ -65,7 +67,11 @@ public class MessageProcessingService implements IReceiveMessage {
     private HanRoutingProtocol.Wrapper decryptEncryptedWrapper (
             HanRoutingProtocol.MessageWrapper encryptedMessageWrapper)
             throws InvalidProtocolBufferException {
-        ByteString wrapperBuffer = decrypt.decryptData(encryptedMessageWrapper.getEncryptedData());
+        byte[] wrapperBuffer = encryptionService.decryptData(encryptedMessageWrapper.getEncryptedData().toByteArray());
         return HanRoutingProtocol.Wrapper.parseFrom(wrapperBuffer);
+    }
+
+    @Override public void sendMessage(EncryptedMessage message) {
+
     }
 }
