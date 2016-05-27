@@ -84,11 +84,9 @@ public class MessageBuilderServiceTest {
 
         HanRoutingProtocol.MessageWrapper buildMessage = messageBuilderService.buildMessage(message,CONTACTRECIEVER);
 
-
         HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
         wrapperBuilder.setType(HanRoutingProtocol.Wrapper.Type.MESSAGE);
-
-
+        
         wrapperBuilder.setData(message.toByteString());
 
         HanRoutingProtocol.MessageWrapper.Builder endPointMessageWrapper = HanRoutingProtocol.MessageWrapper.newBuilder();
@@ -125,7 +123,6 @@ public class MessageBuilderServiceTest {
         GeneratedMessage message = makeMessage();
 
         HanRoutingProtocol.MessageWrapper buildMessage = messageBuilderService.buildMessage(message,CONTACTRECIEVER);
-
 
         HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
         wrapperBuilder.setType(HanRoutingProtocol.Wrapper.Type.MESSAGE);
@@ -179,7 +176,6 @@ public class MessageBuilderServiceTest {
         GeneratedMessage messageConfirmation = makeMessageConfirmation();
 
         HanRoutingProtocol.MessageWrapper buildMessage = messageBuilderService.buildMessage(messageConfirmation,CONTACTRECIEVER);
-
 
         HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
         wrapperBuilder.setType(HanRoutingProtocol.Wrapper.Type.MESSAGECONFIRMATION);
