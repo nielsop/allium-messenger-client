@@ -2,6 +2,7 @@ package nl.han.asd.project.client.commonclient.graph;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.protobuf.ByteString;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
@@ -33,6 +34,7 @@ public class GraphManagerServiceTest {
     private GraphManagerService graphManagerService;
     private CloudHost master;
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphManagerService.class);
+    private final ByteString PUBLICKEY = ByteString.copyFrom("123456789".getBytes());
 
     @Mock
     UpdatedGraphResponseWrapper updatedGraphResponseWrapper;
@@ -89,7 +91,7 @@ public class GraphManagerServiceTest {
         node_1.setIPaddress("192.168.2.1");
         node_1.addEdge(edge_1);
         node_1.setId("NODE_ID_1");
-        node_1.setPublicKey("123456789");
+        node_1.setPublicKey(PUBLICKEY);
         addedNodes.add(node_1.build());
 
 
@@ -98,7 +100,7 @@ public class GraphManagerServiceTest {
         node_2.setIPaddress("192.168.2.2");
         node_2.addEdge(edge_2);
         node_2.setId("NODE_ID_2");
-        node_2.setPublicKey("123456789");
+        node_2.setPublicKey(PUBLICKEY);
 
         addedNodes.add(node_2.build());
 
@@ -106,7 +108,7 @@ public class GraphManagerServiceTest {
         node_3.setPort(3);
         node_3.setIPaddress("192.168.2.3");
         node_3.setId("NODE_ID_3");
-        node_3.setPublicKey("123456789");
+        node_3.setPublicKey(PUBLICKEY);
 
         addedNodes.add(node_3.build());
 
@@ -145,7 +147,7 @@ public class GraphManagerServiceTest {
         node_1.setIPaddress("192.168.2.1");
         node_1.addEdge(edge_1);
         node_1.setId("NODE_ID_1");
-        node_1.setPublicKey("123456789");
+        node_1.setPublicKey(PUBLICKEY);
         addedNodes.add(node_1.build());
 
         HanRoutingProtocol.GraphUpdate.Builder graphUpdate = HanRoutingProtocol.GraphUpdate.newBuilder();
