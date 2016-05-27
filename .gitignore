@@ -132,3 +132,13 @@ buildNumber.properties
 .idea/compiler.xml
 .idea/copyright/profiles_settings.xml
 .idea/encodings.xml
+Logger.log
+Logger.log.1
+_db.lck
+_db.log
+_db.properties
+_db.script
+test_db.lck
+test_db.log
+test_db.properties
+test_db.script
