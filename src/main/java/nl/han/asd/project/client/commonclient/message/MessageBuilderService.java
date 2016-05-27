@@ -3,18 +3,11 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
-import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 
@@ -26,20 +19,17 @@ import java.util.List;
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
     private IGetMessagePath getPath;
     private IEncryptionService encryptionService;
-    private ConnectionService connectionService = null;
-    private IContactStore contactStore = null;
 
     @Inject
-    public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService, IContactStore contactStore) {
+    public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService) {
         this.getPath = getPath;
         this.encryptionService = encryptionService;
-        this.contactStore = contactStore;
     }
 
-    public <T extends GeneratedMessage> HanRoutingProtocol.MessageWrapper buildMessage(T generatedMessage , Contact contactReceiver) throws IndexOutOfBoundsException {
+    @Override
+    public <T extends GeneratedMessage> HanRoutingProtocol.MessageWrapper buildMessage(T generatedMessage , Contact contactReceiver) {
         //TODO check if contactReceiver contains latest data from master server.
 
         HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();

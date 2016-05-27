@@ -6,7 +6,6 @@ import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -52,20 +51,17 @@ public class MessageBuilderServiceTest {
     @Mock
     private IEncryptionService encrypt;
 
-    @Mock
-    private IContactStore contactStore;
-
     private MessageBuilderService messageBuilderService;
 
     private UUID MESSAGEID;
     private String CONTACTRECIEVERUSERNAME = "Bob";
     private Contact CONTACTRECIEVER;
-    private ArrayList<Node> PATH;
+    private List<Node> PATH;
 
 
     @Before
     public void setUp() throws Exception {
-        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,contactStore);
+        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt);
 
         MESSAGEID = UUID.randomUUID();
 
@@ -120,7 +116,7 @@ public class MessageBuilderServiceTest {
         path.addAll(PATH);
         pathDeterminationService = Mockito.mock(IGetMessagePath.class);
 
-        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,contactStore);
+        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt);
 
         when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(PATH);
 
@@ -155,7 +151,7 @@ public class MessageBuilderServiceTest {
 
         pathDeterminationService = Mockito.mock(IGetMessagePath.class);
 
-        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,contactStore);
+        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt);
 
         when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(PATH);
         GeneratedMessage message = makeMessage();
@@ -173,7 +169,7 @@ public class MessageBuilderServiceTest {
 
         pathDeterminationService = Mockito.mock(IGetMessagePath.class);
 
-        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt,contactStore);
+        messageBuilderService = new MessageBuilderService(pathDeterminationService,encrypt);
 
         when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(PATH);
 

@@ -18,7 +18,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
 
-    public IContactStore contactStore;
+    private IContactStore contactStore;
     private IMessageStore messageStore;
     private IEncryptionService encryptionService;
     private ISendData sendData;
