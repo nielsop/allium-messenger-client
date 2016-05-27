@@ -172,6 +172,16 @@ public class ValidationTest {
     }
 
     @Test
+    public void testEqualPasswordsReturnTrue(){
+        assertTrue(Validation.passwordsEqual(VALID_PASSWORD, VALID_PASSWORD));
+    }
+
+    @Test
+    public void testNotEqualPasswordsReturnFalse(){
+        assertFalse(Validation.passwordsEqual(VALID_PASSWORD, VALID_PASSWORD));
+    }
+
+    @Test
     public void testValidationRegister8CharsPasswordSuccess() {
         assertTrue(Validation.validateCredentials(VALID_USERNAME_3CHARS, VALID_PASSWORD_8CHARS));
     }
