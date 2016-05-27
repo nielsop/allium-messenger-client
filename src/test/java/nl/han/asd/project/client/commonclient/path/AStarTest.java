@@ -40,7 +40,7 @@ public class AStarTest {
         graph.addNodeVertex(nodeE);
         graph.addNodeVertex(nodeF);
 
-        AStar astar = new AStar(grap);
+        AStar astar = new AStar(graph.getGraphMap());
 
         List<Node> path = astar.findPath(nodeA, nodeF);
 

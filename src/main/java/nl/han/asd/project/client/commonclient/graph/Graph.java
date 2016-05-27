@@ -42,5 +42,9 @@ public class Graph {
         graph.remove(vertex.getId());
     }
 
+    public HashMap<String, Node> getGraphMap() {
+        return this.graph;
+    }
+
 
 }
