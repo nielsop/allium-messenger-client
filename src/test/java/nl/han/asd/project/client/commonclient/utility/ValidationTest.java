@@ -176,9 +176,9 @@ public class ValidationTest {
         assertTrue(Validation.passwordsEqual(VALID_PASSWORD, VALID_PASSWORD));
     }
 
-    @Test
+    @Test (expected =  IllegalArgumentException.class)
     public void testNotEqualPasswordsReturnFalse(){
-        assertFalse(Validation.passwordsEqual(VALID_PASSWORD, VALID_PASSWORD));
+        Validation.passwordsEqual(VALID_PASSWORD, VALID_PASSWORD);
     }
 
     @Test
