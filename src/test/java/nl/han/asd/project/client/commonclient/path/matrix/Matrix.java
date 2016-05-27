@@ -1,5 +1,7 @@
 package nl.han.asd.project.client.commonclient.path.matrix;
 
+import javafx.util.Pair;
+
 /**
  * Created by Jevgeni on 25-5-2016.
  */
@@ -29,6 +31,13 @@ class Matrix {
 
         steps = 1;
         matrix = new short[this.size][this.size][MAX_STEPS];
+        prepareMatrix();
+    }
+
+    private void prepareMatrix() {
+        for(int i = 0; i < size; i++)
+            for(int j = 0; j < size; j++)
+               if (i != j) matrix[i][j][0] = Short.MAX_VALUE;
     }
 
     /**
@@ -47,60 +56,77 @@ class Matrix {
      *
      * @param steps Amount of steps to take.
      */
-    protected void calculate(int steps) {
-        // check for steps > max_steps
-        tempMatrix = new short[size][size][MAX_STEPS];
+    protected void calculate(int steps, int indexOfEndPoint) {
+        short[][] previous = new short[size][size];
 
-        for (short row = 0; row < size; row++) {
-            for (short column = 0; column < size; column++) {
-                if (matrixEverHadAnyValue(row, column)) {
+        for(int i = 0; i < size; i++)
+            for(int j = 0; j < size; j++) {
+                previous[i][j] = matrix[i][j][0];
+            }
 
-                    int currentValue = Integer.MAX_VALUE;
-                    int[] currentPath = null;
+        short[][] ret = internalCalculate(previous);
 
-                    short[][] rowOfColumn = matrix[column]; // target
-                    short[] historyValues = matrix[row][column]; // current
+        for(int i = 0; i < size; i++)
+            for(int j = 0; j < size; j++) {
+                matrix[i][j][1] = ret[i][j];
+            }
 
-                    for(int stepCounter = steps - 1; stepCounter >= 0; stepCounter--) { // continue from the latest found path
-                        short historyValue = historyValues[stepCounter];
-                        if (historyValue <= 0)
-                           continue;
+        ret = internalCalculate(ret);
 
-                        for (int columnRowOfColumn = 0; columnRowOfColumn < rowOfColumn.length; columnRowOfColumn++) { // get the target row
+        for(int i = 0; i < size; i++)
+            for(int j = 0; j < size; j++) {
+                matrix[i][j][2] = ret[i][j];
+            }
 
-                            if (tempMatrixNotSetBefore(row, columnRowOfColumn) && columnRowOfColumn != row) { // check if we haven't set it already
+        ret = internalCalculate(ret);
 
-                                for (int indexColumnRowOfColumn = 0; indexColumnRowOfColumn
-                                        < rowOfColumn[columnRowOfColumn].length; indexColumnRowOfColumn++) { // loop through all (previous) values of the target row
+        for(int i = 0; i < size; i++)
+            for(int j = 0; j < size; j++) {
+                matrix[i][j][3] = ret[i][j];
+            }
 
-                                    short selectedRowValue = rowOfColumn[columnRowOfColumn][indexColumnRowOfColumn];
-                                    if (selectedRowValue != 0 && (historyValue + selectedRowValue)
-                                            < currentValue &&
-                                            (stepCounter + indexColumnRowOfColumn + 1)== steps) {
 
-                                        currentValue = historyValue + selectedRowValue;
-                                        currentPath = new int[] { columnRowOfColumn, row };
-                                    }
-                                }
-                            }
+    }
+
+    private short[][] internalCalculate(short[][] previous)
+    {
+        short[][] current = new short[size][size];
+
+        for(int i = 0; i < size; i++)
+            for(int j = 0; j < size; j++)
+                if (i != j) current[i][j] = previous[i][j];
+
+        for (short rowNumber = 0; rowNumber < size; rowNumber++) {
+            for (short columnNumber = 0; columnNumber < size; columnNumber++) {
+                if (previous[rowNumber][columnNumber] > 0 && rowNumber != columnNumber)
+                {
+                    short[] row = previous[rowNumber];
+
+                    for(short rowColumnNumber = 0; rowColumnNumber < size; rowColumnNumber++)
+                    {
+                        if (rowColumnNumber == columnNumber || row[rowColumnNumber] == Short.MAX_VALUE)
+                            continue;
+
+                        for(short a = 0; a < size; a++) {
+                            short valueOfA = previous[rowColumnNumber][a];
+                            if (a == rowColumnNumber || a == rowNumber
+                                    || valueOfA == Short.MAX_VALUE)
+                                continue;
+
+                            if (a != columnNumber)
+                                continue;
+
+                            short outcome = (short) (valueOfA + previous[rowNumber][rowColumnNumber]);
+                            if (outcome < previous[rowNumber][columnNumber])
+                                current[rowNumber][columnNumber] = outcome;
                         }
                     }
 
-                    // set new paths
-                    if (currentPath != null) {
-                        tempMatrix[currentPath[0]][currentPath[1]][0] = (short) currentValue;
-                        tempMatrix[currentPath[1]][currentPath[0]][0] = (short) currentValue;
-                    }
-
-                    // save old values for traceability
-                    for(int i = 1; i < MAX_STEPS; i++)
-                        tempMatrix[row][column][i] = matrix[row][column][i - 1]; // do not set 0 value;
                 }
             }
         }
 
-        matrix = tempMatrix;
-        this.steps = steps;
+        return current;
     }
 
     /**

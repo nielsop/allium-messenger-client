@@ -57,21 +57,24 @@ public class GraphMatrix extends Matrix {
      */
     public void calculate()
     {
-        super.calculate(steps++);
+        super.calculate(steps++, 0);
     }
 
 
-    public String toPrintableString() {
+    public String toPrintableString(int index) {
         StringBuilder builder = new StringBuilder();
         short[][][] matrix = super.getCurrentMatrix();
-
+        String shortMax = String.valueOf(Short.MAX_VALUE);
         String keys = internalMap.keySet().stream().map(k -> k).collect(Collectors.joining("\t"));
         builder.append(String.format("\t%s\n", keys));
 
         for (int i = 0; i < matrix.length; i++) {
             builder.append(internalMap.keySet().toArray()[i] + "\t");
             for (int j = 0; j < matrix.length; j++) {
-                builder.append(matrix[i][j][0] + "\t");
+                String value = String.valueOf(matrix[i][j][index]);
+                if (value.equals(shortMax)) value = "X";
+
+                builder.append(value + "\t");
             }
 
             builder.append("\n");

@@ -38,55 +38,51 @@ public class MatrixTest {
         GraphMatrix graphMatrix = new GraphMatrix(graph.getGraphMap());
         graphMatrix.fillMatrix();
 
-        System.out.print(graphMatrix.toPrintableString());
+       // System.out.print(graphMatrix.toPrintableString());
 
         System.out.print("\n\n --- MULTIPLYING --- \n\n");
 
         graphMatrix.calculate();
 
-        System.out.print(graphMatrix.toPrintableString());
+       // System.out.print(graphMatrix.toPrintableString());
     }
 
     @Test
     public void testMethod2() {
         Graph graph = new Graph();
 
-        Node nodeOne = new Node("1", "127.0.0.1", 1001, new byte[] { 0x00 });
-        Node nodeTwo = new Node("2", "127.0.0.1", 1002, new byte[] { 0x00 });
-        Node nodeThree = new Node("3", "127.0.0.1", 1003, new byte[] { 0x00 });
-        Node nodeFour = new Node("4", "127.0.0.1", 1004, new byte[] { 0x00 });
+        Node nodeA = new Node("A", "127.0.0.1", 1001, new byte[] { 0x00 });
+        Node nodeB = new Node("B", "127.0.0.1", 1002, new byte[] { 0x00 });
+        Node nodeC = new Node("C", "127.0.0.1", 1003, new byte[] { 0x00 });
+        Node nodeD = new Node("D", "127.0.0.1", 1004, new byte[] { 0x00 });
+        Node nodeE = new Node("E", "127.0.0.1", 1005, new byte[] { 0x00 });
+        Node nodeF = new Node("F", "127.0.0.1", 1006, new byte[] { 0x00 });
 
-        nodeOne.addEdge(nodeTwo, 2);
-        nodeOne.addEdge(nodeFour, 1);
-        nodeTwo.addEdge(nodeThree, 4);
-        nodeFour.addEdge(nodeThree, 6);
+        nodeA.addEdge(nodeE, 8);
+        nodeA.addEdge(nodeF, 4);
+        nodeE.addEdge(nodeC, 3);
+        nodeC.addEdge(nodeD, 1);
+        nodeC.addEdge(nodeB, 10);
+        nodeF.addEdge(nodeB, 2);
+        nodeF.addEdge(nodeD, 3);
 
-        graph.addNodeVertex(nodeOne);
-        graph.addNodeVertex(nodeTwo);
-        graph.addNodeVertex(nodeThree);
-        graph.addNodeVertex(nodeFour);
+        graph.addNodeVertex(nodeA);
+        graph.addNodeVertex(nodeB);
+        graph.addNodeVertex(nodeC);
+        graph.addNodeVertex(nodeD);
+        graph.addNodeVertex(nodeE);
+        graph.addNodeVertex(nodeF);
 
         GraphMatrix graphMatrix = new GraphMatrix(graph.getGraphMap());
         graphMatrix.fillMatrix();
 
-        System.out.print(graphMatrix.toPrintableString());
-
-        System.out.print("\n\n --- MULTIPLYING (Step = 2) --- \n\n");
 
         graphMatrix.calculate();
 
-        System.out.print(graphMatrix.toPrintableString());
-
-        System.out.print("\n\n --- MULTIPLYING (Step = 3) --- \n\n");
-
-        graphMatrix.calculate();
-
-        System.out.print(graphMatrix.toPrintableString());
-
-        System.out.print("\n\n --- MULTIPLYING (Step = 4) --- \n\n");
-
-        graphMatrix.calculate();
-
-        System.out.print(graphMatrix.toPrintableString());
+        for(int i = 0; i <= 3; i++)
+        {
+            System.out.print(String.format("\n\n --- MULTIPLYING (Step = %d) --- \n\n", i + 1));
+            System.out.print(graphMatrix.toPrintableString(i));
+        }
     }
 }
