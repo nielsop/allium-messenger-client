@@ -12,9 +12,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by BILLPOORTS on 22-4-2016.
- */
 public class PackerTest {
 
     private final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };

@@ -1,120 +1,76 @@
 package nl.han.asd.project.client.commonclient.store;
 
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
-import nl.han.asd.project.client.commonclient.presentation.CommonClientGateway;
-import nl.han.asd.project.commonservices.internal.utility.Check;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ContactStore implements IContactStore {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
-
-    private IPersistence persistence;
-    private List<Contact> contactList = new ArrayList<>();
+    public IPersistence persistence;
     private CurrentUser currentUser;
+    private ArrayList<Contact> contactList = new ArrayList<>();
 
-    /**
-     * Constructor of ContactStore
-     *
-     * @param persistence used to connect to local database.
-     */
     @Inject
     public ContactStore(IPersistence persistence) {
         this.persistence = persistence;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    // TODO remove test contacts
     @Override
-    public void addContact(String username) {
-        contactList.add(new Contact(username));
-        try {
-            persistence.addContact(username);
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+    public void createTestContacts() {
+        addContact("bram", "asdf4321".getBytes());
+        addContact("niels", "asdf4321".getBytes());
+        addContact("marius", "asdf4321".getBytes());
+        addContact("kenny", "asdf4321".getBytes());
+        addContact("julius", "asdf4321".getBytes());
+        addContact("jevgeni", "asdf4321".getBytes());
+        addContact("dennis", "asdf4321".getBytes());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override //TODO: Should not be possible to add already existing userNames?
+    public void addContact(String username, byte[] publicKey) {
+        contactList.add(new Contact(username, publicKey));
+    }
+
     @Override
     public void removeContact(String username) {
         for (Contact contact : contactList) {
             if (contact.getUsername().equals(username)) {
                 contactList.remove(contact);
-                try {
-                    persistence.deleteContact(username);
-                } catch (SQLException e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
                 break;
             }
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void deleteAllContactsInMemory() {
+    public void deleteAllContacts() {
         contactList.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Contact getCurrentUser() {
-        return currentUser.getCurrentUserAsContact();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setCurrentUser(CurrentUser currentUser) {
-        this.currentUser = Check.notNull(currentUser, "currentUser");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Contact> getAllContacts() {
-        refreshContactList();
+    public ArrayList<Contact> getAllContacts() {
         return contactList;
     }
 
-    /**
-     * Refills the contacts in the database and stores them into the contact list.
-     */
-    private void refreshContactList() {
-        contactList.clear();
-        try {
-            persistence.getContacts().forEach(contact -> contactList.add(new Contact(contact.getUsername())));
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Contact findContact(String username) {
-        refreshContactList();
+        if (username == null) {
+            return null;
+        }
         for (Contact contact : contactList) {
             if (contact.getUsername().equals(username))
                 return contact;
         }
         return null;
+    }
+
+    @Override
+    public CurrentUser getCurrentUser() {
+        return currentUser;
+    }
+
+    @Override
+    public void setCurrentUser(CurrentUser currentUser) {
+        this.currentUser = currentUser;
     }
 }

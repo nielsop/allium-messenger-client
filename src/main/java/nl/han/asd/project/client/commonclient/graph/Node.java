@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.graph;
 
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.NoSuchElementException;
  * @since 20-4-2016
  */
 public class Node {
-    private Map<String,Edge> adjacent;
+    private Map<String, Edge> adjacent;
     private String id;
     private String ipAddress;
     private int port;
@@ -30,8 +31,8 @@ public class Node {
      * add an edge
      * @param edge
      */
-    public void addEdge(HanRoutingProtocol.Edge edge){
-        adjacent.put(edge.getTargetNodeId(),new Edge(edge.getTargetNodeId(),edge.getWeight()));
+    public void addEdge(HanRoutingProtocol.Edge edge) {
+        adjacent.put(edge.getTargetNodeId(), new Edge(edge.getTargetNodeId(), edge.getWeight()));
     }
 
     /**
@@ -41,9 +42,9 @@ public class Node {
      * @return
      *      The edge that has been found with the destination node id.
      */
-    public Edge getEdge(String destinationNodeId){
+    public Edge getEdge(String destinationNodeId) {
         Edge edge = adjacent.get(destinationNodeId);
-        if(edge == null)
+        if (edge == null)
             throw new NoSuchElementException();
         return edge;
     }
@@ -66,5 +67,15 @@ public class Node {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public boolean equals(Object anotherObject) {
+        return !(anotherObject == null || !(anotherObject instanceof Node));
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getId()).toHashCode();
     }
 }

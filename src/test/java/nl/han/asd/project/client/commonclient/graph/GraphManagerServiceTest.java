@@ -26,9 +26,6 @@ import java.util.List;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by Julius on 25/04/16.
- */
 public class GraphManagerServiceTest {
 
     private GraphManagerService graphManagerService;

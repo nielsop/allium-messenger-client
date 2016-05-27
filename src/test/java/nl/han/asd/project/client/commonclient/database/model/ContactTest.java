@@ -4,13 +4,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
- *
- *
- * @author Niels Bokmans
- * @version 1.0
- * @since 23-5-2016
- */
 public class ContactTest {
 
     private static Contact contact;

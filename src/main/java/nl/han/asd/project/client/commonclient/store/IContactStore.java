@@ -3,15 +3,18 @@ package nl.han.asd.project.client.commonclient.store;
 import java.util.List;
 
 public interface IContactStore {
+    // TODO remove test method
+    void createTestContacts();
+
     /**
      * Adds new contact into contactstore.
      *  @param username username of contact
-     *
+     *  @param publicKey publicKey.
      */
-    void addContact(String username);
+    void addContact(String username, byte[] publicKey);
 
     /**
-     * Removes contact from contactstore.
+     * Removes contact from contactStore.
      *
      * @param username username of to be deleted contact
      */
@@ -35,7 +38,7 @@ public interface IContactStore {
     /**
      * Deletes all the contacts in the contactstore memory.
      */
-    void deleteAllContactsInMemory();
+    void deleteAllContacts();
 
     /**
      * Setter for currentUser.
@@ -49,5 +52,5 @@ public interface IContactStore {
      *
      * @return current user that is logged in
      */
-    Contact getCurrentUser();
+    CurrentUser getCurrentUser();
 }
