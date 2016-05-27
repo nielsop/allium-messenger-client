@@ -7,6 +7,7 @@ import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.ContactStore;
+
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -51,7 +52,7 @@ public class MessageBuilderService implements IMessageBuilder {
     private EncryptedMessage buildMessagePackage(String messageText, Contact contactReceiver, Contact contactSender) {
         List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
-        Message message = new Message(contactSender, new Date(System.currentTimeMillis()), messageText);
+        Message message = new Message(contactSender, new Date(), messageText);
         //TODO kijken of path of die nodes bevat anders gooi exep
         byte[] firstLayer = buildFirstMessagePackageLayer(path.get(0), message);
         path.remove(0);
@@ -67,7 +68,12 @@ public class MessageBuilderService implements IMessageBuilder {
     private byte[] buildFirstMessagePackageLayer(Node node, Message message) {
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
+<<<<<<< HEAD
         builder.setUsername(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername()); builder.setIPaddress(node.getIpAddress());
+=======
+        builder.setUsername(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());
+        builder.setIPaddress(node.getIpAddress());
+>>>>>>> hotfix/sonar-issues
         builder.setPort(node.getPort());
         builder.setData(ByteString.copyFromUtf8(message.getText()));
         return encryptionService.encryptData(node.getPublicKey(), builder.build().toByteArray());

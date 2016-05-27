@@ -11,9 +11,6 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * Created by Jevgeni on 26-4-2016.
- */
 class Server {
     public Packer packer;
     private volatile boolean isRunning = true;

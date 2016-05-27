@@ -12,9 +12,6 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by Jevgeni on 15-4-2016.
- */
 public class ConnectionServiceTest implements IConnectionService {
 
     private static Server server = new Server();

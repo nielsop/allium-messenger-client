@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
 
@@ -18,7 +16,6 @@ import java.util.Properties;
 public class Configuration {
     public static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
-    private static final String DATABASE_ENCRYPTION_ALGORITHM = "SHA-256";
 
     /**
      * Private constructor to prevent instantiation.

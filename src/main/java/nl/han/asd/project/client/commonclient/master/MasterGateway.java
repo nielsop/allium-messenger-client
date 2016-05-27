@@ -88,7 +88,7 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
     @Override
     public RegisterResponseWrapper register(String username, String password, String passwordRepeat) throws IllegalArgumentException {
         Validation.validateCredentials(username, password);
-        Validation.PasswordsEqual(password, passwordRepeat);
+        Validation.passwordsEqual(password, passwordRepeat);
         HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder().setUsername(username).setPassword(password).build();
         RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREGISTERREQUEST, getSocket());
         HanRoutingProtocol.ClientRegisterResponse response = req.writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);

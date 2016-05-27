@@ -17,12 +17,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
 
 public class CommonClientGatewayIT {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGatewayIT.class);
     private CloudHost master;
     private MasterGateway gateway;
     private CommonClientGateway commonClientGateway;
@@ -80,7 +83,7 @@ public class CommonClientGatewayIT {
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
         gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
