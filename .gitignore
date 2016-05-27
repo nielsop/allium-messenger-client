@@ -1,4 +1,7 @@
 sh.exe.stackdump
+*.log
+*_db*
+
 
 # Created by https://www.gitignore.io/api/intellij,eclipse,java,maven
 

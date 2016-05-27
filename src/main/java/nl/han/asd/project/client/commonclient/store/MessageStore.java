@@ -2,26 +2,22 @@ package nl.han.asd.project.client.commonclient.store;
 
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MessageStore implements IMessageStore, IMessageStoreObserver {
-    private IPersistence persistence;
-
-    //for testing purposes
-    ArrayList<Message> messages = new ArrayList<>();
+    private IPersistence persistenceService;
 
     @Inject
     public MessageStore(IPersistence persistence) {
-        this.persistence = persistence;
+        this.persistenceService = persistence;
     }
 
     @Override
     public void addMessage(Message message) {
-        messages.add(message);
+        persistenceService.saveMessage(message);
     }
 
     @Override
@@ -30,16 +26,12 @@ public class MessageStore implements IMessageStore, IMessageStoreObserver {
     }
 
     @Override
+    public Map<Contact, List<Message>> getAllMessagesFromAllUsers() {
+        return persistenceService.getAllMessagesPerContact();
+    }
+
+    @Override
     public List<Message> getMessagesFromUser(String contact) {
-        ArrayList<Message> msgs = new ArrayList<>();
-        for (Message msg : messages) {
-            if (msg.getReceiver().getUsername().equals(contact)) {
-                msgs.add(msg);
-            }
-            else if (msg.getSender().getUsername().equals(contact)) {
-                msgs.add(msg);
-            }
-        }
-        return msgs;
+        return getAllMessagesFromAllUsers().get(new Contact(contact));
     }
 }

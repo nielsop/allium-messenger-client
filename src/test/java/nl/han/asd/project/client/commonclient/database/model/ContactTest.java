@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.database.model;
 
+import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -11,6 +11,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Date;
+
 public class CommonClientGatewayTest {
 
     private CommonClientGateway commonClientGateway;
@@ -25,10 +27,10 @@ public class CommonClientGatewayTest {
     private String emptyPublicKey = "";
     private String privateKey = "";
     private String secretHash = "";
-    private Contact contact1 = new Contact("FirstUser", emptyPublicKey);
-    private CurrentUser user1 = new CurrentUser("FirstUser", privateKey, secretHash);
-    private Contact contact2 = new Contact("SecondUser", emptyPublicKey);
-    private CurrentUser user2 = new CurrentUser("SecondUser", privateKey, secretHash);
+    private Contact contact1 = new Contact("FirstUser", emptyPublicKey.getBytes());
+    private CurrentUser user1 = new CurrentUser("FirstUser", privateKey.getBytes(), secretHash);
+    private Contact contact2 = new Contact("SecondUser", emptyPublicKey.getBytes());
+    private CurrentUser user2 = new CurrentUser("SecondUser", privateKey.getBytes(), secretHash);
 
     @Before
     public void setup() {
@@ -44,19 +46,6 @@ public class CommonClientGatewayTest {
         commonClientGateway = new CommonClientGateway(contactStore, messageStore, messageBuilder, messageStoreObserver, registration, login);
     }
 
-    @Test
-    public void testGetMessagesFromUserActuallyGetsAllMessagesFromUser() {
-        Assert.assertTrue(commonClientGateway.getMessagesFromUser(contact1.getUsername()).isEmpty());
-        Message message1 = new Message("Message 1", contact1, contact2, System.currentTimeMillis());
-        Message message2 = new Message("Message 2", contact1, contact2, System.currentTimeMillis());
-        Assert.assertFalse(commonClientGateway.getMessagesFromUser(contact1.getUsername()).contains(message1));
-        Assert.assertFalse(commonClientGateway.getMessagesFromUser(contact1.getUsername()).contains(message2));
-        commonClientGateway.addMessage(message1);
-        commonClientGateway.addMessage(message2);
-        Assert.assertTrue(commonClientGateway.getMessagesFromUser(contact1.getUsername()).size() == 2);
-        Assert.assertTrue(commonClientGateway.getMessagesFromUser(contact1.getUsername()).contains(message1));
-        Assert.assertTrue(commonClientGateway.getMessagesFromUser(contact1.getUsername()).contains(message2));
-    }
 
     @Test
     public void testGetCurrentUserAfterSettingNewUserInContactStore() {
@@ -74,19 +63,11 @@ public class CommonClientGatewayTest {
         Assert.assertTrue(contactStore.getAllContacts() == commonClientGateway.getContacts());
         Assert.assertTrue(commonClientGateway.getContacts().contains(contact1));
     }
-
-    @Test
-    public void testSendMessageAddsMessageToMessageStore() {
-        int sizeBefore = messageStore.getMessagesFromUser(contact1.getUsername()).size();
-        commonClientGateway.sendMessage(new Message("newMessage", contact1, contact2, System.currentTimeMillis()));
-        Assert.assertTrue(sizeBefore + 1 == messageStore.getMessagesFromUser(contact1.getUsername()).size());
-    }
-
     @Test
     public void removeContactActuallyRemovesContactFromContactStore() {
         String newContact = "newContact";
         Assert.assertTrue(contactStore.findContact(newContact) == null);
-        contactStore.addContact(newContact, emptyPublicKey);
+        contactStore.addContact(newContact, emptyPublicKey.getBytes());
         Assert.assertTrue(contactStore.findContact(newContact).getUsername() == newContact);
         commonClientGateway.removeContact(newContact);
         Assert.assertTrue(contactStore.findContact(newContact) == null);

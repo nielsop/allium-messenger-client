@@ -22,19 +22,19 @@ public class ContactStoreTest {
 
     // Test contactStore 1
     private String usernameContact1 = "testContact1";
-    private String publicKeyContact1 = "asdfTest1";
+    private byte[] publicKeyContact1 = "asdfTest1".getBytes();
 
     // Test contactStore 2
     private String usernameContact2 = "testContact2";
-    private String publicKeyContact2 = "asdfTest2";
+    private byte[] publicKeyContact2 = "asdfTest2".getBytes();
 
     // Test contactStore 3
     private String usernameContact3 = "testContact3";
-    private String publicKeyContact3 = "asdfTest3";
+    private byte[] publicKeyContact3 = "asdfTest3".getBytes();
 
     // Test contactStore 4
     private String usernameContact4 = "testContact4";
-    private String publicKeyContact4 = "asdfTest4";
+    private byte[] publicKeyContact4 = "asdfTest4".getBytes();
 
     @Before
     public void initialize() {

@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.database.model;
 
-import nl.han.asd.project.client.commonclient.Configuration;
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class MessageTest {
 
     @Test
     public void testGetId() {
-        Assert.assertEquals(PRIMARY_ID, message.getId());
+        Assert.assertEquals(PRIMARY_ID, message.getDatabaseId());
     }
 
     @Test
@@ -54,7 +55,7 @@ public class MessageTest {
 
     @Test
     public void testGetTimestamp() {
-        Assert.assertEquals(DATE, message.getTimestamp());
+        Assert.assertEquals(DATE, message.getMessageTimestamp());
     }
 
     @Test

@@ -81,7 +81,7 @@ public class CommonClientGateway {
         LoginResponseWrapper loginResponse = login.login(username, password);
         LOGGER.info("User: \"" + username + "\" loginRequest status: " + loginResponse.getStatus().name());
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-            contactStore.setCurrentUser(new CurrentUser(username, publicKey, secretHash));
+            contactStore.setCurrentUser(new CurrentUser(username, publicKey.getBytes(), secretHash));
         }
         return loginResponse.getStatus();
     }
@@ -107,7 +107,7 @@ public class CommonClientGateway {
 
     public void sendMessage(Message message) {
         //TODO: Actually send message to a user
-        LOGGER.info(message.getSender().getUsername() + " sends to " + message.getReceiver().getUsername() + " the following massage: " + message.getText());
+        LOGGER.info(message.getSender().getUsername() + " sends the following massage: " + message.getText());
         messageStore.addMessage(message);
     }
 

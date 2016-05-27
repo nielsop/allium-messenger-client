@@ -11,7 +11,7 @@ public interface IContactStore {
      *  @param username username of contact
      *  @param publicKey publicKey.
      */
-    void addContact(String username, String publicKey);
+    void addContact(String username, byte[] publicKey);
 
     /**
      * Removes contact from contactstore.
