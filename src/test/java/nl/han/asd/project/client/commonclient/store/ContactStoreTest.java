@@ -13,19 +13,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ContactStoreTest {
+    private static final String usernameContact1 = "testContact1";
+    private static final byte[] publicKeyContact1 = "asdfTest1".getBytes();
+    private static final String usernameContact2 = "testContact2";
+    private static final byte[] publicKeyContact2 = "asdfTest2".getBytes();
+    private static final String usernameContact3 = "testContact3";
+    private static final byte[] publicKeyContact3 = "asdfTest3".getBytes();
+    private static final String usernameContact4 = "testContact4";
+    private static final byte[] publicKeyContact4 = "asdfTest4".getBytes();
     private IPersistence persistence;
     private ContactStore contactStore;
     private List<Contact> singleContactArrayList;
     private List<Contact> multipleContactArrayList;
-
-    private static final String usernameContact1 = "testContact1";
-    private static final String publicKeyContact1 = "asdfTest1";
-    private static final String usernameContact2 = "testContact2";
-    private static final String publicKeyContact2 = "asdfTest2";
-    private static final String usernameContact3 = "testContact3";
-    private static final String publicKeyContact3 = "asdfTest3";
-    private static final String usernameContact4 = "testContact4";
-    private static final String publicKeyContact4 = "asdfTest4";
 
     @Before
     public void initialize() {

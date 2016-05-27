@@ -18,17 +18,17 @@ public class ContactStore implements IContactStore {
     // TODO remove test contacts
     @Override
     public void createTestContacts() {
-        addContact("bram", "asdf4321");
-        addContact("niels", "asdf4321");
-        addContact("marius", "asdf4321");
-        addContact("kenny", "asdf4321");
-        addContact("julius", "asdf4321");
-        addContact("jevgeni", "asdf4321");
-        addContact("dennis", "asdf4321");
+        addContact("bram", "asdf4321".getBytes());
+        addContact("niels", "asdf4321".getBytes());
+        addContact("marius", "asdf4321".getBytes());
+        addContact("kenny", "asdf4321".getBytes());
+        addContact("julius", "asdf4321".getBytes());
+        addContact("jevgeni", "asdf4321".getBytes());
+        addContact("dennis", "asdf4321".getBytes());
     }
 
     @Override //TODO: Should not be possible to add already existing userNames?
-    public void addContact(String username, String publicKey) {
+    public void addContact(String username, byte[] publicKey) {
         contactList.add(new Contact(username, publicKey));
     }
 

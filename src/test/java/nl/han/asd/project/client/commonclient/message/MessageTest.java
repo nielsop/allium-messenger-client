@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -24,12 +26,7 @@ public class MessageTest {
     @Before
     public void setUp(){
         testdata = "testdata";
-        message = new Message(testdata,contactSender,contactReceiver, System.currentTimeMillis());
-    }
-
-    @Test
-    public void testGetReceiver() throws Exception {
-        assertEquals(contactReceiver,message.getReceiver());
+        message = new Message(contactSender, new Date(), testdata);
     }
 
     @Test

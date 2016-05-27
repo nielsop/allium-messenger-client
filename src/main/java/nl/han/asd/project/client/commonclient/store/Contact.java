@@ -1,22 +1,36 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.graph.Node;
+import nl.han.asd.project.commonservices.encryption.EncryptionService;
 
 public class Contact {
     private String username;
     private Node[] connectedNodes;
-    private String publicKey;
+    private byte[] publicKey;
     private boolean online;
 
-    public Contact(String username, String publicKey) {
-        this.username = username;
-        this.publicKey = publicKey;
+    public Contact(String username) {
+        this(username, new byte[] {}, false);
     }
 
-    public Contact(String username, String publicKey, boolean online) {
+    public Contact(String username, byte[] publicKey) {
+        this(username, publicKey, false);
+    }
+
+    public Contact(String username, byte[] publicKey, boolean online) {
         this.username = username;
         this.publicKey = publicKey;
         this.online = online;
+    }
+
+    public static Contact fromDatabase(String username) {
+        Injector injector = Guice.createInjector(new CommonclientModule());
+        EncryptionService service = injector.getInstance(EncryptionService.class);
+        return new Contact(username, service.getPublicKey());
+
     }
 
     public String getUsername() {
@@ -35,7 +49,7 @@ public class Contact {
         this.connectedNodes = connectedNodes;
     }
 
-    public String getPublicKey() {
+    public byte[] getPublicKey() {
         return publicKey;
     }
 
@@ -45,5 +59,24 @@ public class Contact {
 
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    @Override
+    public String toString() {
+        return getUsername();
+    }
+
+    @Override
+    public boolean equals(Object anotherObject) {
+        if (anotherObject == null || !(anotherObject instanceof Contact)) {
+            return false;
+        }
+        Contact contact = (Contact) anotherObject;
+        return contact.getUsername().equals(getUsername());
+    }
+
+    @Override
+    public int hashCode() {
+        return getUsername().hashCode();
     }
 }

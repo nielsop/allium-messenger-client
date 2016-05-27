@@ -11,6 +11,8 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+
 public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
@@ -37,11 +39,12 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
         HanRoutingProtocol.Message message = null;
         try {
             message = HanRoutingProtocol.Message.parseFrom(messageBuffer);
+            return new Message(contactStore.findContact(message.getSender()),
+                    new Date(), message.getText());
         } catch (InvalidProtocolBufferException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new Message(message.getText(), contactStore.findContact(message.getSender()),
-                contactStore.getCurrentUser().getCurrentUserAsContact(), System.currentTimeMillis());
+        return null;
     }
 
     @Override

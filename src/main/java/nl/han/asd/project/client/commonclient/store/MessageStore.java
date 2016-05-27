@@ -31,9 +31,7 @@ public class MessageStore implements IMessageStore, IMessageStoreObserver {
     public List<Message> getMessagesFromUser(String contact) {
         List<Message> msgs = new ArrayList<>();
         for (Message msg : messages) {
-            if (msg.getReceiver().getUsername().equals(contact)) {
-                msgs.add(msg);
-            } else if (msg.getSender().getUsername().equals(contact)) {
+            if (msg.getSender().getUsername().equals(contact)) {
                 msgs.add(msg);
             }
         }

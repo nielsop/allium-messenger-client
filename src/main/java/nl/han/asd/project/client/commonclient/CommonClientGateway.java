@@ -30,7 +30,7 @@ public class CommonClientGateway {
     private IRegistration registration;
     private ILogin login;
     private String privateKey = "privateKey";
-    private String publicKey = "publicKey";
+    private byte[] publicKey = "publicKey".getBytes();
     private String secretHash = "secretHash";
 
     @Inject
