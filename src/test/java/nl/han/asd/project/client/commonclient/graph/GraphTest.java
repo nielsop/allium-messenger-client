@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.graph;
 
+import com.google.protobuf.ByteString;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,13 +31,13 @@ public class GraphTest {
         graph = new Graph();
         edge = HanRoutingProtocol.Edge.newBuilder().setTargetNodeId(EDGEDESTINATIONNODE).setWeight(EDGEDESTINATIONNODEWEIGHT).build();
         edgeNode1 = new Edge(EDGEDESTINATIONNODE,EDGEDESTINATIONNODEWEIGHT);
-        node = HanRoutingProtocol.Node.newBuilder().setPort(NODE1_PORT).setIPaddress(NODE1_IP).setId(NODE1_ID).setPublicKey( new String(NODE1_PUBLICKEY)).addEdge(edge).build();
+        node = HanRoutingProtocol.Node.newBuilder().setPort(NODE1_PORT).setIPaddress(NODE1_IP).setId(NODE1_ID).setPublicKey(ByteString.copyFrom(NODE1_PUBLICKEY)).addEdge(edge).build();
     }
 
     @Test
     public void testResetGraph() throws Exception {
         HanRoutingProtocol.Node node2 = HanRoutingProtocol.Node.newBuilder().setPort(1337).setIPaddress("192.168.2.1")
-                .setId("NODE_2").setPublicKey("12345").build();
+                .setId("NODE_2").setPublicKey(ByteString.copyFrom("12345".getBytes())).build();
         graph.addNodeVertex(node);
         graph.addNodeVertex(node2);
         Assert.assertEquals(2, graph.getVertexMapSize());

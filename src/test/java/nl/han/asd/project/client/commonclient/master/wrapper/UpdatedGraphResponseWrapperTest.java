@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.ws.rs.HEAD;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,20 +17,26 @@ import java.util.List;
  */
 public class UpdatedGraphResponseWrapperTest {
 
+    private static final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
     private static UpdatedGraphResponseWrapper updatedGraphResponseWrapper;
 
     @BeforeClass
     public static void setupTestClass() {
         HanRoutingProtocol.Node node1 = HanRoutingProtocol.Node.newBuilder().setId("Node-1").setIPaddress("127.0.0.1")
-                .setPort(1337).setPublicKey("0x00").build();
+                .setPort(1337).setPublicKey(
+                        ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES)).build();
         HanRoutingProtocol.Node node2 = HanRoutingProtocol.Node.newBuilder().setId("Node-2").setIPaddress("127.0.0.2")
-                .setPort(1337).setPublicKey("0x00").build();
+                .setPort(1337).setPublicKey(
+                        ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES)).build();
         HanRoutingProtocol.Node node3 = HanRoutingProtocol.Node.newBuilder().setId("Node-3").setIPaddress("127.0.0.3")
-                .setPort(1337).setPublicKey("0x00").build();
+                .setPort(1337).setPublicKey(
+                        ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES)).build();
         HanRoutingProtocol.Node node4 = HanRoutingProtocol.Node.newBuilder().setId("Node-4").setIPaddress("127.0.0.4")
-                .setPort(1337).setPublicKey("0x00").build();
+                .setPort(1337).setPublicKey(
+                        ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES)).build();
         HanRoutingProtocol.Node node5 = HanRoutingProtocol.Node.newBuilder().setId("Node-5").setIPaddress("127.0.0.5")
-                .setPort(1337).setPublicKey("0x00").build();
+                .setPort(1337).setPublicKey(
+                        ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES)).build();
 
         /*
         HanRoutingProtocol.GraphUpdate graphUpdate1 = HanRoutingProtocol.GraphUpdate.newBuilder().
@@ -41,7 +48,7 @@ public class UpdatedGraphResponseWrapperTest {
         */
 
         HanRoutingProtocol.GraphUpdate graphUpdate1 = HanRoutingProtocol.GraphUpdate.newBuilder().
-                setIsFullGraph(false).setNewVersion(1).build();
+                setIsFullGraph(true).setNewVersion(1).build();
         HanRoutingProtocol.GraphUpdate graphUpdate2 = HanRoutingProtocol.GraphUpdate.newBuilder().
                 setIsFullGraph(false).setNewVersion(2).build();
         HanRoutingProtocol.GraphUpdate graphUpdate3 = HanRoutingProtocol.GraphUpdate.newBuilder().
@@ -55,36 +62,40 @@ public class UpdatedGraphResponseWrapperTest {
 
     @Test
     public void testUpdatedGraphWrapperCreationSavesNewVersion() {
-        UpdatedGraphWrapper updatedGraph1 =
-                updatedGraphResponseWrapper.getUpdatedGraphs().get(0);
-        Assert.assertEquals(updatedGraph1.newVersion, 1);
+
+        UpdatedGraphWrapper updatedGraph1 = updatedGraphResponseWrapper.getUpdatedGraphs()
+                .get(0);
+        Assert.assertEquals(updatedGraph1.getNewVersion(), 1);
     }
 
     @Test
     public void testUpdatedGraphWrapperCreationSavesIsFullGraphTrue() {
-        UpdatedGraphWrapper updatedGraph1 = updatedGraphResponseWrapper.getUpdatedGraphs().get(0);
-        Assert.assertEquals(updatedGraph1.isFullGraph, false);
-        //        Assert.assertEquals(updatedGraph1.isFullGraph, true);
+        UpdatedGraphWrapper updatedGraph1 = updatedGraphResponseWrapper.getUpdatedGraphs()
+                .get(0);
+        Assert.assertEquals(updatedGraph1.isFullGraph(), true);
     }
 
     @Test
     public void testUpdatedGraphWrapperCreationSavesIsFullGraphFalse() {
-        UpdatedGraphWrapper updatedGraph2 = updatedGraphResponseWrapper.getUpdatedGraphs().get(1);
-        Assert.assertEquals(updatedGraph2.isFullGraph, false);
+        UpdatedGraphWrapper updatedGraph2 = updatedGraphResponseWrapper.getUpdatedGraphs()
+                .get(1);
+        Assert.assertEquals(updatedGraph2.isFullGraph(), false);
     }
 
     @Test
     public void testUpdatedGraphWrapperCreationSavesAddedNodesList() {
-        UpdatedGraphWrapper updatedGraph1 = updatedGraphResponseWrapper.getUpdatedGraphs().get(0);
-//        Assert.assertEquals(updatedGraph1.addedNodes.size(), 2);
-        Assert.assertEquals(updatedGraph1.addedNodes.size(), 0);
+        UpdatedGraphWrapper updatedGraph1 = updatedGraphResponseWrapper.getUpdatedGraphs()
+                .get(0);
+        //        Assert.assertEquals(updatedGraph1.addedNodes.size(), 2);
+        Assert.assertEquals(updatedGraph1.getAddedNodes().size(), 0);
     }
 
     @Test
     public void testUpdatedGraphWrapperCreationSavesDeletedNodesList() {
-        UpdatedGraphWrapper updatedGraph2 = updatedGraphResponseWrapper.getUpdatedGraphs().get(1);
-//        Assert.assertEquals(updatedGraph2.deletedNodes.size(), 2);
-        Assert.assertEquals(updatedGraph2.deletedNodes.size(), 0);
+        UpdatedGraphWrapper updatedGraph2 = updatedGraphResponseWrapper.getUpdatedGraphs()
+                .get(1);
+        //        Assert.assertEquals(updatedGraph2.deletedNodes.size(), 2);
+        Assert.assertEquals(updatedGraph2.getDeletedNodes().size(), 0);
     }
 
 }

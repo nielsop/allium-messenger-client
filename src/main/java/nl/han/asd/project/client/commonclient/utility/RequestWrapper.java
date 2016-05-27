@@ -29,10 +29,8 @@ public class RequestWrapper {
      * @param requestType The request type.
      * @param socket The socket to write to and read from.
      */
-    public RequestWrapper(final GeneratedMessage message, final HanRoutingProtocol.Wrapper.Type requestType,
-            final Socket socket) {
-        this.message = HanRoutingProtocol.Wrapper.newBuilder().setType(requestType).setData(message.toByteString())
-                .build();
+    public RequestWrapper(final GeneratedMessage message, final HanRoutingProtocol.Wrapper.Type requestType, final Socket socket) {
+        this.message = HanRoutingProtocol.Wrapper.newBuilder().setType(requestType).setData(message.toByteString()).build();
         this.socket = socket;
     }
 
@@ -49,8 +47,7 @@ public class RequestWrapper {
         return null;
     }
 
-    private <T extends GeneratedMessage> T parseFrom(Class<T> classDescriptor, byte[] data)
-            throws SocketException, InvalidProtocolBufferException {
+    private <T extends GeneratedMessage> T parseFrom(Class<T> classDescriptor, byte[] data) throws SocketException, InvalidProtocolBufferException {
         try {
             Field defaultInstanceField = classDescriptor.getDeclaredField("DEFAULT_INSTANCE");
             defaultInstanceField.setAccessible(true);
@@ -67,7 +64,6 @@ public class RequestWrapper {
 
     private void writeToSocket() {
         try {
-            final GeneratedMessage m = message;
             message.writeDelimitedTo(socket.getOutputStream());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);

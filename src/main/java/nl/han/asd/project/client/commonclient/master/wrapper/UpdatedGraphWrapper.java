@@ -41,4 +41,20 @@ public class UpdatedGraphWrapper {
         this.addedNodes = graphUpdate.getAddedNodesList();
         this.deletedNodes = graphUpdate.getDeletedNodesList();
     }
+
+    public int getNewVersion() {
+        return newVersion;
+    }
+
+    public boolean isFullGraph() {
+        return isFullGraph;
+    }
+
+    public List<HanRoutingProtocol.Node> getAddedNodes() {
+        return addedNodes;
+    }
+
+    public List<HanRoutingProtocol.Node> getDeletedNodes() {
+        return deletedNodes;
+    }
 }

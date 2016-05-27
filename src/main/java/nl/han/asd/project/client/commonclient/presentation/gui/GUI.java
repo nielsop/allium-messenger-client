@@ -12,7 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.han.asd.project.client.commonclient.CommonclientModule;
-import nl.han.asd.project.client.commonclient.presentation.PresentationLayer;
+import nl.han.asd.project.client.commonclient.presentation.CommonClientGateway;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.DashboardController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.auth.LoginController;
 import nl.han.asd.project.client.commonclient.presentation.gui.controller.auth.RegisterController;
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 public class GUI extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(GUI.class);
-    public PresentationLayer pLayer;
+    public CommonClientGateway pLayer;
     private Stage stage;
     private Scene scene;
 
@@ -31,21 +31,6 @@ public class GUI extends Application {
 
     public Scene getScene() {
         return scene;
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        Injector injector = Guice.createInjector(new CommonclientModule());
-        injector.injectMembers(this);
-        try {
-            stage = primaryStage;
-            stage.setTitle("Ui Berichter");
-            stage.setMinWidth(640);
-            stage.setMinHeight(360);
-            setScene(Page.LOGIN);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage(), ex);
-        }
     }
 
     public void setScene(Page page) {
@@ -67,6 +52,21 @@ public class GUI extends Application {
         stage.show();
     }
 
+    @Override
+    public void start(Stage primaryStage) {
+        Injector injector = Guice.createInjector(new CommonclientModule());
+        injector.injectMembers(this);
+        try {
+            stage = primaryStage;
+            stage.setTitle("Ui Berichter");
+            stage.setMinWidth(640);
+            stage.setMinHeight(360);
+            setScene(Page.LOGIN);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage(), ex);
+        }
+    }
+
     private Scene buildScene(Parent pane) {
         if (scene != null)
             return new Scene(pane, scene.getWidth(), scene.getHeight());
@@ -75,7 +75,7 @@ public class GUI extends Application {
     }
 
     @Inject
-    public void setPresentationLayer(PresentationLayer pLayer) {
+    public void setPresentationLayer(CommonClientGateway pLayer) {
         this.pLayer = pLayer;
     }
 

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -49,7 +50,9 @@ public class Connection {
     public void open(final String hostName, final int portNumber) throws SocketException {
         if (Validation.isValidAddress(hostName) && Validation.isValidPort(portNumber)) {
             try {
-                socket = new Socket(hostName, portNumber);
+                socket = new Socket();
+                socket.connect(new InetSocketAddress(hostName, portNumber), 7000);
+                socket.setSoTimeout(5000);
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
                 throw new SocketException("Couldn't connect to the given endpoint.");
@@ -120,8 +123,8 @@ public class Connection {
                         connectionService.onReceiveRead(wrapper);
                         Thread.sleep(sleepTime);
                     } catch (InterruptedException e) {
-                        Thread.interrupted();
                         LOGGER.error(e.getMessage(), e);
+                        Thread.interrupted();
                     } catch (SocketException e) {
                         isRunning = false;
                         LOGGER.error(e.getMessage(), e);

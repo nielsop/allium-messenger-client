@@ -2,10 +2,10 @@ package nl.han.asd.project.client.commonclient.connection;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.cryptography.CryptographyService;
+import nl.han.asd.project.client.commonclient.cryptography.EncryptionService;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,12 +17,13 @@ import static org.junit.Assert.assertEquals;
  */
 public class PackerTest {
 
+    private final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
     private Packer packer = null;
 
     @Before
     public void InitPacker() {
         final Injector injector = Guice.createInjector(new EncryptionModule());
-        packer = new Packer(new CryptographyService(injector.getInstance(IEncryptionService.class)));
+        packer = new Packer(new EncryptionService());
     }
 
     @Test
@@ -36,12 +37,12 @@ public class PackerTest {
     public HanRoutingProtocol.Wrapper pack() {
         // Simulate a builder..
         HanRoutingProtocol.ClientLoginRequest.Builder builder = HanRoutingProtocol.ClientLoginRequest.newBuilder();
-        builder.setPublicKey("test");
+        builder.setPublicKey(ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES));
         builder.setUsername("test");
         builder.setPassword("test");
 
         // Pack..
-        HanRoutingProtocol.Wrapper packed = packer.pack(builder, packer.getMyPublicKey());
+        HanRoutingProtocol.Wrapper packed = packer.pack(builder);
 
         return packed;
     }

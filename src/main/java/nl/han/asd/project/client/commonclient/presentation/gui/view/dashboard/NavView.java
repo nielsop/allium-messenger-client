@@ -13,7 +13,7 @@ public class NavView {
     private Label settings;
 
     public NavView() {
-        hBox = PaneFactory.getHBox(10, new int[]{5, 5, 5, 5}, "");
+        hBox = PaneFactory.getHBox(10, new int[] { 5, 5, 5, 5 }, "");
         hBox.setStyle("-fx-background-color: #EEE; -fx-background: #EEE;");
         logout = new Label("Uitloggen");
         settings = new Label("Instellingen");

@@ -27,6 +27,16 @@ public class UpdatedGraphResponseWrapper {
      */
     private List<UpdatedGraphWrapper> updatedGraphs;
 
+
+    /**
+     *
+     * Returns the updated graph.
+     * @return updatedGraph
+     */
+    public List<UpdatedGraphWrapper> getUpdatedGraphs(){
+        return updatedGraphs;
+    }
+
     /**
      * Creates a new updated graph response wrapper from a list of ByteStrings containing the individual graph updates.
      *
@@ -37,7 +47,6 @@ public class UpdatedGraphResponseWrapper {
         graphUpdates.forEach(graphUpdate -> {
             try {
                 updatedGraphWrapper.add(new UpdatedGraphWrapper(readGeneric(HanRoutingProtocol.GraphUpdate.class, graphUpdate)));
-
             } catch (SocketException | InvalidProtocolBufferException e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -47,10 +56,6 @@ public class UpdatedGraphResponseWrapper {
 
     public void setUpdatedGraphs(List<UpdatedGraphWrapper> graphs) {
         this.updatedGraphs = graphs;
-    }
-
-    public List<UpdatedGraphWrapper> getUpdatedGraphs() {
-        return updatedGraphs;
     }
 
     /**
@@ -73,8 +78,7 @@ public class UpdatedGraphResponseWrapper {
      * @throws InvalidProtocolBufferException Throws a InvalidProtocolBufferException incase the wrong protocol buffer
      *                                        is being used to parse the message.
      */
-    private <T extends GeneratedMessage> T readGeneric(Class<T> classDescriptor, ByteString b)
-            throws SocketException, InvalidProtocolBufferException {
+    private <T extends GeneratedMessage> T readGeneric(Class<T> classDescriptor, ByteString b) throws SocketException, InvalidProtocolBufferException {
         byte[] buffer = b.toByteArray();
         if (buffer != null) {
             try {

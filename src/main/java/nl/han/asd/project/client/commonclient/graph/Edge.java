@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Edge {
     private String destinationNodeId;
+
     private float weight;
 
     public Edge(String destinationNodeId, float weight) {

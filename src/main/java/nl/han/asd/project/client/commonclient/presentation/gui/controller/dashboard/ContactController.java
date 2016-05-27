@@ -27,13 +27,15 @@ public class ContactController {
     }
 
     private void onActions() {
+        //not implemented yet
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     private void fillContactList() {
         if (model.getContacts() != null) {
             model.getContacts().stream().filter(contact -> contact != null).forEach(contact -> {
                 Label name = new Label(contact.getUsername());
-                HBox contactBox = getHBox(0, new int[]{5, 5, 5, 5}, "-fx-background-color: #FFF;");
+                HBox contactBox = getHBox(0, new int[] { 5, 5, 5, 5 }, "-fx-background-color: #FFF;");
                 setHBoxMouseEvents(contactBox, contact);
                 contactBox.getChildren().add(name);
                 view.getContactList().getChildren().add(contactBox);
@@ -44,7 +46,8 @@ public class ContactController {
     private void setHBoxMouseEvents(HBox hBox, Contact contact) {
         hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             model.selectContact(contact);
-            if (current != null) current.setStyle("-fx-background-color: #FFF;");
+            if (current != null)
+                current.setStyle("-fx-background-color: #FFF;");
             hBox.setStyle("-fx-background-color: #EEE;");
             current = hBox;
             model.setCurrectContact(contact);
@@ -53,7 +56,8 @@ public class ContactController {
             hBox.setStyle("-fx-background-color: #EEE;");
         });
         hBox.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-            if (hBox != current) hBox.setStyle("-fx-background-color: #FFF;");
+            if (hBox != current)
+                hBox.setStyle("-fx-background-color: #FFF;");
         });
     }
 

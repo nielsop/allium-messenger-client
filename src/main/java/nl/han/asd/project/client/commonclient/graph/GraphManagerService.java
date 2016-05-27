@@ -1,7 +1,7 @@
 package nl.han.asd.project.client.commonclient.graph;
 
 import com.google.inject.Inject;
-import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
+import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 
 import java.util.Map;
@@ -10,10 +10,10 @@ public class GraphManagerService implements IGetVertices {
 
     private int currentGraphVersion;
     private Graph graph;
-    private IGetUpdatedGraph gateway;
+    private IGetGraphUpdates gateway;
 
     @Inject
-    public GraphManagerService(IGetUpdatedGraph gateway) {
+    public GraphManagerService(IGetGraphUpdates gateway) {
         graph = new Graph();
         this.gateway = gateway;
         currentGraphVersion = 0;
@@ -39,10 +39,10 @@ public class GraphManagerService implements IGetVertices {
      */
     public void processGraphUpdates() {
         UpdatedGraphResponseWrapper updatedGraph = gateway.getUpdatedGraph(currentGraphVersion);
-        if (updatedGraph.getLast().newVersion > currentGraphVersion) {
-            setCurrentGraphVersion(updatedGraph.getLast().newVersion);
+        if (updatedGraph.getLast().getNewVersion() > currentGraphVersion) {
+            setCurrentGraphVersion(updatedGraph.getLast().getNewVersion());
 
-            if (updatedGraph.getLast().isFullGraph) {
+            if (updatedGraph.getLast().isFullGraph()) {
                 graph.resetGraph();
                 updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
                 updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addEdgesToVertex(vertex));

@@ -16,15 +16,15 @@ import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactor
 public class ContactView {
     private BorderPane borderPane;
     private HBox top = getTop();
-    private ScrollPane center = getCenter();
-    private HBox bottom = getBottom();
     private VBox contactList;
+    private ScrollPane center = getCenter();
     private Button edit;
     private Button remove;
     private Button add;
+    private HBox bottom = getBottom();
 
     public ContactView() {
-        borderPane = PaneFactory.getBorderPane(new int[]{0,0,0,0});
+        borderPane = PaneFactory.getBorderPane(new int[] { 0, 0, 0, 0 });
         borderPane.setStyle("-fx-background-color: #FFF; -fx-background: #FFF;");
         borderPane.setTop(top);
         borderPane.setCenter(center);
@@ -32,7 +32,7 @@ public class ContactView {
     }
 
     private HBox getTop() {
-        HBox hBox = getHBox(0, new int[]{5,5,5,5}, "");
+        HBox hBox = getHBox(0, new int[] { 5, 5, 5, 5 }, "");
         Label title = new Label("Contacten");
         title.setStyle("-fx-font-size: 15px;");
         hBox.getChildren().add(title);
@@ -42,13 +42,13 @@ public class ContactView {
     private ScrollPane getCenter() {
         String style = "-fx-background-color:#FFF; -fx-background: #FFF;";
         ScrollPane scrollPane = getScrollPane(true, true, null, null, style);
-        contactList = getVBox(0, new int[]{0,0,0,0}, "");
+        contactList = getVBox(0, new int[] { 0, 0, 0, 0 }, "");
         scrollPane.setContent(contactList);
         return scrollPane;
     }
 
     private HBox getBottom() {
-        HBox hBox = getHBox(5, new int[]{0,0,0,0}, "");
+        HBox hBox = getHBox(5, new int[] { 0, 0, 0, 0 }, "");
         edit = new Button("Edit");
         add = new Button("Add");
         remove = new Button("Remove");

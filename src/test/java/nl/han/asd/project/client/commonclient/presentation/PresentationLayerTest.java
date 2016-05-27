@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class PresentationLayerTest {
 
-    PresentationLayer pLayer;
+    CommonClientGateway pLayer;
     IRegistration registration;
 
     @Before
@@ -27,8 +27,8 @@ public class PresentationLayerTest {
         RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(
                 ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.SUCCES).getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
-        pLayer = new PresentationLayer(registration);
-        assertEquals(registerResponse.status, pLayer.register("username", "password"));
+        pLayer = new CommonClientGateway(registration);
+        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
     }
 
     @Test
@@ -36,8 +36,8 @@ public class PresentationLayerTest {
         RegisterResponseWrapper registerResponse = new RegisterResponseWrapper(
                 ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.FAILED).getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
-        pLayer = new PresentationLayer(registration);
-        assertEquals(registerResponse.status, pLayer.register("username", "password"));
+        pLayer = new CommonClientGateway(registration);
+        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class PresentationLayerTest {
                 ClientRegisterResponse.newBuilder().setStatus(ClientRegisterResponse.Status.TAKEN_USERNAME)
                         .getStatus());
         Mockito.when(registration.register("username", "password")).thenReturn(registerResponse);
-        pLayer = new PresentationLayer(registration);
-        assertEquals(registerResponse.status, pLayer.register("username", "password"));
+        pLayer = new CommonClientGateway(registration);
+        assertEquals(registerResponse.getStatus(), pLayer.register("username", "password"));
     }
 }
