@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.database;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,7 @@ public class HyperSQLDatabase implements IDatabase {
      * @param password The user's password.
      * @throws SQLException if a database access error occurs.
      */
+    @Inject
     public HyperSQLDatabase(String username, String password) throws SQLException {
         final String key = generateKey(username, password);
         connection = DriverManager.getConnection("jdbc:hsqldb:" + username + "_db;crypt_key=" + key + ";crypt_type=AES", DATABASE_USERNAME, DATABASE_PASSWORD);

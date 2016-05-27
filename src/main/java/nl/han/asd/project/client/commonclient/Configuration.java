@@ -17,7 +17,6 @@ import java.util.Properties;
  */
 public class Configuration {
     public static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
     private static final String DATABASE_ENCRYPTION_ALGORITHM = "SHA-256";
 
@@ -29,6 +28,7 @@ public class Configuration {
 
     public static int getPort() {
         try {
+            LOGGER.info("User dir: " + System.getProperty("user.dir"));
             FileInputStream inputStream = new FileInputStream("application.properties");
             final Properties properties = new Properties();
             properties.load(inputStream);

@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class CurrentUserTest {
 
     private static final String TEST_CURRENTUSER_USERNAME = "testuser";
-    private static final String TEST_CURRENTUSER_PUBLICKEY = "thisIsTestPublicKey";
+    private static final byte[] TEST_CURRENTUSER_PUBLICKEY = "thisIsTestPublicKey".getBytes();
     private static final String TEST_CURRENTUSER_SECRETHASH = "thisIsATestSecretHash";
 
     private ContactStore contactStore;

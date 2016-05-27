@@ -7,6 +7,7 @@ import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import org.junit.After;
@@ -38,6 +39,9 @@ public class MessageBuilderServiceTest {
     @Mock
     IGetMessagePath getPath;
 
+    @Mock
+    IContactStore contactStore;
+
     @InjectMocks
     private MessageBuilderService messageBuilderService;
 
@@ -46,14 +50,14 @@ public class MessageBuilderServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        messageBuilderService = new MessageBuilderService(getPath,encrypt);
+        messageBuilderService = new MessageBuilderService(getPath,encrypt, contactStore);
     }
 
     @Test
     public void sendMessageTest(){
         //TODO: fix this test that takes ridiculously long to execute and doesn't even test anything
-        Contact contactReciever = new Contact("julius","1234");
-        Contact contactSender = new Contact("bram","123456");
+        Contact contactReciever = new Contact("julius","1234".getBytes());
+        Contact contactSender = new Contact("bram","123456".getBytes());
         contactReciever.setConnectedNodes(new Node[]{new Node("NODE_ID_1","192.168.2.8",1234,"123456789".getBytes()),new Node("NODE_ID_2","192.168.2.9",1234,"123456789".getBytes()),new Node("NODE_ID_3","192.168.2.10",1234,"123456789".getBytes())});
         ArrayList<Node> path = new ArrayList<Node>(Arrays.asList(new Node("NODE_ID_1","192.168.2.1",1234,"123456789".getBytes()), new Node("NODE_ID_2","192.168.2.2",1234,"123456789".getBytes()), new Node("NODE_ID_3","192.168.2.3",1234,"123456789".getBytes())));
         Byte[] encryptedData = new Byte[]{0,1,0,1};

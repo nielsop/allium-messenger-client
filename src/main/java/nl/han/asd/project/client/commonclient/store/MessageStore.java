@@ -1,25 +1,37 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
 
 public class MessageStore implements IMessageStore, IMessageStoreObserver {
-    private IPersistence persistence;
+    private IPersistence persistenceService;
 
     @Inject
     public MessageStore(IPersistence persistence) {
-        this.persistence = persistence;
+        this.persistenceService = persistence;
     }
 
     @Override
-    public void addMessage(HanRoutingProtocol.Message message) {
+    public void addMessage(Message message) {
+        persistenceService.saveMessage(message);
+    }
+
+    @Override
+    public void findMessage(Message message) {
         //TODO: implement!
     }
 
     @Override
-    public void findMessage(HanRoutingProtocol.Message message) {
-        //TODO: implement!
+    public Map<Contact, List<Message>> getAllMessagesFromAllUsers() {
+        return persistenceService.getAllMessagesPerContact();
+    }
+
+    @Override
+    public List<Message> getMessagesFromUser(String contact) {
+        return getAllMessagesFromAllUsers().get(new Contact(contact));
     }
 }

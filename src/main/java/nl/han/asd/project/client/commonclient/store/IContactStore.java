@@ -1,29 +1,28 @@
 package nl.han.asd.project.client.commonclient.store;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface IContactStore {
+
     /**
      * Adds new contact into contactstore.
      *  @param username username of contact
-     *
      */
-    void addContact(String username) throws SQLException;
+    void addContact(String username);
 
     /**
      * Removes contact from contactstore.
      *
      * @param username username of to be deleted contact
      */
-    void removeContact(String username) throws SQLException;
+    void removeContact(String username);
 
     /**
-     * Retrieves all contacts of current user.
+     * Get a list of all the contacts in the contactstore.
      *
-     * @return List of contacts
+     * @return a list of all the contacts
      */
-    List<Contact> getAllContacts() throws SQLException;
+    List<Contact> getAllContacts();
 
     /**
      * Finds a contact in the contactstore by username.
@@ -31,7 +30,12 @@ public interface IContactStore {
      * @param username username of contact.
      * @return <tt>Contact</tt> if found, <tt>null</tt> otherwise.
      */
-    Contact findContact(String username) throws SQLException;
+    Contact findContact(String username);
+
+    /**
+     * Deletes all the contacts in the contactstore memory.
+     */
+    void deleteAllContactsFromMemory();
 
     /**
      * Setter for currentUser.

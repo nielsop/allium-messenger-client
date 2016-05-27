@@ -17,7 +17,8 @@ public class MessageModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(IGetMessagePath.class).to(PathDeterminationService.class);
-        bind(IEncryptionService.class).to(EncryptionService.class);
+        //bind(IEncryptionService.class).to(EncryptionService.class);
+        // TODO: Remove this one? This also happens with the this.install(new EncryptionModule) line in the CommonClientModule.
         bind(IMessageStore.class).to(MessageStore.class);
         bind(ISendMessage.class).to(MessageProcessingService.class);
         bind(IMessageBuilder.class).to(MessageBuilderService.class);

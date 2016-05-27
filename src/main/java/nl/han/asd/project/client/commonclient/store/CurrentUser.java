@@ -21,7 +21,7 @@ public class CurrentUser {
      *
      * @throws IllegalArgumentException if secretHash is null
      */
-    public CurrentUser(String username, String publicKey, String secretHash) {
+    public CurrentUser(String username, byte[] publicKey, String secretHash) {
         contact = new Contact(username, publicKey);
         this.secretHash = Check.notNull(secretHash, "secretHash");
     }

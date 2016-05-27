@@ -1,5 +1,9 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import nl.han.asd.project.client.commonclient.CommonclientModule;
+import nl.han.asd.project.client.commonclient.cryptography.EncryptionService;
 import nl.han.asd.project.client.commonclient.graph.Node;
 
 /**
@@ -10,7 +14,7 @@ import nl.han.asd.project.client.commonclient.graph.Node;
 public class Contact {
     private String username;
     private Node[] connectedNodes;
-    private String publicKey;
+    private byte[] publicKey;
     private boolean online;
 
     /**
@@ -19,7 +23,7 @@ public class Contact {
      * @param username username of contact
      */
     public Contact(String username) {
-        this.username = username;
+        this(username, new byte[] {}, false);
     }
 
     /**
@@ -28,9 +32,33 @@ public class Contact {
      * @param username username of contact
      * @param publicKey publicKey of contact
      */
-    public Contact(String username, String publicKey) {
+    public Contact(String username, byte[] publicKey) {
+        this(username, publicKey, false);
+    }
+
+    /**
+     * Constructor of Contact.
+     *
+     * @param username username of contact
+     * @param publicKey publicKey of contact
+     * @param online if the contact is online or not
+     */
+    public Contact(String username, byte[] publicKey, boolean online) {
         this.username = username;
         this.publicKey = publicKey;
+        this.online = online;
+    }
+
+    /**
+     * Gets contact from database.
+     * @param username username of contact
+     * @return Contact of current user by username from database.
+     */
+    public static Contact fromDatabase(String username) {
+        Injector injector = Guice.createInjector(new CommonclientModule());
+        EncryptionService service = injector.getInstance(EncryptionService.class);
+        return new Contact(username, service.getPublicKey());
+
     }
 
     /**
@@ -69,7 +97,7 @@ public class Contact {
      *
      * @param publicKey the publicKey of the contact for encrypting messages.
      */
-    public void setPublicKey(String publicKey) {
+    public void setPublicKey(byte[] publicKey) {
         this.publicKey = publicKey;
     }
 
@@ -78,7 +106,7 @@ public class Contact {
      *
      * @return the publicKey of the contact for encrypting messages.
      */
-    public String getPublicKey() {
+    public byte[] getPublicKey() {
         return publicKey;
     }
 
@@ -98,5 +126,40 @@ public class Contact {
      */
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    /**
+     * Returns the contact's username as string.
+     *
+     * @return the usernaname of the contact as string
+     */
+    @Override
+    public String toString() {
+        return getUsername();
+    }
+
+    /**
+     * Checks if anotherObject is equal of contact.
+     *
+     * @param anotherObject the to be checked object
+     * @return <tt>true</tt> if anotherObject is equal of contact, <tt>false</tt> otherwise
+     */
+    @Override
+    public boolean equals(Object anotherObject) {
+        if (anotherObject == null || !(anotherObject instanceof Contact)) {
+            return false;
+        }
+        Contact contact = (Contact) anotherObject;
+        return contact.getUsername().equals(getUsername());
+    }
+
+    /**
+     * Get the hashCode of the contact's username.
+     *
+     * @return the hashCode of the contact's username.
+     */
+    @Override
+    public int hashCode() {
+        return getUsername().hashCode();
     }
 }

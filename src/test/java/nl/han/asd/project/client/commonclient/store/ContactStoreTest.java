@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.store;
 
-import nl.han.asd.project.client.commonclient.database.model.Contact;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 /**
@@ -36,10 +36,6 @@ public class ContactStoreTest {
 
     @Before
     public void initialize() {
-        //        appender = new TestLoggerAppender();
-        //        rootLogger = Logger.getRootLogger();
-        //        rootLogger.addAppender(appender);
-
         persistence = Mockito.mock(IPersistence.class);
         contactStore = new ContactStore(persistence);
 
@@ -64,7 +60,7 @@ public class ContactStoreTest {
         mockDeletedContactList.add(new Contact(TEST_CONTACT4));
     }
 
-    private void addTestContacts() throws SQLException {
+    private void addTestContacts() {
         // Mock
         when(persistence.addContact(TEST_CONTACT1)).thenReturn(true);
         when(persistence.addContact(TEST_CONTACT2)).thenReturn(true);
@@ -139,11 +135,17 @@ public class ContactStoreTest {
         // Test
         addTestContacts();
         contactStore.removeContact(TEST_CONTACT2);
-        nl.han.asd.project.client.commonclient.store.Contact selectedContact = contactStore.findContact(TEST_CONTACT2);
+        Contact selectedContact = contactStore.findContact(TEST_CONTACT2);
 
         // Assert
-        assertEquals(null, selectedContact);
+        assertNull(selectedContact);
         assertEquals(3, contactStore.getAllContacts().size());
     }
 
+    @Test
+    public void testClearAllContactsFromList() {
+        addTestContacts();
+        contactStore.deleteAllContactsFromMemory();
+        assertEquals(0, contactStore.getAllContacts().size());
+    }
 }
