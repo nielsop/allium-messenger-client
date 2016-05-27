@@ -1,12 +1,29 @@
 package nl.han.asd.project.client.commonclient.login;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import com.google.protobuf.ByteString;
 
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
+import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ Contact.class, LoginService.class, IEncryptionService.class })
 public class LoginServiceTest {
 
     /* Valid credentials */
@@ -24,14 +41,15 @@ public class LoginServiceTest {
     private static final String INVALID_PASSWORD_NULL = null;
 
     private IAuthentication authenticationMock;
+    private IEncryptionService encryptionServiceMock;
 
     private ILogin login;
 
     @Before
     public void setUp() {
         authenticationMock = mock(IAuthentication.class);
-
-        login = new LoginService(authenticationMock);
+        encryptionServiceMock = mock(IEncryptionService.class);
+        login = new LoginService(authenticationMock, encryptionServiceMock);
     }
 
     @Test(expected = IllegalUsernameException.class)
@@ -77,6 +95,50 @@ public class LoginServiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void testIsPasswordNull() throws Exception {
         login.login(VALID_USERNAME, INVALID_PASSWORD_NULL);
+    }
+
+    @Test(expected = InvalidCredentialsException.class)
+    public void statusFailed() throws Exception {
+        when(encryptionServiceMock.getPublicKey()).thenReturn("key".getBytes());
+
+        ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
+        requestBuilder.setUsername(VALID_USERNAME);
+        requestBuilder.setPassword(VALID_USERNAME);
+        requestBuilder.setPublicKey(ByteString.copyFrom("key".getBytes()));
+        ClientLoginRequest request = requestBuilder.build();
+
+        ClientLoginResponse.Builder responseBuilder = ClientLoginResponse.newBuilder();
+        responseBuilder.setStatus(ClientLoginResponse.Status.FAILED);
+        ClientLoginResponse response = responseBuilder.build();
+
+        when(authenticationMock.login(any())).thenReturn(response);
+
+        login.login(VALID_USERNAME, VALID_PASSWORD);
+    }
+
+    @Test
+    public void statusSuccess() throws Exception {
+        when(encryptionServiceMock.getPublicKey()).thenReturn("key".getBytes());
+
+        ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
+        requestBuilder.setUsername(VALID_USERNAME);
+        requestBuilder.setPassword(VALID_USERNAME);
+        requestBuilder.setPublicKey(ByteString.copyFrom("key".getBytes()));
+        ClientLoginRequest request = requestBuilder.build();
+
+        ClientLoginResponse.Builder responseBuilder = ClientLoginResponse.newBuilder();
+        responseBuilder.setStatus(ClientLoginResponse.Status.SUCCES);
+        responseBuilder.setSecretHash("hash");
+        ClientLoginResponse response = responseBuilder.build();
+
+        when(authenticationMock.login(any())).thenReturn(response);
+
+        Contact contactMock = mock(Contact.class);
+        whenNew(Contact.class).withAnyArguments().thenReturn(contactMock);
+
+        assertEquals(contactMock, login.login(VALID_USERNAME, VALID_PASSWORD));
+
+        verify(contactMock).setSecretHash(eq("hash"));
     }
 
 }

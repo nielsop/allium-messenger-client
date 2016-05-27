@@ -105,7 +105,7 @@ public class ConnectionService implements IConnectionService {
      * of the provided hostname or port.
      *
      * <p>
-     * The functionally provided by this constructor is functionally
+     * The functionally provided by this constructor is
      * equal to:
      *
      * <pre>

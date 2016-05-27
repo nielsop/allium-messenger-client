@@ -4,9 +4,12 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import com.google.protobuf.ByteString;
+
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest.Builder;
@@ -20,15 +23,19 @@ import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 public class LoginService implements ILogin {
 
     private IAuthentication authentication;
+    private IEncryptionService encryptionService;
 
     /**
      * Construct a new LoginService.
      *
      * @param authentication the authentication interface
+     * @param encryptionService encryptionService holding
+     *          the public key of this application
      */
     @Inject
-    public LoginService(IAuthentication authentication) {
+    public LoginService(IAuthentication authentication, IEncryptionService encryptionService) {
         this.authentication = Check.notNull(authentication, "authentication");
+        this.encryptionService = Check.notNull(encryptionService, "encryptionService");
     }
 
     /** {@inheritDoc} */
@@ -41,6 +48,7 @@ public class LoginService implements ILogin {
         Builder loginRequest = ClientLoginRequest.newBuilder();
         loginRequest.setUsername(username);
         loginRequest.setPassword(password);
+        loginRequest.setPublicKey(ByteString.copyFrom(encryptionService.getPublicKey()));
 
         ClientLoginResponse loginResponse = authentication.login(loginRequest.build());
 
