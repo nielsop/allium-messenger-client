@@ -8,11 +8,12 @@ import java.util.Map;
 public interface IMessageStore {
     void addMessage(Message message);
 
-    void findMessage(Message message);
-
-    Map<Contact, List<Message>> getAllMessagesFromAllUsers();
-
     List<Message> getMessagesFromUser(String contact);
 
+    void saveToDatabase();
+
+    void updateFromDatabase();
+
+    void clear();
 }
 

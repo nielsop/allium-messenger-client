@@ -4,7 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
-import nl.han.asd.project.client.commonclient.login.ILogin;
+import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
@@ -17,12 +17,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
 
 public class CommonClientGatewayIT {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGatewayIT.class);
     private CloudHost master;
     private MasterGateway gateway;
     private CommonClientGateway commonClientGateway;
@@ -33,7 +36,7 @@ public class CommonClientGatewayIT {
     private IMessageStoreObserver messageStoreObserver;
     private IEncryptionService encryptionService;
     private IRegistration registration;
-    private ILogin login;
+    private ILoginService login;
 
     private String validUsername = "validUsername";
     private String validPassword = "validPassword";
@@ -47,7 +50,7 @@ public class CommonClientGatewayIT {
         messageBuilder = injector.getInstance(IMessageBuilder.class);
         messageStoreObserver = injector.getInstance(IMessageStoreObserver.class);
         registration = injector.getInstance(IRegistration.class);
-        login = injector.getInstance(ILogin.class);
+        login = injector.getInstance(ILoginService.class);
 
         commonClientGateway = new CommonClientGateway(contactStore, messageStore, messageBuilder, messageStoreObserver, registration, login);
     }
@@ -80,7 +83,7 @@ public class CommonClientGatewayIT {
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
         gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));

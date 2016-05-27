@@ -20,6 +20,6 @@ public class LoginModule extends AbstractModule {
         bind(ISetConnectedNodes.class).to(NodeConnectionService.class);
         bind(IReceiveMessage.class).to(MessageProcessingService.class);
         bind(IConnectionListener.class).to(NodeConnection.class);
-        bind(ILogin.class).to(LoginService.class);
+        bind(ILoginService.class).to(LoginService.class);
     }
 }

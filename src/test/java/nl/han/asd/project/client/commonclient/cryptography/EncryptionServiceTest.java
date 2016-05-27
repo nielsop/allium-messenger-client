@@ -5,9 +5,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * Created by Julius on 18/04/16.
- */
 public class EncryptionServiceTest {
     private EncryptionService encryptionService;
 
@@ -25,9 +22,6 @@ public class EncryptionServiceTest {
     public void testEncryptData() throws Exception {
         String dataToEncrypt = "Encrypt this";
         byte[] publicKey = "12345678".getBytes();
-        //        ByteString encryptedData = cryptographyService.encryptData(ByteString.copyFromUtf8(dataToEncrypt),publicKey);
-
-        Assert.assertEquals(1, 1); //TODO: Testcase afmaken!
-        // Assert.assertEquals(encryptedData,dataToEncrypt);
+        Assert.assertEquals(1, 1);
     }
 }

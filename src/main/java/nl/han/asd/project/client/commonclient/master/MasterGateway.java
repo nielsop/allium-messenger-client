@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.Socket;
 
-public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
+public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication, ILogout {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterGateway.class);
     private ConnectionService connectionService;
@@ -88,7 +88,7 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
     @Override
     public RegisterResponseWrapper register(String username, String password, String passwordRepeat) throws IllegalArgumentException {
         Validation.validateCredentials(username, password);
-        Validation.PasswordsEqual(password, passwordRepeat);
+        Validation.passwordsEqual(password, passwordRepeat);
         HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder().setUsername(username).setPassword(password).build();
         RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREGISTERREQUEST, getSocket());
         HanRoutingProtocol.ClientRegisterResponse response = req.writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);
@@ -111,6 +111,15 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
         RequestWrapper req = new RequestWrapper(clientRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREQUEST, getSocket());
         HanRoutingProtocol.ClientResponse clientResponse = req.writeAndRead(HanRoutingProtocol.ClientResponse.class);
         return new ClientGroupResponseWrapper(clientResponse.getClientsList());
+    }
+
+    @Override
+    public boolean logout(String username, String secretHash) {
+        HanRoutingProtocol.ClientLogoutRequest logoutRequest = HanRoutingProtocol.ClientLogoutRequest.newBuilder().setUsername(username).setSecretHash(secretHash).build();
+
+        RequestWrapper req = new RequestWrapper(logoutRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGOUTREQUEST, getSocket());
+        HanRoutingProtocol.ClientLogoutResponse logoutResponse = req.writeAndRead(HanRoutingProtocol.ClientLogoutResponse.class);
+        return logoutResponse.getStatus() == HanRoutingProtocol.ClientLogoutResponse.Status.SUCCES;
     }
 
     /**

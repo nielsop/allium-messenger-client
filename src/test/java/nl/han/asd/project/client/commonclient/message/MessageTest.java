@@ -30,8 +30,7 @@ public class MessageTest {
     private static final Timestamp TIMESTAMP = new Timestamp(DATE.getTime());
     private static final String PRIMARY_MESSAGE = "Testmessage";
     private static final String SECONDARY_MESSAGE = "Testmessage2";
-    private static final String PRIMARY_MESSAGE_TOSTRING =
-            "Message[sender=" + PRIMARY_USERNAME + ", timestamp=" + DATE + ", text=" + PRIMARY_MESSAGE + "]";
+    private static final String PRIMARY_MESSAGE_TOSTRING = "Message[sender=" + PRIMARY_USERNAME + ", timestamp=" + DATE + ", text=" + PRIMARY_MESSAGE + "]";
 
     @BeforeClass
     public static void beforeClass() {

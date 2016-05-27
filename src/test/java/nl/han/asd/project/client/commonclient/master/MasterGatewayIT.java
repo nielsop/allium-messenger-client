@@ -4,11 +4,17 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
+import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
+import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -21,16 +27,19 @@ import java.util.UUID;
  */
 public class MasterGatewayIT {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MasterGatewayIT.class);
     private static final String VALID_USERNAME = "valid_username";
     private static final String VALID_PASSWORD = "valid_password";
     private CloudHost master;
     private MasterGateway gateway;
+    private IContactStore contactStore;
+    private IEncryptionService encryptionService;
 
     @Before
     public void setup() {
         master = CloudHostFactory.getCloudHost("master");
         master.setup();
-        Injector injector = Guice.createInjector(new EncryptionModule());
+        Injector injector = Guice.createInjector(new CommonclientModule());
         while (true) {
             try {
                 new Socket(master.getHostName(), master.getPort(1337));
@@ -42,10 +51,12 @@ public class MasterGatewayIT {
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
-        gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
+        encryptionService = injector.getInstance(IEncryptionService.class);
+        gateway = new MasterGateway(encryptionService);
+        contactStore = injector.getInstance(IContactStore.class);
         gateway.setConnectionData(master.getHostName(), master.getPort(1337));
     }
 
@@ -80,19 +91,30 @@ public class MasterGatewayIT {
     }
 
     /* Get updated graph from master server */
-    // TODO: Tests for when we actually add real nodes & see if the right node is added to master.
     @Test
     public void testGetUpdatedGraphSuccessful() {
-        Assert.assertTrue(true
-                /*TODO: gateway.getUpdatedGraph(0).getLast().newVersion >= gateway
-                        .getCurrentGraphVersion()*/);
+        Assert.assertTrue(gateway.getUpdatedGraph(0).getUpdatedGraphs().size() > 0);
     }
 
     /* Get active client group from master server */
 
-    @Test @Ignore("Has to be fixed.") //TODO: Fix test?
+    @Test @Ignore("Has to be fixed.")
     public void testGetClientGroupSuccessful() {
         ClientGroupResponseWrapper response = gateway.getClientGroup();
         Assert.assertTrue(response.getClientGroup().size() >= 0);
+    }
+
+    @Test
+    public void testLogoutSuccessful() {
+        gateway.register("test1234", "test1234", "test1234");
+        LoginResponseWrapper loginResponse = gateway.authenticate("test1234", "test1234");
+        CurrentUser currentUser = new CurrentUser("test1234", encryptionService.getPublicKey(), loginResponse.getSecretHash());
+        contactStore.setCurrentUser(currentUser);
+        Assert.assertTrue(gateway.logout(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername(), contactStore.getCurrentUser().getSecretHash()));
+    }
+
+    @Test
+    public void testLogoutNotSuccessful() {
+        Assert.assertFalse(gateway.logout("notLoggedInUser", "aRandomSecretHash"));
     }
 }

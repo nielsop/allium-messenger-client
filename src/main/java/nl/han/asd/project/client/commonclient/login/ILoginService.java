@@ -5,7 +5,7 @@ import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrappe
 /**
  * Created by Marius on 19-04-16.
  */
-@FunctionalInterface
-public interface ILogin {
+public interface ILoginService {
     LoginResponseWrapper login(String username, String password);
+    boolean logout(String username, String secretHash);
 }

@@ -11,15 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
-/**
- * @author DDulos
- * @version 1.0
- * @since 12-May-16
- */
 public class ContactStoreTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContactStoreTest.class);
 
@@ -47,7 +41,6 @@ public class ContactStoreTest {
     }
 
     private void initializeMockContacts() {
-
         mockedSingleContactList.add(new Contact(TEST_CONTACT1));
 
         mockedMultipleContactList.add(new Contact(TEST_CONTACT1));
@@ -134,18 +127,20 @@ public class ContactStoreTest {
 
         // Test
         addTestContacts();
-        contactStore.removeContact(TEST_CONTACT2);
-        Contact selectedContact = contactStore.findContact(TEST_CONTACT2);
 
         // Assert
-        assertNull(selectedContact);
+        assertNull(contactStore.findContact(TEST_CONTACT2));
+        assertEquals(4, contactStore.getAllContacts().size());
+        contactStore.removeContact(TEST_CONTACT2);
+        assertNull(contactStore.findContact(TEST_CONTACT2));
         assertEquals(3, contactStore.getAllContacts().size());
     }
 
     @Test
     public void testClearAllContactsFromList() {
         addTestContacts();
+        assertTrue(contactStore.getAllContacts().size() > 0);
         contactStore.deleteAllContactsFromMemory();
-        assertEquals(0, contactStore.getAllContacts().size());
+        assertTrue(contactStore.getAllContacts().size() == 0);
     }
 }

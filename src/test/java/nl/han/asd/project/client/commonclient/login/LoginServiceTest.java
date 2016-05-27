@@ -16,11 +16,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 
-/**
- * @author Niels Bokmans
- * @version 1.0
- * @since 18-4-2016
- */
 @RunWith(MockitoJUnitRunner.class)
 public class LoginServiceTest {
 

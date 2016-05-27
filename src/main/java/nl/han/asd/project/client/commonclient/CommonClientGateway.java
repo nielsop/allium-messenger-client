@@ -1,6 +1,6 @@
 package nl.han.asd.project.client.commonclient;
 
-import nl.han.asd.project.client.commonclient.login.ILogin;
+import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
@@ -21,20 +21,20 @@ import java.util.List;
  */
 public class CommonClientGateway implements ICommonClient {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
     private IMessageBuilder messageBuilder;
     private IMessageStoreObserver messageStoreObserver;
     private IRegistration registration;
-    private ILogin login;
+    private ILoginService login;
     private String privateKey = "privateKey";
-    private String publicKey = "publicKey";
+    private byte[] publicKey = "publicKey".getBytes();
 
     @Inject
     public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IMessageBuilder messageBuilder, IMessageStoreObserver messageStoreObserver,
-            IRegistration registration, ILogin login) {
+            IRegistration registration, ILoginService login) {
         this.contactStore = contactStore;
         this.messageStore = messageStore;
         this.messageBuilder = messageBuilder;
@@ -52,24 +52,17 @@ public class CommonClientGateway implements ICommonClient {
      */
     @Override
     public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IllegalArgumentException {
-        //Get registering response
         RegisterResponseWrapper registerResponse = registration.register(username, password, passwordRepeat);
-        //In every other case, do something.
         switch (registerResponse.getStatus()) {
             case SUCCES:
-                LOGGER.info("Registering worked!");
                 break;
             case FAILED:
-                LOGGER.info("Registering failed!");
                 break;
             case TAKEN_USERNAME:
-                LOGGER.info("Username already exists, registering failed.");
                 break;
             default:
-                LOGGER.info("Something went wrong (default).");
                 break;
         }
-        //Return the status
         return registerResponse.getStatus();
     }
 
@@ -79,9 +72,8 @@ public class CommonClientGateway implements ICommonClient {
     @Override
     public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) throws IllegalArgumentException {
         LoginResponseWrapper loginResponse = login.login(username, password);
-        LOGGER.info("User: \"" + username + "\" loginRequest status: " + loginResponse.getStatus().name());
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-            contactStore.setCurrentUser(new CurrentUser(username, publicKey.getBytes(), loginResponse.getSecretHash()));
+            contactStore.setCurrentUser(new CurrentUser(username, publicKey, loginResponse.getSecretHash()));
         }
         return loginResponse.getStatus();
     }
@@ -93,7 +85,6 @@ public class CommonClientGateway implements ICommonClient {
      */
     @Override
     public Contact getCurrentUser() {
-        LOGGER.info("Find the current user");
         return contactStore.getCurrentUserAsContact();
     }
 
@@ -102,7 +93,6 @@ public class CommonClientGateway implements ICommonClient {
      */
     @Override
     public List<Contact> getContacts() {
-        LOGGER.info("Find all contacts");
         return contactStore.getAllContacts();
     }
 
@@ -164,6 +154,9 @@ public class CommonClientGateway implements ICommonClient {
      */
     @Override
     public void logout() {
-        //TODO: Implement method. Delete all in memory user data.
+        contactStore.deleteAllContactsFromMemory();
+        messageStore.saveToDatabase();
+        messageStore.clear();
+        login.logout(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername(), contactStore.getCurrentUser().getSecretHash());
     }
 }
