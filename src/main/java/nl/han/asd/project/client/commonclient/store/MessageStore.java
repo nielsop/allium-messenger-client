@@ -24,6 +24,7 @@ public class MessageStore implements IMessageStore, IMessageStoreObserver {
     @Override
     public void findMessage(Message message) {
         //TODO: implement!
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -22,7 +22,6 @@ public class MainClient implements IConnectionService {
     }
 
     public void run() throws IOException, InterruptedException {
-        //connectionService = new ConnectionService(this);
         connectionService.open("10.182.5.214", 4444);
 
         HanRoutingProtocol.MessageWrapper.Builder encryptedMessageBuilder = HanRoutingProtocol.MessageWrapper
@@ -31,14 +30,9 @@ public class MainClient implements IConnectionService {
         encryptedMessageBuilder.setPort(5555);
         encryptedMessageBuilder.setUsername("Jev");
 
-        encryptedMessageBuilder.setData(ByteString.copyFrom(
+        encryptedMessageBuilder.setEncryptedData(ByteString.copyFrom(
                 new byte[] { 0x48, 0x6F, 0x69, 0x2C, 0x20, 0x69, 0x6B, 0x20, 0x62, 0x65, 0x6E, 0x20, 0x4A, 0x65, 0x76,
                         0x67, 0x65, 0x6E, 0x69 }, 0, 19));
-        //encryptedMessageBuilder.setEncryptedData(ByteString.copyFrom(new byte[]{0x4A, 0x75, 0x6C, 0x6C, 0x69, 0x65, 0x20, 0x68, 0x65, 0x62, 0x62, 0x65, 0x6E, 0x20, 0x61, 0x6C, 0x6C, 0x65, 0x6D, 0x61, 0x61, 0x6C, 0x20, 0x65, 0x65, 0x6E, 0x20, 0x6F, 0x6E, 0x76, 0x6F, 0x6C, 0x64, 0x6F, 0x65, 0x6E, 0x64, 0x65, 0x2E, }, 0, 39));
-
-        //connectionService.writeGeneric(encryptedMessageBuilder);
-        //TODO: merge -v- hier iets? read bestaat niet meer
-        //byte[] payload = connectionService.read();
         System.out.println(new String(new byte[] {}, "UTF-8"));
         connectionService.close();
     }

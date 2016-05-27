@@ -33,7 +33,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
-        builder.setData(messageToSend.getEncryptedData());
+        builder.setData(messageToSend.getData());
         connectionService = new ConnectionService(messageToSend.getPublicKey());
         try {
             connectionService.open(messageToSend.getIp(), messageToSend.getPort());
@@ -82,7 +82,7 @@ public class MessageBuilderService implements IMessageBuilder {
         Node node = remainingPath.get(0);
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
-        builder.setData(ByteString.copyFrom(message));
+        builder.setEncryptedData(ByteString.copyFrom(message));
 
         remainingPath.remove(0);
 
