@@ -8,10 +8,7 @@ import nl.han.asd.project.client.commonclient.utility.Validation;
 
 import javax.inject.Inject;
 
-
 public class LoginService implements ILogin {
-
-    //private static final MasterGateway masterGateway = new MasterGateway(null);
 
     private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]";
     private static final String REGEX_ALPHANUMERICSPECIAL = "^(?=(?:\\D*?\\d){8,32}(?!.*?\\d))[a-zA-Z0-9@\\#$%&*()_+\\]\\[';:?.,!^-]+$";

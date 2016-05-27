@@ -1,8 +1,8 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
 import nl.han.asd.project.client.commonclient.database.IDatabase;
-import nl.han.asd.project.client.commonclient.database.model.Contact;
-import nl.han.asd.project.client.commonclient.database.model.Message;
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.Contact;
 
 import java.sql.SQLException;
 import java.util.List;

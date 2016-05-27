@@ -2,8 +2,8 @@ package nl.han.asd.project.client.commonclient.persistence;
 
 import nl.han.asd.project.client.commonclient.Configuration;
 import nl.han.asd.project.client.commonclient.database.IDatabase;
-import nl.han.asd.project.client.commonclient.database.model.Contact;
-import nl.han.asd.project.client.commonclient.database.model.Message;
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.Contact;
 
 import javax.inject.Inject;
 import java.sql.ResultSet;
@@ -31,7 +31,7 @@ public class PersistenceService implements IPersistence {
 
     @Override
     public boolean saveMessage(Message message) throws SQLException {
-        final String messageTimestampInDatabaseFormat = Configuration.TIMESTAMP_FORMAT.format(message.getTimestamp());
+        final String messageTimestampInDatabaseFormat = Configuration.TIMESTAMP_FORMAT.format(message.getMessageTimestamp());
         return getDatabase().query(String
                 .format("INSERT INTO Message (sender, message, timestamp) VALUES ('%s', '%s', '%s')",
                         message.getSender().getUsername(), message.getText(), messageTimestampInDatabaseFormat));
@@ -81,7 +81,7 @@ public class PersistenceService implements IPersistence {
         final List<Contact> contactList = new ArrayList<>();
         ResultSet selectContactsResult = getDatabase().select("SELECT * FROM Contact");
         while (selectContactsResult.next()) {
-            contactList.add(Contact.fromDatabase(selectContactsResult.getObject(2)));
+            contactList.add(Contact.fromDatabase((String) selectContactsResult.getObject(2)));
         }
         selectContactsResult.close();
         return contactList;

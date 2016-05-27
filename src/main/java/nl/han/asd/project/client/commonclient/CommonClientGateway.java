@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class CommonClientGateway {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
@@ -61,7 +61,7 @@ public class CommonClientGateway {
      * @return RegisterResponse.status
      * @throws IllegalArgumentException
      */
-    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IllegalArgumentException  {
+    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) {
         RegisterResponseWrapper registerResponse = registration.register(username, password, passwordRepeat);
         switch (registerResponse.getStatus()) {
             case SUCCES:
@@ -70,11 +70,13 @@ public class CommonClientGateway {
                 break;
             case TAKEN_USERNAME:
                 break;
+            default:
+                break;
         }
         return registerResponse.getStatus();
     }
 
-    public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) throws IllegalArgumentException  {
+    public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) {
         LoginResponseWrapper loginResponse = login.login(username, password);
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
             contactStore.setCurrentUser(new CurrentUser(username, publicKey, secretHash));
@@ -109,6 +111,10 @@ public class CommonClientGateway {
 
     //TODO: Implement method. Delete all in memory user data.
     public void logout() {
+        throw new UnsupportedOperationException();
+    }
 
+    public static Logger getLogger() {
+        return LOGGER;
     }
 }
