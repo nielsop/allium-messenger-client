@@ -4,7 +4,11 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
+import nl.han.asd.project.client.commonclient.CommonclientModule;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
+import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -28,12 +32,14 @@ public class MasterGatewayIT {
     private static final String VALID_PASSWORD = "valid_password";
     private CloudHost master;
     private MasterGateway gateway;
+    private IContactStore contactStore;
+    private IEncryptionService encryptionService;
 
     @Before
     public void setup() {
         master = CloudHostFactory.getCloudHost("master");
         master.setup();
-        Injector injector = Guice.createInjector(new EncryptionModule());
+        Injector injector = Guice.createInjector(new CommonclientModule());
         while (true) {
             try {
                 new Socket(master.getHostName(), master.getPort(1337));
@@ -48,7 +54,9 @@ public class MasterGatewayIT {
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
+        encryptionService = injector.getInstance(IEncryptionService.class);
+        gateway = new MasterGateway(encryptionService);
+        contactStore = injector.getInstance(IContactStore.class);
         gateway.setConnectionData(master.getHostName(), master.getPort(1337));
     }
 
@@ -94,5 +102,19 @@ public class MasterGatewayIT {
     public void testGetClientGroupSuccessful() {
         ClientGroupResponseWrapper response = gateway.getClientGroup();
         Assert.assertTrue(response.getClientGroup().size() >= 0);
+    }
+
+    @Test
+    public void testLogoutSuccessful() {
+        gateway.register("test1234", "test1234", "test1234");
+        LoginResponseWrapper loginResponse = gateway.authenticate("test1234", "test1234");
+        CurrentUser currentUser = new CurrentUser("test1234", encryptionService.getPublicKey(), loginResponse.getSecretHash());
+        contactStore.setCurrentUser(currentUser);
+        Assert.assertTrue(gateway.logout(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername(), contactStore.getCurrentUser().getSecretHash()));
+    }
+
+    @Test
+    public void testLogoutNotSuccessful() {
+        Assert.assertFalse(gateway.logout("notLoggedInUser", "aRandomSecretHash"));
     }
 }

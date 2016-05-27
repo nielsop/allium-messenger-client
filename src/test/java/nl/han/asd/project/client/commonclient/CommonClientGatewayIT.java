@@ -4,7 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
-import nl.han.asd.project.client.commonclient.login.ILogin;
+import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
@@ -36,7 +36,7 @@ public class CommonClientGatewayIT {
     private IMessageStoreObserver messageStoreObserver;
     private IEncryptionService encryptionService;
     private IRegistration registration;
-    private ILogin login;
+    private ILoginService login;
 
     private String validUsername = "validUsername";
     private String validPassword = "validPassword";
@@ -50,7 +50,7 @@ public class CommonClientGatewayIT {
         messageBuilder = injector.getInstance(IMessageBuilder.class);
         messageStoreObserver = injector.getInstance(IMessageStoreObserver.class);
         registration = injector.getInstance(IRegistration.class);
-        login = injector.getInstance(ILogin.class);
+        login = injector.getInstance(ILoginService.class);
 
         commonClientGateway = new CommonClientGateway(contactStore, messageStore, messageBuilder, messageStoreObserver, registration, login);
     }

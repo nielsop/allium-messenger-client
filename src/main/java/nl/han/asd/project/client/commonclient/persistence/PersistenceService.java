@@ -97,7 +97,7 @@ public class PersistenceService implements IPersistence {
         try {
             return getDatabase().query(String.format("DELETE FROM Contact WHERE username = '%s'", username));
         } catch (SQLException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
         return false;
     }

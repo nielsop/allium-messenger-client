@@ -2,16 +2,13 @@ package nl.han.asd.project.client.commonclient;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import nl.han.asd.project.client.commonclient.login.ILogin;
+import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
-import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Date;
 
 public class CommonClientGatewayTest {
 
@@ -22,7 +19,7 @@ public class CommonClientGatewayTest {
     private IMessageBuilder messageBuilder;
     private IMessageStoreObserver messageStoreObserver;
     private IRegistration registration;
-    private ILogin login;
+    private ILoginService login;
 
     private String emptyPublicKey = "";
     private String privateKey = "";
@@ -41,7 +38,7 @@ public class CommonClientGatewayTest {
         messageBuilder = injector.getInstance(IMessageBuilder.class);
         messageStoreObserver = injector.getInstance(IMessageStoreObserver.class);
         registration = injector.getInstance(IRegistration.class);
-        login = injector.getInstance(ILogin.class);
+        login = injector.getInstance(ILoginService.class);
 
         commonClientGateway = new CommonClientGateway(contactStore, messageStore, messageBuilder, messageStoreObserver, registration, login);
     }
