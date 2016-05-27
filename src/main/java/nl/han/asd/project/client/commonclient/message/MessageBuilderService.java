@@ -65,6 +65,7 @@ public class MessageBuilderService implements IMessageBuilder {
      */
     private byte[] buildFirstMessagePackageLayer(Node node, Message message) {
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
+
         builder.setUsername(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());

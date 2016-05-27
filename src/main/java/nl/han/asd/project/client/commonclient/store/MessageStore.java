@@ -31,13 +31,14 @@ public class MessageStore implements IMessageStore, IMessageStoreObserver {
     }
 
     @Override
-    public List<Message> getMessagesFromUser(final String contactName) {
-        final Contact contact = new Contact(contactName);
-        if (messagesPerContact.containsKey(contact)) {
-            return messagesPerContact.get(contact);
-        }
-        return new ArrayList<>();
+    public Map<Contact, List<Message>> getAllMessagesFromAllUsers() {
+        return persistenceService.getAllMessagesPerContact();
     }
+
+    @Override
+    public List<Message> getMessagesFromUser(String contact) {
+        return getAllMessagesFromAllUsers().get(new Contact(contact));
+	}
 	
 	@Override
     public void saveToDatabase() {

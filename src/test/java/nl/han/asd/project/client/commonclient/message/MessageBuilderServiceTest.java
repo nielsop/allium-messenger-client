@@ -43,14 +43,14 @@ public class MessageBuilderServiceTest {
     @Mock
     IContactStore contactStore;
     IGetMessagePath pathDeterminationService = Mockito.mock(PathDeterminationService.class);
-
     @InjectMocks
     private MessageBuilderService messageBuilderService;
 
     @Before
     public void setUp() throws Exception {
-        messageBuilderService = new MessageBuilderService(getPath, encrypt, contactStore);
+        messageBuilderService = new MessageBuilderService(getPath,encrypt, contactStore);
     }
+
 
     @Test
     @Ignore("Needs to be fixed, takes too long to execute.")

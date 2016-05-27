@@ -157,6 +157,6 @@ public class CommonClientGateway implements ICommonClient {
         contactStore.deleteAllContactsFromMemory();
         messageStore.saveToDatabase();
         messageStore.clear();
-        login.logout(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername(), contactStore.getCurrentUser().getSecretHash());
+        LOGGER.info("Logout successful: " + login.logout(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername(), contactStore.getCurrentUser().getSecretHash()));
     }
 }
