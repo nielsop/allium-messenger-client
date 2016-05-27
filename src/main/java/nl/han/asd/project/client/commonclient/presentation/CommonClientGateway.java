@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -95,14 +96,14 @@ public class CommonClientGateway implements ICommonClient{
      */
     @Override
     public Contact getCurrentUser() {
-        return contactStore.getCurrentUser();
+        return contactStore.getCurrentUserAsContact();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Contact> getContacts() {
+    public List<Contact> getContacts() throws SQLException {
         return contactStore.getAllContacts();
     }
 
@@ -110,7 +111,7 @@ public class CommonClientGateway implements ICommonClient{
      * {@inheritDoc}
      */
     @Override
-    public void removeContact(String username) {
+    public void removeContact(String username) throws SQLException {
         contactStore.removeContact(username);
     }
 
@@ -118,7 +119,7 @@ public class CommonClientGateway implements ICommonClient{
      * {@inheritDoc}
      */
     @Override
-    public void addContact(String username) {
+    public void addContact(String username) throws SQLException {
         contactStore.addContact(username);
     }
 
@@ -128,6 +129,5 @@ public class CommonClientGateway implements ICommonClient{
      */
     @Override
     public void logout() {
-        contactStore.deleteAllContactsInMemory();
     }
 }

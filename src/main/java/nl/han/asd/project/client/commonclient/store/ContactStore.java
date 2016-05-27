@@ -16,7 +16,6 @@ public class ContactStore implements IContactStore {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
     private IPersistence persistence;
-    private List<Contact> contactList = new ArrayList<>();
     private CurrentUser currentUser;
 
     /**
@@ -33,47 +32,32 @@ public class ContactStore implements IContactStore {
      * {@inheritDoc}
      */
     @Override
-    public void addContact(String username) {
-        contactList.add(new Contact(username));
-        try {
-            persistence.addContact(username);
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+    public void addContact(String username) throws SQLException {
+        persistence.addContact(username);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void removeContact(String username) {
-        for (Contact contact : contactList) {
-            if (contact.getUsername().equals(username)) {
-                contactList.remove(contact);
-                try {
-                    persistence.deleteContact(username);
-                } catch (SQLException e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-                break;
-            }
-        }
+    public void removeContact(String username) throws SQLException {
+        persistence.deleteContact(username);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void deleteAllContactsInMemory() {
-        contactList.clear();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Contact getCurrentUser() {
+    public Contact getCurrentUserAsContact() {
         return currentUser.getCurrentUserAsContact();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CurrentUser getCurrentUser() {
+        return currentUser;
     }
 
     /**
@@ -88,30 +72,18 @@ public class ContactStore implements IContactStore {
      * {@inheritDoc}
      */
     @Override
-    public List<Contact> getAllContacts() {
-        refreshContactList();
-        return contactList;
-    }
-
-    /**
-     * Refills the contacts in the database and stores them into the contact list.
-     */
-    private void refreshContactList() {
-        contactList.clear();
-        try {
-            persistence.getContacts().forEach(contact -> contactList.add(new Contact(contact.getUsername())));
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+    public List<Contact> getAllContacts() throws SQLException {
+        List<Contact> tempContactList = new ArrayList<>();
+        persistence.getContacts().forEach(contact -> tempContactList.add(new Contact(contact.getUsername())));
+        return tempContactList;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Contact findContact(String username) {
-        refreshContactList();
-        for (Contact contact : contactList) {
+    public Contact findContact(String username) throws SQLException {
+        for (Contact contact : getAllContacts()) {
             if (contact.getUsername().equals(username))
                 return contact;
         }
