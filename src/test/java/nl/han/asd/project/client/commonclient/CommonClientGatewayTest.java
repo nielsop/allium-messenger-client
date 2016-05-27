@@ -36,14 +36,7 @@ public class CommonClientGatewayTest {
     public void setup() {
 
         Injector injector = Guice.createInjector(new CommonclientModule());
-        contactStore = injector.getInstance(IContactStore.class);
-        messageStore = injector.getInstance(IMessageStore.class);
-        messageBuilder = injector.getInstance(IMessageBuilder.class);
-        messageStoreObserver = injector.getInstance(IMessageStoreObserver.class);
-        registration = injector.getInstance(IRegistration.class);
-        login = injector.getInstance(ILogin.class);
-
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, messageBuilder, messageStoreObserver, registration, login);
+        commonClientGateway = injector.getInstance(CommonClientGateway.class);
     }
 
 
