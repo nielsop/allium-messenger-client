@@ -53,12 +53,16 @@ public class ChatController {
 
     private VBox getChatPane(Contact contact) {
         VBox vBox = getVBox(0, new int[] { 0, 0, 0, 0 }, "");
+        //        for (Message message : paneDashboard.getMessages(contactStore)) {
+        //            addMessageToChat(message, vBox, false);
+        //        }
         return vBox;
     }
 
     public void addMessageToChat(Message message, VBox chat, boolean newMessage) {
         HBox messageBox = getHBox(0, new int[] { 5, 5, 5, 5 }, "-fx-background-color: #EEE;");
         messageBox.getChildren().add(new Text(message.getText()));
+
 
         if (message.getSender().getUsername().equals(model.getCurrentUser().getUsername())) {
             messageBox.setAlignment(Pos.TOP_RIGHT);

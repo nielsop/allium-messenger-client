@@ -30,7 +30,7 @@ public class MainClient implements IConnectionService {
         encryptedMessageBuilder.setPort(5555);
         encryptedMessageBuilder.setUsername("Jev");
 
-        encryptedMessageBuilder.setData(ByteString.copyFrom(
+        encryptedMessageBuilder.setEncryptedData(ByteString.copyFrom(
                 new byte[] { 0x48, 0x6F, 0x69, 0x2C, 0x20, 0x69, 0x6B, 0x20, 0x62, 0x65, 0x6E, 0x20, 0x4A, 0x65, 0x76,
                         0x67, 0x65, 0x6E, 0x69 }, 0, 19));
         System.out.println(new String(new byte[] {}, "UTF-8"));

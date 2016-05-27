@@ -25,11 +25,12 @@ public class MessageBuilderService implements IMessageBuilder {
     }
 
     public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
+        //TODO check if contactReceiver contains latest data from master server.
         EncryptedMessage messageToSend = buildMessagePackage(messageText, contactReceiver, contactSender);
 
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
-        builder.setData(messageToSend.getEncryptedData());
+        builder.setEncryptedData(messageToSend.getEncryptedData());
     }
 
     private EncryptedMessage buildMessagePackage(String messageText, Contact contactReceiver, Contact contactSender) {
@@ -53,7 +54,7 @@ public class MessageBuilderService implements IMessageBuilder {
         builder.setUsername(message.getReceiver().getUsername());
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
-        builder.setData(ByteString.copyFromUtf8(message.getText()));
+        builder.setEncryptedData(ByteString.copyFromUtf8(message.getText()));
         return encryptionService.encryptData(node.getPublicKey(),builder.build().toByteArray());
     }
 
@@ -70,7 +71,7 @@ public class MessageBuilderService implements IMessageBuilder {
         Node node = remainingPath.get(0);
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
-        builder.setData(ByteString.copyFrom(message));
+        builder.setEncryptedData(ByteString.copyFrom(message));
 
         remainingPath.remove(0);
 

@@ -72,6 +72,11 @@ public class PersistenceService implements IPersistence {
     }
 
     @Override
+    public boolean deleteAllContacts() throws SQLException {
+        return getDatabase().query(String.format("DELETE FROM Contact"));
+    }
+
+    @Override
     public List<Contact> getContacts() throws SQLException {
         final List<Contact> contactList = new ArrayList<>();
         ResultSet selectContactsResult = getDatabase().select("SELECT * FROM Contact");

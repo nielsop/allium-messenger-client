@@ -33,21 +33,6 @@ public class GUI extends Application {
         return scene;
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-        Injector injector = Guice.createInjector(new CommonclientModule());
-        injector.injectMembers(this);
-        try {
-            stage = primaryStage;
-            stage.setTitle("Ui Berichter");
-            stage.setMinWidth(640);
-            stage.setMinHeight(360);
-            setScene(Page.LOGIN);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage(), ex);
-        }
-    }
-
     public void setScene(Page page) {
         switch (page) {
             case LOGIN:
@@ -67,6 +52,21 @@ public class GUI extends Application {
         stage.show();
     }
 
+    @Override
+    public void start(Stage primaryStage) {
+        Injector injector = Guice.createInjector(new CommonclientModule());
+        injector.injectMembers(this);
+        try {
+            stage = primaryStage;
+            stage.setTitle("Ui Berichter");
+            stage.setMinWidth(640);
+            stage.setMinHeight(360);
+            setScene(Page.LOGIN);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage(), ex);
+        }
+    }
+
     private Scene buildScene(Parent pane) {
         if (scene != null)
             return new Scene(pane, scene.getWidth(), scene.getHeight());
@@ -80,6 +80,6 @@ public class GUI extends Application {
     }
 
     public enum Page {
-        LOGIN, REGISTER, DASHBOARD, CONTACTS, CHAT, SETTINGS, CONFIRMATION
+        LOGIN, REGISTER, DASHBOARD, SETTINGS
     }
 }
