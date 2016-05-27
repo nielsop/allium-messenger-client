@@ -20,17 +20,27 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.google.protobuf.GeneratedMessage;
 
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ SocketHandler.class, Socket.class, HanRoutingProtocol.Wrapper.class })
+@PrepareForTest({ SocketHandler.class, Socket.class, Wrapper.class })
 public class SocketHandlerTest {
 
     String host = "localhost";
     int port = 1337;
 
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorNullHost() throws Exception {
+        new SocketHandler(null, 1024);
+    }
+
+    @Test
+    public void constructorNullEncryptionService() throws Exception {
+        new SocketHandler("localhost", 1024, null);
+    }
+
     @Test
     public void testWrite() throws Exception {
-
         Socket socketMock = mock(Socket.class);
         whenNew(Socket.class).withParameterTypes(String.class, int.class).withArguments(eq(host), eq(port))
         .thenReturn(socketMock);
@@ -55,17 +65,17 @@ public class SocketHandlerTest {
         whenNew(Socket.class).withParameterTypes(String.class, int.class).withArguments(eq(host), eq(port))
         .thenReturn(socketMock).thenReturn(mock(Socket.class));
 
-        GeneratedMessage generatedMessageMock = mock(GeneratedMessage.class);
-        GeneratedMessage generatedMessageMock2 = mock(GeneratedMessage.class);
+        Wrapper wrapperMock1 = mock(Wrapper.class);
+        Wrapper wrapperMock2 = mock(Wrapper.class);
         OutputStream outputStreamMock = mock(OutputStream.class);
 
         when(socketMock.getOutputStream()).thenReturn(outputStreamMock);
 
         SocketHandler socketHandler = new SocketHandler(host, port);
-        socketHandler.write(generatedMessageMock);
-        verify(generatedMessageMock).writeDelimitedTo(eq(outputStreamMock));
-        socketHandler.write(generatedMessageMock2);
-        verify(generatedMessageMock2).writeDelimitedTo(eq(outputStreamMock));
+        socketHandler.write(wrapperMock1);
+        verify(wrapperMock1).writeDelimitedTo(eq(outputStreamMock));
+        socketHandler.write(wrapperMock2);
+        verify(wrapperMock2).writeDelimitedTo(eq(outputStreamMock));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -77,7 +87,7 @@ public class SocketHandlerTest {
     public void testWriteAndReadVerifyWrapperCall() throws Exception {
         //Variables
         SocketHandler socketHandler = new SocketHandler(host, port);
-        GeneratedMessage generatedMessageMock = mock(GeneratedMessage.class);
+        Wrapper wrapperMock = mock(Wrapper.class);
         InputStream inputStreamMock = mock(InputStream.class);
         Socket socketMock = mock(Socket.class);
 
@@ -87,9 +97,32 @@ public class SocketHandlerTest {
         when(socketMock.getInputStream()).thenReturn(inputStreamMock);
 
         //Execute
-        socketHandler.writeAndRead(generatedMessageMock);
+        socketHandler.writeAndRead(wrapperMock);
 
         verifyStatic();
         HanRoutingProtocol.Wrapper.parseDelimitedFrom(eq(inputStreamMock));
     }
+
+    @Test
+    public void testCloseSocket() throws Exception {
+        Socket socketMock = mock(Socket.class);
+        whenNew(Socket.class).withParameterTypes(String.class, int.class).withArguments(eq(host), eq(port))
+        .thenReturn(socketMock);
+
+        Wrapper wrapperMock = mock(Wrapper.class);
+        OutputStream outputStreamMock = mock(OutputStream.class);
+
+        when(socketMock.getOutputStream()).thenReturn(outputStreamMock);
+
+        SocketHandler sh = new SocketHandler(host, port);
+        sh.write(wrapperMock);
+        verify(wrapperMock).writeDelimitedTo(eq(outputStreamMock));
+
+        Wrapper wrapper = mock(Wrapper.class);
+        System.err.println(wrapper);
+
+        sh.close();
+        verify(socketMock).close();
+    }
+
 }

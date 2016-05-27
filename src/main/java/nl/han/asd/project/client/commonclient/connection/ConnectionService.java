@@ -4,9 +4,11 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
@@ -35,6 +37,8 @@ import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Type;
  * @version 1.0
  */
 public class ConnectionService implements IConnectionService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
+
     private Semaphore mutex;
 
     private IEncryptionService encryptionService;
@@ -42,7 +46,7 @@ public class ConnectionService implements IConnectionService {
     private String host;
     private int port;
 
-    private Socket socket;
+    private SocketHandler socketHandler;
 
     private byte[] publicKeyBytes;
 
@@ -88,12 +92,10 @@ public class ConnectionService implements IConnectionService {
     @AssistedInject
     public ConnectionService(IEncryptionService encryptionService, @Assisted String host, @Assisted int port,
             @Assisted byte[] publicKeyBytes) {
-        this.encryptionService = Check.notNull(encryptionService, "encryptionService");
-        this.host = Check.notNull(host, "host");
-        this.port = port;
-        this.publicKeyBytes = Check.notNull(publicKeyBytes, "publicKeyBytes");
+        this(host, port);
 
-        mutex = new Semaphore(1);
+        this.encryptionService = Check.notNull(encryptionService, "encryptionService");
+        this.publicKeyBytes = Check.notNull(publicKeyBytes, "publicKeyBytes");
     }
 
     /**
@@ -137,9 +139,8 @@ public class ConnectionService implements IConnectionService {
     @AssistedInject
     public ConnectionService(IEncryptionService encryptionService, @Assisted String host, @Assisted int port,
             @Assisted File publicKeyFile) throws IOException {
+        this(host, port);
         this.encryptionService = Check.notNull(encryptionService, "encryptionService");
-        this.host = Check.notNull(host, "host");
-        this.port = port;
 
         Check.notNull(publicKeyFile, "publicKeyFile");
         try (FileInputStream fileInputStream = new FileInputStream(publicKeyFile)) {
@@ -148,8 +149,6 @@ public class ConnectionService implements IConnectionService {
             publicKeyBytes = new byte[(int) publicKeyFile.length()];
             dataInputStream.readFully(publicKeyBytes);
         }
-
-        mutex = new Semaphore(1);
     }
 
     /** {@inheritDoc} */
@@ -171,42 +170,31 @@ public class ConnectionService implements IConnectionService {
         return wrapperBuilder.build();
     }
 
-    private <T extends GeneratedMessage> void writeSocket(T wrapper) throws IOException {
-        if (socket == null) {
-            socket = new Socket(host, port);
-        }
-
-        try {
-            wrapper.writeDelimitedTo(socket.getOutputStream());
-        } finally {
-            if (!mutex.hasQueuedThreads()) {
-                socket.close();
-                socket = null;
-            }
-
-            mutex.release();
-        }
-    }
-
-    private <T extends GeneratedMessage> void writeNewSocket(T wrapper) throws IOException {
-        Socket localSocket = new Socket(host, port);
-
-        try {
-            wrapper.writeDelimitedTo(localSocket.getOutputStream());
-        } finally {
-            localSocket.close();
+    private void writeNewSocket(Wrapper wrapper) {
+        try (SocketHandler newSocketHandler = new SocketHandler(host, port)) {
+            newSocketHandler.write(wrapper);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public <T extends GeneratedMessage> void write(T wrapper, long timeout, TimeUnit unit)
+    public void write(Wrapper wrapper, long timeout, TimeUnit unit)
             throws IOException, MessageNotSentException {
         Check.notNull(wrapper, "wrapper");
 
         try {
             if (mutex.tryAcquire(timeout, unit)) {
-                writeSocket(wrapper);
+                try {
+                    socketHandler.write(wrapper);
+                } finally {
+                    if (!mutex.hasQueuedThreads()) {
+                        socketHandler.close();
+                    }
+
+                    mutex.release();
+                }
             } else {
                 writeNewSocket(wrapper);
             }
@@ -218,84 +206,36 @@ public class ConnectionService implements IConnectionService {
 
     /** {@inheritDoc} */
     @Override
-    public <T extends GeneratedMessage> void write(T wrapper) throws IOException, MessageNotSentException {
-        Check.notNull(wrapper, "wrapper");
-
-        try {
-            mutex.acquire();
-        } catch (InterruptedException e) {
-            Thread.currentThread().isInterrupted();
-            throw new MessageNotSentException(e);
-        }
-
-        writeSocket(wrapper);
+    public void write(Wrapper wrapper) throws IOException, MessageNotSentException {
+        write(wrapper, -1, TimeUnit.MILLISECONDS);
     }
 
-    private <T extends GeneratedMessage> GeneratedMessage writeAndReadSocket(T wrapper) throws IOException {
-        if (socket == null) {
-            socket = new Socket(host, port);
-        }
-
-        Wrapper responseWrapper = null;
-        try {
-            wrapper.writeDelimitedTo(socket.getOutputStream());
-            responseWrapper = Wrapper.parseDelimitedFrom(socket.getInputStream());
-
-            if (encryptionService == null) {
-                return Parser.parseFrom(responseWrapper);
-            } else {
-                byte[] decryptedData = encryptionService.decryptData(responseWrapper.getData().toByteArray());
-
-                Builder wrapperBuilder = Wrapper.newBuilder();
-                wrapperBuilder.setType(responseWrapper.getType());
-                wrapperBuilder.setData(ByteString.copyFrom(decryptedData));
-
-                return Parser.parseFrom(wrapperBuilder.build());
-            }
-        } finally {
-            if (!mutex.hasQueuedThreads()) {
-                socket.close();
-                socket = null;
-            }
-
-            mutex.release();
-        }
-    }
-
-    private <T extends GeneratedMessage> GeneratedMessage writeAndReadNewSocket(T wrapper)
+    private GeneratedMessage writeAndReadNewSocket(Wrapper wrapper)
             throws InterruptedException, IOException {
-        Socket localSocket = new Socket(host, port);
-
-        Wrapper responseWrapper = null;
-        try {
-            wrapper.writeDelimitedTo(socket.getOutputStream());
-            responseWrapper = Wrapper.parseDelimitedFrom(socket.getInputStream());
-
-            if (encryptionService == null) {
-                return Parser.parseFrom(responseWrapper);
-            } else {
-                byte[] decryptedData = encryptionService.decryptData(responseWrapper.getData().toByteArray());
-
-                Builder wrapperBuilder = Wrapper.newBuilder();
-                wrapperBuilder.setType(responseWrapper.getType());
-                wrapperBuilder.setData(ByteString.copyFrom(decryptedData));
-
-                return Parser.parseFrom(wrapperBuilder.build());
-            }
+        try (SocketHandler socketHandler = new SocketHandler(host, port, encryptionService)) {
+            return socketHandler.writeAndRead(wrapper);
         } finally {
-            localSocket.close();
+            socketHandler.close();
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public <T extends GeneratedMessage> GeneratedMessage writeAndRead(T wrapper, long timeout, TimeUnit unit)
+    public GeneratedMessage writeAndRead(Wrapper wrapper, long timeout, TimeUnit unit)
             throws IOException, MessageNotSentException {
         Check.notNull(wrapper, "wrapper");
 
         try {
             if (mutex.tryAcquire(timeout, unit)) {
-                return writeAndReadSocket(wrapper);
+                try {
+                    return socketHandler.writeAndRead(wrapper);
+                } finally {
+                    if (!mutex.hasQueuedThreads()) {
+                        socketHandler.close();
+                    }
+
+                    mutex.release();
+                }
             } else {
                 return writeAndReadNewSocket(wrapper);
             }
@@ -307,17 +247,8 @@ public class ConnectionService implements IConnectionService {
 
     /** {@inheritDoc} */
     @Override
-    public <T extends GeneratedMessage> GeneratedMessage writeAndRead(T wrapper)
+    public GeneratedMessage writeAndRead(Wrapper wrapper)
             throws IOException, MessageNotSentException {
-        Check.notNull(wrapper, "wrapper");
-
-        try {
-            mutex.acquire();
-        } catch (InterruptedException e) {
-            Thread.currentThread().isInterrupted();
-            throw new MessageNotSentException(e);
-        }
-
-        return writeAndReadSocket(wrapper);
+        return writeAndRead(wrapper, -1, TimeUnit.MILLISECONDS);
     }
 }

@@ -19,6 +19,8 @@ public interface IConnectionService {
      * Wrap the provided message in a new Wrapper instance encrypting
      * the message provided the public key of the receiver was defined.
      *
+     * @param T the type of message
+     *
      * @param message to-be-wrapped message
      * @param type type referring to this message
      *
@@ -40,8 +42,6 @@ public interface IConnectionService {
      * equal to timeout excluding the time required to setup a new
      * connection.
      *
-     * @param T type of wrapper
-     *
      * @param wrapper to-be-send wrapper
      * @param timeout maximum timout to wait before giving up
      *          and creating a new socket
@@ -55,7 +55,7 @@ public interface IConnectionService {
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    public <T extends GeneratedMessage> void write(T wrapper, long timeout, TimeUnit unit)
+    public void write(Wrapper wrapper, long timeout, TimeUnit unit)
             throws IOException, MessageNotSentException;
 
     /**
@@ -65,8 +65,6 @@ public interface IConnectionService {
      * Note that this method may block for a long time
      * depending on the number of other threads waiting
      * to send a message.
-     *
-     * @param T type of wrapper
      *
      * @param wrapper to-be-send wrapper
      *
@@ -78,7 +76,7 @@ public interface IConnectionService {
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    public <T extends GeneratedMessage> void write(T wrapper) throws IOException, MessageNotSentException;
+    public void write(Wrapper wrapper) throws IOException, MessageNotSentException;
 
     /**
      * Transmit the provided message to the host and wait for the
@@ -93,12 +91,12 @@ public interface IConnectionService {
      * equal to timeout excluding the time required to setup a new
      * connection.
      *
-     * @param T type of wrapper
-     *
      * @param wrapper to-be-send wrapper
      * @param timeout maximum timeout to wait before giving up
      *          and creating a new socket
      * @param unit the time unit of the timeout parameter
+     *
+     * @return the received response
      *
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
@@ -108,7 +106,7 @@ public interface IConnectionService {
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    public <T extends GeneratedMessage> GeneratedMessage writeAndRead(T wrapper, long timeout, TimeUnit unit)
+    public GeneratedMessage writeAndRead(Wrapper wrapper, long timeout, TimeUnit unit)
             throws IOException, MessageNotSentException;
 
     /**
@@ -120,9 +118,9 @@ public interface IConnectionService {
      * depending on the number of other threads waiting
      * to send a message.
      *
-     * @param T type of wrapper
-     *
      * @param wrapper to-be-send wrapper
+     *
+     * @return the received response
      *
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
@@ -132,6 +130,6 @@ public interface IConnectionService {
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    public <T extends GeneratedMessage> GeneratedMessage writeAndRead(T wrapper)
+    public GeneratedMessage writeAndRead(Wrapper wrapper)
             throws IOException, MessageNotSentException;
 }
