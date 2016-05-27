@@ -77,7 +77,7 @@ public class CommonClientGateway implements ICommonClientGateway {
     public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) {
         LoginResponseWrapper loginResponse = login.login(username, password);
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-            contactStore.setCurrentUser(new CurrentUser(username, publicKey.getBytes(), secretHash));
+            contactStore.setCurrentUser(new CurrentUser(username, publicKey, secretHash));
         }
         return loginResponse.getStatus();
     }
@@ -119,6 +119,6 @@ public class CommonClientGateway implements ICommonClientGateway {
         contactStore.deleteAllContacts();
         messageStore.saveToDatabase();
         messageStore.clear();
-        login.logout(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername(), contactStore.getCurrentUser().getSecretHash());
+        LOGGER.info("Logout successful: " + login.logout(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername(), contactStore.getCurrentUser().getSecretHash()));
     }
 }

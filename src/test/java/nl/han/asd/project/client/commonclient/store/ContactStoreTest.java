@@ -26,22 +26,6 @@ public class ContactStoreTest {
     private ArrayList<Contact> singleContactArrayList;
     private ArrayList<Contact> multipleContactArrayList;
 
-    // Test contactStore 1
-    private String usernameContact1 = "testContact1";
-    private byte[] publicKeyContact1 = "asdfTest1".getBytes();
-
-    // Test contactStore 2
-    private String usernameContact2 = "testContact2";
-    private byte[] publicKeyContact2 = "asdfTest2".getBytes();
-
-    // Test contactStore 3
-    private String usernameContact3 = "testContact3";
-    private byte[] publicKeyContact3 = "asdfTest3".getBytes();
-
-    // Test contactStore 4
-    private String usernameContact4 = "testContact4";
-    private byte[] publicKeyContact4 = "asdfTest4".getBytes();
-
     @Before
     public void initialize() {
         persistence = Mockito.mock(IPersistence.class);

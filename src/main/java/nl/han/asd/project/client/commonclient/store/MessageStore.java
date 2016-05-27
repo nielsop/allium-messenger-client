@@ -31,15 +31,6 @@ public class MessageStore implements IMessageStore, IMessageStoreObserver {
     }
 
     @Override
-    public List<Message> getMessagesFromUser(final String contactName) {
-        final Contact contact = new Contact(contactName);
-        if (messagesPerContact.containsKey(contact)) {
-            return messagesPerContact.get(contact);
-        }
-        return new ArrayList<>();
-    }
-
-    @Override
     public Map<Contact, List<Message>> getAllMessagesFromAllUsers() {
         return persistenceService.getAllMessagesPerContact();
     }

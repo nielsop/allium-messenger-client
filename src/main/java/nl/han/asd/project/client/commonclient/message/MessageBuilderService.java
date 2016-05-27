@@ -68,12 +68,8 @@ public class MessageBuilderService implements IMessageBuilder {
     private byte[] buildFirstMessagePackageLayer(Node node, Message message) {
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
-<<<<<<< HEAD
-        builder.setUsername(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername()); builder.setIPaddress(node.getIpAddress());
-=======
         builder.setUsername(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());
         builder.setIPaddress(node.getIpAddress());
->>>>>>> hotfix/sonar-issues
         builder.setPort(node.getPort());
         builder.setData(ByteString.copyFromUtf8(message.getText()));
         return encryptionService.encryptData(node.getPublicKey(), builder.build().toByteArray());
