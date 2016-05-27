@@ -63,10 +63,12 @@ public class ChatController {
         HBox messageBox = getHBox(0, new int[] { 5, 5, 5, 5 }, "-fx-background-color: #EEE;");
         messageBox.getChildren().add(new Text(message.getText()));
 
-        if (message.getSender().getUsername().equals(model.getCurrentUser().getUsername()))
+
+        if (message.getSender().getUsername().equals(model.getCurrentUser().getUsername())) {
             messageBox.setAlignment(Pos.TOP_RIGHT);
-        else
+        } else {
             messageBox.setAlignment(Pos.TOP_LEFT);
+        }
 
         setHBoxMouseEvents(messageBox);
         chat.getChildren().add(messageBox);
@@ -82,11 +84,11 @@ public class ChatController {
 
         });
         hBox.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-            view.setEnteredMessage(hBox); //Entered = hovered
+            view.setEnteredMessage(hBox);
 
         });
         hBox.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-            view.setExitedMessage(hBox); //Exited = no longer hovered
+            view.setExitedMessage(hBox);
         });
     }
 

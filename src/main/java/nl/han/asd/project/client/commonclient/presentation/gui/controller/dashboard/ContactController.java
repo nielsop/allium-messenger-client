@@ -15,6 +15,7 @@ import static nl.han.asd.project.client.commonclient.presentation.gui.PaneFactor
  * Created by Marius on 25-04-16.
  */
 public class ContactController {
+    private static final String BACKGROUND_COLOR = "-fx-background-color: #FFF;";
     private ContactModel model;
     private ContactView view;
     private HBox current;
@@ -27,7 +28,6 @@ public class ContactController {
     }
 
     private void onActions() {
-        //not implemented yet
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
@@ -35,7 +35,7 @@ public class ContactController {
         if (model.getContacts() != null) {
             model.getContacts().stream().filter(contact -> contact != null).forEach(contact -> {
                 Label name = new Label(contact.getUsername());
-                HBox contactBox = getHBox(0, new int[] { 5, 5, 5, 5 }, "-fx-background-color: #FFF;");
+                HBox contactBox = getHBox(0, new int[] { 5, 5, 5, 5 }, BACKGROUND_COLOR);
                 setHBoxMouseEvents(contactBox, contact);
                 contactBox.getChildren().add(name);
                 view.getContactList().getChildren().add(contactBox);
@@ -47,7 +47,7 @@ public class ContactController {
         hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             model.selectContact(contact);
             if (current != null)
-                current.setStyle("-fx-background-color: #FFF;");
+                current.setStyle(BACKGROUND_COLOR);
             hBox.setStyle("-fx-background-color: #EEE;");
             current = hBox;
             model.setCurrectContact(contact);
@@ -57,7 +57,7 @@ public class ContactController {
         });
         hBox.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
             if (hBox != current)
-                hBox.setStyle("-fx-background-color: #FFF;");
+                hBox.setStyle(BACKGROUND_COLOR);
         });
     }
 

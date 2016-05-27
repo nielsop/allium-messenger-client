@@ -25,7 +25,6 @@ import java.util.List;
 public class CommonClientGateway implements ICommonClient{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
-
     public IContactStore contactStore;
     public IMessageBuilder messageBuilder;
     public IMessageStoreObserver messageObserver;
@@ -37,16 +36,16 @@ public class CommonClientGateway implements ICommonClient{
     /**
      * Constructs a presentation layer, using one given gateway.
      *
-     * @param registration
+     * @param registration an instance of the implementation of the registration interface.
      */
     public CommonClientGateway(IRegistration registration) {
         this.registration = registration;
     }
 
     @Inject
-    public CommonClientGateway(IContactStore contactStore, IMessageBuilder messageBuilder,
-            IMessageStoreObserver messageObserver, IRegistration registration, ILogin login, ISendMessage sendMessage) {
-        this.contactStore = contactStore;
+    public CommonClientGateway(IContactStore contact, IMessageBuilder messageBuilder, IMessageStoreObserver messageObserver, IRegistration registration, ILogin login,
+            ISendMessage sendMessage) {
+        this.contactStore = contact;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
         this.registration = registration;

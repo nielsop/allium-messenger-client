@@ -9,7 +9,7 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MessageProcessingService implements IReceiveMessage,ISendMessage {
+public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
     private IMessageStore messageStore;
@@ -41,7 +41,7 @@ public class MessageProcessingService implements IReceiveMessage,ISendMessage {
 
     @Override
     public void sendMessage(EncryptedMessage message) {
-
+        throw new UnsupportedOperationException();
     }
 
     //TODO peelMessagePacket / Pakket uitpakken

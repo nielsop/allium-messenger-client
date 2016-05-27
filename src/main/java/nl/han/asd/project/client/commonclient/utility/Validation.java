@@ -33,8 +33,9 @@ public final class Validation {
      * @param port Port must be in range 1024 - 65535
      *             You can create a server on ports 1 through 65535.
      *             Port numbers less than 256 are reserved for well-known services (like HTTP on port 80) and port numbers less than 1024 require root access on UNIX systems.
-     *             Specifying a port of 0 in the ServerSocket constructor results in the server listening on a random, unused port, usually >= 1024.
+     *             Specifying a port of 0 in the ServerSocket constructor results in the server listening on a random, unused port, usually greater than 1024.
      *             http://www.jguru.com/faq/view.jsp?EID=17521
+     * @return <tt>true</tt> if the port is valid, <tt>false</tt> otherwise.
      */
     public static boolean isValidPort(int port) {
         return port >= 1024 && port <= 65535;
@@ -71,7 +72,6 @@ public final class Validation {
      * @param password The password to check.
      * @return <tt>true</tt> if it's a valid password, <tt>false</tt> otherwise.
      */
-    //TODO: Better password regex.
     private static boolean isValidPassword(String password) {
         if (password == null || password.isEmpty() || !password.matches(REGEX_ALPHANUMERIC)) {
             throw new IllegalArgumentException("Invalid username! Username may only consist of digits, numbers, underscores and dashes.");

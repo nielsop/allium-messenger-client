@@ -35,7 +35,7 @@ public class DashboardController {
     }
 
     public void selectContact(Contact contact) {
-        //        paneChat.setContact(contactStore);
+        throw new UnsupportedOperationException();
     }
 
     public ContactController getContactController() {
