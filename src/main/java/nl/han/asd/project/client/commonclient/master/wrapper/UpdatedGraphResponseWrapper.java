@@ -27,6 +27,7 @@ public class UpdatedGraphResponseWrapper {
      */
     private List<UpdatedGraphWrapper> updatedGraphs;
 
+
     /**
      *
      * Returns the updated graph.
@@ -42,14 +43,19 @@ public class UpdatedGraphResponseWrapper {
      * @param graphUpdates The graph updates
      */
     public UpdatedGraphResponseWrapper(List<ByteString> graphUpdates) {
-        updatedGraphs = new ArrayList<>();
+        List<UpdatedGraphWrapper> updatedGraphWrapper = new ArrayList<>();
         graphUpdates.forEach(graphUpdate -> {
             try {
-                updatedGraphs.add(new UpdatedGraphWrapper(readGeneric(HanRoutingProtocol.GraphUpdate.class, graphUpdate)));
+                updatedGraphWrapper.add(new UpdatedGraphWrapper(readGeneric(HanRoutingProtocol.GraphUpdate.class, graphUpdate)));
             } catch (SocketException | InvalidProtocolBufferException e) {
                 LOGGER.error(e.getMessage(), e);
             }
         });
+        setUpdatedGraphs(updatedGraphWrapper);
+    }
+
+    public void setUpdatedGraphs(List<UpdatedGraphWrapper> graphs) {
+        this.updatedGraphs = graphs;
     }
 
     /**
@@ -58,7 +64,7 @@ public class UpdatedGraphResponseWrapper {
      * @return The last (i.e. most recent) graph.
      */
     public UpdatedGraphWrapper getLast() {
-        return updatedGraphs.get(updatedGraphs.size() - 1);
+        return getUpdatedGraphs().get(getUpdatedGraphs().size() - 1);
     }
 
     /**
@@ -87,60 +93,7 @@ public class UpdatedGraphResponseWrapper {
                 throw new InvalidProtocolBufferException("Invalid class provided.");
             }
         }
-        return null;
-    }
-
-    /**
-     * Wrapper class for individual updated graphs.
-     */
-    public class UpdatedGraphWrapper {
-        /**
-         * Stores the new version.
-         */
-        private int newVersion;
-
-        /**
-         * Stores whether or not the graph is a full graph.
-         */
-        private boolean isFullGraph;
-
-        /**
-         * Contains a list of all nodes that were added to the graph this version.
-         */
-        private List<HanRoutingProtocol.Node> addedNodes;
-
-        /**
-         * Contains a list of all nodes taht were deleted from the graph this version.
-         */
-        private List<HanRoutingProtocol.Node> deletedNodes;
-
-        /**
-         * Creates a new UpdatedGraphWrapper.
-         *
-         * @param graphUpdate The HRP updated graph.
-         */
-        public UpdatedGraphWrapper(HanRoutingProtocol.GraphUpdate graphUpdate) {
-            this.newVersion = graphUpdate.getNewVersion();
-            this.isFullGraph = graphUpdate.getIsFullGraph();
-            this.addedNodes = graphUpdate.getAddedNodesList();
-            this.deletedNodes = graphUpdate.getDeletedNodesList();
-        }
-
-        public int getNewVersion() {
-            return newVersion;
-        }
-
-        public boolean isFullGraph() {
-            return isFullGraph;
-        }
-
-        public List<HanRoutingProtocol.Node> getAddedNodes() {
-            return addedNodes;
-        }
-
-        public List<HanRoutingProtocol.Node> getDeletedNodes() {
-            return deletedNodes;
-        }
+        throw new InvalidProtocolBufferException("Empty buffer");
     }
 
 }
