@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ws.rs.HEAD;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +16,7 @@ import java.util.List;
  */
 public class UpdatedGraphResponseWrapperTest {
 
-    private static final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
+    private static final byte[] EMPTY_PUBLICKEY_BYTES = new byte[]{0x00};
     private static UpdatedGraphResponseWrapper updatedGraphResponseWrapper;
 
     @BeforeClass

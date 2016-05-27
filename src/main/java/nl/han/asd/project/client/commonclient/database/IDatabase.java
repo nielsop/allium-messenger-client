@@ -23,12 +23,14 @@ public interface IDatabase {
 
     /**
      * Initializes the Contact and Message table.
+     *
      * @throws SQLException if a database access error occurs.
      */
     void initializeDatabase() throws SQLException;
 
     /**
      * Executes a INSERT, UPDATE or DELETE query.
+     *
      * @param sqlQuery The query string.
      * @return <tt>true</tt> if the query was executed successfully, <tt>false</tt> otherwise
      * @throws SQLException if a database access error occurs.
@@ -37,6 +39,7 @@ public interface IDatabase {
 
     /**
      * Executes a SELECT query.
+     *
      * @param sqlQuery The query string.
      * @return a ResultSet object containing the results of the query.
      * @throws SQLException if a database access error occurs.
@@ -45,12 +48,14 @@ public interface IDatabase {
 
     /**
      * Closes the database connection.
+     *
      * @throws SQLException if a database access error occurs.
      */
     void stop() throws SQLException;
 
     /**
      * Checks whether the database connection is open or not.
+     *
      * @return <tt>true</tt> if a database connection is or can be opened, <tt>false</tt> otherwise.
      * @throws SQLException if a database access error occurs.
      */

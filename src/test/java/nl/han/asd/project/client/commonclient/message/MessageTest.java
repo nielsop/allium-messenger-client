@@ -24,18 +24,18 @@ public class MessageTest {
     private Contact contactReceiver;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         testdata = "testdata";
         message = new Message(contactSender, new Date(), testdata);
     }
 
     @Test
     public void testGetSender() throws Exception {
-        assertEquals(contactSender,message.getSender());
+        assertEquals(contactSender, message.getSender());
     }
 
     @Test
     public void testGetText() throws Exception {
-        assertEquals(testdata,message.getText());
+        assertEquals(testdata, message.getText());
     }
 }

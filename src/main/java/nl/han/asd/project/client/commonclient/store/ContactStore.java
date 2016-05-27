@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 
 public class ContactStore implements IContactStore {
-    public IPersistence persistence;
+    private IPersistence persistence;
     private CurrentUser currentUser;
     private ArrayList<Contact> contactList = new ArrayList<>();
 

@@ -5,6 +5,6 @@ import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponse
 @FunctionalInterface
 public interface IGetClientGroup {
 
-    public ClientGroupResponseWrapper getClientGroup();
+    ClientGroupResponseWrapper getClientGroup();
 
 }

@@ -5,13 +5,10 @@ import com.google.inject.Injector;
 import nl.han.asd.project.client.commonclient.login.ILogin;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
-import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Date;
 
 public class CommonClientGatewayTest {
 
@@ -63,6 +60,7 @@ public class CommonClientGatewayTest {
         Assert.assertTrue(contactStore.getAllContacts() == commonClientGateway.getContacts());
         Assert.assertTrue(commonClientGateway.getContacts().contains(contact1));
     }
+
     @Test
     public void removeContactActuallyRemovesContactFromContactStore() {
         String newContact = "newContact";

@@ -22,6 +22,7 @@ public final class Validation {
 
     /**
      * Validates an IP address.
+     *
      * @param address The address to check.
      * @return <tt>true</tt> if the address is valid, <tt>false</tt> otherwise.
      */
@@ -44,6 +45,7 @@ public final class Validation {
     /**
      * This method calls the validation of the username and the validation of the password.
      * This method returns true if both validation methods return true.
+     *
      * @param username the username to validate.
      * @param password the password to validate.
      * @return boolean if validated or not.
@@ -54,6 +56,7 @@ public final class Validation {
 
     /**
      * Checks if the username is a valid username
+     *
      * @param username The username to check.
      * @return <tt>true</tt> if it's a valid username, <tt>false</tt> otherwise.
      */
@@ -69,6 +72,7 @@ public final class Validation {
 
     /**
      * Checks if the password is a valid password
+     *
      * @param password The password to check.
      * @return <tt>true</tt> if it's a valid password, <tt>false</tt> otherwise.
      */
@@ -84,7 +88,8 @@ public final class Validation {
 
     /**
      * Checks if the passwords are equal
-     * @param password The password to check.
+     *
+     * @param password       The password to check.
      * @param passwordRepeat The password to check.
      * @return <tt>true</tt> if it's a valid password, <tt>false</tt> otherwise.
      */

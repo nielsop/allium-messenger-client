@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
  */
 public class Graph {
 
-    private Map<String,Node> vertexMap = new HashMap<>();
+    private Map<String, Node> vertexMap = new HashMap<>();
 
     public Node getNodeVertex(String nodeID) {
         Node vertex = vertexMap.get(nodeID);
@@ -25,16 +25,16 @@ public class Graph {
         return vertexMap.size();
     }
 
-    public void resetGraph(){
+    public void resetGraph() {
         vertexMap = new HashMap<>();
     }
 
-    public void addNodeVertex(HanRoutingProtocol.Node vertex){
-        Node node = new Node(vertex.getId(),vertex.getIPaddress(),vertex.getPort(),vertex.getPublicKey().toByteArray());
-        vertexMap.put(node.getId(),node);
+    public void addNodeVertex(HanRoutingProtocol.Node vertex) {
+        Node node = new Node(vertex.getId(), vertex.getIPaddress(), vertex.getPort(), vertex.getPublicKey().toByteArray());
+        vertexMap.put(node.getId(), node);
     }
 
-    public void addEdgesToVertex(HanRoutingProtocol.Node vertex){
+    public void addEdgesToVertex(HanRoutingProtocol.Node vertex) {
         Node node = getNodeVertex(vertex.getId());
         vertex.getEdgeList().forEach(node::addEdge);
     }

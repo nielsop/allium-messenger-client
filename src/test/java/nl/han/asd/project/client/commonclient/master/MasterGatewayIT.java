@@ -90,7 +90,8 @@ public class MasterGatewayIT {
 
     /* Get active client group from master server */
 
-    @Test @Ignore("Has to be fixed.")
+    @Test
+    @Ignore("Has to be fixed.")
     public void testGetClientGroupSuccessful() {
         ClientGroupResponseWrapper response = gateway.getClientGroup();
         Assert.assertTrue(response.getClientGroup().size() >= 0);

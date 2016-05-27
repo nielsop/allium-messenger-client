@@ -3,7 +3,6 @@ package nl.han.asd.project.client.commonclient.utility;
 import java.util.Random;
 
 /**
- *
  * @author Kenny
  * @version 1.0
  * @since 12-5-2016
@@ -18,6 +17,6 @@ public class TestHelper {
             char c = possibleChars[random.nextInt(possibleChars.length)];
             sb.append(c);
         }
-        return(sb.toString());
+        return (sb.toString());
     }
 }

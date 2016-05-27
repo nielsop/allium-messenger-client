@@ -1,14 +1,11 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphWrapper;
-import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.After;
 import org.junit.Assert;
@@ -18,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -28,22 +26,19 @@ import static org.mockito.Mockito.when;
 
 public class GraphManagerServiceTest {
 
-    private GraphManagerService graphManagerService;
-    private CloudHost master;
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphManagerService.class);
     private final ByteString PUBLICKEY = ByteString.copyFrom("123456789".getBytes());
-
     @Mock
     UpdatedGraphResponseWrapper updatedGraphResponseWrapper;
-
     @Mock
     MasterGateway masterGateway;
+    private GraphManagerService graphManagerService;
+    private CloudHost master;
 
     @Before
     public void setUp() throws Exception {
         master = CloudHostFactory.getCloudHost("master");
         master.setup();
-        Injector injector = Guice.createInjector(new EncryptionModule());
         while (true) {
             try {
                 new Socket(master.getHostName(), master.getPort(1337));
@@ -55,7 +50,7 @@ public class GraphManagerServiceTest {
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                LOGGER.error(e.getMessage(),e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
@@ -121,8 +116,8 @@ public class GraphManagerServiceTest {
         when(masterGateway.getUpdatedGraph(anyInt())).thenReturn(updatedGraphResponseWrapper);
         when(updatedGraphResponseWrapper.getUpdatedGraphs()).thenReturn(updatedGraphs);
         graphManagerService.processGraphUpdates();
-        Assert.assertEquals(graphManagerService.getCurrentGraphVersion(),1);
-        Assert.assertEquals(graphManagerService.getGraph().getVertexMapSize(),3);
+        Assert.assertEquals(graphManagerService.getCurrentGraphVersion(), 1);
+        Assert.assertEquals(graphManagerService.getGraph().getVertexMapSize(), 3);
     }
 
     @Test
@@ -158,8 +153,8 @@ public class GraphManagerServiceTest {
         when(masterGateway.getUpdatedGraph(anyInt())).thenReturn(updatedGraphResponseWrapper);
         when(updatedGraphResponseWrapper.getUpdatedGraphs()).thenReturn(updatedGraphs);
         graphManagerService.processGraphUpdates();
-        Assert.assertEquals(graphManagerService.getCurrentGraphVersion(),1);
-        Assert.assertEquals(graphManagerService.getGraph().getVertexMapSize(),1);
+        Assert.assertEquals(graphManagerService.getCurrentGraphVersion(), 1);
+        Assert.assertEquals(graphManagerService.getGraph().getVertexMapSize(), 1);
     }
 
 }

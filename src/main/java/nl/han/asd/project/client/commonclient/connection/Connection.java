@@ -22,7 +22,6 @@ import java.net.SocketException;
  * @author Jevgeni Geursten
  */
 public class Connection {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
     private final IConnectionPipe connectionService;
     private volatile boolean isRunning;
@@ -71,8 +70,9 @@ public class Connection {
 
     /**
      * Writes data to the output stream.
+     *
      * @param wrapper Data wrapped inside the EncryptedWrapper class to be send over the socket.
-     * @throws SocketException Writing to stream failed.
+     * @throws SocketException          Writing to stream failed.
      * @throws IllegalArgumentException A parameter has an invalid value.
      */
     public void write(final HanRoutingProtocol.Wrapper wrapper) throws SocketException {
@@ -89,6 +89,7 @@ public class Connection {
 
     /**
      * Reads data from the input stream.
+     *
      * @return An EncryptedWrapper that contains the real object.
      * @throws SocketException Connection or streams failed.
      */

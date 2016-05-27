@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
- *
  * @author Niels Bokmans
  * @version 1.0
  * @since 24-5-2016

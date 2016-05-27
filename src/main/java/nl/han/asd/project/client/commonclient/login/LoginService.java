@@ -16,15 +16,16 @@ public class LoginService implements ILogin {
     private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]";
     private static final String REGEX_ALPHANUMERICSPECIAL = "^(?=(?:\\D*?\\d){8,32}(?!.*?\\d))[a-zA-Z0-9@\\#$%&*()_+\\]\\[';:?.,!^-]+$";
 
-    private MasterGateway masterGateway = null;
+    private MasterGateway masterGateway;
     private ISetConnectedNodes setConnectedNodes;
     private IAuthentication authentication;
 
     /**
      * Creates a loginService object using guice dependency injection.
+     *
      * @param setConnectedNodes interface IGetConnectedNodes.
-     * @param authentication interface IAuthentication.
-     * @param gateway MasterGateway gateway.
+     * @param authentication    interface IAuthentication.
+     * @param gateway           MasterGateway gateway.
      */
     @Inject
     public LoginService(ISetConnectedNodes setConnectedNodes, IAuthentication authentication, MasterGateway gateway) {
@@ -35,6 +36,7 @@ public class LoginService implements ILogin {
 
     /**
      * Creates a LoginResponseWrapper using a username and a password.
+     *
      * @param username the username to login.
      * @param password the password to login.
      * @return LoginResponseWrapper as a result from MasterGateway.register(username, password).

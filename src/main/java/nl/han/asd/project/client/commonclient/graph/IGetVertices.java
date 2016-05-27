@@ -9,5 +9,5 @@ import java.util.Map;
  * @since 18/05/16
  */
 public interface IGetVertices {
-    Map<String,Node> getVertices();
+    Map<String, Node> getVertices();
 }

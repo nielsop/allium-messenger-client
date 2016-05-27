@@ -16,8 +16,8 @@ import java.util.List;
  */
 public class ClientGroupResponseWrapperTest {
 
+    private static final byte[] EMPTY_PUBLICKEY_BYTES = new byte[]{0x00};
     private static List<HanRoutingProtocol.Client> clients;
-    private static final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
 
     @BeforeClass
     public static void setupTestClass() {

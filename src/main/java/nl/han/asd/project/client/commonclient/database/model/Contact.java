@@ -1,8 +1,6 @@
 package nl.han.asd.project.client.commonclient.database.model;
 
 /**
- *
- *
  * @author Niels Bokmans
  * @version 1.0
  * @since 20-5-2016

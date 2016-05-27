@@ -8,8 +8,6 @@ import nl.han.asd.project.commonservices.encryption.IEncryptionService;
  * @since 29-4-2016
  */
 public class EncryptionService implements IEncryptionService {
-
-
     /**
      * Decrypts a byte array containing data.
      *
@@ -29,14 +27,12 @@ public class EncryptionService implements IEncryptionService {
     /**
      * Encrypts a byte array containing data.
      *
-     * @param key The public key to encrypt the ByteString with.
-     * @param data      The byte array in ByteString format.
+     * @param key  The public key to encrypt the ByteString with.
+     * @param data The byte array in ByteString format.
      * @return The encrrypted byte array in ByteString format.
      */
     @Override
     public byte[] encryptData(byte[] key, byte[] data) {
         return new byte[0];
     }
-
-
 }

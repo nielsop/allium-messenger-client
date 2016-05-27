@@ -21,8 +21,8 @@ public class MessageBuilderService implements IMessageBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
     private IGetMessagePath getPath;
     private IEncryptionService encryptionService;
-    private ConnectionService connectionService = null;
-    private IContactStore contactStore = null;
+    private IContactStore contactStore;
+    private ConnectionService connectionService;
 
     @Inject
     public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService, IContactStore contactStore) {
@@ -59,7 +59,8 @@ public class MessageBuilderService implements IMessageBuilder {
 
     /**
      * Deepest layer in final message package
-     * @param node contains information about the next hop in path
+     *
+     * @param node    contains information about the next hop in path
      * @param message contains information about the message typed by the client
      * @return encrypted data from the first layer that is build
      */

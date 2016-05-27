@@ -1,10 +1,9 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -16,13 +15,13 @@ import java.util.Date;
 public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
-    public IContactStore contactStore;
+    private IContactStore contactStore;
     private IMessageStore messageStore;
-
     private IEncryptionService encryptionService;
 
     @Inject
-    public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService) {
+    public MessageProcessingService(IContactStore contactStore, IMessageStore messageStore, IEncryptionService encryptionService) {
+        this.contactStore = contactStore;
         this.messageStore = messageStore;
         this.encryptionService = encryptionService;
     }

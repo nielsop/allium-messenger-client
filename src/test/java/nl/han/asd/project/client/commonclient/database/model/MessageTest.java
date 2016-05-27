@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.database.model;
 
-import nl.han.asd.project.client.commonclient.Configuration;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,10 +12,6 @@ import java.util.Date;
 
 public class MessageTest {
 
-    private static Message message;
-    private static Message sameMessage;
-    private static Message differentMessage;
-
     private static final int PRIMARY_ID = 1;
     private static final int SECONDARY_ID = 2;
     private static final String PRIMARY_USERNAME = "TestUsername";
@@ -27,6 +22,9 @@ public class MessageTest {
     private static final String SECONDARY_MESSAGE = "Testmessage2";
     private static final String PRIMARY_MESSAGE_TOSTRING =
             "Message[sender=" + PRIMARY_USERNAME + ", timestamp=" + DATE + ", text=" + PRIMARY_MESSAGE + "]";
+    private static Message message;
+    private static Message sameMessage;
+    private static Message differentMessage;
 
     @BeforeClass
     public static void beforeClass() {

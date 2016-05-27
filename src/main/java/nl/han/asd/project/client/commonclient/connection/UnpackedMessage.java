@@ -20,6 +20,7 @@ public class UnpackedMessage {
 
     /**
      * Data contains the underlying message.
+     *
      * @return Underlying message that was received.
      */
     public byte[] getData() {
@@ -28,6 +29,7 @@ public class UnpackedMessage {
 
     /**
      * The type of protocol message that 'getData' returns.
+     *
      * @return Type of protocol message.
      */
     public GeneratedMessage getDataMessage() {
@@ -36,6 +38,7 @@ public class UnpackedMessage {
 
     /**
      * The type of the EncryptedWrapper class, this matches the 'getDataMessage' type.
+     *
      * @return Type of the EncryptedWrapper.Type matching 'getData'
      */
     public HanRoutingProtocol.Wrapper.Type getDataType() {

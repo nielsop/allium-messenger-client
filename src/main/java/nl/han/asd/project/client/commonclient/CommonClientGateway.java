@@ -55,13 +55,13 @@ public class CommonClientGateway {
      * Register a user on the master application with the given credentials.
      * Use the MasterGateway to register a user.
      *
-     * @param username username given by user.
-     * @param password password given by user.
+     * @param username       username given by user.
+     * @param password       password given by user.
      * @param passwordRepeat repeated password given by the user.
      * @return RegisterResponse.status
      * @throws IllegalArgumentException
      */
-    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IllegalArgumentException  {
+    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IllegalArgumentException {
         RegisterResponseWrapper registerResponse = registration.register(username, password, passwordRepeat);
         switch (registerResponse.getStatus()) {
             case SUCCES:
@@ -74,7 +74,7 @@ public class CommonClientGateway {
         return registerResponse.getStatus();
     }
 
-    public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) throws IllegalArgumentException  {
+    public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) throws IllegalArgumentException {
         LoginResponseWrapper loginResponse = login.login(username, password);
         if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
             contactStore.setCurrentUser(new CurrentUser(username, publicKey, secretHash));

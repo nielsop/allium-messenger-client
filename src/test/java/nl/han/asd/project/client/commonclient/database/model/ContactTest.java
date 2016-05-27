@@ -6,10 +6,9 @@ import org.junit.Test;
 
 public class ContactTest {
 
-    private static Contact contact;
-
     private static final String PRIMARY_USERNAME = "TestContact";
     private static final String SECONDARY_USERNAME = "TestContact2";
+    private static Contact contact;
 
     @BeforeClass
     public static void beforeClass() {

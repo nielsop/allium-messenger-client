@@ -33,17 +33,17 @@ public class Edge {
 
         Edge edgeToCompare = (Edge) obj;
         return new EqualsBuilder().
-                        append(destinationNodeId, edgeToCompare.destinationNodeId).
-                        append(weight, edgeToCompare.weight).
-                        isEquals();
+                append(destinationNodeId, edgeToCompare.destinationNodeId).
+                append(weight, edgeToCompare.weight).
+                isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 31).
-                        append(destinationNodeId).
-                        append(weight).
-                        toHashCode();
+                append(destinationNodeId).
+                append(weight).
+                toHashCode();
     }
 
 

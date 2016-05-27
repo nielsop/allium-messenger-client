@@ -11,8 +11,6 @@ import java.text.ParseException;
 import java.util.Date;
 
 /**
- *
- *
  * @author Niels Bokmans
  * @version 1.0
  * @since 22-5-2016
