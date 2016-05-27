@@ -1,9 +1,14 @@
 package nl.han.asd.project.client.commonclient.store;
 
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import nl.han.asd.project.client.commonclient.message.Message;
+
+import java.util.List;
 
 public interface IMessageStore {
-    public void addMessage(HanRoutingProtocol.Message message);
+    void addMessage(Message message);
 
-    public void findMessage(HanRoutingProtocol.Message message);
+    void findMessage(Message message);
+
+    List<Message> getMessagesFromUser(String contact);
 }
+

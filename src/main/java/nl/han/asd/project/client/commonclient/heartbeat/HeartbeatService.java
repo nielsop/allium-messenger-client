@@ -51,8 +51,7 @@ public class HeartbeatService implements IConnectionService {
     @Override
     public void onReceiveRead(UnpackedMessage message) {
         try {
-            HanRoutingProtocol.ClientHeartbeat clientHeartbeat = HanRoutingProtocol.ClientHeartbeat
-                    .parseFrom(message.getData());
+            HanRoutingProtocol.ClientHeartbeat clientHeartbeat = HanRoutingProtocol.ClientHeartbeat.parseFrom(message.getData());
         } catch (InvalidProtocolBufferException e) {
             LOGGER.error(e.getMessage(), e);
         }

@@ -3,13 +3,20 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
+import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+
 
 /**
  * @author Julius
@@ -18,13 +25,18 @@ import java.util.List;
  */
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
     private IGetMessagePath getPath;
     private IEncryptionService encryptionService;
+    private ConnectionService connectionService = null;
+    private IContactStore contactStore = null;
 
     @Inject
-    public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService) {
+    public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService, IContactStore contactStore) {
         this.getPath = getPath;
         this.encryptionService = encryptionService;
+        this.contactStore = contactStore;
     }
 
     public <T extends GeneratedMessage> HanRoutingProtocol.MessageWrapper buildMessage(T generatedMessage , Contact contactReceiver) throws IndexOutOfBoundsException {
@@ -45,6 +57,7 @@ public class MessageBuilderService implements IMessageBuilder {
         }
 
         byte[] firstLayer = buildFirstMessagePackageLayer(path.get(0), wrapperBuilder.build(), contactReceiver);
+
         path.remove(0);
 
         return buildLastMessagePackageLayer(path.get(path.size() - 1), buildMessagePackageLayer(firstLayer, path));
@@ -63,7 +76,7 @@ public class MessageBuilderService implements IMessageBuilder {
         messageWrapperBuilder.setUsername(contactReceiver.getUsername());
         messageWrapperBuilder.setIPaddress(node.getIpAddress());
         messageWrapperBuilder.setPort(node.getPort());
-        messageWrapperBuilder.setEncryptedData(wrapper.toByteString());
+        messageWrapperBuilder.setData(wrapper.toByteString());
         return encryptionService.encryptData(messageWrapperBuilder.build().toByteArray(), node.getPublicKey());
     }
 
@@ -73,7 +86,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
         messageWrapperBuilder.setIPaddress(node.getIpAddress());
         messageWrapperBuilder.setPort(node.getPort());
-        messageWrapperBuilder.setEncryptedData(ByteString.copyFrom(data));
+        messageWrapperBuilder.setData(ByteString.copyFrom(data));
 
         return messageWrapperBuilder.build();
     }
@@ -87,7 +100,7 @@ public class MessageBuilderService implements IMessageBuilder {
         Node node = remainingPath.get(0);
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
-        builder.setEncryptedData(ByteString.copyFrom(message));
+        builder.setData(ByteString.copyFrom(message));
 
         remainingPath.remove(0);
 

@@ -9,6 +9,7 @@ import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrappe
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
+import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
@@ -21,13 +22,17 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
     //TODO: missing: IWebService from Master
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterGateway.class);
-    private static int currentGraphVersion = -1;
     private ConnectionService connectionService;
     private Socket socket;
     private IEncryptionService encryptionService;
     private String hostname = Configuration.getHostname();
     private int port = Configuration.getPort();
 
+    /**
+     * Constructs the MasterGateway.
+     * Gets an instance of the encryption service using Guice dependency injection.
+     * @param encryptionService
+     */
     @Inject
     public MasterGateway(IEncryptionService encryptionService) {
         this.encryptionService = encryptionService;
@@ -38,6 +43,11 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
         this.port = port;
     }
 
+    /**
+     * Gets the socket if there already was a connection.
+     * It creates a new socket if there is no socket or the previous has been closed.
+     * @return Socket socket.
+     */
     public Socket getSocket() {
         if (socket == null || socket.isClosed()) {
             try {
@@ -49,26 +59,40 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
         return socket;
     }
 
+    /**
+     * This method authenticates a user to the master application with the given credentials.
+     * @param username the username to be authenticated.
+     * @param password the password belonging to the username.
+     * @return a wrapper which is the response of the authentication process. For the specific details of the LoginResponseWrapper,
+     *          check the LoginResponseWrapper class.
+     */
     @Override
-    public LoginResponseWrapper authenticate(String username, String password) {
-        HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder()
-                .setUsername(username).setPassword(password).setPublicKey(ByteString.copyFrom(getPublicKey())).build();
-        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST,
-                getSocket());
-        HanRoutingProtocol.ClientLoginResponse response = request
-                .writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
-        return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(),
-                response.getStatus());
+    public LoginResponseWrapper authenticate(String username, String password) throws IllegalArgumentException {
+        Validation.validateCredentials(username, password);
+        HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder().setUsername(username).setPassword(password)
+                .setPublicKey(ByteString.copyFrom(encryptionService.getPublicKey())).build();
+        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST, getSocket());
+        HanRoutingProtocol.ClientLoginResponse response = request.writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
+        //TODO: Response kan null zijn als er op de master niet ingelogd kan worden (wordt nu afgevangen op master). Controle voor response=null toevoegen?
+        return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(), response.getStatus());
     }
 
+    /**
+     * This method registers a user at the master application with the given credentials.
+     * @param username the username to be registered.
+     * @param password the password to be registered with the username.
+     * @param passwordRepeat repeat the password to guarantee the user he inserted the password he really wanted to use.
+     * @return a wrapper which is the response of the registration process. For the specific details of the RegisterResponseWrapper,,
+     *          check the RegisterResponseWrapper class.
+     * @throws IllegalArgumentException
+     */
     @Override
-    public RegisterResponseWrapper register(String username, String password) {
-        HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder()
-                .setUsername(username).setPassword(password).build();
-        RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREGISTERREQUEST,
-                getSocket());
-        HanRoutingProtocol.ClientRegisterResponse response = req
-                .writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);
+    public RegisterResponseWrapper register(String username, String password, String passwordRepeat) throws IllegalArgumentException {
+        Validation.validateCredentials(username, password);
+        Validation.passwordsEqual(password, passwordRepeat);
+        HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder().setUsername(username).setPassword(password).build();
+        RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREGISTERREQUEST, getSocket());
+        HanRoutingProtocol.ClientRegisterResponse response = req.writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);
         return new RegisterResponseWrapper(response.getStatus());
     }
 
@@ -82,7 +106,6 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
         HanRoutingProtocol.GraphUpdateResponse response = req
                 .writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class);
         UpdatedGraphResponseWrapper updatedGraphs = new UpdatedGraphResponseWrapper(response.getGraphUpdatesList());
-        setCurrentGraphVersion(updatedGraphs.getLast().getNewVersion());
         return updatedGraphs;
     }
 
@@ -96,35 +119,7 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
     }
 
     /**
-     * Returns the current graph version.
-     *
-     * @return The current graph version.
-     */
-    public int getCurrentGraphVersion() {
-        return currentGraphVersion;
-    }
-
-    /**
-     * Sets the current graph version.
-     *
-     * @param newVersion The new graph version.
-     */
-    private void setCurrentGraphVersion(int newVersion) {
-        currentGraphVersion = newVersion;
-    }
-
-    /**
-     * Returns the public key.
-     *
-     * @return The public key.
-     */
-    private byte[] getPublicKey() {
-        return encryptionService.getPublicKey();
-    }
-
-    /**
      * Returns the connection.
-     *
      * @return The connection
      */
     private ConnectionService getConnection() {
@@ -155,7 +150,6 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
 
     /**
      * Checks if the connection is open.
-     *
      * @return <tt>true</tt> if the connection is open, <tt>false</tt> if the connection is not.
      */
     private boolean isConnectionOpen() {

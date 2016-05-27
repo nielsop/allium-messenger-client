@@ -53,10 +53,8 @@ public final class ConnectionService implements IConnectionPipe {
      * @param receiverPublicKey The public key of the receiver.
      * @param targetService An instance that implements IConnectionService. This instance will be used as callback
      *                      while reading asynchronous.
-     * @throws IOException
      */
-    public ConnectionService(final int sleepTime, final byte[] receiverPublicKey,
-            final IConnectionService targetService) {
+    public ConnectionService(final int sleepTime, final byte[] receiverPublicKey, final IConnectionService targetService) {
         this(sleepTime, receiverPublicKey);
 
         if (targetService == null) {
@@ -80,7 +78,6 @@ public final class ConnectionService implements IConnectionPipe {
      * @param receiverPublicKey The public key of the receiver.
      * @param targetService An instance that implements IConnectionService. This instance will be used as callback
      *                      while reading asynchronous.
-     * @throws IOException
      */
     public ConnectionService(final byte[] receiverPublicKey, final IConnectionService targetService) {
         this(DEFAULT_SLEEP_TIME, receiverPublicKey, targetService);
@@ -102,7 +99,7 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Start reading asynchronous from the input stream.
-     * @throws SocketException
+     * @throws SocketException If there is no valid connection.
      */
     public void readAsync() throws SocketException {
         if (!connection.isConnected()) {
@@ -153,6 +150,7 @@ public final class ConnectionService implements IConnectionPipe {
     /**
      * Writes data from the builder to the connection using the input stream.
      * @param instance Instance of the builder class of the protocol buffer.
+     * @param <T>             Protocol buffer class.
      * @throws SocketException An exception occurred while writing the data.
      */
     public <T extends GeneratedMessage.Builder> void write(final T instance) throws SocketException {
@@ -178,7 +176,7 @@ public final class ConnectionService implements IConnectionPipe {
     /**
      * Closes the existing connection.
      *
-     * @throws IOException
+     * @throws IOException if the connection isn't valid.
      */
     public void close() throws IOException {
         connection.close();

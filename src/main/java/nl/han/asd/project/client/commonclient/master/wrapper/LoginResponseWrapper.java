@@ -24,7 +24,7 @@ public class LoginResponseWrapper {
     private String secretHash;
 
     /**
-     * Stores the status of the login response.
+     * Stores the status of the loginRequest response.
      */
     private HanRoutingProtocol.ClientLoginResponse.Status status;
 
@@ -33,17 +33,12 @@ public class LoginResponseWrapper {
      *
      * @param nodeList   The connected nodes list.
      * @param secretHash The secret hash.
-     * @param status     The status of the login request.
+     * @param status     The status of the loginRequest request.
      */
-    public LoginResponseWrapper(List<String> nodeList, String secretHash,
-            HanRoutingProtocol.ClientLoginResponse.Status status) {
+    public LoginResponseWrapper(List<String> nodeList, String secretHash, HanRoutingProtocol.ClientLoginResponse.Status status) {
         this.nodeList = nodeList;
         this.secretHash = secretHash;
         this.status = status;
-    }
-
-    public HanRoutingProtocol.ClientLoginResponse.Status getStatus() {
-        return status;
     }
 
     public List<String> getNodeList() {
@@ -52,5 +47,9 @@ public class LoginResponseWrapper {
 
     public String getSecretHash() {
         return secretHash;
+    }
+
+    public HanRoutingProtocol.ClientLoginResponse.Status getStatus() {
+        return status;
     }
 }

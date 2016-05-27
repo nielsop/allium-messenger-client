@@ -6,9 +6,6 @@ import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.client.commonclient.store.MessageStore;
 
-/**
- * Created by Marius on 19-04-16.
- */
 public class MessageModule extends AbstractModule {
     @Override
     protected void configure() {

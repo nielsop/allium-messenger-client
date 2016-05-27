@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 /**
@@ -13,6 +14,7 @@ import java.util.Properties;
  * @since 29/04/16
  */
 public class Configuration {
+    public static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 
     /**
@@ -23,6 +25,7 @@ public class Configuration {
 
     public static int getPort() {
         try {
+            LOGGER.info("User dir: " + System.getProperty("user.dir"));
             FileInputStream inputStream = new FileInputStream("application.properties");
             final Properties properties = new Properties();
             properties.load(inputStream);
@@ -44,4 +47,5 @@ public class Configuration {
         }
         return "";
     }
+
 }
