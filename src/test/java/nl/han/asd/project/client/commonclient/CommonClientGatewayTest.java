@@ -36,7 +36,16 @@ public class CommonClientGatewayTest {
     public void setup() {
 
         Injector injector = Guice.createInjector(new CommonclientModule());
-        commonClientGateway = injector.getInstance(CommonClientGateway.class);
+        contactStore = injector.getInstance(IContactStore.class);
+        messageStore = injector.getInstance(IMessageStore.class);
+        messageBuilder = injector.getInstance(IMessageBuilder.class);
+        messageStoreObserver = injector.getInstance(IMessageStoreObserver.class);
+        registration = injector.getInstance(IRegistration.class);
+        login = injector.getInstance(ILogin.class);
+
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, messageBuilder, messageStoreObserver, registration, login);
+
+        //TODO: Update those tests; Jasper says this is not how inject should work, but if we delete the injectors, the tests will fail.
     }
 
 

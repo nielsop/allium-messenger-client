@@ -177,8 +177,8 @@ public class ValidationTest {
     }
 
     @Test (expected =  IllegalArgumentException.class)
-    public void testNotEqualPasswordsReturnFalse(){
-        Validation.passwordsEqual(VALID_PASSWORD, VALID_PASSWORD);
+    public void testNotEqualPasswordsReturnFalse() throws Exception {
+        Validation.passwordsEqual(VALID_PASSWORD_40CHARS, VALID_PASSWORD_8CHARS);
     }
 
     @Test
