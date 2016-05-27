@@ -6,10 +6,7 @@ import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrappe
 import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
-import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.CurrentUser;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
-import nl.han.asd.project.client.commonclient.store.IMessageStoreObserver;
+import nl.han.asd.project.client.commonclient.store.*;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +20,7 @@ import java.util.List;
  * <p>
  * Leave empty until we know what to do with it
  */
-public class CommonClientGateway implements ICommonClient{
+public class CommonClientGateway implements ICommonClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
@@ -45,8 +42,8 @@ public class CommonClientGateway implements ICommonClient{
     }
 
     @Inject
-    public CommonClientGateway(IContactStore contactStore, IMessageBuilder messageBuilder,
-            IMessageStoreObserver messageObserver, IRegistration registration, ILogin login, ISendMessage sendMessage) {
+    public CommonClientGateway(IContactStore contactStore, IMessageBuilder messageBuilder, IMessageStoreObserver messageObserver, IRegistration registration, ILogin login,
+            ISendMessage sendMessage) {
         this.contactStore = contactStore;
         this.messageBuilder = messageBuilder;
         this.messageObserver = messageObserver;
@@ -103,30 +100,46 @@ public class CommonClientGateway implements ICommonClient{
      * {@inheritDoc}
      */
     @Override
-    public List<Contact> getContacts() throws SQLException {
-        return contactStore.getAllContacts();
+    public List<Contact> getContacts() throws StorageException {
+        try {
+            return contactStore.getAllContacts();
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new StorageException("Cannot get contacts from storage!");
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void removeContact(String username) throws SQLException {
-        contactStore.removeContact(username);
+    public void removeContact(String username) throws StorageException {
+        try {
+            contactStore.removeContact(username);
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new StorageException("Cannot remove contact from storage!");
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void addContact(String username) throws SQLException {
-        contactStore.addContact(username);
+    public void addContact(String username) throws StorageException {
+        try {
+            contactStore.addContact(username);
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new StorageException("Cannot add new contact to storage!");
+        }
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     //TODO: Implement method. Delete all in memory user data.
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void logout() {
     }

@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.presentation;
 
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.StorageException;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.sql.SQLException;
@@ -43,21 +44,21 @@ public interface ICommonClient {
      *
      * @return list of contacts of the current user
      */
-    List<Contact> getContacts() throws SQLException;
+    List<Contact> getContacts() throws SQLException, StorageException;
 
     /**
      * Removes contact from contactstore.
      *
      * @param username username of contact
      */
-    void removeContact(String username) throws SQLException;
+    void removeContact(String username) throws SQLException, StorageException;
 
     /**
      * Adds contact to contactstore.
      *
      * @param username username of contact
      */
-    void addContact(String username) throws SQLException;
+    void addContact(String username) throws SQLException, StorageException;
 
     /**
      * Logs out the user and deletes all user data in memory
