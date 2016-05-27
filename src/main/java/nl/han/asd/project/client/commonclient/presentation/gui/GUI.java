@@ -80,6 +80,6 @@ public class GUI extends Application {
     }
 
     public enum Page {
-        LOGIN, REGISTER, DASHBOARD, CONTACTS, CHAT, SETTINGS, CONFIRMATION
+        LOGIN, REGISTER, DASHBOARD, SETTINGS
     }
 }
