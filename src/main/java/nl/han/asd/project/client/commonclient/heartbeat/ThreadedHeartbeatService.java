@@ -141,7 +141,7 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
      * <p>
      * This method does not defensively copy the provided
      * parameter. It is therefore considered an error
-     * to change instance variable of the user
+     * to change instance variables of the user
      * class before calling stopHeartbeatFor(user).
      */
     @Override

@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.google.protobuf.ByteString;
@@ -37,8 +34,6 @@ import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Type;
  * @version 1.0
  */
 public class ConnectionService implements IConnectionService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
-
     private Semaphore mutex;
 
     private IEncryptionService encryptionService;
@@ -58,7 +53,7 @@ public class ConnectionService implements IConnectionService {
      * Note that this method does not check the validity
      * of the provided hostname or port.
      *
-     * @param host to-be-conencted to host
+     * @param host to-be-connected to host
      * @param port port to use during connection
      *
      * @throws IllegalArgumentException if host is null
@@ -70,6 +65,7 @@ public class ConnectionService implements IConnectionService {
 
         encryptionService = null;
 
+        socketHandler = new SocketHandler(host, port, encryptionService);
         mutex = new Semaphore(1);
     }
 
@@ -170,18 +166,15 @@ public class ConnectionService implements IConnectionService {
         return wrapperBuilder.build();
     }
 
-    private void writeNewSocket(Wrapper wrapper) {
+    private void writeNewSocket(Wrapper wrapper) throws IOException {
         try (SocketHandler newSocketHandler = new SocketHandler(host, port)) {
             newSocketHandler.write(wrapper);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public void write(Wrapper wrapper, long timeout, TimeUnit unit)
-            throws IOException, MessageNotSentException {
+    public void write(Wrapper wrapper, long timeout, TimeUnit unit) throws IOException, MessageNotSentException {
         Check.notNull(wrapper, "wrapper");
 
         try {
@@ -210,12 +203,9 @@ public class ConnectionService implements IConnectionService {
         write(wrapper, -1, TimeUnit.MILLISECONDS);
     }
 
-    private GeneratedMessage writeAndReadNewSocket(Wrapper wrapper)
-            throws InterruptedException, IOException {
-        try (SocketHandler socketHandler = new SocketHandler(host, port, encryptionService)) {
-            return socketHandler.writeAndRead(wrapper);
-        } finally {
-            socketHandler.close();
+    private GeneratedMessage writeAndReadNewSocket(Wrapper wrapper) throws IOException {
+        try (SocketHandler newSocketHandler = new SocketHandler(host, port, encryptionService)) {
+            return newSocketHandler.writeAndRead(wrapper);
         }
     }
 
@@ -247,8 +237,7 @@ public class ConnectionService implements IConnectionService {
 
     /** {@inheritDoc} */
     @Override
-    public GeneratedMessage writeAndRead(Wrapper wrapper)
-            throws IOException, MessageNotSentException {
+    public GeneratedMessage writeAndRead(Wrapper wrapper) throws IOException, MessageNotSentException {
         return writeAndRead(wrapper, -1, TimeUnit.MILLISECONDS);
     }
 }

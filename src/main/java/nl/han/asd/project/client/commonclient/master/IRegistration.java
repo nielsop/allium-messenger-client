@@ -25,7 +25,7 @@ public interface IRegistration {
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
      *          exception
-     * @throws MessageNotSendException if the connection service
+     * @throws MessageNotSentException if the connection service
      *          was unable to send the message. Note that
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.

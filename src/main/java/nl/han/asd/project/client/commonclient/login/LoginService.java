@@ -29,8 +29,11 @@ public class LoginService implements ILogin {
      * Construct a new LoginService.
      *
      * @param authentication the authentication interface
-     * @param encryptionService encryptionService holding
-     *          the public key of this application
+     * @param encryptionService the encryptionservice holding
+     *          the public key
+     *
+     * @throws IllegalArgumentException if authentication
+     *          or encryptionService is null
      */
     @Inject
     public LoginService(IAuthentication authentication, IEncryptionService encryptionService) {

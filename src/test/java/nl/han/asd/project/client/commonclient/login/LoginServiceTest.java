@@ -23,7 +23,7 @@ import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Contact.class, LoginService.class, IEncryptionService.class })
+@PrepareForTest({ Contact.class, LoginService.class })
 public class LoginServiceTest {
 
     /* Valid credentials */

@@ -85,7 +85,7 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
      * @param properties properties instance containing the
      *          connection details
      * @param connectionServiceFactory factory to construct
-     *          the connection service to the master application
+     *          the connection service
      *
      * @throws IllegalArgumentException if properties or
      *          encryptionService is null

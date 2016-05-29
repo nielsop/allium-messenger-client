@@ -18,7 +18,7 @@ import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
 
-public class ConnectionServiceTestIT {
+public class ConnectionServiceIT {
 
     private IConnectionService connectionService = null;
 
@@ -79,7 +79,7 @@ public class ConnectionServiceTestIT {
 
     @Test
     public void connectionModuleTest() throws Exception {
-        Injector injector = Guice.createInjector(new ConnectionModule());
+        Injector injector = Guice.createInjector(new ConnectionModule(), new EncryptionModule());
         injector.getInstance(IConnectionServiceFactory.class);
     }
 }

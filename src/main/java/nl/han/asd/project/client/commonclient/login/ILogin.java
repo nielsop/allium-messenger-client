@@ -6,7 +6,7 @@ import nl.han.asd.project.client.commonclient.connection.MessageNotSentException
 import nl.han.asd.project.client.commonclient.store.Contact;
 
 /**
- * Define the login realated methods.
+ * Define the login related methods.
  *
  * @version 1.0
  */
@@ -14,7 +14,7 @@ public interface ILogin {
 
     /**
      * Check the provided user information and
-     * send these details to the master server for
+     * send the provided details to the master server for
      * authentication.
      *
      * @param username identifying name of the user
@@ -36,7 +36,7 @@ public interface ILogin {
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
      *          exception
-     * @throws MessageNotSendException if the connection service
+     * @throws MessageNotSentException if the connection service
      *          was unable to send the message. Note that
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.

@@ -24,7 +24,10 @@ public interface IGetClientGroup {
      * @throws IllegalArgumentException if request is null
      * @throws IOException if an {@link IOException} occurred
      *          while preparing to send/sending the request
-     * @throws MessageNotSendException
+     * @throws MessageNotSentException if the connection service
+     *          was unable to send the message. Note that
+     *          this exception is not thrown on Socket related
+     *          exceptions. See IOException.
      */
     public Client getClientGroup(ClientRequest request) throws IOException, MessageNotSentException;
 }

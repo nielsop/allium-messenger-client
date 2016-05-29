@@ -21,8 +21,13 @@ public interface IHeartbeat {
      *          while preparing to send/sending the heartbeat
      *
      * @throws IllegalArgumentException if heartbeat is null
-     * @throws MessageNotSendException if the method
-     *          was unable to send the message
+     * @throws IOException if the function was unable to send
+     *          the wrapper due to a socket related
+     *          exception
+     * @throws MessageNotSentException if the connection service
+     *          was unable to send the message. Note that
+     *          this exception is not thrown on Socket related
+     *          exceptions. See IOException.
      */
     void sendHeartbeat(ClientHeartbeat heartbeat) throws IOException, MessageNotSentException;
 }

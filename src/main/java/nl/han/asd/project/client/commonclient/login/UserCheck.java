@@ -25,9 +25,9 @@ public class UserCheck {
      * <p>
      * The rules describing a valid username are as follows:
      * <pre>
-     *  LENGTH : > 3 && < 12
+     *  LENGTH : {@code > {@value #MIN_USERNAME_LENGTH} && < {@value #MAX_USERNAME_LENGTH}}
      *  CHARACTERS : {@value #REGEX_ALPHANUMERIC}
-     * <pre>
+     * </pre>
      *
      * @param username to be checked username
      *
@@ -60,8 +60,8 @@ public class UserCheck {
      * <p>
      * The rules describing a valid password are as follows:
      * <pre>
-     *  LENGTH : > 3 && < 12
-     * <pre>
+     *  LENGTH : {@code > {@value #MIN_PASSWORD_LENGTH} && < {@value #MAX_PASSWORD_LENGTH}}
+     * </pre>
      *
      * @param password to be checked password
      *

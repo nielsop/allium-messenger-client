@@ -41,7 +41,7 @@ public class HeartbeatTestITTest {
 
         threadedHeartbeat.startHeartbeatFor(contact);
 
-        Thread.currentThread().sleep(TimeUnit.SECONDS.toMillis(2));
+        Thread.sleep(TimeUnit.SECONDS.toMillis(2));
 
         Builder clientHeartbeatBuilder = ClientHeartbeat.newBuilder();
         clientHeartbeatBuilder.setUsername(contact.getUsername());

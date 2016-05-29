@@ -19,7 +19,7 @@ public interface IConnectionService {
      * Wrap the provided message in a new Wrapper instance encrypting
      * the message provided the public key of the receiver was defined.
      *
-     * @param T the type of message
+     * @param <T> the type of message
      *
      * @param message to-be-wrapped message
      * @param type type referring to this message
@@ -35,7 +35,7 @@ public interface IConnectionService {
      *
      * <p>
      * This method should only be used for time-critical messages
-     * that which transmission is unable to wait.
+     * for which transmission delay is not acceptable.
      *
      * <p>
      * Note that the delay before sending the message is at most
@@ -45,18 +45,17 @@ public interface IConnectionService {
      * @param wrapper to-be-send wrapper
      * @param timeout maximum timout to wait before giving up
      *          and creating a new socket
-     * @param unit the time unit of the timout parameter
+     * @param unit the time unit of the timeout parameter
      *
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
      *          exception
-     * @throws MessageNotSenException if the connection service
+     * @throws MessageNotSentException if the connection service
      *          was unable to send the message. Note that
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    public void write(Wrapper wrapper, long timeout, TimeUnit unit)
-            throws IOException, MessageNotSentException;
+    public void write(Wrapper wrapper, long timeout, TimeUnit unit) throws IOException, MessageNotSentException;
 
     /**
      * Transmit the provided message to the host.
@@ -71,7 +70,7 @@ public interface IConnectionService {
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
      *          exception
-     * @throws MessageNotSenException if the connection service
+     * @throws MessageNotSentException if the connection service
      *          was unable to send the message. Note that
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
@@ -84,7 +83,7 @@ public interface IConnectionService {
      *
      * <p>
      * This method should only be used for time-critical messages
-     * that which transmission is unable to wait.
+     * for which transmission delays are unacceptable.
      *
      * <p>
      * Note that the delay before sending the message is at most
@@ -101,7 +100,7 @@ public interface IConnectionService {
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
      *          exception
-     * @throws MessageNotSenException if the connection service
+     * @throws MessageNotSentException if the connection service
      *          was unable to send the message. Note that
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
@@ -125,11 +124,10 @@ public interface IConnectionService {
      * @throws IOException if the function was unable to send
      *          the wrapper due to a socket related
      *          exception
-     * @throws MessageNotSenException if the connection service
+     * @throws MessageNotSentException if the connection service
      *          was unable to send the message. Note that
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    public GeneratedMessage writeAndRead(Wrapper wrapper)
-            throws IOException, MessageNotSentException;
+    public GeneratedMessage writeAndRead(Wrapper wrapper) throws IOException, MessageNotSentException;
 }

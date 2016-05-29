@@ -20,7 +20,7 @@ public interface IConnectionServiceFactory {
      * Note that this method does not check the validity
      * of the provided hostname or port.
      *
-     * @param host to-be-conencted to host
+     * @param host to-be-connected to host
      * @param port port to use during connection
      *
      * @return a new {@link IConnectionService} instance
