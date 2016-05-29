@@ -10,13 +10,6 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.UUID;
 
-/**
- *
- *
- * @author Niels Bokmans
- * @version 1.0
- * @since 22-5-2016
- */
 public class HyperSQLDatabaseIT {
 
     private IDatabase database;

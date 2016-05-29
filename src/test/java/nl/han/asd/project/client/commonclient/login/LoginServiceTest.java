@@ -2,9 +2,7 @@ package nl.han.asd.project.client.commonclient.login;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -18,6 +16,7 @@ import com.google.protobuf.ByteString;
 
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
@@ -133,12 +132,10 @@ public class LoginServiceTest {
 
         when(authenticationMock.login(any())).thenReturn(response);
 
-        Contact contactMock = mock(Contact.class);
-        whenNew(Contact.class).withAnyArguments().thenReturn(contactMock);
+        CurrentUser contactMock = mock(CurrentUser.class);
+        whenNew(CurrentUser.class).withAnyArguments().thenReturn(contactMock);
 
         assertEquals(contactMock, login.login(VALID_USERNAME, VALID_PASSWORD));
-
-        verify(contactMock).setSecretHash(eq("hash"));
     }
 
 }

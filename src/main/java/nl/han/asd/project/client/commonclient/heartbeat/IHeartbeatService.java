@@ -1,6 +1,6 @@
 package nl.han.asd.project.client.commonclient.heartbeat;
 
-import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
 
 /**
  * Define the heartbeat scheduling methods.
@@ -16,7 +16,7 @@ public interface IHeartbeatService {
      *
      * @throws IllegalArgumentException if contact is null
      */
-    public void startHeartbeatFor(Contact contact);
+    public void startHeartbeatFor(CurrentUser contact);
 
     /**
      * De-schedule the heartbeats for a given contact instance.
@@ -29,5 +29,5 @@ public interface IHeartbeatService {
      * @throws InterruptedException if the current thread was
      *          interrupted during the joining of the heartbeat thread
      */
-    public boolean stopHeartbeatFor(Contact contact) throws InterruptedException;
+    public boolean stopHeartbeatFor(CurrentUser contact) throws InterruptedException;
 }

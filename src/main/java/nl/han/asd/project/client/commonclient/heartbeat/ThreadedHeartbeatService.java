@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.master.IHeartbeat;
-import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientHeartbeat;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientHeartbeat.Builder;
@@ -50,9 +50,9 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
     public class HeartbeatSender extends Thread {
         private volatile boolean isRunning = true;
 
-        private Contact contact;
+        private CurrentUser contact;
 
-        protected HeartbeatSender(Contact contact) {
+        protected HeartbeatSender(CurrentUser contact) {
             this.contact = contact;
         }
 
@@ -76,7 +76,7 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
         private ClientHeartbeat buildheartbeat() {
             Builder clientHeartbeatBuilder = ClientHeartbeat.newBuilder();
 
-            clientHeartbeatBuilder.setUsername(contact.getUsername());
+            clientHeartbeatBuilder.setUsername(contact.getCurrentUserAsContact().getUsername());
             clientHeartbeatBuilder.setSecretHash(contact.getSecretHash());
 
             return clientHeartbeatBuilder.build();
@@ -145,17 +145,17 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
      * class before calling stopHeartbeatFor(user).
      */
     @Override
-    public void startHeartbeatFor(Contact contact) {
+    public void startHeartbeatFor(CurrentUser contact) {
         Check.notNull(contact, "contact");
 
-        if (activeHeartbeats.containsKey(contact.getUsername())) {
+        if (activeHeartbeats.containsKey(contact.getCurrentUserAsContact().getUsername())) {
             return;
         }
 
         Thread heartbeatThread = new HeartbeatSender(contact);
         heartbeatThread.start();
 
-        activeHeartbeats.put(contact.getUsername(), (HeartbeatSender) heartbeatThread);
+        activeHeartbeats.put(contact.getCurrentUserAsContact().getUsername(), (HeartbeatSender) heartbeatThread);
     }
 
     /**
@@ -166,10 +166,10 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
      * be send after a successful execution of this method.
      */
     @Override
-    public boolean stopHeartbeatFor(Contact contact) throws InterruptedException {
+    public boolean stopHeartbeatFor(CurrentUser contact) throws InterruptedException {
         Check.notNull(contact, "contact");
 
-        HeartbeatSender heartbeatSender = activeHeartbeats.get(contact.getUsername());
+        HeartbeatSender heartbeatSender = activeHeartbeats.get(contact.getCurrentUserAsContact().getUsername());
 
         if (heartbeatSender == null) {
             return false;

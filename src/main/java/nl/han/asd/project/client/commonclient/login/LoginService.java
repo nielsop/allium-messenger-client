@@ -8,7 +8,7 @@ import com.google.protobuf.ByteString;
 
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
-import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
@@ -43,7 +43,7 @@ public class LoginService implements ILogin {
 
     /** {@inheritDoc} */
     @Override
-    public Contact login(String username, String password)
+    public CurrentUser login(String username, String password)
             throws InvalidCredentialsException, IOException, MessageNotSentException {
         UserCheck.checkUsername(username);
         UserCheck.checkPassword(password);
@@ -59,8 +59,6 @@ public class LoginService implements ILogin {
             throw new InvalidCredentialsException(loginResponse.getStatus().name());
         }
 
-        Contact currentUser = new Contact(username, null);
-        currentUser.setSecretHash(loginResponse.getSecretHash());
-        return currentUser;
+        return new CurrentUser(username, encryptionService.getPublicKey(), loginResponse.getSecretHash());
     }
 }

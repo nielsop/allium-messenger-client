@@ -19,7 +19,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import nl.han.asd.project.client.commonclient.heartbeat.ThreadedHeartbeatService.HeartbeatSender;
 import nl.han.asd.project.client.commonclient.master.IHeartbeat;
-import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ThreadedHeartbeatService.class, HeartbeatSender.class })
@@ -54,7 +54,7 @@ public class HeartbeatTest {
 
     @Test
     public void startHeartbeatExistingContact() throws Exception {
-        Contact contact = new Contact("username", "key");
+        CurrentUser contact = new CurrentUser("username", "key".getBytes(), "secret hash");
 
         HeartbeatSender heartbeatSender = mock(HeartbeatSender.class);
         whenNew(HeartbeatSender.class).withArguments(eq(contact)).thenReturn(heartbeatSender);
@@ -68,7 +68,7 @@ public class HeartbeatTest {
 
     @Test
     public void startHeartbeatNewContact() throws Exception {
-        Contact contact = new Contact("username", "key");
+        CurrentUser contact = new CurrentUser("username", "key".getBytes(), "secret hash");
 
         HeartbeatSender heartbeatSenderMock = mock(HeartbeatSender.class);
         whenNew(HeartbeatSender.class).withArguments(eq(contact)).thenReturn(heartbeatSenderMock);
@@ -84,14 +84,14 @@ public class HeartbeatTest {
 
     @Test
     public void stopHeartbeatNonScheduledUser() throws Exception {
-        Contact contact = new Contact("username", "key");
+        CurrentUser contact = new CurrentUser("username", "key".getBytes(), "secret hash");
         boolean removed = threadedHeartbeat.stopHeartbeatFor(contact);
         assertFalse(removed);
     }
 
     @Test
     public void stopheartbeatScheduledUser() throws Exception {
-        Contact contact = new Contact("username", "key");
+        CurrentUser contact = new CurrentUser("username", "key".getBytes(), "secret hash");
 
         HeartbeatSender heartbeatSender = mock(HeartbeatSender.class);
         whenNew(HeartbeatSender.class).withArguments(eq(contact)).thenReturn(heartbeatSender);

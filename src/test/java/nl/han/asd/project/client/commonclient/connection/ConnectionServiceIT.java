@@ -60,8 +60,6 @@ public class ConnectionServiceIT {
                 }
             }
         });
-
-        t.setDaemon(true);
         t.start();
 
         ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
@@ -72,7 +70,60 @@ public class ConnectionServiceIT {
         Wrapper wrapper = connectionService.wrap(requestBuilder.build(), Wrapper.Type.CLIENTLOGINREQUEST);
 
         ClientLoginResponse response = (ClientLoginResponse) connectionService.writeAndRead(wrapper);
-        assertEquals(response.getStatus(), ClientLoginResponse.Status.SUCCES);
+        assertEquals(ClientLoginResponse.Status.SUCCES, response.getStatus());
+
+        t.join();
+    }
+
+    @Test
+    public void testMultipleWriteReads() throws Exception {
+        Thread t = new Thread(() -> {
+            ServerSocket serverSocket = null;
+            Socket socket = null;
+            try {
+                serverSocket = new ServerSocket(10002);
+                socket = serverSocket.accept();
+
+                ClientLoginResponse.Builder responseBuilder = ClientLoginResponse.newBuilder();
+                responseBuilder.setStatus(ClientLoginResponse.Status.SUCCES);
+
+                Wrapper wrapper = connectionService.wrap(responseBuilder.build(), Wrapper.Type.CLIENTLOGINRESPONSE);
+                wrapper.writeDelimitedTo(socket.getOutputStream());
+
+                socket = serverSocket.accept();
+
+                responseBuilder = ClientLoginResponse.newBuilder();
+                responseBuilder.setStatus(ClientLoginResponse.Status.FAILED);
+
+                wrapper = connectionService.wrap(responseBuilder.build(), Wrapper.Type.CLIENTLOGINRESPONSE);
+                wrapper.writeDelimitedTo(socket.getOutputStream());
+            } catch (Exception e) {
+            } finally {
+                try {
+                    serverSocket.close();
+                } catch (Exception e) {
+                }
+
+                try {
+                    socket.close();
+                } catch (Exception e) {
+                }
+            }
+        });
+        t.start();
+
+        ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
+        requestBuilder.setUsername("username");
+        requestBuilder.setPassword("password");
+        requestBuilder.setPublicKey(ByteString.EMPTY);
+
+        Wrapper wrapper = connectionService.wrap(requestBuilder.build(), Wrapper.Type.CLIENTLOGINREQUEST);
+
+        ClientLoginResponse response = (ClientLoginResponse) connectionService.writeAndRead(wrapper);
+        assertEquals(ClientLoginResponse.Status.SUCCES, response.getStatus());
+
+        response = (ClientLoginResponse) connectionService.writeAndRead(wrapper);
+        assertEquals(ClientLoginResponse.Status.FAILED, response.getStatus());
 
         t.join();
     }

@@ -3,7 +3,7 @@ package nl.han.asd.project.client.commonclient.login;
 import java.io.IOException;
 
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
-import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
 
 /**
  * Define the login related methods.
@@ -41,6 +41,6 @@ public interface ILogin {
      *          this exception is not thrown on Socket related
      *          exceptions. See IOException.
      */
-    Contact login(String username, String password)
+    CurrentUser login(String username, String password)
             throws InvalidCredentialsException, IOException, MessageNotSentException;
 }

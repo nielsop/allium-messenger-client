@@ -9,7 +9,6 @@ import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Message {

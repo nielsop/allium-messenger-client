@@ -62,6 +62,7 @@ public class SocketHandler implements AutoCloseable {
     @Override
     public void close() throws IOException {
         socket.close();
+        socket = null;
     }
 
 }
