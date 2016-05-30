@@ -16,7 +16,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -129,6 +131,9 @@ public class LoginServiceTest {
         ClientLoginResponse.Builder responseBuilder = ClientLoginResponse.newBuilder();
         responseBuilder.setStatus(ClientLoginResponse.Status.SUCCES);
         responseBuilder.setSecretHash("hash");
+        responseBuilder.addConnectedNodes("127.0.0.1:1331");
+        responseBuilder.addConnectedNodes("127.0.0.1:1332");
+        responseBuilder.addConnectedNodes("127.0.0.1:1333");
         ClientLoginResponse response = responseBuilder.build();
 
         when(authenticationMock.login(any())).thenReturn(response);
@@ -137,5 +142,7 @@ public class LoginServiceTest {
         whenNew(CurrentUser.class).withAnyArguments().thenReturn(contactMock);
 
         assertEquals(contactMock, login.login(VALID_USERNAME, VALID_PASSWORD));
+
+        verify(setConnectedNodes).setConnectedNodes(eq(response.getConnectedNodesList()));
     }
 }
