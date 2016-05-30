@@ -2,16 +2,17 @@ package nl.han.asd.project.client.commonclient.connection;
 
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.cryptography.EncryptionService;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.net.SocketException;
 
 /**
- * Provides a connection service using sockets such as reading and writing data.
+ * Provides a connection connectionService using sockets such as reading and writing data.
  *
  * @author Jevgeni Geurtsen
  */
@@ -19,10 +20,17 @@ public final class ConnectionService implements IConnectionPipe {
     private static final int DEFAULT_SLEEP_TIME = 25; // 25ms
     private static final String INVALID_SOCKET_CONNECTION = "Socket has no valid or connection, or the valid connection was closed.";
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
-    private Packer packer = null;
-    private byte[] receiverPublicKey = null;
-    private Connection connection = null;
-    private IConnectionService service = null;
+    private Packer packer;
+    private byte[] receiverPublicKey;
+    private Connection connection;
+    private IConnectionService connectionService;
+    private IEncryptionService encryptionService;
+
+    @Inject
+    public ConnectionService(IConnectionService connectionService, IEncryptionService encryptionService) {
+        this.connectionService = connectionService;
+        this.encryptionService = encryptionService;
+    }
 
     /**
      * Initializes this class.
@@ -32,7 +40,7 @@ public final class ConnectionService implements IConnectionPipe {
      */
     public ConnectionService(final int sleepTime, final byte[] receiverPublicKey) {
         connection = new Connection(this);
-        packer = new Packer(new EncryptionService());
+        packer = new Packer(encryptionService);
 
         if (receiverPublicKey == null)
             throw new IllegalArgumentException("Public key cannot be empty.");
@@ -60,7 +68,7 @@ public final class ConnectionService implements IConnectionPipe {
                     "You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
         }
 
-        service = targetService;
+        connectionService = targetService;
     }
 
     /**
@@ -107,7 +115,7 @@ public final class ConnectionService implements IConnectionPipe {
         if (!connection.isConnected()) {
             throw new SocketException(INVALID_SOCKET_CONNECTION);
         }
-        if (service == null) {
+        if (connectionService == null) {
             throw new IllegalArgumentException(
                     "You must implement 'IServiceConnection' to your class and initialize this class with the 'this' keyword in order to use the Async read method.");
         }
@@ -200,9 +208,9 @@ public final class ConnectionService implements IConnectionPipe {
 
     @Override
     public void onReceiveRead(final HanRoutingProtocol.Wrapper wrapper) {
-        if (service != null) {
+        if (connectionService != null) {
             UnpackedMessage message = packer.unpack(wrapper);
-            service.onReceiveRead(message);
+            connectionService.onReceiveRead(message);
         }
     }
 

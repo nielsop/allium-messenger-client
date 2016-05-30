@@ -84,4 +84,8 @@ public class Message {
     public int getDatabaseId() {
         return databaseId;
     }
+
+public Date getTimestamp() {
+        return timestamp;
+    }
 }
