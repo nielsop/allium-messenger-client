@@ -1,27 +1,42 @@
 package nl.han.asd.project.client.commonclient.message;
 
-import com.google.inject.Inject;
-import com.google.protobuf.ByteString;
-import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
-import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import com.google.inject.Inject;
+import com.google.protobuf.ByteString;
+
+import nl.han.asd.project.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.graph.Node;
+import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
+import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
 
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
-    private IGetMessagePath getPath;
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
+    private IGetMessagePath getPath;
     private IEncryptionService encryptionService;
+    private IConnectionService connectionService = null;
+    private IContactStore contactStore = null;
+
+    private IConnectionServiceFactory connectionServiceFactory;
 
     @Inject
-    public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService) {
+    public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService,
+            IContactStore contactStore, IConnectionServiceFactory connectionServiceFactory) {
         this.getPath = getPath;
         this.encryptionService = encryptionService;
+        this.contactStore = contactStore;
     }
 
     public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
@@ -31,12 +46,22 @@ public class MessageBuilderService implements IMessageBuilder {
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
         builder.setData(messageToSend.getEncryptedData());
+
+        connectionService = connectionServiceFactory.create(messageToSend.getIp(), messageToSend.getPort(),
+                messageToSend.getPublicKey());
+
+        try {
+            Wrapper wrapper = connectionService.wrap(builder.build(), Wrapper.Type.MESSAGEWRAPPER);
+            connectionService.write(wrapper);
+        } catch (IOException | MessageNotSentException e) {
+            LOGGER.error("Message could not be send due to connection problems.", e);
+        }
     }
 
     private EncryptedMessage buildMessagePackage(String messageText, Contact contactReceiver, Contact contactSender) {
         List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
-        Message message = new Message(messageText, contactSender, contactReceiver);
+        Message message = new Message(contactSender, new Date(), messageText);
         //TODO kijken of path of die nodes bevat anders gooi exep
         byte[] firstLayer = buildFirstMessagePackageLayer(path.get(0), message);
         path.remove(0);
@@ -52,15 +77,16 @@ public class MessageBuilderService implements IMessageBuilder {
     private byte[] buildFirstMessagePackageLayer(Node node, Message message) {
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
-        builder.setUsername(message.getReceiver().getUsername());
+        builder.setUsername(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
         builder.setData(ByteString.copyFromUtf8(message.getText()));
-        return encryptionService.encryptData(node.getPublicKey(),builder.build().toByteArray());
+        return encryptionService.encryptData(node.getPublicKey(), builder.build().toByteArray());
     }
 
     private EncryptedMessage buildLastMessagePackageLayer(Node node, byte[] data) {
-        return new EncryptedMessage(null, node.getIpAddress(), node.getPort(),node.getPublicKey(),ByteString.copyFrom(data));
+        return new EncryptedMessage(null, node.getIpAddress(), node.getPort(), node.getPublicKey(),
+                ByteString.copyFrom(data));
     }
 
     private byte[] buildMessagePackageLayer(byte[] message, List<Node> remainingPath) {
@@ -76,8 +102,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
         remainingPath.remove(0);
 
-        byte[] encryptedMessage = encryptionService
-                .encryptData(node.getPublicKey(),builder.build().toByteArray());
+        byte[] encryptedMessage = encryptionService.encryptData(node.getPublicKey(), builder.build().toByteArray());
         return buildMessagePackageLayer(encryptedMessage, remainingPath);
     }
 }

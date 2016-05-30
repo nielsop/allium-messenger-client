@@ -7,5 +7,5 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 @FunctionalInterface
 public interface ISendMessage {
-    void processOutgoingMessage(HanRoutingProtocol.MessageWrapper messageWrapper, Contact contactReceiver);
+    void sendMessage(HanRoutingProtocol.MessageWrapper messageWrapper, Contact contactReceiver);
 }

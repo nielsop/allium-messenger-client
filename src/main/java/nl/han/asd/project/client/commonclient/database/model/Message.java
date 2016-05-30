@@ -1,22 +1,16 @@
 package nl.han.asd.project.client.commonclient.database.model;
 
-import nl.han.asd.project.client.commonclient.Configuration;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
 
-/**
- *
- *
- * @author Niels Bokmans
- * @version 1.0
- * @since 22-5-2016
- */
 public class Message {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Message.class);
@@ -38,7 +32,7 @@ public class Message {
             final int id = (Integer) result.getObject(1);
             final Contact sender = Contact.fromDatabase(result.getObject(2));
             final String message = (String) result.getObject(4);
-            final Date timestamp = Configuration.TIMESTAMP_FORMAT.parse(Configuration.TIMESTAMP_FORMAT.format(result.getTimestamp(3)));
+            final Date timestamp = IPersistence.TIMESTAMP_FORMAT.parse(IPersistence.TIMESTAMP_FORMAT.format(result.getTimestamp(3)));
             return new Message(id, sender, timestamp, message);
         } catch (SQLException | ParseException e) {
             LOGGER.error(e.getMessage(), e);

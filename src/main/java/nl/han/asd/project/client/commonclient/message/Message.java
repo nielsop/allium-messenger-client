@@ -2,29 +2,60 @@ package nl.han.asd.project.client.commonclient.message;
 
 import nl.han.asd.project.client.commonclient.persistence.PersistenceObject;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.Date;
 
-/**
- * Created by Marius on 25-04-16.
- */
-public class Message extends PersistenceObject {
-    private String id;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import nl.han.asd.project.client.commonclient.persistence.IPersistence;
+import nl.han.asd.project.client.commonclient.store.Contact;
+
+public class Message {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Message.class);
+    private String messageId;
+    private int databaseId;
 
     private String text;
     private Contact sender;
-    private Contact receiver;
-    private long messageTimestamp;
+    private Date timestamp;
 
-    public Message() {}
-
-    public Message(String text, Contact sender, Contact receiver) {
-        setText(text);
-        setSender(sender);
-        setReceiver(receiver);
+    public Message(Contact sender, Date timestamp, String text) {
+        this(-1, sender, timestamp, text);
     }
 
-    public Contact getReceiver() {
-        return receiver;
+    public Message(int id, Contact sender, Date timestamp, String text) {
+        databaseId = id;
+        this.sender = sender;
+        this.timestamp = timestamp;
+        this.text = text;
     }
+
+    public static Message fromDatabase(ResultSet result) {
+        try {
+            final int id = (Integer) result.getObject(1);
+            final Contact sender = Contact.fromDatabase((String) result.getObject(2));
+            final String message = (String) result.getObject(4);
+            final Date timestamp = IPersistence.TIMESTAMP_FORMAT.parse(IPersistence.TIMESTAMP_FORMAT.format(result.getTimestamp(3)));
+            return new Message(id, sender, timestamp, message);
+        } catch (SQLException | ParseException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public static Message fromProtocolMessage(HanRoutingProtocol.Message protocolMessage)
+    {
+        final int id = Integer.parseInt(protocolMessage.getId());
+        final Contact sender = Contact.fromDatabase(protocolMessage.getSender());
+        final String text = protocolMessage.getText();
+        final Date timestamp = new Date(protocolMessage.getTimeSent());
+        return new Message(id, sender, timestamp, text);
+    }
+
 
     public Contact getSender() {
         return sender;
@@ -34,24 +65,37 @@ public class Message extends PersistenceObject {
         return text;
     }
 
-
-    public void setText(String value) {
-        this.text = value;
+    public String getMessageId() {
+        return messageId;
     }
 
-    public void setSender(Contact sender) {
-        this.sender = sender;
+    public Date getMessageTimestamp() {
+        return timestamp;
     }
 
-    public void setReceiver(Contact receiver) {
-        this.receiver = receiver;
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Message[sender=").append(sender.getUsername()).append(", timestamp=").append(timestamp)
+                .append(", text=").append(text).append("]");
+        return sb.toString();
     }
 
-    public String getId() {
-        return id;
+    @Override
+    public boolean equals(Object anotherObject) {
+        if (anotherObject == null || !(anotherObject instanceof Message)) {
+            return false;
+        }
+        final Message otherMessage = (Message) anotherObject;
+        return getText().equalsIgnoreCase(otherMessage.getText()) && getSender().equals(otherMessage.getSender());
     }
 
-    public long getMessageTimestamp() {
-        return messageTimestamp;
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(getMessageId()).append(getSender()).append(getText()).toHashCode();
+    }
+
+    public int getDatabaseId() {
+        return databaseId;
     }
 }

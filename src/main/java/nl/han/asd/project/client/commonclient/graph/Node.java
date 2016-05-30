@@ -1,7 +1,11 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import java.util.LinkedList;
-import java.util.List;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * @author Niels Bokmans
@@ -9,7 +13,7 @@ import java.util.List;
  * @since 20-4-2016
  */
 public class Node {
-    List<Edge> adjacent;
+    private Map<String, Edge> adjacent;
     private String id;
     private String ipAddress;
     private int port;
@@ -20,17 +24,33 @@ public class Node {
         this.ipAddress = ipAddress;
         this.port = port;
         this.publicKey = publicKey;
-        adjacent = new LinkedList<>();
+        this.adjacent = new HashMap<>();
     }
 
-    @Override
-    public boolean equals(Object anotherObj) {
-        return anotherObj instanceof Node;
+    /**
+     * add an edge
+     * @param edge
+     */
+    public void addEdge(HanRoutingProtocol.Edge edge) {
+        adjacent.put(edge.getTargetNodeId(), new Edge(edge.getTargetNodeId(), edge.getWeight()));
     }
 
-    @Override
-    public int hashCode() {
-        return (id + "@" + ipAddress + ":" + port).hashCode();
+    /**
+     *
+     * @param destinationNodeId
+     *      Contains the Id from the edge's destination node.
+     * @return
+     *      The edge that has been found with the destination node id.
+     */
+    public Edge getEdge(String destinationNodeId) {
+        Edge edge = adjacent.get(destinationNodeId);
+        if (edge == null)
+            throw new NoSuchElementException();
+        return edge;
+    }
+
+    public Map<String, Edge> getAdjacent() {
+        return adjacent;
     }
 
     public String getIpAddress() {
@@ -47,5 +67,15 @@ public class Node {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public boolean equals(Object anotherObject) {
+        return !(anotherObject == null || !(anotherObject instanceof Node));
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getId()).toHashCode();
     }
 }

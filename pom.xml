@@ -63,7 +63,6 @@
                 <version>${pittest-maven.version}</version>
                 <executions>
                     <execution>
-                        <phase>test</phase>
                         <goals>
                             <goal>mutationCoverage</goal>
                         </goals>
@@ -211,7 +210,12 @@
             <version>2.5.1</version>
         </dependency>
         <dependency>
-            <groupId>org.hsqldb</groupId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.1</version>
+        </dependency>
+        <dependency>
+        <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>2.3.3</version>
         </dependency>

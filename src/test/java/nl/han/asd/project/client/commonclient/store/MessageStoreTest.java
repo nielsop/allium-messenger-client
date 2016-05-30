@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.store;
 
 import com.google.inject.Guice;
+import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import nl.han.asd.project.client.commonclient.persistence.PersistenceModule;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -29,7 +30,7 @@ public class MessageStoreTest {
 
         when(messageStore.findMessageByID(message.getId())).thenReturn(message);
 
-        messageStore.addMessage(message, "recipient");
+        messageStore.addMessage(Message.fromProtocolMessage(message));
         HanRoutingProtocol.Message result = messageStore.findMessageByID(message.getId());
 
         assertEquals(result, message);

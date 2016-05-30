@@ -1,14 +1,13 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 
 import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.database.model.Contact;
 import nl.han.asd.project.client.commonclient.database.model.Message;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Defines an interface for persistence functions.
@@ -18,6 +17,9 @@ import java.util.Map;
  * @since 24-05-2016
  */
 public interface IPersistence {
+
+    public static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     /**
      * Deletes a message from the database.
      * @param id The id of the message to remove from the database.

@@ -51,7 +51,7 @@ public class MessageProcessingServiceTest {
         messageProcessingService.processIncomingMessage(messageWrapper);
 
         // verify that the addMessage is called (thus no exceptions where thrown)
-        verify(messageStore, times(1)).addMessage(eq(message), eq(messageWrapper.getUsername()));
+        verify(messageStore, times(1)).addMessage(eq(Message.fromProtocolMessage(message)));
     }
 
 
@@ -84,7 +84,7 @@ public class MessageProcessingServiceTest {
         messageProcessingService.processIncomingMessage(messageWrapper);
 
         // verify that the addMessage or messageReceived method are never called.
-        verify(messageStore, times(0)).addMessage(any(), any());
+        verify(messageStore, times(0)).addMessage(any());
         verify(messageStore, times(0)).messageReceived(any());
     }
 
@@ -105,7 +105,7 @@ public class MessageProcessingServiceTest {
         messageProcessingService.processIncomingMessage(messageWrapper);
 
         // verify that the addMessage or messageReceived method are never called.
-        verify(messageStore, times(0)).addMessage(any(), any());
+        verify(messageStore, times(0)).addMessage(any());
         verify(messageStore, times(0)).messageReceived(any());
     }
 

@@ -1,141 +1,164 @@
 package nl.han.asd.project.client.commonclient.master;
 
-import com.google.inject.Inject;
-import com.google.protobuf.ByteString;
-import nl.han.asd.project.client.commonclient.Configuration;
-import nl.han.asd.project.client.commonclient.connection.ConnectionService;
-import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
-import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
-import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
-import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
-import nl.han.asd.project.client.commonclient.utility.RequestWrapper;
-import nl.han.asd.project.client.commonclient.utility.Validation;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.File;
 import java.io.IOException;
-import java.net.Socket;
+import java.util.Properties;
 
-public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication {
+import javax.inject.Inject;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MasterGateway.class);
-    private ConnectionService connectionService;
-    private Socket socket;
-    private IEncryptionService encryptionService;
-    private String hostname = Configuration.getHostname();
-    private int port = Configuration.getPort();
+import com.google.protobuf.GeneratedMessage;
 
+import nl.han.asd.project.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Client;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientHeartbeat;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Type;
+
+/**
+ * Base implementation class used during the communication
+ * with the master server.
+ *
+ * <p>
+ * Note that this implementation limits the number of open
+ * connections to the master application to 1 meaning that
+ * calls may block even on requests that do not expect a response
+ * if the application has an active connection with the master server
+ * prior to calling the send-method.
+ *
+ * @version 1.0
+ */
+public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication, IGetClientGroup, IGetGraphUpdates {
+
+    private enum PropertyValues {
+        MASTER_SERVER_HOST("master-server-host", false), MASTER_SERVER_PORT("master-server-port", false),
+        MASTER_SERVER_KEYFILE("master-server-keyfile", true);
+
+        private String value;
+        private boolean nullable;
+
+        private PropertyValues(String value, boolean nullable) {
+            this.value = Check.notNull(value, "value");
+            this.nullable = nullable;
+        }
+
+        String get(Properties properties) {
+            String property = properties.getProperty(value);
+            return nullable ? property : Check.notNull(property, value);
+        }
+
+        Integer getInteger(Properties properties) {
+            return Integer.valueOf(get(properties));
+        }
+    }
+
+    private IConnectionService connectionService;
+
+    /**
+     * Construct a new MasterGateway instance using the provided
+     * parameters.
+     *
+     * <p>
+     * Note that this implementation relies on the properties
+     * defined in the properties parameter to find the required
+     * connection and authentication details on socket construction.
+     *
+     * <p>
+     * The following properties are used:
+     * <pre>
+     *  properties name         | definition                                            | example
+     *  {@link PropertyValues#MASTER_SERVER_HOST}       | the ip or hostname to connect to                      | "10.0.0.1"
+     *  {@link PropertyValues#MASTER_SERVER_PORT}       | the port to connect to                                | 3333
+     *  {@link PropertyValues#MASTER_SERVER_KEYFILE}    | keyfile containing the master's public key            | "/usr/keyfile"
+     * </pre>
+     * All packets are send plain-text if {@link PropertyValues#MASTER_SERVER_KEYFILE} is undefined.
+     *
+     * @param properties properties instance containing the
+     *          connection details
+     * @param connectionServiceFactory factory to construct
+     *          the connection service
+     *
+     * @throws IllegalArgumentException if properties or
+     *          encryptionService is null
+     * @throws IOException if unable to construct a new
+     *          {@link IConnectionService} using the
+     *          {@link PropertyValues#MASTER_SERVER_KEYFILE}
+     */
     @Inject
-    public MasterGateway(IEncryptionService encryptionService) {
-        this.encryptionService = encryptionService;
-    }
+    public MasterGateway(Properties properties, IConnectionServiceFactory connectionServiceFactory) throws IOException {
+        Check.notNull(properties, "properties");
+        Check.notNull(connectionServiceFactory, "connectionServiceFactory");
 
-    public void setConnectionData(String hostname, int port) {
-        this.hostname = hostname;
-        this.port = port;
-    }
+        String host = PropertyValues.MASTER_SERVER_HOST.get(properties);
+        int port = PropertyValues.MASTER_SERVER_PORT.getInteger(properties);
 
-    public Socket getSocket() {
-        if (socket == null || socket.isClosed()) {
-            try {
-                socket = new Socket(hostname, port);
-            } catch (IOException e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+        String keyfile = PropertyValues.MASTER_SERVER_KEYFILE.get(properties);
+
+        if (keyfile == null) {
+            connectionService = connectionServiceFactory.create(host, port);
+        } else {
+            connectionService = connectionServiceFactory.create(host, port, new File(keyfile));
         }
-        return socket;
     }
 
+    /** {@inheritDoc} */
     @Override
-    public LoginResponseWrapper authenticate(String username, String password) {
-        Validation.validateCredentials(username, password);
-        HanRoutingProtocol.ClientLoginRequest loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder().setUsername(username).setPassword(password)
-                .setPublicKey(ByteString.copyFrom(encryptionService.getPublicKey())).build();
-        RequestWrapper request = new RequestWrapper(loginRequest, HanRoutingProtocol.Wrapper.Type.CLIENTLOGINREQUEST, getSocket());
-        HanRoutingProtocol.ClientLoginResponse response = request.writeAndRead(HanRoutingProtocol.ClientLoginResponse.class);
-        return new LoginResponseWrapper(response.getConnectedNodesList(), response.getSecretHash(), response.getStatus());
+    public ClientRegisterResponse register(ClientRegisterRequest request) throws IOException, MessageNotSentException {
+        Check.notNull(request, "request");
+
+        Wrapper wrapper = connectionService.wrap(request, Type.CLIENTREGISTERREQUEST);
+        return (ClientRegisterResponse) connectionService.writeAndRead(wrapper);
     }
 
+    /** {@inheritDoc} */
     @Override
-    public RegisterResponseWrapper register(String username, String password) {
-        Validation.validateCredentials(username, password);
-        HanRoutingProtocol.ClientRegisterRequest registerRequest = HanRoutingProtocol.ClientRegisterRequest.newBuilder().setUsername(username).setPassword(password).build();
-        RequestWrapper req = new RequestWrapper(registerRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREGISTERREQUEST, getSocket());
-        HanRoutingProtocol.ClientRegisterResponse response = req.writeAndRead(HanRoutingProtocol.ClientRegisterResponse.class);
-        return new RegisterResponseWrapper(response.getStatus());
+    public void sendHeartbeat(ClientHeartbeat heartbeat) throws IOException, MessageNotSentException {
+        Check.notNull(heartbeat, "heartbeat");
+
+        Wrapper wrapper = connectionService.wrap(heartbeat, Type.CLIENTHEARTBEAT);
+        connectionService.write(wrapper);
     }
 
+    /** {@inheritDoc} */
     @Override
-    public UpdatedGraphResponseWrapper getUpdatedGraph(int version) {
-        HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder().setCurrentVersion(version).build();
-        RequestWrapper req = new RequestWrapper(graphUpdateRequest, HanRoutingProtocol.Wrapper.Type.GRAPHUPDATEREQUEST, getSocket());
+    public ClientLoginResponse login(ClientLoginRequest request) throws IOException, MessageNotSentException {
+        Check.notNull(request, "request");
 
-        HanRoutingProtocol.GraphUpdateResponse response = req.writeAndRead(HanRoutingProtocol.GraphUpdateResponse.class);
-        UpdatedGraphResponseWrapper updatedGraphs = new UpdatedGraphResponseWrapper(response.getGraphUpdatesList());
-        return updatedGraphs;
+        Wrapper wrapper = connectionService.wrap(request, Type.CLIENTLOGINREQUEST);
+        GeneratedMessage response = connectionService.writeAndRead(wrapper);
+
+        return Check.isInstance(response, ClientLoginResponse.class, "response");
     }
 
+    /** {@inheritDoc} */
     @Override
-    public ClientGroupResponseWrapper getClientGroup() {
-        HanRoutingProtocol.ClientRequest clientRequest = HanRoutingProtocol.ClientRequest.newBuilder().build();
-        RequestWrapper req = new RequestWrapper(clientRequest, HanRoutingProtocol.Wrapper.Type.CLIENTREQUEST, getSocket());
-        HanRoutingProtocol.ClientResponse clientResponse = req.writeAndRead(HanRoutingProtocol.ClientResponse.class);
-        return new ClientGroupResponseWrapper(clientResponse.getClientsList());
+    public GraphUpdateResponse getUpdatedGraph(GraphUpdateRequest request) throws IOException, MessageNotSentException {
+        Check.notNull(request, "request");
+
+        Wrapper wrapper = connectionService.wrap(request, Type.GRAPHUPDATEREQUEST);
+        GeneratedMessage response = connectionService.writeAndRead(wrapper);
+
+        return Check.isInstance(response, GraphUpdateResponse.class, "response");
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Client getClientGroup(ClientRequest request) throws IOException, MessageNotSentException {
+        Check.notNull(request, "request");
 
-    /**
-     * Returns the connection.
-     *
-     * @return The connection
-     */
-    private ConnectionService getConnection() {
-        if (isConnectionOpen()) {
-            return connectionService;
-        }
-        startConnection();
-        return connectionService;
+        Wrapper wrapper = connectionService.wrap(request, Type.CLIENTREQUEST);
+        GeneratedMessage response = connectionService.writeAndRead(wrapper);
+
+        return Check.isInstance(response, Client.class, "response");
     }
 
-    /**
-     * Starts the connection.
-     */
-    private void startConnection() {
-        if (isConnectionOpen())
-            return;
-        if (connectionService == null) {
-            // new byte[] { 0x00 } = public key that belongs to the cryptography service of the receiver
-            //                          en/decryption is disabled for now, so initializing with an null-byte is sufficient.
-            connectionService = new ConnectionService(encryptionService, new byte[]{0x00});
-        }
-        try {
-            connectionService.open(Configuration.getHostname(), Configuration.getPort());
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Checks if the connection is open.
-     *
-     * @return <tt>true</tt> if the connection is open, <tt>false</tt> if the connection is not.
-     */
-    private boolean isConnectionOpen() {
-        return connectionService != null && connectionService.isConnected();
-    }
-
-    /**
-     * Closes the connection service.
-     */
-    public void close() {
-        if (isConnectionOpen()) {
-            try {
-                connectionService.close();
-            } catch (IOException e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-    }
 }

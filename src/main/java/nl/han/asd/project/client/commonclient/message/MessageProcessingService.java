@@ -4,6 +4,9 @@ import com.google.inject.Inject;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.node.ISendData;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
@@ -58,21 +61,22 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
                     == HanRoutingProtocol.Wrapper.Type.MESSAGE) {
 
                 HanRoutingProtocol.Message message = HanRoutingProtocol.Message.parseFrom(wrapper.getData());
-                messageStore.addMessage(message, messageWrapper.getUsername());
+                Message internalMessage = Message.fromProtocolMessage(message);
+                messageStore.addMessage(internalMessage);
 
             } else {
                 throw new InvalidProtocolBufferException(String.format(
                         "Packet didn't contain a MessageConfirmation nor a Message but %s.",
                         wrapper.getType().name()));
             }
-
         } catch (InvalidProtocolBufferException e) {
             LOGGER.error("Error unpacking received message.", e);
         }
     }
 
     @Override
-    public void processOutgoingMessage(HanRoutingProtocol.MessageWrapper messageWrapper, Contact contactReceiver) {
+    public void sendMessage(HanRoutingProtocol.MessageWrapper messageWrapper,
+            Contact contactReceiver) {
         nodeConnectionService.sendData(messageWrapper.toByteArray(), contactReceiver);
     }
 
