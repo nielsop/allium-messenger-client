@@ -8,8 +8,6 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 import java.util.List;
 
 /**
- *
- *
  * @author Niels Bokmans
  * @version 1.0
  * @since 27-5-2016
@@ -20,8 +18,8 @@ public interface ICommonClientGateway {
      * Register a user on the master application with the given credentials.
      * Use the MasterGateway to register a user.
      *
-     * @param username username given by user.
-     * @param password password given by user.
+     * @param username       username given by user.
+     * @param password       password given by user.
      * @param passwordRepeat repeated password given by the user.
      * @return RegisterResponse.status
      * @throws IllegalArgumentException

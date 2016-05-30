@@ -30,6 +30,7 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
     /**
      * Constructs the MasterGateway.
      * Gets an instance of the encryption service using Guice dependency injection.
+     *
      * @param encryptionService
      */
     @Inject
@@ -45,6 +46,7 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
     /**
      * Gets the socket if there already was a connection.
      * It creates a new socket if there is no socket or the previous has been closed.
+     *
      * @return Socket socket.
      */
     public Socket getSocket() {
@@ -60,10 +62,11 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
 
     /**
      * This method authenticates a user to the master application with the given credentials.
+     *
      * @param username the username to be authenticated.
      * @param password the password belonging to the username.
      * @return a wrapper which is the response of the authentication process. For the specific details of the LoginResponseWrapper,
-     *          check the LoginResponseWrapper class.
+     * check the LoginResponseWrapper class.
      */
     @Override
     public LoginResponseWrapper authenticate(String username, String password) throws IllegalArgumentException {
@@ -78,11 +81,12 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
 
     /**
      * This method registers a user at the master application with the given credentials.
-     * @param username the username to be registered.
-     * @param password the password to be registered with the username.
+     *
+     * @param username       the username to be registered.
+     * @param password       the password to be registered with the username.
      * @param passwordRepeat repeat the password to guarantee the user he inserted the password he really wanted to use.
      * @return a wrapper which is the response of the registration process. For the specific details of the RegisterResponseWrapper,,
-     *          check the RegisterResponseWrapper class.
+     * check the RegisterResponseWrapper class.
      * @throws IllegalArgumentException
      */
     @Override
@@ -124,6 +128,7 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
 
     /**
      * Returns the connection.
+     *
      * @return The connection
      */
     private ConnectionService getConnection() {
@@ -143,7 +148,7 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
         if (connectionService == null) {
             // new byte[] { 0x00 } = public key that belongs to the cryptography service of the receiver
             //                          en/decryption is disabled for now, so initializing with an null-byte is sufficient.
-            connectionService = new ConnectionService(new byte[] { 0x00 });
+            connectionService = new ConnectionService(new byte[]{0x00});
         }
         try {
             connectionService.open(Configuration.getHostname(), Configuration.getPort());
@@ -154,6 +159,7 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
 
     /**
      * Checks if the connection is open.
+     *
      * @return <tt>true</tt> if the connection is open, <tt>false</tt> if the connection is not.
      */
     private boolean isConnectionOpen() {

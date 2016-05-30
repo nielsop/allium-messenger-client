@@ -9,7 +9,6 @@ import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponse
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
-import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.*;
@@ -98,7 +97,8 @@ public class MasterGatewayIT {
 
     /* Get active client group from master server */
 
-    @Test @Ignore("Has to be fixed.")
+    @Test
+    @Ignore("Has to be fixed.")
     public void testGetClientGroupSuccessful() {
         ClientGroupResponseWrapper response = gateway.getClientGroup();
         Assert.assertTrue(response.getClientGroup().size() >= 0);

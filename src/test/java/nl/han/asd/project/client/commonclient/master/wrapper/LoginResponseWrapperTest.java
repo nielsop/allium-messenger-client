@@ -19,7 +19,7 @@ public class LoginResponseWrapperTest {
      * this.secretHash = secretHash;
      * this.status = status;
      */
-    private static final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
+    private static final byte[] EMPTY_PUBLICKEY_BYTES = new byte[]{0x00};
     private static List<String> nodeList;
 
     @BeforeClass

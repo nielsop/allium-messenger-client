@@ -29,15 +29,6 @@ public class UpdatedGraphResponseWrapper {
 
 
     /**
-     *
-     * Returns the updated graph.
-     * @return updatedGraph
-     */
-    public List<UpdatedGraphWrapper> getUpdatedGraphs(){
-        return updatedGraphs;
-    }
-
-    /**
      * Creates a new updated graph response wrapper from a list of ByteStrings containing the individual graph updates.
      *
      * @param graphUpdates The graph updates
@@ -52,6 +43,15 @@ public class UpdatedGraphResponseWrapper {
             }
         });
         setUpdatedGraphs(updatedGraphWrapper);
+    }
+
+    /**
+     * Returns the updated graph.
+     *
+     * @return updatedGraph
+     */
+    public List<UpdatedGraphWrapper> getUpdatedGraphs() {
+        return updatedGraphs;
     }
 
     public void setUpdatedGraphs(List<UpdatedGraphWrapper> graphs) {

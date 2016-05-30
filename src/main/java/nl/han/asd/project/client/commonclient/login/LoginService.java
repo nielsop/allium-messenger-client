@@ -19,9 +19,10 @@ public class LoginService implements ILoginService {
 
     /**
      * Creates a loginService object using guice dependency injection.
+     *
      * @param setConnectedNodes interface IGetConnectedNodes.
-     * @param authentication interface IAuthentication.
-     * @param gateway MasterGateway gateway.
+     * @param authentication    interface IAuthentication.
+     * @param gateway           MasterGateway gateway.
      */
     @Inject
     public LoginService(ISetConnectedNodes setConnectedNodes, IAuthentication authentication, MasterGateway gateway) {
@@ -32,6 +33,7 @@ public class LoginService implements ILoginService {
 
     /**
      * Creates a LoginResponseWrapper using a username and a password.
+     *
      * @param username the username to login.
      * @param password the password to login.
      * @return LoginResponseWrapper as a result from MasterGateway.register(username, password).

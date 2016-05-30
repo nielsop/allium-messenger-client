@@ -13,7 +13,7 @@ public class Contact {
     private boolean online;
 
     public Contact(String username) {
-        this(username, new byte[] {}, false);
+        this(username, new byte[]{}, false);
     }
 
     public Contact(String username, byte[] publicKey) {

@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class ConnectionServiceTest implements IConnectionService {
 
     private static Server server = new Server();
-    private final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
+    private final byte[] EMPTY_PUBLICKEY_BYTES = new byte[]{0x00};
     private ConnectionService connectionService = null;
 
     public ConnectionServiceTest() {

@@ -29,8 +29,8 @@ public class EncryptionService implements IEncryptionService {
     /**
      * Encrypts a byte array containing data.
      *
-     * @param key The public key to encrypt the ByteString with.
-     * @param data      The byte array in ByteString format.
+     * @param key  The public key to encrypt the ByteString with.
+     * @param data The byte array in ByteString format.
      * @return The encrrypted byte array in ByteString format.
      */
     @Override

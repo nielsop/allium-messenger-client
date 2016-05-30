@@ -18,7 +18,7 @@ public class NodeTest {
     private final String NODE_ID = "NODE_1";
     private final String NODE_IP = "192.168.2.16";
     private final int NODE_PORT = 1337;
-    private final byte[] NODE_PUBLICKEY = new byte[] { 0x00 };
+    private final byte[] NODE_PUBLICKEY = new byte[]{0x00};
     private Node node;
     private HanRoutingProtocol.Edge edge;
 

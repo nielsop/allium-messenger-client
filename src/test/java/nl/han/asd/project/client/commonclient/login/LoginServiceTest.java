@@ -1,20 +1,10 @@
 package nl.han.asd.project.client.commonclient.login;
 
-import nl.han.asd.project.client.commonclient.master.IAuthentication;
-import nl.han.asd.project.client.commonclient.master.MasterGateway;
-import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
-import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 import nl.han.asd.project.client.commonclient.utility.Validation;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoginServiceTest {

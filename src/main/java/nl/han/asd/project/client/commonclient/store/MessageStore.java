@@ -38,9 +38,9 @@ public class MessageStore implements IMessageStore, IMessageStoreObserver {
     @Override
     public List<Message> getMessagesFromUser(String contact) {
         return getAllMessagesFromAllUsers().get(new Contact(contact));
-	}
-	
-	@Override
+    }
+
+    @Override
     public void saveToDatabase() {
         for (final Map.Entry<Contact, List<Message>> mapEntry : messagesPerContact.entrySet()) {
             for (final Message message : mapEntry.getValue()) {

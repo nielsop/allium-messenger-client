@@ -36,7 +36,7 @@ public class CommonClientGateway implements ICommonClientGateway {
 
     @Inject
     public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IMessageBuilder messageBuilder, IMessageStoreObserver messageStoreObserver,
-            IRegistration registration, ILoginService login) {
+                               IRegistration registration, ILoginService login) {
         this.contactStore = contactStore;
         this.messageStore = messageStore;
         this.messageBuilder = messageBuilder;

@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 
 public class PackerTest {
 
-    private final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
+    private final byte[] EMPTY_PUBLICKEY_BYTES = new byte[]{0x00};
     private Packer packer = null;
 
     @Before

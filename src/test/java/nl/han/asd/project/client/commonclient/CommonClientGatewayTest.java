@@ -60,6 +60,7 @@ public class CommonClientGatewayTest {
         Assert.assertTrue(contactStore.getAllContacts() == commonClientGateway.getContacts());
         Assert.assertTrue(commonClientGateway.getContacts().contains(contact1));
     }
+
     @Test
     public void removeContactActuallyRemovesContactFromContactStore() {
         String newContact = "newContact";

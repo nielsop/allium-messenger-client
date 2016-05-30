@@ -2,11 +2,12 @@ package nl.han.asd.project.client.commonclient.utility;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Bram Heijmink on 10-5-2016.
@@ -26,6 +27,18 @@ public class ValidationTest {
     private static final String INVALID_PASSWORD_TOO_SHORT = ""; // Aanname dat de minimum lengte van een password 8 tekens is.
     private static final String INVALID_USERNAME_NULL = null;
     private static final String INVALID_PASSWORD_NULL = null;
+    private static final String VALID_USERNAME_3CHARS = "OKE";
+    private static final String VALID_USERNAME_40CHARS = "ThisIsAUsernameOf50CharactersIIIIIIIIIII";
+    private static final String INVALID_USERNAME_2CHARS = "NO";
+    private static final String INVALID_USERNAME_41CHARS = "ThisIsAUsernameOf51CharactersIIIIIIIIIIII";
+    private static final String VALID_USERNAME_RIGHT_CHARS = "This-Is_Valid-Username";
+    private static final String INVALID_USERNAME_WRONG_CHARS = "WrongUsername*&^%$";
+    private static final String INVALID_PASSWORD_7CHARS = "Invalid";
+    private static final String VALID_PASSWORD_8CHARS = "ThisIsOk";
+    private static final String VALID_PASSWORD_40CHARS = "ThisIsAPasswordOf40CharactersOOOOOOOOOOO";
+    private static final String INVALID_PASSWORD_41CHARS = "ThisIsAPasswordOf41CharactersOOOOOOOOOOOO";
+    private static final String VALID_PASSWORD_RIGHT_CHARS = "This-Is_Valid-Password";
+    private static final String INVALID_PASSWORD_WRONG_CHARS = "WrongPassword*&@#$";
 
     @Before
     public void setUp() {
@@ -81,20 +94,6 @@ public class ValidationTest {
         Validation.validateCredentials(VALID_USERNAME, INVALID_PASSWORD_NULL);
     }
 
-    private static final String VALID_USERNAME_3CHARS = "OKE";
-    private static final String VALID_USERNAME_40CHARS = "ThisIsAUsernameOf50CharactersIIIIIIIIIII";
-    private static final String INVALID_USERNAME_2CHARS = "NO";
-    private static final String INVALID_USERNAME_41CHARS = "ThisIsAUsernameOf51CharactersIIIIIIIIIIII";
-    private static final String VALID_USERNAME_RIGHT_CHARS = "This-Is_Valid-Username";
-    private static final String INVALID_USERNAME_WRONG_CHARS = "WrongUsername*&^%$";
-
-    private static final String INVALID_PASSWORD_7CHARS = "Invalid";
-    private static final String VALID_PASSWORD_8CHARS = "ThisIsOk";
-    private static final String VALID_PASSWORD_40CHARS = "ThisIsAPasswordOf40CharactersOOOOOOOOOOO";
-    private static final String INVALID_PASSWORD_41CHARS = "ThisIsAPasswordOf41CharactersOOOOOOOOOOOO";
-    private static final String VALID_PASSWORD_RIGHT_CHARS = "This-Is_Valid-Password";
-    private static final String INVALID_PASSWORD_WRONG_CHARS = "WrongPassword*&@#$";
-
     /* Testing ipAddress */
     @Test
     public void testValidIPV4Address() {
@@ -123,19 +122,27 @@ public class ValidationTest {
 
     /* Testing ports */
     @Test
-    public void testValidPort1023() { assertEquals(Validation.isValidPort(1023), false) ; }
+    public void testValidPort1023() {
+        assertEquals(Validation.isValidPort(1023), false);
+    }
 
     @Test
-    public void testValidPort1024() { assertEquals(Validation.isValidPort(1024), true) ; }
+    public void testValidPort1024() {
+        assertEquals(Validation.isValidPort(1024), true);
+    }
 
     @Test
-    public void testValidPort65535() { assertEquals(Validation.isValidPort(65535), true) ; }
+    public void testValidPort65535() {
+        assertEquals(Validation.isValidPort(65535), true);
+    }
 
     @Test
-    public void testInvalidPort65536() { assertEquals(Validation.isValidPort(65536), false) ; }
+    public void testInvalidPort65536() {
+        assertEquals(Validation.isValidPort(65536), false);
+    }
 
     /* Testing validating username */
-    @Test (expected =  IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testValidationRegister2CharsUsernameFailed() {
         Validation.validateCredentials(INVALID_USERNAME_2CHARS, VALID_PASSWORD_8CHARS);
     }
@@ -150,7 +157,7 @@ public class ValidationTest {
         assertTrue(Validation.validateCredentials(VALID_USERNAME_40CHARS, VALID_PASSWORD_8CHARS));
     }
 
-    @Test (expected =  IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testValidationRegister41CharsUsernameFailed() {
         Validation.validateCredentials(INVALID_USERNAME_41CHARS, VALID_PASSWORD_8CHARS);
     }
@@ -160,13 +167,13 @@ public class ValidationTest {
         assertTrue(Validation.validateCredentials(VALID_USERNAME_RIGHT_CHARS, VALID_PASSWORD_8CHARS));
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testValidationRegisterUsernameWithWrongChars() {
         Validation.validateCredentials(INVALID_USERNAME_WRONG_CHARS, VALID_PASSWORD_8CHARS);
     }
 
     /* Testing validating password */
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testValidationRegister7CharsPasswordFailed() {
         Validation.validateCredentials(VALID_USERNAME_3CHARS, INVALID_PASSWORD_7CHARS);
     }
@@ -181,12 +188,12 @@ public class ValidationTest {
         assertTrue(Validation.validateCredentials(VALID_USERNAME_3CHARS, VALID_PASSWORD_40CHARS));
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testValidationRegister41CharsPasswordFailed() {
         Validation.validateCredentials(VALID_USERNAME_3CHARS, INVALID_PASSWORD_41CHARS);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testValidationRegisterWrongCharsFailed() {
         Validation.validateCredentials(VALID_USERNAME_3CHARS, INVALID_PASSWORD_WRONG_CHARS);
     }
@@ -197,12 +204,12 @@ public class ValidationTest {
     }
 
     @Test
-    public void testValidationClassIsFinal(){
+    public void testValidationClassIsFinal() {
         assertTrue(Modifier.isFinal(Validation.class.getModifiers()));
     }
 
     @Test
-    public void testValidationClassHasOnly1ConstructorAndItIsPrivate(){
+    public void testValidationClassHasOnly1ConstructorAndItIsPrivate() {
         try {
             final Constructor constructor = Validation.class.getDeclaredConstructor();
             assertTrue(!constructor.isAccessible() && Validation.class.getDeclaredConstructors().length == 1);

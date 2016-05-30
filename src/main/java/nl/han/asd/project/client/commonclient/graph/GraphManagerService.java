@@ -20,7 +20,6 @@ public class GraphManagerService implements IGetVertices {
     }
 
     /**
-     *
      * @return the current graph version
      */
     public int getCurrentGraphVersion() {
@@ -55,7 +54,6 @@ public class GraphManagerService implements IGetVertices {
     }
 
     /**
-     *
      * @return the graph
      */
     public Graph getGraph() {
@@ -63,11 +61,10 @@ public class GraphManagerService implements IGetVertices {
     }
 
     /**
-     *
      * @return the vertices from the graph
      */
     @Override
-    public Map<String,Node> getVertices() {
+    public Map<String, Node> getVertices() {
         return graph.getVertexMap();
     }
 }

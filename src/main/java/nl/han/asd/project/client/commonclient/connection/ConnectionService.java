@@ -30,7 +30,7 @@ public final class ConnectionService implements IConnectionPipe {
     /**
      * Initializes this class.
      *
-     * @param sleepTime Amount of time the asynchronous thread sleeps in between reads from the socket.
+     * @param sleepTime         Amount of time the asynchronous thread sleeps in between reads from the socket.
      * @param receiverPublicKey The public key of the receiver.
      */
     public ConnectionService(final int sleepTime, final byte[] receiverPublicKey) {
@@ -50,10 +50,11 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Initializes this class.
-     * @param sleepTime Amount of time the asynchronous thread sleeps in between reads from the socket.
+     *
+     * @param sleepTime         Amount of time the asynchronous thread sleeps in between reads from the socket.
      * @param receiverPublicKey The public key of the receiver.
-     * @param targetService An instance that implements IConnectionService. This instance will be used as callback
-     *                      while reading asynchronous.
+     * @param targetService     An instance that implements IConnectionService. This instance will be used as callback
+     *                          while reading asynchronous.
      */
     public ConnectionService(final int sleepTime, final byte[] receiverPublicKey, final IConnectionService targetService) {
         this(sleepTime, receiverPublicKey);
@@ -68,6 +69,7 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Initializes this class.
+     *
      * @param receiverPublicKey The public key of the receiver.
      */
     public ConnectionService(final byte[] receiverPublicKey) {
@@ -76,9 +78,10 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Initializes this class.
+     *
      * @param receiverPublicKey The public key of the receiver.
-     * @param targetService An instance that implements IConnectionService. This instance will be used as callback
-     *                      while reading asynchronous.
+     * @param targetService     An instance that implements IConnectionService. This instance will be used as callback
+     *                          while reading asynchronous.
      */
     public ConnectionService(final byte[] receiverPublicKey, final IConnectionService targetService) {
         this(DEFAULT_SLEEP_TIME, receiverPublicKey, targetService);
@@ -86,6 +89,7 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Reads data from the input stream.
+     *
      * @return A byte array containing the received data from the input stream, or null if no data was read.
      * @throws SocketException If there is no valid connection.
      */
@@ -100,6 +104,7 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Start reading asynchronous from the input stream.
+     *
      * @throws SocketException If there is no valid connection.
      */
     public void readAsync() throws SocketException {
@@ -150,8 +155,9 @@ public final class ConnectionService implements IConnectionPipe {
 
     /**
      * Writes data from the builder to the connection using the input stream.
+     *
      * @param instance Instance of the builder class of the protocol buffer.
-     * @param <T>             Protocol buffer class.
+     * @param <T>      Protocol buffer class.
      * @throws SocketException An exception occurred while writing the data.
      */
     public <T extends GeneratedMessage.Builder> void write(final T instance) throws SocketException {

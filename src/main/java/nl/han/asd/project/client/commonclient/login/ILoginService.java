@@ -7,5 +7,6 @@ import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrappe
  */
 public interface ILoginService {
     LoginResponseWrapper login(String username, String password);
+
     boolean logout(String username, String secretHash);
 }

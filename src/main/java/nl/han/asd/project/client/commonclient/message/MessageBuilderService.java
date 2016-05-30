@@ -6,8 +6,6 @@ import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.ContactStore;
-
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -61,7 +59,8 @@ public class MessageBuilderService implements IMessageBuilder {
 
     /**
      * Deepest layer in final message package
-     * @param node contains information about the next hop in path
+     *
+     * @param node    contains information about the next hop in path
      * @param message contains information about the message typed by the client
      * @return encrypted data from the first layer that is build
      */

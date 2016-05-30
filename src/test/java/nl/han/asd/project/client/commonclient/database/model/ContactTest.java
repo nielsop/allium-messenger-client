@@ -6,18 +6,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *
- *
  * @author Niels Bokmans
  * @version 1.0
  * @since 23-5-2016
  */
 public class ContactTest {
 
-    private static Contact contact;
-
     private static final String PRIMARY_USERNAME = "TestContact";
     private static final String SECONDARY_USERNAME = "TestContact2";
+    private static Contact contact;
 
     @BeforeClass
     public static void beforeClass() {

@@ -26,6 +26,7 @@ public class Packer {
 
     /**
      * Packs a builder inside an EncryptedWrapper message.
+     *
      * @param originalBuilder Any Builder from the protocol buffer class.
      * @return The byte array that represents the EncryptedWrapper.
      */
@@ -44,6 +45,7 @@ public class Packer {
 
     /**
      * Unpacks a byte array that was read from the input stream.
+     *
      * @param packed EncryptedWrapper that needs to be unpacked.
      * @return The unpacked version of the encrypted wrapper.
      */
@@ -56,8 +58,9 @@ public class Packer {
 
     /**
      * Converts an EncryptedWrapper.Type to its matching protocol buffer class.
+     *
      * @param type The EncryptedWrapper.Type that needs to be converted.
-     * @param <T> Any class, derived from GeneratedMessage.
+     * @param <T>  Any class, derived from GeneratedMessage.
      * @return An class that extends from GeneratedMessage which can be used to decode the data inside an EncryptedWrapper.
      * @throws UnknownObjectException
      */
@@ -85,6 +88,7 @@ public class Packer {
 
     /**
      * Converts a descriptor taken from the Builder class to convert it to a valid EncryptedWrapper.Type.
+     *
      * @param classDescriptor The descriptor type of a builder.
      * @return The EncryptedWrapper.Type that is equivalent to the descriptor type.
      */
