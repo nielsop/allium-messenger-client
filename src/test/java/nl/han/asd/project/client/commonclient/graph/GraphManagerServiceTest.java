@@ -65,7 +65,7 @@ public class GraphManagerServiceTest {
 
     @After
     public void tearDown() throws Exception {
-
+        master.teardown();
     }
 
     @Test
