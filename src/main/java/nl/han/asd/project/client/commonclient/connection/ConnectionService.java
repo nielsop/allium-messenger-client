@@ -1,10 +1,7 @@
 package nl.han.asd.project.client.commonclient.connection;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
@@ -43,8 +40,7 @@ public final class ConnectionService implements IConnectionPipe {
      */
     public ConnectionService(final int sleepTime, final byte[] receiverPublicKey) {
         connection = new Connection(this);
-        Injector injector = Guice.createInjector(new EncryptionModule());
-        packer = new Packer(injector.getInstance(IEncryptionService.class));
+        packer = new Packer(encryptionService);
 
         if (receiverPublicKey == null)
             throw new IllegalArgumentException("Public key cannot be empty.");

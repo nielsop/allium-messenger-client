@@ -1,14 +1,11 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphWrapper;
-import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.After;
 import org.junit.Assert;
@@ -42,7 +39,6 @@ public class GraphManagerServiceTest {
     public void setUp() throws Exception {
         master = CloudHostFactory.getCloudHost("master");
         master.setup();
-        Injector injector = Guice.createInjector(new EncryptionModule());
         while (true) {
             try {
                 new Socket(master.getHostName(), master.getPort(1337));

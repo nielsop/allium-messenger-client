@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 
 public class ContactStore implements IContactStore {
-    public IPersistence persistence;
+    private IPersistence persistence;
     private CurrentUser currentUser;
     private ArrayList<Contact> contactList = new ArrayList<>();
 
@@ -69,6 +69,11 @@ public class ContactStore implements IContactStore {
         return currentUser;
     }
 
+    @Override
+    public void setCurrentUser(CurrentUser currentUser) {
+        this.currentUser = currentUser;
+    }
+
     /**
      * Getter for currentUser as a Contact.
      *
@@ -77,10 +82,5 @@ public class ContactStore implements IContactStore {
     @Override
     public Contact getCurrentUserAsContact() {
         return currentUser.getCurrentUserAsContact();
-    }
-
-    @Override
-    public void setCurrentUser(CurrentUser currentUser) {
-        this.currentUser = currentUser;
     }
 }

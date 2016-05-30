@@ -22,8 +22,8 @@ public class MessageBuilderService implements IMessageBuilder {
     private static MessageBuilderService instance = null;
     private IGetMessagePath getPath;
     private IEncryptionService encryptionService;
-    private ConnectionService connectionService = null;
-    private IContactStore contactStore = null;
+    private IContactStore contactStore;
+    private ConnectionService connectionService;
 
     @Inject
     public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService, IContactStore contactStore) {

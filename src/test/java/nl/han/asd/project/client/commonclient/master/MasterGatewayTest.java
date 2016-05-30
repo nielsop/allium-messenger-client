@@ -25,8 +25,8 @@ import static org.hsqldb.lib.StringConverter.hexStringToByteArray;
 @PrepareForTest(MasterGateway.class)
 public class MasterGatewayTest {
 
-    private MasterGateway gateway;
     byte[] byteArray;
+    private MasterGateway gateway;
 
     @Before
     public void setup() throws Exception {

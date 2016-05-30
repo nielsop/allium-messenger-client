@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient;
 import com.google.inject.AbstractModule;
 import nl.han.asd.project.client.commonclient.connection.ConnectionModule;
 import nl.han.asd.project.client.commonclient.database.DatabaseModule;
+import nl.han.asd.project.client.commonclient.graph.GraphModule;
 import nl.han.asd.project.client.commonclient.heartbeat.HeartbeatModule;
 import nl.han.asd.project.client.commonclient.login.LoginModule;
 import nl.han.asd.project.client.commonclient.master.MasterModule;
@@ -22,6 +23,7 @@ public class CommonClientModule extends AbstractModule {
     protected void configure() {
         this.install(new ConnectionModule());
         this.install(new DatabaseModule());
+        this.install(new GraphModule());
         this.install(new HeartbeatModule());
         this.install(new LoginModule());
         this.install(new MasterModule());

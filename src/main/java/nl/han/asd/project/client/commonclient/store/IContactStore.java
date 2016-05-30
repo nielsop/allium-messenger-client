@@ -49,16 +49,16 @@ public interface IContactStore {
     CurrentUser getCurrentUser();
 
     /**
-     * Getter for currentUser as a Contact.
-     *
-     * @return current user that is logged in as a Contact object.
-     */
-    Contact getCurrentUserAsContact();
-
-    /**
      * Setter for currentUser.
      *
      * @param currentUser the current user that is logged in
      */
     void setCurrentUser(CurrentUser currentUser);
+
+    /**
+     * Getter for currentUser as a Contact.
+     *
+     * @return current user that is logged in as a Contact object.
+     */
+    Contact getCurrentUserAsContact();
 }

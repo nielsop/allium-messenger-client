@@ -15,13 +15,13 @@ import java.util.Date;
 public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
-    public IContactStore contactStore;
+    private IContactStore contactStore;
     private IMessageStore messageStore;
-
     private IEncryptionService encryptionService;
 
     @Inject
-    public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService) {
+    public MessageProcessingService(IContactStore contactStore, IMessageStore messageStore, IEncryptionService encryptionService) {
+        this.contactStore = contactStore;
         this.messageStore = messageStore;
         this.encryptionService = encryptionService;
     }

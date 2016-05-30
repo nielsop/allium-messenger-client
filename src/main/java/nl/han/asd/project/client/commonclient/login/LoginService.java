@@ -13,7 +13,7 @@ public class LoginService implements ILoginService {
     private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]";
     private static final String REGEX_ALPHANUMERICSPECIAL = "^(?=(?:\\D*?\\d){8,32}(?!.*?\\d))[a-zA-Z0-9@\\#$%&*()_+\\]\\[';:?.,!^-]+$";
 
-    private MasterGateway masterGateway = null;
+    private MasterGateway masterGateway;
     private ISetConnectedNodes setConnectedNodes;
     private IAuthentication authentication;
 

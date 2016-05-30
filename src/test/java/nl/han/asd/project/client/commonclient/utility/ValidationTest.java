@@ -179,11 +179,11 @@ public class ValidationTest {
     }
 
     @Test
-    public void testEqualPasswordsReturnTrue(){
+    public void testEqualPasswordsReturnTrue() {
         assertTrue(Validation.passwordsEqual(VALID_PASSWORD, VALID_PASSWORD));
     }
 
-    @Test (expected =  IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testNotEqualPasswordsReturnFalse() throws Exception {
         Validation.passwordsEqual(VALID_PASSWORD_40CHARS, VALID_PASSWORD_8CHARS);
     }

@@ -57,30 +57,6 @@ public class CommonClientGateway implements ICommonClientGateway {
         contactStore.createTestContacts();
     }
 
-    @Override
-    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) {
-        RegisterResponseWrapper registerResponse = registration.register(username, password, passwordRepeat);
-        switch (registerResponse.getStatus()) {
-            case SUCCES:
-                break;
-            case FAILED:
-                break;
-            case TAKEN_USERNAME:
-                break;
-            default:
-                break;
-        }
-        return registerResponse.getStatus();
-    }
-
-    @Override
-    public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) {
-        LoginResponseWrapper loginResponse = login.login(username, password);
-        if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-            contactStore.setCurrentUser(new CurrentUser(username, publicKey, secretHash));
-        }
-        return loginResponse.getStatus();
-    }
 
     @Override
     public List<Message> getMessagesFromUser(String contact) {
@@ -120,5 +96,39 @@ public class CommonClientGateway implements ICommonClientGateway {
         messageStore.saveToDatabase();
         messageStore.clear();
         LOGGER.info("Logout successful: " + login.logout(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername(), contactStore.getCurrentUser().getSecretHash()));
+    }
+
+    /**
+     * Register a user on the master application with the given credentials.
+     * Use the MasterGateway to register a user.
+     *
+     * @param username       username given by user.
+     * @param password       password given by user.
+     * @param passwordRepeat repeated password given by the user.
+     * @return RegisterResponse.status
+     * @throws IllegalArgumentException
+     */
+    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IllegalArgumentException {
+        RegisterResponseWrapper registerResponse = registration.register(username, password, passwordRepeat);
+        switch (registerResponse.getStatus()) {
+            case SUCCES:
+                break;
+            case FAILED:
+                break;
+            case TAKEN_USERNAME:
+                break;
+            default:
+                break;
+        }
+        return registerResponse.getStatus();
+    }
+
+    public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) throws
+            IllegalArgumentException {
+        LoginResponseWrapper loginResponse = login.login(username, password);
+        if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
+            contactStore.setCurrentUser(new CurrentUser(username, publicKey, secretHash));
+        }
+        return loginResponse.getStatus();
     }
 }

@@ -62,10 +62,9 @@ public class MessageBuilderServiceTest {
         ArrayList<Node> path = new ArrayList<Node>(
                 Arrays.asList(new Node("NODE_ID_1", "192.168.2.1", 1234, "123456789".getBytes()), new Node("NODE_ID_2", "192.168.2.2", 1234, "123456789".getBytes()),
                         new Node("NODE_ID_3", "192.168.2.3", 1234, "123456789".getBytes())));
-        Byte[] encryptedData = new Byte[]{0, 1, 0, 1};
+        byte[] encryptedData = new byte[]{0, 1, 0, 1};
         Mockito.when(pathDeterminationService.getPath(anyInt(), any(Contact.class))).thenReturn(path);
         //Mockito.when(encrypt.encryptData(Mockito.any(ByteString.class),Mockito.any(byte[].class))).thenReturn(ByteString.copyFromUtf8("data"));
-        Mockito.when(pathDeterminationService.getPath(anyInt(), any(Contact.class))).thenReturn(path);
         //        messageBuilderService.sendMessage("hallo 124",contactReciever,contactSender);
     }
 

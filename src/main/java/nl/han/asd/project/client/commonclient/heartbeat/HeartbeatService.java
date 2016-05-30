@@ -4,7 +4,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.connection.IConnectionService;
 import nl.han.asd.project.client.commonclient.connection.UnpackedMessage;
-import nl.han.asd.project.client.commonclient.master.IHeartbeat;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
