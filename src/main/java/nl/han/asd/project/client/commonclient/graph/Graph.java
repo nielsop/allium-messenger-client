@@ -10,8 +10,7 @@ import java.util.NoSuchElementException;
  * Created by Julius on 25/04/16.
  */
 public class Graph {
-
-    private Map<String, Node> vertexMap = new HashMap<>();
+    private HashMap<String, Node> vertexMap = new HashMap<>();
 
     public Node getNodeVertex(String nodeID) {
         Node vertex = vertexMap.get(nodeID);
@@ -31,7 +30,7 @@ public class Graph {
 
     public void addNodeVertex(HanRoutingProtocol.Node vertex) {
         Node node = new Node(vertex.getId(), vertex.getIPaddress(), vertex.getPort(), vertex.getPublicKey().toByteArray());
-        vertexMap.put(node.getId(), node);
+        vertexMap.putIfAbsent(node.getId(), node);
     }
 
     public void addEdgesToVertex(HanRoutingProtocol.Node vertex) {
