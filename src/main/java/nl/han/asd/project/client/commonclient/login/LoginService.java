@@ -23,7 +23,7 @@ public class LoginService implements ILogin {
 
     private IAuthentication authentication;
     private IEncryptionService encryptionService;
-    private ISetConnectedNodes iSetConnectedNodes;
+    private ISetConnectedNodes setConnectedNodes;
 
     /**
      * Construct a new LoginService.
@@ -31,19 +31,22 @@ public class LoginService implements ILogin {
      * @param authentication the authentication interface
      * @param encryptionService the encryptionservice holding
      *          the public key
+     * @param setConnectedNodes the connectedNodes interface
      *
      * @throws IllegalArgumentException if authentication
      *          or encryptionService is null
      */
     @Inject
-    public LoginService(IAuthentication authentication, IEncryptionService encryptionService) {
+    public LoginService(IAuthentication authentication, IEncryptionService encryptionService, ISetConnectedNodes setConnectedNodes) {
         this.authentication = Check.notNull(authentication, "authentication");
         this.encryptionService = Check.notNull(encryptionService, "encryptionService");
+        this.setConnectedNodes = Check.notNull(setConnectedNodes, "setConnectedNodes");
     }
 
     /** {@inheritDoc} */
     @Override
-    public CurrentUser login(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
+    public CurrentUser login(String username, String password)
+            throws InvalidCredentialsException, IOException, MessageNotSentException {
         UserCheck.checkUsername(username);
         UserCheck.checkPassword(password);
 
@@ -53,7 +56,7 @@ public class LoginService implements ILogin {
         loginRequest.setPublicKey(ByteString.copyFrom(encryptionService.getPublicKey()));
 
         ClientLoginResponse loginResponse = authentication.login(loginRequest.build());
-        iSetConnectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList());
+        setConnectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList());
 
         if (loginResponse.getStatus() != ClientLoginResponse.Status.SUCCES) {
             throw new InvalidCredentialsException(loginResponse.getStatus().name());

@@ -16,5 +16,6 @@ public class NodeConnectionService implements ISetConnectedNodes, ISendData {
 
     @Override
     public void setConnectedNodes(ProtocolStringList connectedNodesList) {
+        // TODO implement connectedNodes after login
     }
 }
