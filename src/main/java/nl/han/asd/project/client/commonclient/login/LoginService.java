@@ -1,19 +1,18 @@
 package nl.han.asd.project.client.commonclient.login;
 
-import java.io.IOException;
-
-import javax.inject.Inject;
-
 import com.google.protobuf.ByteString;
-
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
+import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest.Builder;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
+
+import javax.inject.Inject;
+import java.io.IOException;
 
 /**
  * Provide the methods used to login.
@@ -24,6 +23,7 @@ public class LoginService implements ILogin {
 
     private IAuthentication authentication;
     private IEncryptionService encryptionService;
+    private ISetConnectedNodes iSetConnectedNodes;
 
     /**
      * Construct a new LoginService.
@@ -43,8 +43,7 @@ public class LoginService implements ILogin {
 
     /** {@inheritDoc} */
     @Override
-    public CurrentUser login(String username, String password)
-            throws InvalidCredentialsException, IOException, MessageNotSentException {
+    public CurrentUser login(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
         UserCheck.checkUsername(username);
         UserCheck.checkPassword(password);
 
@@ -54,6 +53,7 @@ public class LoginService implements ILogin {
         loginRequest.setPublicKey(ByteString.copyFrom(encryptionService.getPublicKey()));
 
         ClientLoginResponse loginResponse = authentication.login(loginRequest.build());
+        iSetConnectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList());
 
         if (loginResponse.getStatus() != ClientLoginResponse.Status.SUCCES) {
             throw new InvalidCredentialsException(loginResponse.getStatus().name());
