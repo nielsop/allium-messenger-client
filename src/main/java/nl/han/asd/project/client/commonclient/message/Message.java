@@ -19,6 +19,7 @@ public class Message {
     private String text;
     private Contact sender;
     private Date timestamp;
+    private int id;
 
     public Message(Contact sender, Date timestamp, String text) {
         this(-1, sender, timestamp, text);
@@ -87,5 +88,9 @@ public class Message {
 
 public Date getTimestamp() {
         return timestamp;
+    }
+
+    public int getId() {
+        return id;
     }
 }

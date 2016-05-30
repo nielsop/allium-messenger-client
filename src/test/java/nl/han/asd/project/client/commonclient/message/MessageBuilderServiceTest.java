@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.message;
 
-import nl.han.asd.project.client.commonclient.cryptography.EncryptionService;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
@@ -32,7 +31,7 @@ public class MessageBuilderServiceTest {
     @Mock
     IGetGraphUpdates updatedGraphMock;
     @Mock
-    IEncryptionService encrypt = Mockito.mock(EncryptionService.class);
+    IEncryptionService encrypt = Mockito.mock(IEncryptionService.class);
     @Mock
     ISendMessage sendMessage;
     @Mock
