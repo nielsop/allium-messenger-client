@@ -129,7 +129,7 @@ public class ContactStoreTest {
         addTestContacts();
 
         // Assert
-        assertNull(contactStore.findContact(TEST_CONTACT2));
+        assertNotNull(contactStore.findContact(TEST_CONTACT2));
         assertEquals(4, contactStore.getAllContacts().size());
         contactStore.removeContact(TEST_CONTACT2);
         assertNull(contactStore.findContact(TEST_CONTACT2));

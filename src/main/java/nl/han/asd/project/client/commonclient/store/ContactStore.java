@@ -15,11 +15,13 @@ public class ContactStore implements IContactStore {
 
     private IPersistence persistence;
     private CurrentUser currentUser;
-    private ArrayList<Contact> contactList = new ArrayList<>();
+    private List<Contact> contactList;
 
     @Inject
     public ContactStore(IPersistence persistence) {
         this.persistence = persistence;
+        this.contactList = new ArrayList<>();
+        contactList = persistence.getContacts();
     }
 
     @Override
@@ -30,6 +32,13 @@ public class ContactStore implements IContactStore {
 
     @Override
     public void removeContact(String username) {
+        for (int i = 0; i < contactList.size(); i++) {
+            Contact toBeDeletedContact = contactList.get(i);
+            if (toBeDeletedContact.getUsername().equals(username)) {
+                contactList.remove(i);
+                break;
+            }
+        }
         persistence.deleteContact(username);
     }
 
@@ -59,9 +68,7 @@ public class ContactStore implements IContactStore {
      */
     @Override
     public List<Contact> getAllContacts() {
-        List<Contact> tempContactList = new ArrayList<>();
-        persistence.getContacts().forEach(contact -> tempContactList.add(new Contact(contact.getUsername())));
-        return tempContactList;
+        return contactList;
     }
 
     /**
@@ -72,10 +79,11 @@ public class ContactStore implements IContactStore {
         if (username == null) {
             return null;
         }
-        for (Contact contact : getAllContacts()) {
+        for (Contact contact : contactList) {
             if (contact.getUsername().equals(username))
                 return contact;
-        } return null;
+        }
+        return null;
     }
 
     /**
