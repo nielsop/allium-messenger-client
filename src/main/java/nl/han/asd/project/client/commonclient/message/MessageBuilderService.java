@@ -30,7 +30,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
-        builder.setEncryptedData(messageToSend.getEncryptedData());
+        builder.setData(messageToSend.getEncryptedData());
     }
 
     private EncryptedMessage buildMessagePackage(String messageText, Contact contactReceiver, Contact contactSender) {
@@ -55,7 +55,7 @@ public class MessageBuilderService implements IMessageBuilder {
         builder.setUsername(message.getReceiver().getUsername());
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
-        builder.setEncryptedData(ByteString.copyFromUtf8(message.getText()));
+        builder.setData(ByteString.copyFromUtf8(message.getText()));
         return encryptionService.encryptData(node.getPublicKey(),builder.build().toByteArray());
     }
 
@@ -72,7 +72,7 @@ public class MessageBuilderService implements IMessageBuilder {
         Node node = remainingPath.get(0);
         builder.setIPaddress(node.getIpAddress());
         builder.setPort(node.getPort());
-        builder.setEncryptedData(ByteString.copyFrom(message));
+        builder.setData(ByteString.copyFrom(message));
 
         remainingPath.remove(0);
 

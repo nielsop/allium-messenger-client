@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
+import nl.han.asd.project.client.commonclient.node.NodeConnectionService;
 import nl.han.asd.project.client.commonclient.store.MessageStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.verify;
 public class MessageProcessingServiceTest {
 
     @Mock private MessageStore messageStore;
+    @Mock private NodeConnectionService nodeConnectionService;
 
     private IEncryptionService encryptionService;
 
@@ -35,7 +37,7 @@ public class MessageProcessingServiceTest {
 
         encryptionService = injector.getInstance(IEncryptionService.class);
         messageProcessingService = new MessageProcessingService(messageStore,
-                encryptionService);
+                encryptionService, nodeConnectionService);
     }
 
     @Test public void testWithMessageWrapper() {
@@ -46,7 +48,7 @@ public class MessageProcessingServiceTest {
 
         HanRoutingProtocol.MessageWrapper messageWrapper = getMessageWrapper(
                 wrapperByteString);
-        messageProcessingService.processMessage(messageWrapper);
+        messageProcessingService.processIncomingMessage(messageWrapper);
 
         // verify that the addMessage is called (thus no exceptions where thrown)
         verify(messageStore, times(1)).addMessage(eq(message), eq(messageWrapper.getUsername()));
@@ -61,7 +63,7 @@ public class MessageProcessingServiceTest {
 
         HanRoutingProtocol.MessageWrapper messageWrapper = getMessageWrapper(
                 wrapperByteString);
-        messageProcessingService.processMessage(messageWrapper);
+        messageProcessingService.processIncomingMessage(messageWrapper);
 
         // verify that the messageReceived is called (thus no exceptions where thrown)
         verify(messageStore, times(1)).messageReceived(eq(messageConfirmation.getConfirmationId()));
@@ -72,14 +74,14 @@ public class MessageProcessingServiceTest {
                 .newBuilder();
         graphUpdateRequestBuilder.setCurrentVersion(1);
 
-        // build wrapper containing Type.GRAPHUPDATEREQUEST, processMessage should be unable to parse this.
+        // build wrapper containing Type.GRAPHUPDATEREQUEST, processIncomingMessage should be unable to parse this.
         ByteString wrapperByteString = HanRoutingProtocol.Wrapper.newBuilder()
                 .setData(graphUpdateRequestBuilder.build().toByteString()).setType(HanRoutingProtocol.Wrapper.Type.GRAPHUPDATEREQUEST)
                 .build().toByteString();
 
         HanRoutingProtocol.MessageWrapper messageWrapper = getMessageWrapper(
                 wrapperByteString);
-        messageProcessingService.processMessage(messageWrapper);
+        messageProcessingService.processIncomingMessage(messageWrapper);
 
         // verify that the addMessage or messageReceived method are never called.
         verify(messageStore, times(0)).addMessage(any(), any());
@@ -100,7 +102,7 @@ public class MessageProcessingServiceTest {
                 wrapperByteString);
 
         // try to process the UnpackedMessage with the MessageWrapper type but message object
-        messageProcessingService.processMessage(messageWrapper);
+        messageProcessingService.processIncomingMessage(messageWrapper);
 
         // verify that the addMessage or messageReceived method are never called.
         verify(messageStore, times(0)).addMessage(any(), any());
@@ -116,9 +118,9 @@ public class MessageProcessingServiceTest {
 
         // encrypt it with our public key, thus only we can decrypt it (must be same instance, see initSerivce).
         ByteString encryptedData = ByteString.copyFrom(encryptionService
-                .encryptData(message.toByteArray(), encryptionService.getPublicKey()));
+                .encryptData(encryptionService.getPublicKey(), message.toByteArray()));
 
-        messageWrapperBuilder.setEncryptedData(encryptedData);
+        messageWrapperBuilder.setData(encryptedData);
 
         return messageWrapperBuilder.build();
     }

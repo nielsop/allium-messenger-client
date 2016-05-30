@@ -14,7 +14,7 @@ public class MessageProcessingServiceIT {
     private CloudHost master;
 
     @Before public void setup() {
-        master = CloudHostFactory.getCloudHost("master");
+        master = CloudHostFactory.getCloudHost("node");
         master.setup();
 
         //connectionService = new ConnectionService(new byte[] { 0x00, 0x00 });

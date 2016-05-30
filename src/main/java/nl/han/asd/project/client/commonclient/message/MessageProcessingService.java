@@ -1,10 +1,11 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
-import com.google.protobuf.ByteString;
+import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.node.ISendData;
 import nl.han.asd.project.client.commonclient.node.ISendMessage;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
     private final IMessageStore messageStore;
+    private final ISendData nodeConnectionService;
     private final IEncryptionService encryptionService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
@@ -29,17 +31,19 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
      * @param messageStore Instance of IMessageStore.
      * @param encryptionService Instance of IEncryptionService
      */
-    @Inject public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService) {
+    @Inject public MessageProcessingService(IMessageStore messageStore,
+            IEncryptionService encryptionService, ISendData nodeConnectionService) {
         this.messageStore = messageStore;
         this.encryptionService = encryptionService;
+        this.nodeConnectionService = nodeConnectionService;
     }
 
     /**
-     * Processes a message.
+     * Processes an incoming message.
      *
      * @param messageWrapper An instance of MessageWrapper which should be processed.
      */
-    @Override public void processMessage(HanRoutingProtocol.MessageWrapper messageWrapper) {
+    @Override public void processIncomingMessage(HanRoutingProtocol.MessageWrapper messageWrapper) {
         try {
             HanRoutingProtocol.Wrapper wrapper = decryptEncryptedWrapper(
                     messageWrapper);
@@ -47,7 +51,8 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
             if (wrapper.getType()
                     == HanRoutingProtocol.Wrapper.Type.MESSAGECONFIRMATION) {
 
-                HanRoutingProtocol.MessageConfirmation messageConfirmation = HanRoutingProtocol.MessageConfirmation.parseFrom(wrapper.getData());
+                HanRoutingProtocol.MessageConfirmation messageConfirmation = HanRoutingProtocol.MessageConfirmation
+                        .parseFrom(wrapper.getData());
                 messageStore.messageReceived(messageConfirmation.getConfirmationId());
             } else if (wrapper.getType()
                     == HanRoutingProtocol.Wrapper.Type.MESSAGE) {
@@ -56,7 +61,9 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
                 messageStore.addMessage(message, messageWrapper.getUsername());
 
             } else {
-                throw new InvalidProtocolBufferException(String.format("Packet didn't contain either MessageConfirmation or Message but %s.", wrapper.getType().name()));
+                throw new InvalidProtocolBufferException(String.format(
+                        "Packet didn't contain a MessageConfirmation nor a Message but %s.",
+                        wrapper.getType().name()));
             }
 
         } catch (InvalidProtocolBufferException e) {
@@ -64,14 +71,14 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
         }
     }
 
-    private HanRoutingProtocol.Wrapper decryptEncryptedWrapper (
-            HanRoutingProtocol.MessageWrapper encryptedMessageWrapper)
-            throws InvalidProtocolBufferException {
-        byte[] wrapperBuffer = encryptionService.decryptData(encryptedMessageWrapper.getEncryptedData().toByteArray());
-        return HanRoutingProtocol.Wrapper.parseFrom(wrapperBuffer);
+    @Override
+    public void processOutgoingMessage(HanRoutingProtocol.MessageWrapper messageWrapper, Contact contactReceiver) {
+        nodeConnectionService.sendData(messageWrapper.toByteArray(), contactReceiver);
     }
 
-    @Override public void sendMessage(EncryptedMessage message) {
-
+    private HanRoutingProtocol.Wrapper decryptEncryptedWrapper(HanRoutingProtocol.MessageWrapper encryptedMessageWrapper) throws InvalidProtocolBufferException {
+        byte[] wrapperBuffer = encryptionService
+                .decryptData(encryptedMessageWrapper.getData().toByteArray());
+        return HanRoutingProtocol.Wrapper.parseFrom(wrapperBuffer);
     }
 }
