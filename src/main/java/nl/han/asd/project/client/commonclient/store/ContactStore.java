@@ -69,6 +69,16 @@ public class ContactStore implements IContactStore {
         return currentUser;
     }
 
+    /**
+     * Getter for currentUser as a Contact.
+     *
+     * @return current user that is logged in as a Contact object.
+     */
+    @Override
+    public Contact getCurrentUserAsContact() {
+        return currentUser.getCurrentUserAsContact();
+    }
+
     @Override
     public void setCurrentUser(CurrentUser currentUser) {
         this.currentUser = currentUser;

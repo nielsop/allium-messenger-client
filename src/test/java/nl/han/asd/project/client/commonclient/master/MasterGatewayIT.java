@@ -4,7 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
-import nl.han.asd.project.client.commonclient.CommonclientModule;
+import nl.han.asd.project.client.commonclient.CommonClientModule;
 import nl.han.asd.project.client.commonclient.master.wrapper.ClientGroupResponseWrapper;
 import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
@@ -38,7 +38,7 @@ public class MasterGatewayIT {
     public void setup() {
         master = CloudHostFactory.getCloudHost("master");
         master.setup();
-        Injector injector = Guice.createInjector(new CommonclientModule());
+        Injector injector = Guice.createInjector(new CommonClientModule());
         while (true) {
             try {
                 new Socket(master.getHostName(), master.getPort(1337));
@@ -92,7 +92,7 @@ public class MasterGatewayIT {
     /* Get updated graph from master server */
     @Test
     public void testGetUpdatedGraphSuccessful() {
-        Assert.assertTrue(gateway.getUpdatedGraph(0).getUpdatedGraphs().size() > 0);
+        Assert.assertTrue(gateway.IGetUpdatedGraph(0).getUpdatedGraphs().size() > 0);
     }
 
     /* Get active client group from master server */

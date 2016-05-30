@@ -22,7 +22,6 @@ import java.net.SocketException;
  * @author Jevgeni Geursten
  */
 public class Connection {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
     private final IConnectionPipe connectionService;
     private volatile boolean isRunning;
@@ -31,7 +30,7 @@ public class Connection {
     private InputStream inputStream;
     private int sleepTime = 25; // default
 
-    public Connection(final IConnectionPipe service) {
+    public Connection(IConnectionPipe service) {
         connectionService = service;
         inputStream = null;
         outputStream = null;

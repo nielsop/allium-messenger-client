@@ -117,7 +117,7 @@ public class GraphManagerServiceTest {
         updatedGraphs.add(new UpdatedGraphWrapper(graphUpdate.build()));
         updatedGraphResponseWrapper.setUpdatedGraphs(updatedGraphs);
         when(updatedGraphResponseWrapper.getLast()).thenReturn(updatedGraphs.get(updatedGraphs.size() - 1));
-        when(masterGateway.getUpdatedGraph(anyInt())).thenReturn(updatedGraphResponseWrapper);
+        when(masterGateway.IGetUpdatedGraph(anyInt())).thenReturn(updatedGraphResponseWrapper);
         when(updatedGraphResponseWrapper.getUpdatedGraphs()).thenReturn(updatedGraphs);
         graphManagerService.processGraphUpdates();
         Assert.assertEquals(graphManagerService.getCurrentGraphVersion(), 1);
@@ -154,7 +154,7 @@ public class GraphManagerServiceTest {
         updatedGraphs.add(new UpdatedGraphWrapper(graphUpdate.build()));
         updatedGraphResponseWrapper.setUpdatedGraphs(updatedGraphs);
         when(updatedGraphResponseWrapper.getLast()).thenReturn(updatedGraphs.get(updatedGraphs.size() - 1));
-        when(masterGateway.getUpdatedGraph(anyInt())).thenReturn(updatedGraphResponseWrapper);
+        when(masterGateway.IGetUpdatedGraph(anyInt())).thenReturn(updatedGraphResponseWrapper);
         when(updatedGraphResponseWrapper.getUpdatedGraphs()).thenReturn(updatedGraphs);
         graphManagerService.processGraphUpdates();
         Assert.assertEquals(graphManagerService.getCurrentGraphVersion(), 1);

@@ -19,6 +19,7 @@ import java.util.List;
 public class MessageBuilderService implements IMessageBuilder {
     private static final int MINIMAL_HOPS = 3;
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
+    private static MessageBuilderService instance = null;
     private IGetMessagePath getPath;
     private IEncryptionService encryptionService;
     private ConnectionService connectionService = null;
@@ -29,6 +30,17 @@ public class MessageBuilderService implements IMessageBuilder {
         this.getPath = getPath;
         this.encryptionService = encryptionService;
         this.contactStore = contactStore;
+    }
+
+    private MessageBuilderService() {
+
+    }
+
+    public static MessageBuilderService getInstance() {
+        if (instance == null) {
+            instance = new MessageBuilderService();
+        }
+        return instance;
     }
 
     public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {

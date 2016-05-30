@@ -3,9 +3,10 @@ package nl.han.asd.project.client.commonclient.connection;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.GeneratedMessage;
-import nl.han.asd.project.client.commonclient.cryptography.EncryptionService;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
+import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.rmi.activation.UnknownObjectException;
 import java.util.List;
@@ -14,9 +15,10 @@ import java.util.List;
  * Wrapper that wraps EncryptedWrapper.
  */
 public class Packer {
-    private EncryptionService encryptionService = null;
+    private IEncryptionService encryptionService;
 
-    public Packer(final EncryptionService encryptionService) {
+    @Inject
+    public Packer(IEncryptionService encryptionService) {
         this.encryptionService = encryptionService;
     }
 

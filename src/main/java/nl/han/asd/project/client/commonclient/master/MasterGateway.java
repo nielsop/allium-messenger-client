@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.Socket;
 
-public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication, ILogout {
+public class MasterGateway implements IGetUpdatedGraph, IGetClientGroup, IRegistration, IHeartbeat, IAuthentication, ILogout {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterGateway.class);
     private ConnectionService connectionService;
@@ -100,7 +100,7 @@ public class MasterGateway implements IGetGraphUpdates, IGetClientGroup, IRegist
     }
 
     @Override
-    public UpdatedGraphResponseWrapper getUpdatedGraph(int version) {
+    public UpdatedGraphResponseWrapper IGetUpdatedGraph(int version) {
         HanRoutingProtocol.GraphUpdateRequest graphUpdateRequest = HanRoutingProtocol.GraphUpdateRequest.newBuilder().setCurrentVersion(version).build();
         RequestWrapper req = new RequestWrapper(graphUpdateRequest, HanRoutingProtocol.Wrapper.Type.GRAPHUPDATEREQUEST, getSocket());
 

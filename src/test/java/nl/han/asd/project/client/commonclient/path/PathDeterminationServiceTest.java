@@ -2,7 +2,7 @@ package nl.han.asd.project.client.commonclient.path;
 
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.After;
 import org.junit.Assert;
@@ -21,7 +21,7 @@ import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class PathDeterminationServiceTest {
     @Mock
-    IGetGraphUpdates updatedGraphMock;
+    IGetUpdatedGraph updatedGraphMock;
 
     @Mock
     IGetClientGroup clientGroupMock;

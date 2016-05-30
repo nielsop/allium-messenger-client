@@ -2,8 +2,8 @@ package nl.han.asd.project.client.commonclient.connection;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import nl.han.asd.project.client.commonclient.cryptography.EncryptionService;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -20,7 +20,7 @@ class Server {
 
     public Server() {
         final Injector injector = Guice.createInjector(new EncryptionModule());
-        packer = new Packer(new EncryptionService());
+        packer = new Packer(injector.getInstance(IEncryptionService.class));
     }
 
     public void Start(final int port) throws IOException {

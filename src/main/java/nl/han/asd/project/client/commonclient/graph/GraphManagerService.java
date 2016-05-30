@@ -1,7 +1,7 @@
 package nl.han.asd.project.client.commonclient.graph;
 
 import com.google.inject.Inject;
-import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
 
 import java.util.Map;
@@ -10,10 +10,10 @@ public class GraphManagerService implements IGetVertices {
 
     private int currentGraphVersion;
     private Graph graph;
-    private IGetGraphUpdates gateway;
+    private IGetUpdatedGraph gateway;
 
     @Inject
-    public GraphManagerService(IGetGraphUpdates gateway) {
+    public GraphManagerService(IGetUpdatedGraph gateway) {
         graph = new Graph();
         this.gateway = gateway;
         currentGraphVersion = 0;
@@ -37,7 +37,7 @@ public class GraphManagerService implements IGetVertices {
      * The second iteration makes it possible to add the right edges to the right nodes.
      */
     public void processGraphUpdates() {
-        UpdatedGraphResponseWrapper updatedGraph = gateway.getUpdatedGraph(currentGraphVersion);
+        UpdatedGraphResponseWrapper updatedGraph = gateway.IGetUpdatedGraph(currentGraphVersion);
         if (updatedGraph.getLast().getNewVersion() > currentGraphVersion) {
             setCurrentGraphVersion(updatedGraph.getLast().getNewVersion());
 

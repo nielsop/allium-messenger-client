@@ -9,14 +9,20 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.net.SocketException;
 
 public class HeartbeatService implements IConnectionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeartbeatService.class);
-    protected volatile boolean isRunning = true;
-    protected ConnectionService connectionService = null;
+    private volatile boolean isRunning = true;
+    private ConnectionService connectionService;
     private IHeartbeat heartbeat;
+
+    @Inject
+    public HeartbeatService(IHeartbeat heartbeat) {
+        this.heartbeat = heartbeat;
+    }
 
     public HeartbeatService(String hostName, int portNumber) throws IOException {
         connectionService = new ConnectionService(new byte[]{0x00}, this);
