@@ -1,7 +1,7 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Created by Julius on 26/04/16.

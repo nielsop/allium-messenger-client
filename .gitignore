@@ -142,3 +142,9 @@ test_db.lck
 test_db.log
 test_db.properties
 test_db.script
+string_db.log
+string_db.properties
+string_db.script
+username_db.log
+username_db.properties
+username_db.script

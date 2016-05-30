@@ -18,7 +18,8 @@ import java.util.List;
 /**
  * Created by Julius on 15/04/16.
  */
-@RunWith(MockitoJUnitRunner.class) public class PathDeterminationServiceTest {
+@RunWith(MockitoJUnitRunner.class)
+public class PathDeterminationServiceTest {
     @Mock
     IGetGraphUpdates updatedGraphMock;
 
@@ -50,8 +51,8 @@ import java.util.List;
     }
 
     /*
-Checking if generatedPath contains Node objects
- */
+    Checking if generatedPath contains Node objects
+    */
     @Test
     public void checkIfGeneratedPathContainsNodes() {
         Node[] selfMadePath = { new Node("NODE_ID_1", "192.168.2.8", 1234, "123456789".getBytes()),
@@ -66,8 +67,8 @@ Checking if generatedPath contains Node objects
     }
 
     /*
-Checking if error is trown when miniumHops is negative number
-*/
+    Checking if error is trown when miniumHops is negative number
+    */
     @Test(expected = IllegalArgumentException.class)
     public void whenMinimunHopsIsNegativeThrowError() {
         List<Node> generatePath = pathDeterminationService.getPath(-1, contact);

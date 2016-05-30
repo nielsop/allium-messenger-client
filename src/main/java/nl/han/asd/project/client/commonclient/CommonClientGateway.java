@@ -1,18 +1,27 @@
 package nl.han.asd.project.client.commonclient;
 
-import nl.han.asd.project.client.commonclient.login.ILogin;
-import nl.han.asd.project.client.commonclient.master.IRegistration;
-import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
-import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
-import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.*;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import java.io.IOException;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import java.util.List;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.login.ILogin;
+import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
+import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.store.IMessageStoreObserver;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
 
 /**
  * Android/Desktop application
@@ -34,7 +43,8 @@ public class CommonClientGateway {
     private String secretHash = "secretHash";
 
     @Inject
-    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IMessageBuilder messageBuilder, IMessageStoreObserver messageStoreObserver, IRegistration registration, ILogin login) {
+    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IMessageBuilder messageBuilder,
+            IMessageStoreObserver messageStoreObserver, IRegistration registration, ILogin login) {
         this.contactStore = contactStore;
         this.messageStore = messageStore;
         this.messageBuilder = messageBuilder;
@@ -58,28 +68,29 @@ public class CommonClientGateway {
      * @param username username given by user.
      * @param password password given by user.
      * @param passwordRepeat repeated password given by the user.
+     *
      * @return RegisterResponse.status
+     *
      * @throws IllegalArgumentException
+     * @throws MessageNotSentException
+     * @throws IOException
      */
-    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IllegalArgumentException  {
-        RegisterResponseWrapper registerResponse = registration.register(username, password, passwordRepeat);
-        switch (registerResponse.getStatus()) {
-            case SUCCES:
-                break;
-            case FAILED:
-                break;
-            case TAKEN_USERNAME:
-                break;
+    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password,
+            String passwordRepeat) throws IOException, MessageNotSentException {
+        if (password.equals(passwordRepeat)) {
+            return ClientRegisterResponse.Status.FAILED;
         }
-        return registerResponse.getStatus();
+
+        ClientRegisterRequest.Builder requestBuilder = ClientRegisterRequest.newBuilder();
+        requestBuilder.setUsername(username);
+        requestBuilder.setPassword(password);
+
+        return registration.register(requestBuilder.build()).getStatus();
     }
 
-    public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) throws IllegalArgumentException  {
-        LoginResponseWrapper loginResponse = login.login(username, password);
-        if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-            contactStore.setCurrentUser(new CurrentUser(username, publicKey, secretHash));
-        }
-        return loginResponse.getStatus();
+    public CurrentUser loginRequest(String username, String password)
+            throws InvalidCredentialsException, IOException, MessageNotSentException {
+        return login.login(username, password);
     }
 
     public List<Message> getMessagesFromUser(String contact) {

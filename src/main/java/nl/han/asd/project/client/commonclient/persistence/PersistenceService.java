@@ -1,17 +1,17 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-import nl.han.asd.project.client.commonclient.Configuration;
-import nl.han.asd.project.client.commonclient.database.IDatabase;
-import nl.han.asd.project.client.commonclient.database.model.Contact;
-import nl.han.asd.project.client.commonclient.database.model.Message;
-
-import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
+
+import nl.han.asd.project.client.commonclient.database.IDatabase;
+import nl.han.asd.project.client.commonclient.database.model.Contact;
+import nl.han.asd.project.client.commonclient.database.model.Message;
 
 /**
  * Provides a way to communicate with the database.
@@ -31,9 +31,9 @@ public class PersistenceService implements IPersistence {
 
     @Override
     public boolean saveMessage(Message message) throws SQLException {
-        final String messageTimestampInDatabaseFormat = Configuration.TIMESTAMP_FORMAT.format(message.getTimestamp());
-        return getDatabase().query(String
-                .format("INSERT INTO Message (sender, message, timestamp) VALUES ('%s', '%s', '%s')",
+        final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getTimestamp());
+        return getDatabase()
+                .query(String.format("INSERT INTO Message (sender, message, timestamp) VALUES ('%s', '%s', '%s')",
                         message.getSender().getUsername(), message.getText(), messageTimestampInDatabaseFormat));
     }
 

@@ -1,16 +1,22 @@
 package nl.han.asd.project.client.commonclient.database.model;
 
-import nl.han.asd.project.client.commonclient.Configuration;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+/**
+ *
+ *
+ * @author Niels Bokmans
+ * @version 1.0
+ * @since 23-5-2016
+ */
 public class MessageTest {
 
     private static Message message;
@@ -25,8 +31,8 @@ public class MessageTest {
     private static final Timestamp TIMESTAMP = new Timestamp(DATE.getTime());
     private static final String PRIMARY_MESSAGE = "Testmessage";
     private static final String SECONDARY_MESSAGE = "Testmessage2";
-    private static final String PRIMARY_MESSAGE_TOSTRING =
-            "Message[sender=" + PRIMARY_USERNAME + ", timestamp=" + DATE + ", text=" + PRIMARY_MESSAGE + "]";
+    private static final String PRIMARY_MESSAGE_TOSTRING = "Message[sender=" + PRIMARY_USERNAME + ", timestamp=" + DATE
+            + ", text=" + PRIMARY_MESSAGE + "]";
 
     @BeforeClass
     public static void beforeClass() {
