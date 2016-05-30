@@ -23,11 +23,8 @@ public interface IHeartbeatService {
      *
      * @param contact to remove the scheduled heartbeats for
      *
-     * @return false if no heartbeats were scheduled for this
-     *          contact, true if de-scheduling finished successfully
-     *
      * @throws InterruptedException if the current thread was
      *          interrupted during the joining of the heartbeat thread
      */
-    public boolean stopHeartbeatFor(CurrentUser contact) throws InterruptedException;
+    public void stopHeartbeatFor(CurrentUser contact) throws InterruptedException;
 }

@@ -63,12 +63,14 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
             while (isRunning) {
                 LockSupport.parkNanos(delay);
 
-                if (isRunning) {
-                    try {
-                        heartbeat.sendHeartbeat(buildheartbeat());
-                    } catch (IOException | MessageNotSentException e) {
-                        LOGGER.debug(e.getMessage(), e);
-                    }
+                if (!isRunning) {
+                    return;
+                }
+
+                try {
+                    heartbeat.sendHeartbeat(buildheartbeat());
+                } catch (IOException | MessageNotSentException e) {
+                    LOGGER.debug(e.getMessage(), e);
                 }
             }
         }
@@ -166,20 +168,18 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
      * be send after a successful execution of this method.
      */
     @Override
-    public boolean stopHeartbeatFor(CurrentUser contact) throws InterruptedException {
+    public void stopHeartbeatFor(CurrentUser contact) throws InterruptedException {
         Check.notNull(contact, "contact");
 
         HeartbeatSender heartbeatSender = activeHeartbeats.get(contact.getCurrentUserAsContact().getUsername());
 
         if (heartbeatSender == null) {
-            return false;
+            return;
         }
 
         heartbeatSender.isRunning = false;
         heartbeatSender.interrupt();
         heartbeatSender.join();
-
-        return true;
     }
 
 }

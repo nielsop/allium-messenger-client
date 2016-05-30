@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.heartbeat;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atMost;
@@ -48,6 +47,8 @@ public class HeartbeatTestITTest {
         verify(heartbeatMock, atMost(2)).sendHeartbeat(eq(clientHeartbeatBuilder.build()));
         verify(heartbeatMock, atLeast(1)).sendHeartbeat(eq(clientHeartbeatBuilder.build()));
 
-        assertTrue(threadedHeartbeat.stopHeartbeatFor(contact));
+        threadedHeartbeat.stopHeartbeatFor(contact);
+
+        verify(heartbeatMock, atMost(3)).sendHeartbeat(eq(clientHeartbeatBuilder.build()));
     }
 }

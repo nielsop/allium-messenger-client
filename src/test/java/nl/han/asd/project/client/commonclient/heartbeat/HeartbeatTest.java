@@ -1,7 +1,5 @@
 package nl.han.asd.project.client.commonclient.heartbeat;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -85,8 +83,7 @@ public class HeartbeatTest {
     @Test
     public void stopHeartbeatNonScheduledUser() throws Exception {
         CurrentUser contact = new CurrentUser("username", "key".getBytes(), "secret hash");
-        boolean removed = threadedHeartbeat.stopHeartbeatFor(contact);
-        assertFalse(removed);
+        threadedHeartbeat.stopHeartbeatFor(contact);
     }
 
     @Test
@@ -99,7 +96,7 @@ public class HeartbeatTest {
 
         verify(heartbeatSender).start();
 
-        assertTrue(threadedHeartbeat.stopHeartbeatFor(contact));
+        threadedHeartbeat.stopHeartbeatFor(contact);
 
         verify(heartbeatSender).interrupt();
         verify(heartbeatSender).join();
