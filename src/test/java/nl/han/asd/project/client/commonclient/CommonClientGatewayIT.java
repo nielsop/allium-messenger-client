@@ -44,7 +44,7 @@ public class CommonClientGatewayIT {
     @Before
     public void setup() {
         createCloudHost();
-        Injector injector = Guice.createInjector(new CommonclientModule());
+        Injector injector = Guice.createInjector(new CommonClientModule());
         contactStore = injector.getInstance(IContactStore.class);
         messageStore = injector.getInstance(IMessageStore.class);
         messageBuilder = injector.getInstance(IMessageBuilder.class);

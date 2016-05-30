@@ -6,6 +6,7 @@ import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
+import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.rmi.activation.UnknownObjectException;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 public class Packer {
     private IEncryptionService encryptionService = null;
 
+    @Inject
     public Packer(final IEncryptionService encryptionService) {
         this.encryptionService = encryptionService;
     }

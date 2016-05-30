@@ -1,7 +1,6 @@
 package nl.han.asd.project.client.commonclient;
 
 import com.google.inject.AbstractModule;
-import nl.han.asd.project.client.commonclient.cryptography.CryptographyModule;
 import nl.han.asd.project.client.commonclient.database.DatabaseModule;
 import nl.han.asd.project.client.commonclient.heartbeat.HeartbeatModule;
 import nl.han.asd.project.client.commonclient.login.LoginModule;
@@ -16,10 +15,9 @@ import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 /**
  * Created by Marius on 19-04-16.
  */
-public class CommonclientModule extends AbstractModule {
+public class CommonClientModule extends AbstractModule {
     @Override
     protected void configure() {
-        this.install(new CryptographyModule());
         this.install(new DatabaseModule());
         this.install(new HeartbeatModule());
         this.install(new LoginModule());
@@ -29,5 +27,6 @@ public class CommonclientModule extends AbstractModule {
         this.install(new PathModule());
         this.install(new PersistenceModule());
         this.install(new StoreModule());
+        this.install(new EncryptionModule());
     }
 }

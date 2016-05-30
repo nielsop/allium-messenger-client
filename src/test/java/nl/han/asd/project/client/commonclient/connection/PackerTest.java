@@ -4,8 +4,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.cryptography.EncryptionService;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +20,7 @@ public class PackerTest {
     @Before
     public void InitPacker() {
         final Injector injector = Guice.createInjector(new EncryptionModule());
-        packer = new Packer(new EncryptionService());
+        packer = new Packer(injector.getInstance(IEncryptionService.class));
     }
 
     @Test
