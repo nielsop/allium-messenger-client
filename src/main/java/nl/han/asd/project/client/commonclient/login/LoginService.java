@@ -56,12 +56,12 @@ public class LoginService implements ILogin {
         loginRequest.setPublicKey(ByteString.copyFrom(encryptionService.getPublicKey()));
 
         ClientLoginResponse loginResponse = authentication.login(loginRequest.build());
-        setConnectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList());
 
         if (loginResponse.getStatus() != ClientLoginResponse.Status.SUCCES) {
             throw new InvalidCredentialsException(loginResponse.getStatus().name());
         }
 
+        setConnectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList());
         return new CurrentUser(username, encryptionService.getPublicKey(), loginResponse.getSecretHash());
     }
 }
