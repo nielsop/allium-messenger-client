@@ -44,7 +44,7 @@ public class LoginServiceTest {
     private IEncryptionService encryptionServiceMock;
     private ISetConnectedNodes setConnectedNodes;
 
-    private ILogin login;
+    private ILoginService login;
 
     @Before
     public void setUp() {

@@ -9,10 +9,9 @@ import com.google.inject.AbstractModule;
  * @version 1.0
  */
 public class HeartbeatModule extends AbstractModule {
-
     @Override
     protected void configure() {
         bind(IHeartbeatService.class).to(ThreadedHeartbeatService.class);
     }
-
 }
+

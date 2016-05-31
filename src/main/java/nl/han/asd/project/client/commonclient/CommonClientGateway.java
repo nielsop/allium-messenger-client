@@ -1,27 +1,26 @@
 package nl.han.asd.project.client.commonclient;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
-import nl.han.asd.project.client.commonclient.login.ILogin;
+import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.client.commonclient.store.IMessageStoreObserver;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import nl.han.asd.project.client.commonclient.utility.Validation;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.List;
+
+import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 
 /**
  * Android/Desktop application
@@ -34,23 +33,15 @@ public class CommonClientGateway {
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
-    private IMessageBuilder messageBuilder;
-    private IMessageStoreObserver messageStoreObserver;
     private IRegistration registration;
-    private ILogin login;
-    private String privateKey = "privateKey";
-    private byte[] publicKey = "publicKey".getBytes();
-    private String secretHash = "secretHash";
+    private ILoginService loginService;
 
     @Inject
-    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IMessageBuilder messageBuilder,
-            IMessageStoreObserver messageStoreObserver, IRegistration registration, ILogin login) {
-        this.contactStore = contactStore;
-        this.messageStore = messageStore;
-        this.messageBuilder = messageBuilder;
-        this.messageStoreObserver = messageStoreObserver;
-        this.registration = registration;
-        this.login = login;
+    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration, ILoginService loginService) {
+        this.contactStore = Check.notNull(contactStore, "contactStore");
+        this.messageStore = Check.notNull(messageStore, "messageStore");
+        this.registration = Check.notNull(registration, "registration");
+        this.loginService = Check.notNull(loginService, "loginService");
 
         // TODO remove test method
         createTestContacts();
@@ -65,32 +56,38 @@ public class CommonClientGateway {
      * Register a user on the master application with the given credentials.
      * Use the MasterGateway to register a user.
      *
-     * @param username username given by user.
-     * @param password password given by user.
+     * @param username       username given by user.
+     * @param password       password given by user.
      * @param passwordRepeat repeated password given by the user.
-     *
      * @return RegisterResponse.status
-     *
      * @throws IllegalArgumentException
      * @throws MessageNotSentException
      * @throws IOException
      */
-    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password,
-            String passwordRepeat) throws IOException, MessageNotSentException {
-        if (password.equals(passwordRepeat)) {
-            return ClientRegisterResponse.Status.FAILED;
+    public ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IOException, MessageNotSentException {
+        try {
+            Validation.passwordsEqual(password, passwordRepeat);
+            Validation.validateCredentials(username, password);
+
+            ClientRegisterRequest.Builder requestBuilder = ClientRegisterRequest.newBuilder();
+            requestBuilder.setUsername(username);
+            requestBuilder.setPassword(password);
+
+            return registration.register(requestBuilder.build()).getStatus();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         }
-
-        ClientRegisterRequest.Builder requestBuilder = ClientRegisterRequest.newBuilder();
-        requestBuilder.setUsername(username);
-        requestBuilder.setPassword(password);
-
-        return registration.register(requestBuilder.build()).getStatus();
     }
 
-    public CurrentUser loginRequest(String username, String password)
-            throws InvalidCredentialsException, IOException, MessageNotSentException {
-        return login.login(username, password);
+    public ClientLoginResponse.Status loginRequest(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
+        try {
+            contactStore.setCurrentUser(loginService.login(username, password));
+            return ClientLoginResponse.Status.SUCCES;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
+        }
     }
 
     public List<Message> getMessagesFromUser(String contact) {

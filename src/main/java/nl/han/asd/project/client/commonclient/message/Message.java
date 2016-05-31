@@ -1,16 +1,15 @@
 package nl.han.asd.project.client.commonclient.message;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.Date;
-
+import nl.han.asd.project.client.commonclient.persistence.IPersistence;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.han.asd.project.client.commonclient.persistence.IPersistence;
-import nl.han.asd.project.client.commonclient.store.Contact;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.Date;
 
 public class Message {
     private static final Logger LOGGER = LoggerFactory.getLogger(Message.class);
@@ -20,6 +19,7 @@ public class Message {
     private String text;
     private Contact sender;
     private Date timestamp;
+    private int id;
 
     public Message(Contact sender, Date timestamp, String text) {
         this(-1, sender, timestamp, text);
@@ -86,5 +86,13 @@ public class Message {
 
     public int getDatabaseId() {
         return databaseId;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public int getId() {
+        return id;
     }
 }

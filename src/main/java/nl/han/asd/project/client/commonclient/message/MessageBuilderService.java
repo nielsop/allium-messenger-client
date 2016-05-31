@@ -1,15 +1,7 @@
 package nl.han.asd.project.client.commonclient.message;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
-
 import nl.han.asd.project.client.commonclient.connection.IConnectionService;
 import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
@@ -18,25 +10,43 @@ import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class MessageBuilderService implements IMessageBuilder {
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+public class MessageBuilderService {
     private static final int MINIMAL_HOPS = 3;
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
+    private static MessageBuilderService instance;
     private IGetMessagePath getPath;
     private IEncryptionService encryptionService;
-    private IConnectionService connectionService = null;
-    private IContactStore contactStore = null;
-
+    private IConnectionService connectionService;
+    private IContactStore contactStore;
     private IConnectionServiceFactory connectionServiceFactory;
 
     @Inject
     public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService,
-            IContactStore contactStore, IConnectionServiceFactory connectionServiceFactory) {
-        this.getPath = getPath;
-        this.encryptionService = encryptionService;
-        this.contactStore = contactStore;
+                                 IContactStore contactStore, IConnectionServiceFactory connectionServiceFactory) {
+        this.getPath = Check.notNull(getPath, "getPath");
+        this.encryptionService = Check.notNull(encryptionService, "encryptionService");
+        this.contactStore = Check.notNull(contactStore, "contactStore");
+    }
+
+    private MessageBuilderService() {
+
+    }
+
+    public static MessageBuilderService getInstance() {
+        if (instance == null) {
+            instance = new MessageBuilderService();
+        }
+        return instance;
     }
 
     public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
@@ -70,7 +80,8 @@ public class MessageBuilderService implements IMessageBuilder {
 
     /**
      * Deepest layer in final message package
-     * @param node contains information about the next hop in path
+     *
+     * @param node    contains information about the next hop in path
      * @param message contains information about the message typed by the client
      * @return encrypted data from the first layer that is build
      */

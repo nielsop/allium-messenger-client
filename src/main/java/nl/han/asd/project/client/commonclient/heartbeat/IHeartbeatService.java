@@ -13,7 +13,6 @@ public interface IHeartbeatService {
      * Schedule heartbeats for a given contact instance.
      *
      * @param contact to schedule the heartbeats for
-     *
      * @throws IllegalArgumentException if contact is null
      */
     public void startHeartbeatFor(CurrentUser contact);
@@ -22,9 +21,8 @@ public interface IHeartbeatService {
      * De-schedule the heartbeats for a given contact instance.
      *
      * @param contact to remove the scheduled heartbeats for
-     *
      * @throws InterruptedException if the current thread was
-     *          interrupted during the joining of the heartbeat thread
+     *                              interrupted during the joining of the heartbeat thread
      */
     public void stopHeartbeatFor(CurrentUser contact) throws InterruptedException;
 }

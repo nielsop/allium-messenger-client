@@ -15,16 +15,14 @@ public interface IConnectionServiceFactory {
     /**
      * Create a new {@link IConnectionService} instance used
      * to handle the communication with the specified host.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Note that this method does not check the validity
      * of the provided hostname or port.
      *
      * @param host to-be-connected to host
      * @param port port to use during connection
-     *
      * @return a new {@link IConnectionService} instance
-     *
      * @throws IllegalArgumentException if host is null
      */
     IConnectionService create(String host, int port);
@@ -32,17 +30,15 @@ public interface IConnectionServiceFactory {
     /**
      * Create a new {@link IConnectionService} instance used
      * to handle the communication with the specified host.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Note that this method does not check the validity
      * of the provided hostname or port.
      *
-     * @param host to-be-conencted to host
-     * @param port port to use during connection
+     * @param host           to-be-conencted to host
+     * @param port           port to use during connection
      * @param publicKeyBytes public key of the to-be-connected to host
-     *
      * @return a new {@link IConnectionService} instance
-     *
      * @throws IllegalArgumentException if host and/or publicKeyBytes is null
      */
     IConnectionService create(String host, int port, byte[] publicKeyBytes);
@@ -50,19 +46,17 @@ public interface IConnectionServiceFactory {
     /**
      * Create a new {@link IConnectionService} instance used
      * to handle the communication with the specified host.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Note that this method does not check the validity
      * of the provided hostname or port.
      *
-     * @param host to-be-conencted to host
-     * @param port port to use during connection
+     * @param host          to-be-conencted to host
+     * @param port          port to use during connection
      * @param publicKeyFile byte file containing the hosts public key
-     *
      * @return a new {@link IConnectionService} instance
-     *
      * @throws IllegalArgumentException if host and/or publicKeyFile is null
-     * @throws IOException if an IOException occurs during the publicKeyFile read
+     * @throws IOException              if an IOException occurs during the publicKeyFile read
      */
     IConnectionService create(String host, int port, File publicKeyFile) throws IOException;
 }

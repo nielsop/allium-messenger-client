@@ -1,22 +1,20 @@
 package nl.han.asd.project.client.commonclient.connection;
 
-import static org.junit.Assert.assertEquals;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.protobuf.ByteString;
+import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.protobuf.ByteString;
-
-import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
-import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import static org.junit.Assert.assertEquals;
 
 public class ConnectionServiceIT {
 
