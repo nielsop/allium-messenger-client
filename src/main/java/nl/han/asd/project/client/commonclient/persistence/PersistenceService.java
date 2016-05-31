@@ -35,16 +35,12 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
-    @Override
-    public boolean saveMessage(Message message) {
-        final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getTimestamp());
-        try {
-            return getDatabase().query(String.format("INSERT INTO Message (sender, message, timestamp) VALUES ('%s', '%s', '%s')", message.getSender().getUsername(), message.getText(),
-                    messageTimestampInDatabaseFormat));
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return false;
+	@Override
+    public boolean saveMessage(Message message) throws SQLException {
+        final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getMessageTimestamp());
+        return getDatabase()
+                .query(String.format("INSERT INTO Message (sender, receiver, timestamp, message) VALUES ('%s', '%s', '%s', '%s')",
+                        message.getSender().getUsername(), message.getReceiver().getUsername(), messageTimestampInDatabaseFormat, message.getText()));
     }
 
     @Override
