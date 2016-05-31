@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Inject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.node.ISendData;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -19,6 +20,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     private final IMessageStore messageStore;
     private final ISendData nodeConnectionService;
     private IMessageConfirmation messageConfirmationService;
+    private IContactStore contactStore;
     private final IEncryptionService encryptionService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
@@ -30,11 +32,13 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
      * @param encryptionService Instance of IEncryptionService
      */
     @Inject public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService,
-                                            ISendData nodeConnectionService, IMessageConfirmation messageConfirmationService) {
+                                            ISendData nodeConnectionService, IMessageConfirmation messageConfirmationService,
+                                            IContactStore contactStore) {
         this.messageStore = messageStore;
         this.encryptionService = encryptionService;
         this.nodeConnectionService = nodeConnectionService;
         this.messageConfirmationService = messageConfirmationService;
+        this.contactStore = contactStore;
     }
 
     /**
@@ -59,7 +63,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
                     == HanRoutingProtocol.Wrapper.Type.MESSAGE) {
 
                 HanRoutingProtocol.Message message = HanRoutingProtocol.Message.parseFrom(wrapper.getData());
-                Message internalMessage = Message.fromProtocolMessage(message);
+                Message internalMessage = Message.fromProtocolMessage(message, contactStore.getCurrentUserAsContact());
                 messageStore.addMessage(internalMessage);
 
             } else {

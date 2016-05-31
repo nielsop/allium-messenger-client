@@ -4,6 +4,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.node.NodeConnectionService;
+import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.ContactStore;
 import nl.han.asd.project.client.commonclient.store.MessageStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -18,6 +20,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Jevgeni on 17-5-2016.
@@ -28,6 +31,7 @@ public class MessageProcessingServiceTest {
     @Mock private MessageStore messageStore;
     @Mock private NodeConnectionService nodeConnectionService;
     @Mock private MessageConfirmationService messageConfirmationService;
+    @Mock private ContactStore contactStore;
 
     private IEncryptionService encryptionService;
 
@@ -38,7 +42,7 @@ public class MessageProcessingServiceTest {
 
         encryptionService = injector.getInstance(IEncryptionService.class);
         messageProcessingService = new MessageProcessingService(messageStore,
-                encryptionService, nodeConnectionService, messageConfirmationService);
+                encryptionService, nodeConnectionService, messageConfirmationService, contactStore);
     }
 
     @Test public void testWithMessageWrapper() {
@@ -47,12 +51,14 @@ public class MessageProcessingServiceTest {
         ByteString wrapperByteString = HanRoutingProtocol.Wrapper.newBuilder().setData(message.toByteString())
                 .setType(HanRoutingProtocol.Wrapper.Type.MESSAGE).build().toByteString();
 
+        Contact contact = new Contact("receiver");
+        when(contactStore.getCurrentUserAsContact()).thenReturn(contact);
         HanRoutingProtocol.MessageWrapper messageWrapper = getMessageWrapper(
                 wrapperByteString);
         messageProcessingService.processIncomingMessage(messageWrapper);
 
         // verify that the addMessage is called (thus no exceptions where thrown)
-        verify(messageStore, times(1)).addMessage(eq(Message.fromProtocolMessage(message)));
+        verify(messageStore, times(1)).addMessage(eq(Message.fromProtocolMessage(message, contact)));
     }
 
 
