@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.node;
 
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 /**
  * @author Julius
@@ -9,5 +10,5 @@ import nl.han.asd.project.client.commonclient.store.Contact;
  */
 @FunctionalInterface
 public interface ISendData {
-    void sendData(byte[] data, Contact receiver);
+    void sendData(HanRoutingProtocol.MessageWrapper messageWrapper);
 }

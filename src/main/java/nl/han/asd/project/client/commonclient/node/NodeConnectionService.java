@@ -1,10 +1,10 @@
 package nl.han.asd.project.client.commonclient.node;
 
 import com.google.inject.Inject;
+import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.message.IReceiveMessage;
-import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
@@ -60,7 +60,17 @@ public class NodeConnectionService implements ISetConnectedNodes, ISendData {
     }
 
     @Override
-    public void sendData(byte[] data, Contact receiver) {
+    public void sendData(HanRoutingProtocol.MessageWrapper messageWrapper) {
+        String hostname = messageWrapper.getIPaddress();
+        int port = messageWrapper.getPort();
 
+        try {
+            HanRoutingProtocol.Wrapper wrapper = HanRoutingProtocol.Wrapper.parseFrom(messageWrapper.getData());
+
+            ConnectionService connectionService = new ConnectionService(hostname, port);
+            connectionService.write(wrapper);
+        } catch (MessageNotSentException | IOException e) {
+            e.printStackTrace();
+        }
     }
 }

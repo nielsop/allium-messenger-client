@@ -76,7 +76,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     }
 
     @Override
-    public void sendMessage(HanRoutingProtocol.MessageWrapper messageWrapper, Contact contactReceiver) {
-        nodeConnectionService.sendData(messageWrapper.toByteArray(), contactReceiver);
+    public void sendMessage(HanRoutingProtocol.MessageWrapper messageWrapper) {
+        nodeConnectionService.sendData(messageWrapper);
     }
 }
