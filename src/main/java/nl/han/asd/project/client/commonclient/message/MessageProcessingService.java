@@ -11,6 +11,9 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /**
  *  Processes messages by decrypting their content and storing them in a MessageStore.
  *
@@ -88,7 +91,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     @Override
     public void sendMessage(Message message, Contact contact) {
         HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
-        builder.setId("123");
+        builder.setId(generateUniqueMessageId(contact.getUsername()));
         builder.setSender(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());
         builder.setText(message.getText());
         builder.setTimeSent(System.currentTimeMillis() / 1000L);
@@ -98,5 +101,20 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
         nodeConnectionService.sendData(messageWrapper);
         messageConfirmationService.messageSent(builder.getId(), message, contact);
         messageStore.addMessage(message);
+    }
+
+    private String generateUniqueMessageId(String seed) {
+        String id = seed + String.valueOf(System.currentTimeMillis());
+
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            messageDigest.update(id.getBytes());
+            byte[] digest = messageDigest.digest();
+            id = String.format("%064x", new java.math.BigInteger(1, digest));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return id;
     }
 }
