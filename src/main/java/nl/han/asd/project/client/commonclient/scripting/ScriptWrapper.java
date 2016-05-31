@@ -14,7 +14,6 @@ public class ScriptWrapper implements IScriptWrapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptWrapper.class);
     private IContactStore contactStore;
     private IMessageStore messageStore;
-    private MessageBuilderService messageBuilderService = MessageBuilderService.getInstance();
 
     @Inject
     public ScriptWrapper(IContactStore contactStore, IMessageStore messageStore) {
@@ -24,7 +23,7 @@ public class ScriptWrapper implements IScriptWrapper {
 
     public boolean sendMessage(String username, String message) {
         try {
-            messageBuilderService.sendMessage(message, contactStore.findContact(username), contactStore.getCurrentUserAsContact());
+            // TODO: actually send message
             return true;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

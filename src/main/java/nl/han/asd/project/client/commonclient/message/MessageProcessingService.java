@@ -1,13 +1,8 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
-import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.node.ISendData;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
-import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -74,15 +69,14 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
         }
     }
 
-    @Override
-    public void sendMessage(HanRoutingProtocol.MessageWrapper messageWrapper,
-            Contact contactReceiver) {
-        nodeConnectionService.sendData(messageWrapper.toByteArray(), contactReceiver);
-    }
-
     private HanRoutingProtocol.Wrapper decryptEncryptedWrapper(HanRoutingProtocol.MessageWrapper encryptedMessageWrapper) throws InvalidProtocolBufferException {
         byte[] wrapperBuffer = encryptionService
                 .decryptData(encryptedMessageWrapper.getData().toByteArray());
         return HanRoutingProtocol.Wrapper.parseFrom(wrapperBuffer);
+    }
+
+    @Override
+    public void sendMessage(HanRoutingProtocol.MessageWrapper messageWrapper, Contact contactReceiver) {
+        nodeConnectionService.sendData(messageWrapper.toByteArray(), contactReceiver);
     }
 }

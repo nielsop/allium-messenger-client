@@ -1,6 +1,6 @@
 package nl.han.asd.project.client.commonclient.node;
 
-import nl.han.asd.project.client.commonclient.message.EncryptedMessage;
+import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
