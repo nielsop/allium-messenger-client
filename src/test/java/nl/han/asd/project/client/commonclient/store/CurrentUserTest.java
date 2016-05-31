@@ -26,14 +26,30 @@ public class CurrentUserTest {
     }
 
     @Test
-    public void testCheckCurrentUserData() throws Exception {
+    public void testCheckCurrentUserName() throws Exception {
+        // Test
+        contactStore.setCurrentUser(new CurrentUser(TEST_CURRENTUSER_USERNAME, TEST_CURRENTUSER_PUBLICKEY, TEST_CURRENTUSER_SECRETHASH));
+
+        // Assert
+        assertEquals(TEST_CURRENTUSER_USERNAME, contactStore.getCurrentUserAsContact().getUsername());
+    }
+
+    @Test
+    public void testCheckCurrentUserPublicKey() throws Exception {
+        // Test
+        contactStore.setCurrentUser(new CurrentUser(TEST_CURRENTUSER_USERNAME, TEST_CURRENTUSER_PUBLICKEY, TEST_CURRENTUSER_SECRETHASH));
+
+        // Assert
+        assertEquals(TEST_CURRENTUSER_PUBLICKEY, contactStore.getCurrentUserAsContact().getPublicKey());
+    }
+
+    @Test
+    public void testCheckCurrentUserSecretHash() throws Exception {
         // Test
         contactStore.setCurrentUser(new CurrentUser(TEST_CURRENTUSER_USERNAME, TEST_CURRENTUSER_PUBLICKEY, TEST_CURRENTUSER_SECRETHASH));
         CurrentUser currentUser = contactStore.getCurrentUser();
 
         // Assert
-        assertEquals(TEST_CURRENTUSER_USERNAME, contactStore.getCurrentUserAsContact().getUsername());
-        assertEquals(TEST_CURRENTUSER_PUBLICKEY, contactStore.getCurrentUserAsContact().getPublicKey());
         assertEquals(TEST_CURRENTUSER_SECRETHASH, currentUser.getSecretHash());
     }
 }

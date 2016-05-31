@@ -24,9 +24,10 @@ public class ContactStore implements IContactStore {
      */
     @Inject
     public ContactStore(IPersistence persistence) {
-        this.persistence = persistence;
-        this.contactList = new ArrayList<>();
-        contactList = persistence.getContacts();
+        this.persistence = Check.notNull(persistence, "persistence");
+        this.contactList = persistence.getContacts();
+        if (contactList == null)
+            contactList = new ArrayList<>();
     }
 
     /**
@@ -90,12 +91,16 @@ public class ContactStore implements IContactStore {
      */
     @Override
     public Contact findContact(String username) {
-        if (username == null) {
+        if (username == null || username.equals("")) {
             return null;
         }
+        System.out.println("searching...");
         for (Contact contact : contactList) {
-            if (contact.getUsername().equals(username))
+            System.out.println("contact: " + contact.getUsername());
+            if (contact.getUsername().equals(username)) {
+                System.out.println("found!");
                 return contact;
+            }
         }
         return null;
     }
