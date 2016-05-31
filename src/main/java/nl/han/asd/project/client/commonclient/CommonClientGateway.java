@@ -111,23 +111,6 @@ public class CommonClientGateway {
     }
 
     /**
-     * Adds contact to contactstore.
-     *
-     * @param username username of contact
-     */
-    public void addContact(String username) {
-        contactStore.addContact(username);
-    }
-    /**
-     * Removes contact from contactstore.
-     *
-     * @param username username of contact
-     */
-    public void removeContact(String username) {
-        contactStore.removeContact(username);
-    }
-
-    /**
      * Returns a list of contacts of the current user.
      *
      * @return list of contacts of the current user
@@ -164,11 +147,21 @@ public class CommonClientGateway {
         //TODO: Actually send message to a user
         messageStore.addMessage(message);
     }
-	
+
+    /**
+     * Adds contact to contactstore.
+     *
+     * @param username username of contact
+     */
     public void addContact(String username) {
-        contactStore.addContact(username, username.getBytes()); //TODO: actual public key instead of username.getBytes()
+        contactStore.addContact(username);
     }
 
+    /**
+     * Removes contact from contactstore.
+     *
+     * @param username username of contact
+     */
     public void removeContact(String username) {
         contactStore.removeContact(username);
     }
