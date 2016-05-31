@@ -26,6 +26,7 @@ public class PathDeterminationService implements IGetMessagePath {
 
     @Override
     public List<Node> getPath(int minHops, Contact contactOntvanger) {
+
         if (minHops < 1) {
             throw new IllegalArgumentException("The minimum amount of Hops should be more than 0");
         }

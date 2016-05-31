@@ -108,7 +108,7 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
         Wrapper wrapper = connectionService.wrap(request, Type.CLIENTLOGINREQUEST);
         GeneratedMessage response = connectionService.writeAndRead(wrapper);
 
-        return Check.isInstance(response, ClientLoginResponse.class, "response");
+        return (ClientLoginResponse) response;
     }
 
     /**
@@ -121,7 +121,7 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
         Wrapper wrapper = connectionService.wrap(request, Type.GRAPHUPDATEREQUEST);
         GeneratedMessage response = connectionService.writeAndRead(wrapper);
 
-        return Check.isInstance(response, GraphUpdateResponse.class, "response");
+        return (GraphUpdateResponse) response;
     }
 
     /**
@@ -134,7 +134,7 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
         Wrapper wrapper = connectionService.wrap(request, Type.CLIENTREQUEST);
         GeneratedMessage response = connectionService.writeAndRead(wrapper);
 
-        return Check.isInstance(response, Client.class, "response");
+        return (Client) response;
     }
 
     @Override

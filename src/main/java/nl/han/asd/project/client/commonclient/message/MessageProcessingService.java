@@ -47,9 +47,10 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     }
 
     @Override
-    public void sendMessage(EncryptedMessage message) {
-        throw new UnsupportedOperationException();
+    public void sendMessage(HanRoutingProtocol.Wrapper message) {
+
     }
+
 
     //TODO peelMessagePacket / Pakket uitpakken
 }
