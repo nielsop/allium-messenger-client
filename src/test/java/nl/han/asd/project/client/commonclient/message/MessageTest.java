@@ -20,8 +20,6 @@ public class MessageTest {
     private byte[] array;
     private Boolean online;
     private Contact sender;
-
-    @Mock
     private Contact contactReceiver;
 
     @Before
@@ -30,6 +28,7 @@ public class MessageTest {
         array = new byte[]{123, 123};
         online = true;
         sender = new Contact(username, array, online);
+        contactReceiver = new Contact("username2", array, online);
         message = new Message(sender, contactReceiver, date, testData);
     }
 
@@ -45,10 +44,9 @@ public class MessageTest {
 
     @Test
     public void toStringCreatesRightString() throws Exception {
-        String stringToBeBuild = "Message[sender=Username, timestamp=" + date + ", text=testData]";
         final StringBuilder sb = new StringBuilder();
-        sb.append("Message[sender=").append(sender.getUsername()).append(", timestamp=").append(message.getMessageTimestamp()).append(", text=").append(message.getText()).append("]");
-        assertEquals(stringToBeBuild, message.toString());
+        sb.append("Message[sender=").append(message.getSender().getUsername()).append(", receiver=").append(message.getReceiver().getUsername()).append(", timestamp=").append(message.getMessageTimestamp()).append(", text=").append(message.getText()).append("]");
+        assertEquals(sb.toString(), message.toString());
     }
 
     @Test

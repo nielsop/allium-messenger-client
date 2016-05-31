@@ -36,6 +36,8 @@ public class CommonClientGateway {
     private IRegistration registration;
     private ILoginService loginService;
 
+    private static CommonClientGateway commonClientGateway;
+
     @Inject
     public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration, ILoginService loginService) {
         this.contactStore = Check.notNull(contactStore, "contactStore");

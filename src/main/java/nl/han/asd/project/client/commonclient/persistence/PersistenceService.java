@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-
 import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
@@ -35,12 +34,17 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
-	@Override
-    public boolean saveMessage(Message message) throws SQLException {
+    @Override
+    public boolean saveMessage(Message message) {
         final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getMessageTimestamp());
-        return getDatabase()
-                .query(String.format("INSERT INTO Message (sender, receiver, timestamp, message) VALUES ('%s', '%s', '%s', '%s')",
-                        message.getSender().getUsername(), message.getReceiver().getUsername(), messageTimestampInDatabaseFormat, message.getText()));
+        try {
+            return getDatabase().query(String
+                    .format("INSERT INTO Message (sender, receiver, timestamp, message) VALUES ('%s', '%s', '%s', '%s')", message.getSender().getUsername(),
+                            message.getReceiver().getUsername(), messageTimestampInDatabaseFormat, message.getText()));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
     }
 
     @Override
