@@ -3,7 +3,7 @@ package nl.han.asd.project.client.commonclient.login;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
-import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
+import nl.han.asd.project.client.commonclient.node.IConnectedNodes;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.commonservices.internal.utility.Check;
@@ -23,7 +23,7 @@ public class LoginService implements ILoginService {
 
     private IAuthentication authentication;
     private IEncryptionService encryptionService;
-    private ISetConnectedNodes setConnectedNodes;
+    private IConnectedNodes setConnectedNodes;
 
     /**
      * Construct a new LoginService.
@@ -37,7 +37,7 @@ public class LoginService implements ILoginService {
      *          or encryptionService is null
      */
     @Inject
-    public LoginService(IAuthentication authentication, IEncryptionService encryptionService, ISetConnectedNodes setConnectedNodes) {
+    public LoginService(IAuthentication authentication, IEncryptionService encryptionService, IConnectedNodes setConnectedNodes) {
         this.authentication = Check.notNull(authentication, "authentication");
         this.encryptionService = Check.notNull(encryptionService, "encryptionService");
         this.setConnectedNodes = Check.notNull(setConnectedNodes, "setConnectedNodes");

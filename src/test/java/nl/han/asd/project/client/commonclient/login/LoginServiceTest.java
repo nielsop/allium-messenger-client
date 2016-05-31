@@ -2,7 +2,7 @@ package nl.han.asd.project.client.commonclient.login;
 
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
-import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
+import nl.han.asd.project.client.commonclient.node.IConnectedNodes;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -42,7 +42,7 @@ public class LoginServiceTest {
 
     private IAuthentication authenticationMock;
     private IEncryptionService encryptionServiceMock;
-    private ISetConnectedNodes setConnectedNodes;
+    private IConnectedNodes setConnectedNodes;
 
     private ILoginService login;
 
@@ -50,7 +50,7 @@ public class LoginServiceTest {
     public void setUp() {
         authenticationMock = mock(IAuthentication.class);
         encryptionServiceMock = mock(IEncryptionService.class);
-        setConnectedNodes = mock(ISetConnectedNodes.class);
+        setConnectedNodes = mock(IConnectedNodes.class);
         login = new LoginService(authenticationMock, encryptionServiceMock, setConnectedNodes);
     }
 

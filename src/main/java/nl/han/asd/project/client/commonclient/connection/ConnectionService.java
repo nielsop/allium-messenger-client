@@ -255,4 +255,11 @@ public class ConnectionService implements IConnectionService {
         return socketHandler.read();
     }
 
+    public void close() {
+        try {
+            socketHandler.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -38,6 +38,7 @@ public class NodeConnection {
                         e.printStackTrace();
                     }
                 }
+                connectionService.close();
             }
         }).start();
     }

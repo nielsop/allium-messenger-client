@@ -9,11 +9,16 @@ import java.util.List;
  *
  * @version 1.0
  */
-public interface ISetConnectedNodes {
+public interface IConnectedNodes {
     /**
      * Set the connectedNodes after successful login.
      *
      * @param connectedNodesList the list of connectedNodes
      */
     void setConnectedNodes(List<String> connectedNodesList);
+
+    /**
+     * Unset connectedNodes when after logout.
+     */
+    void unsetConnectedNodes();
 }

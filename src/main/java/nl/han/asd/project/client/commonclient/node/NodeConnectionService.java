@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NodeConnectionService implements ISetConnectedNodes, ISendData {
+public class NodeConnectionService implements IConnectedNodes, ISendData {
     private IReceiveMessage receiveMessage;
     private IContactStore contactStore;
     private IMessageConfirmation messageConfirmation;
@@ -59,6 +59,14 @@ public class NodeConnectionService implements ISetConnectedNodes, ISendData {
 
             nodeConnection.start();
         }
+    }
+
+    @Override
+    public void unsetConnectedNodes() {
+        for (NodeConnection openConnection : openConnections) {
+            openConnection.stop();
+        }
+        openConnections = new ArrayList<>();
     }
 
     @Override
