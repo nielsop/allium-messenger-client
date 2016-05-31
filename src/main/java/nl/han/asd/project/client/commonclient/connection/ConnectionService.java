@@ -47,6 +47,8 @@ public class ConnectionService implements IConnectionService {
 
     private byte[] publicKeyBytes;
 
+    public boolean closeOnIdle = true;
+
     /**
      * Create a new ConnectionService instance used
      * to handle the communication with the specified host.
@@ -185,7 +187,7 @@ public class ConnectionService implements IConnectionService {
                 try {
                     socketHandler.write(wrapper);
                 } finally {
-                    if (!mutex.hasQueuedThreads()) {
+                    if (!mutex.hasQueuedThreads() && closeOnIdle) {
                         socketHandler.close();
                     }
 
@@ -223,7 +225,7 @@ public class ConnectionService implements IConnectionService {
                 try {
                     return socketHandler.writeAndRead(wrapper);
                 } finally {
-                    if (!mutex.hasQueuedThreads()) {
+                    if (!mutex.hasQueuedThreads() && closeOnIdle) {
                         socketHandler.close();
                     }
 

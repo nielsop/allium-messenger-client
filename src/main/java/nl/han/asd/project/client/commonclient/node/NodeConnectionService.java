@@ -14,7 +14,6 @@ import java.util.List;
 
 public class NodeConnectionService implements ISetConnectedNodes, ISendData {
     private IReceiveMessage receiveMessage;
-    private IConnectionListener nodeConnectionService;
     private IContactStore contactStore;
 
     private List<NodeConnection> openConnections = new ArrayList<>();
@@ -23,12 +22,10 @@ public class NodeConnectionService implements ISetConnectedNodes, ISendData {
      * Constructor of NodeConnectionService
      *
      * @param receiveMessage the receiveMessage interface
-     * @param nodeConnectionService the nodeConnection interface
      */
     @Inject
-    public NodeConnectionService(IReceiveMessage receiveMessage, IConnectionListener nodeConnectionService, IContactStore contactStore) {
+    public NodeConnectionService(IReceiveMessage receiveMessage, IContactStore contactStore) {
         this.receiveMessage = receiveMessage;
-        this.nodeConnectionService = nodeConnectionService;
         this.contactStore = contactStore;
     }
 
@@ -44,6 +41,7 @@ public class NodeConnectionService implements ISetConnectedNodes, ISendData {
             int port = Integer.parseInt(parts[1]);
 
             final ConnectionService connectionService = new ConnectionService(hostname, port);
+            connectionService.closeOnIdle = false;
 
             HanRoutingProtocol.ClientNodeConnection.Builder builder = HanRoutingProtocol.ClientNodeConnection.newBuilder();
             builder.setUsername(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());
