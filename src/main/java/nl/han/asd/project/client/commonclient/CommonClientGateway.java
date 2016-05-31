@@ -90,10 +90,10 @@ public class CommonClientGateway {
     }
 
     /**
-     * Retrieves messaages of current user from messagestore.
+     * Retrieves messages of current user from messageStore.
      *
      * @param contact the username of the contact
-     * @return
+     * @return List with all the messages from/to the given contact
      */
     public List<Message> getMessagesFromUser(String contact) {
         return messageStore.getMessagesFromUser(contact);
