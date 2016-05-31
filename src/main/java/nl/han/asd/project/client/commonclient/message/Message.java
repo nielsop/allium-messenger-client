@@ -87,7 +87,7 @@ public class Message {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(getMessageId()).append(getSender()).append(getText()).toHashCode();
+        return new HashCodeBuilder(17, 37).append(getMessageId()).append(getSender()).append(getText()).append(getReceiver()).toHashCode();
     }
 
     public int getDatabaseId() {
