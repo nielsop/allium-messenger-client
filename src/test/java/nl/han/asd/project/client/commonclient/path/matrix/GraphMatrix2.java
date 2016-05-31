@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.path.matrix;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import nl.han.asd.project.client.commonclient.graph.Edge;
@@ -59,17 +60,59 @@ public class GraphMatrix2 extends Matrix2 {
         super.calculate(10);
     }
 
-    public String getFormattedPath(String source, String destination) {
-        StringBuilder sb = new StringBuilder();
+    public String toString(int pathLength) {
+        StringBuilder stringBuilder = new StringBuilder();
 
-        sb.append(source);
-
-        for (Integer index : super.getPath(internalMap.get(source).intValue(),
-                internalMap.get(destination).intValue())) {
-            sb.append(" -> ").append(internalMap2.get(index));
+        for (int colNr = 0; colNr < size; colNr++) {
+            stringBuilder.append("\t" + internalMap2.get(colNr));
         }
 
-        sb.append(" -> ").append(destination);
+        stringBuilder.append("\n");
+
+        for (int rowNr = 0; rowNr < size; rowNr++) {
+            stringBuilder.append(internalMap2.get(rowNr) + "\t");
+
+            for (int colNr = 0; colNr < size; colNr++) {
+                if (colNr <= rowNr) {
+                    stringBuilder.append("-\t");
+                } else {
+                    if (super.matrix[pathLength][index(rowNr, colNr)] == null) {
+                        stringBuilder.append("X\t");
+                    } else {
+                        stringBuilder.append(super.matrix[pathLength][index(rowNr, colNr)].weight + "\t");
+                    }
+                }
+            }
+
+            stringBuilder.append("\n");
+        }
+
+        return stringBuilder.toString();
+    }
+
+    public String getFormattedPath(String source, String destination, int pathLength) {
+        StringBuilder sb = new StringBuilder();
+
+        int sourceInt = internalMap.get(source).intValue();
+        int destInt = internalMap.get(destination).intValue();
+
+        if (destInt < sourceInt) {
+            return getFormattedPath(destination, source, pathLength);
+        }
+
+        sb.append(destination);
+
+        List<Integer> pathList = super.getPath(sourceInt, destInt, pathLength);
+
+        if (pathList == null) {
+            return "not possible";
+        }
+
+        for (Integer index : pathList) {
+            sb.append(" <- ").append(internalMap2.get(index));
+        }
+
+        sb.append(" <- ").append(source);
 
         return sb.toString();
     }
