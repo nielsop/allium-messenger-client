@@ -1,19 +1,18 @@
 package nl.han.asd.project.client.commonclient.login;
 
-import java.io.IOException;
-
-import javax.inject.Inject;
-
 import com.google.protobuf.ByteString;
-
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
+import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest.Builder;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
+
+import javax.inject.Inject;
+import java.io.IOException;
 
 /**
  * Provide the methods used to login.
@@ -24,6 +23,7 @@ public class LoginService implements ILogin {
 
     private IAuthentication authentication;
     private IEncryptionService encryptionService;
+    private ISetConnectedNodes setConnectedNodes;
 
     /**
      * Construct a new LoginService.
@@ -31,14 +31,16 @@ public class LoginService implements ILogin {
      * @param authentication the authentication interface
      * @param encryptionService the encryptionservice holding
      *          the public key
+     * @param setConnectedNodes the connectedNodes interface
      *
      * @throws IllegalArgumentException if authentication
      *          or encryptionService is null
      */
     @Inject
-    public LoginService(IAuthentication authentication, IEncryptionService encryptionService) {
+    public LoginService(IAuthentication authentication, IEncryptionService encryptionService, ISetConnectedNodes setConnectedNodes) {
         this.authentication = Check.notNull(authentication, "authentication");
         this.encryptionService = Check.notNull(encryptionService, "encryptionService");
+        this.setConnectedNodes = Check.notNull(setConnectedNodes, "setConnectedNodes");
     }
 
     /** {@inheritDoc} */
@@ -59,6 +61,7 @@ public class LoginService implements ILogin {
             throw new InvalidCredentialsException(loginResponse.getStatus().name());
         }
 
+        setConnectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList());
         return new CurrentUser(username, encryptionService.getPublicKey(), loginResponse.getSecretHash());
     }
 }
