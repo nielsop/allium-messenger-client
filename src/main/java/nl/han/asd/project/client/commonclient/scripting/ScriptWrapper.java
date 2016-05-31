@@ -43,7 +43,7 @@ public class ScriptWrapper implements IScriptWrapper {
 
     @Override
     public void printUI(IScriptWrapper.UIMessageType type, String message) {
-
+        //ToDo implement
     }
 
     public enum UIMessageType {

@@ -7,9 +7,12 @@ import nl.han.asd.project.client.commonclient.connection.Parser;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
 
 import java.io.IOException;
 import java.util.Map;
+
+import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
 
 public class GraphManagerService implements IGetVertices {
     private int currentGraphVersion;
@@ -44,34 +47,24 @@ public class GraphManagerService implements IGetVertices {
      * @throws MessageNotSentException
      */
     public void processGraphUpdates() throws IOException, MessageNotSentException {
-        HanRoutingProtocol.GraphUpdateRequest request = HanRoutingProtocol.GraphUpdateRequest.newBuilder().setCurrentVersion(currentGraphVersion).build();
+        GraphUpdateResponse response = getUpdatedGraph.getUpdatedGraph(GraphUpdateRequest.newBuilder().setCurrentVersion(currentGraphVersion).build());
+        GraphUpdate lastUpdate = Parser.parseFrom(response.getGraphUpdates(response.getGraphUpdatesCount() - 1).toByteArray(), GraphUpdate.class);
 
-        HanRoutingProtocol.GraphUpdateResponse response = getUpdatedGraph.getUpdatedGraph(request);
-
-        HanRoutingProtocol.GraphUpdate lastUpdate = Parser.parseFrom(
-                response.getGraphUpdates(response.getGraphUpdatesCount() - 1).toByteArray(), HanRoutingProtocol.GraphUpdate.class);
-
-        if (lastUpdate.getNewVersion() <= currentGraphVersion) {
+        if (lastUpdate.getNewVersion() <= currentGraphVersion)
             return;
-        }
-
-        if (lastUpdate.getIsFullGraph()) {
+        if (lastUpdate.getIsFullGraph())
             graph.resetGraph();
-        }
 
         for (ByteString updateByteString : response.getGraphUpdatesList()) {
-            HanRoutingProtocol.GraphUpdate update = Parser.parseFrom(updateByteString.toByteArray(), HanRoutingProtocol.GraphUpdate.class);
-
+            GraphUpdate update = Parser.parseFrom(updateByteString.toByteArray(), GraphUpdate.class);
             for (nl.han.asd.project.protocol.HanRoutingProtocol.Node addedNode : update.getAddedNodesList()) {
                 graph.addNodeVertex(addedNode);
                 graph.addEdgesToVertex(addedNode);
             }
-
             for (nl.han.asd.project.protocol.HanRoutingProtocol.Node deletedNode : update.getDeletedNodesList()) {
                 graph.removeNodeVertex(deletedNode);
             }
         }
-
         currentGraphVersion = lastUpdate.getNewVersion();
     }
 

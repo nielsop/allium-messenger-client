@@ -29,7 +29,7 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse
  */
 public class CommonClientGateway {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
@@ -90,10 +90,10 @@ public class CommonClientGateway {
     }
 
     /**
-     * Retrieves messaages of current user from messagestore.
+     * Retrieves messages of current user from messageStore.
      *
      * @param contact the username of the contact
-     * @return
+     * @return List with all the messages from/to the given contact
      */
     public List<Message> getMessagesFromUser(String contact) {
         return messageStore.getMessagesFromUser(contact);
@@ -166,8 +166,7 @@ public class CommonClientGateway {
     /**
      * Logs out the user and deletes all user data in memory
      */
-    //TODO: Implement method. Delete all in memory user data.
     public void logout() {
-
+        //TODO: Implement method. Delete all in memory user data.
     }
 }
