@@ -1,58 +1,93 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import nl.han.asd.project.client.commonclient.CommonClientGateway;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import nl.han.asd.project.commonservices.internal.utility.Check;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ContactStore implements IContactStore {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+
     private IPersistence persistence;
     private CurrentUser currentUser;
-    private ArrayList<Contact> contactList = new ArrayList<>();
+    private List<Contact> contactList;
 
+    /**
+     * Constructor of Contactstore.
+     *
+     * @param persistence the layer where the store connects and communicates with the database
+     */
     @Inject
     public ContactStore(IPersistence persistence) {
-        this.persistence = Check.notNull(persistence, "persistence");
+        this.persistence = persistence;
+        this.contactList = new ArrayList<>();
+        contactList = persistence.getContacts();
     }
 
-    // TODO remove test contacts
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void createTestContacts() {
-        addContact("bram", "asdf4321".getBytes());
-        addContact("niels", "asdf4321".getBytes());
-        addContact("marius", "asdf4321".getBytes());
-        addContact("kenny", "asdf4321".getBytes());
-        addContact("julius", "asdf4321".getBytes());
-        addContact("jevgeni", "asdf4321".getBytes());
-        addContact("dennis", "asdf4321".getBytes());
+    public void addContact(String username) {
+        contactList.add(new Contact(username));
+        persistence.addContact(username);
     }
 
-    @Override //TODO: Should not be possible to add already existing userNames?
-    public void addContact(String username, byte[] publicKey) {
-        contactList.add(new Contact(username, publicKey));
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeContact(String username) {
-        for (Contact contact : contactList) {
-            if (contact.getUsername().equals(username)) {
-                contactList.remove(contact);
+        for (int i = 0; i < contactList.size(); i++) {
+            Contact toBeDeletedContact = contactList.get(i);
+            if (toBeDeletedContact.getUsername().equals(username)) {
+                contactList.remove(i);
                 break;
             }
         }
+        persistence.deleteContact(username);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void deleteAllContacts() {
-        contactList.clear();
+    public Contact getCurrentUserAsContact() {
+        return currentUser.getCurrentUserAsContact();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ArrayList<Contact> getAllContacts() {
+    public CurrentUser getCurrentUser() {
+        return currentUser;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setCurrentUser(CurrentUser currentUser) {
+        this.currentUser = Check.notNull(currentUser, "currentUser");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Contact> getAllContacts() {
         return contactList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Contact findContact(String username) {
         if (username == null) {
@@ -65,23 +100,11 @@ public class ContactStore implements IContactStore {
         return null;
     }
 
-    @Override
-    public CurrentUser getCurrentUser() {
-        return currentUser;
-    }
-
-    @Override
-    public void setCurrentUser(CurrentUser currentUser) {
-        this.currentUser = currentUser;
-    }
-
     /**
-     * Getter for currentUser as a Contact.
-     *
-     * @return current user that is logged in as a Contact object.
+     * {@inheritDoc}
      */
     @Override
-    public Contact getCurrentUserAsContact() {
-        return currentUser.getCurrentUserAsContact();
+    public void deleteAllContactsFromMemory() {
+        contactList.clear();
     }
 }

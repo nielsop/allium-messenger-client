@@ -26,13 +26,13 @@ public class CommonClientGatewayTest {
     private IRegistration registration;
     private ILoginService login;
 
-    private String emptyPublicKey = "";
-    private String privateKey = "";
+    private byte[] emptyPublicKey = "".getBytes();
+    private byte[] privateKey = "".getBytes();
     private String secretHash = "";
-    private Contact contact1 = new Contact("FirstUser", emptyPublicKey.getBytes());
-    private CurrentUser user1 = new CurrentUser("FirstUser", privateKey.getBytes(), secretHash);
-    private Contact contact2 = new Contact("SecondUser", emptyPublicKey.getBytes());
-    private CurrentUser user2 = new CurrentUser("SecondUser", privateKey.getBytes(), secretHash);
+    private Contact contact1 = new Contact("FirstUser", emptyPublicKey);
+    private CurrentUser user1 = new CurrentUser("FirstUser", privateKey, secretHash);
+    private Contact contact2 = new Contact("SecondUser", emptyPublicKey);
+    private CurrentUser user2 = new CurrentUser("SecondUser", privateKey, secretHash);
 
     @Before
     public void setup() {
@@ -86,7 +86,7 @@ public class CommonClientGatewayTest {
     public void removeContactActuallyRemovesContactFromContactStore() {
         String newContact = "newContact";
         Assert.assertTrue(contactStore.findContact(newContact) == null);
-        contactStore.addContact(newContact, emptyPublicKey.getBytes());
+        contactStore.addContact(newContact);
         Assert.assertTrue(contactStore.findContact(newContact).getUsername() == newContact);
         commonClientGateway.removeContact(newContact);
         Assert.assertTrue(contactStore.findContact(newContact) == null);
