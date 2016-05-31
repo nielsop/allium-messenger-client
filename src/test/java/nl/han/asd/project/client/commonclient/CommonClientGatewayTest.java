@@ -42,7 +42,7 @@ public class CommonClientGatewayTest {
 
     @Before
     public void setup() {
-        Injector injector = Guice.createInjector(new CommonclientModule(), new AbstractModule() {
+        Injector injector = Guice.createInjector(new CommonClientModule(), new AbstractModule() {
 
             @Override
             protected void configure() {

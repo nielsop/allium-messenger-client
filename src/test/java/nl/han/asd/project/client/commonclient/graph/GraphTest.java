@@ -15,10 +15,6 @@ import java.util.NoSuchElementException;
  * @since 29/04/16
  */
 public class GraphTest {
-    private Graph graph;
-    private HanRoutingProtocol.Node node;
-    private HanRoutingProtocol.Edge edge;
-    private Edge edgeNode1;
     private final String EDGEDESTINATIONNODE = "NODE_2";
     private final int EDGEDESTINATIONNODEWEIGHT = 12;
     private final int NODE1_PORT = 1337;

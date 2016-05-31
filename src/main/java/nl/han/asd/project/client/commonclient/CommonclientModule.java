@@ -15,7 +15,7 @@ import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 /**
  * Created by Marius on 19-04-16.
  */
-public class CommonclientModule extends AbstractModule {
+public class CommonClientModule extends AbstractModule {
     @Override
     protected void configure() {
         install(new ConnectionModule());
