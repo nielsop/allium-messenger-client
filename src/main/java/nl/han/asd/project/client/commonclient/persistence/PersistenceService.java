@@ -113,6 +113,10 @@ public class PersistenceService implements IPersistence {
         final List<Contact> contactList = new ArrayList<>();
         try {
             ResultSet selectContactsResult = getDatabase().select("SELECT * FROM Contact");
+
+            if (selectContactsResult == null)
+                return new ArrayList<>();
+
             while (selectContactsResult.next()) {
                 contactList.add(Contact.fromDatabase((String) selectContactsResult.getObject(2)));
             }
