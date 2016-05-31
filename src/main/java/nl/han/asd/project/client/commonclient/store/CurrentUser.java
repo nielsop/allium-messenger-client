@@ -14,7 +14,7 @@ public class CurrentUser {
 
     /**
      * Constructor of CurrentUser.
-     * 
+     *
      * @param username username of user
      * @param publicKey publicKey of user
      * @param secretHash hash of user used for identification to master server
