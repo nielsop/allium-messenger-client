@@ -35,8 +35,12 @@ public class HyperSQLDatabase implements IDatabase {
         initializeDatabase();
     }
 
+    /**
+     * This constructor is only ment to be used by Guice.
+     * DO NOT manually instantiate this class with this empty constructor!
+     */
     public HyperSQLDatabase() {
-
+        //Needed for GUICE to word?
     }
 
     private static String generateKey(String username, String password) {
