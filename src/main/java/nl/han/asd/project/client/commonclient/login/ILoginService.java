@@ -18,7 +18,6 @@ public interface ILoginService {
      *
      * @param username identifying name of the user
      * @param password password
-     * @return instance holding all user details including
      * the secret hash returned from the master application
      * @throws IllegalArgumentException    if username and/or password
      *                                     is null
@@ -38,7 +37,7 @@ public interface ILoginService {
      *                                     this exception is not thrown on Socket related
      *                                     exceptions. See IOException.
      */
-    CurrentUser login(String username, String password)
+    void login(String username, String password)
             throws InvalidCredentialsException, IOException, MessageNotSentException;
 
     boolean logout(String username, String secretHash);

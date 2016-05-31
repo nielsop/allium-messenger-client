@@ -94,7 +94,7 @@ public class CommonClientGateway {
      */
     public ClientLoginResponse.Status loginRequest(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
         try {
-            contactStore.setCurrentUser(loginService.login(username, password));
+            loginService.login(username, password);
             return ClientLoginResponse.Status.SUCCES;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

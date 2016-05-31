@@ -5,6 +5,7 @@ import nl.han.asd.project.client.commonclient.master.IAuthentication;
 import nl.han.asd.project.client.commonclient.node.IConnectedNodes;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
+import static org.powermock.api.support.membermodification.MemberMatcher.constructor;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Contact.class, LoginService.class })
@@ -43,6 +45,7 @@ public class LoginServiceTest {
     private IAuthentication authenticationMock;
     private IEncryptionService encryptionServiceMock;
     private IConnectedNodes setConnectedNodes;
+    private IContactStore contactStore;
 
     private ILoginService login;
 
@@ -51,7 +54,8 @@ public class LoginServiceTest {
         authenticationMock = mock(IAuthentication.class);
         encryptionServiceMock = mock(IEncryptionService.class);
         setConnectedNodes = mock(IConnectedNodes.class);
-        login = new LoginService(authenticationMock, encryptionServiceMock, setConnectedNodes);
+        contactStore = mock(IContactStore.class);
+        login = new LoginService(authenticationMock, encryptionServiceMock, setConnectedNodes, contactStore);
     }
 
     @Test(expected = IllegalUsernameException.class)
@@ -141,8 +145,8 @@ public class LoginServiceTest {
         CurrentUser contactMock = mock(CurrentUser.class);
         whenNew(CurrentUser.class).withAnyArguments().thenReturn(contactMock);
 
-        assertEquals(contactMock, login.login(VALID_USERNAME, VALID_PASSWORD));
+        login.login(VALID_USERNAME, VALID_PASSWORD);
 
-        verify(setConnectedNodes).setConnectedNodes(eq(response.getConnectedNodesList()));
+        verify(setConnectedNodes).setConnectedNodes(eq(response.getConnectedNodesList()), eq(VALID_USERNAME));
     }
 }

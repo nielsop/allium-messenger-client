@@ -14,8 +14,6 @@ import java.util.List;
 
 public class NodeConnectionService implements IConnectedNodes, ISendData {
     private IReceiveMessage receiveMessage;
-    private IContactStore contactStore;
-    private IMessageConfirmation messageConfirmation;
 
     private List<NodeConnection> openConnections = new ArrayList<>();
 
@@ -25,27 +23,28 @@ public class NodeConnectionService implements IConnectedNodes, ISendData {
      * @param receiveMessage the receiveMessage interface
      */
     @Inject
-    public NodeConnectionService(IReceiveMessage receiveMessage, IContactStore contactStore, IMessageConfirmation messageConfirmation) {
+    public NodeConnectionService(IReceiveMessage receiveMessage) {
         this.receiveMessage = receiveMessage;
-        this.contactStore = contactStore;
-        this.messageConfirmation = messageConfirmation;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setConnectedNodes(List<String> connectedNodes) {
+    public void setConnectedNodes(List<String> connectedNodes, String username) {
         for (String connectNode : connectedNodes) {
             String[] parts = connectNode.split(":");
             String hostname = parts[0];
             int port = Integer.parseInt(parts[1]);
 
+            System.out.println(hostname);
+            System.out.println(port);
+
             final ConnectionService connectionService = new ConnectionService(hostname, port);
             connectionService.closeOnIdle = false;
 
             HanRoutingProtocol.ClientNodeConnection.Builder builder = HanRoutingProtocol.ClientNodeConnection.newBuilder();
-            builder.setUsername(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());
+            builder.setUsername(username);
 
             try {
                 HanRoutingProtocol.Wrapper wrapper = connectionService.wrap(builder.build(), HanRoutingProtocol.Wrapper.Type.CLIENTNODECONNECTION);

@@ -15,7 +15,7 @@ public interface IConnectedNodes {
      *
      * @param connectedNodesList the list of connectedNodes
      */
-    void setConnectedNodes(List<String> connectedNodesList);
+    void setConnectedNodes(List<String> connectedNodesList, String username);
 
     /**
      * Unset connectedNodes when after logout.

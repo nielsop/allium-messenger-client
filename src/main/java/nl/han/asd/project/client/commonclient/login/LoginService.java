@@ -5,6 +5,7 @@ import nl.han.asd.project.client.commonclient.connection.MessageNotSentException
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
 import nl.han.asd.project.client.commonclient.node.IConnectedNodes;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
@@ -21,6 +22,7 @@ import java.io.IOException;
  */
 public class LoginService implements ILoginService {
 
+    private IContactStore contactStore;
     private IAuthentication authentication;
     private IEncryptionService encryptionService;
     private IConnectedNodes setConnectedNodes;
@@ -37,7 +39,9 @@ public class LoginService implements ILoginService {
      *          or encryptionService is null
      */
     @Inject
-    public LoginService(IAuthentication authentication, IEncryptionService encryptionService, IConnectedNodes setConnectedNodes) {
+    public LoginService(IAuthentication authentication, IEncryptionService encryptionService, IConnectedNodes setConnectedNodes,
+                        IContactStore contactStore) {
+        this.contactStore = contactStore;
         this.authentication = Check.notNull(authentication, "authentication");
         this.encryptionService = Check.notNull(encryptionService, "encryptionService");
         this.setConnectedNodes = Check.notNull(setConnectedNodes, "setConnectedNodes");
@@ -45,7 +49,7 @@ public class LoginService implements ILoginService {
 
     /** {@inheritDoc} */
     @Override
-    public CurrentUser login(String username, String password)
+    public void login(String username, String password)
             throws InvalidCredentialsException, IOException, MessageNotSentException {
         UserCheck.checkUsername(username);
         UserCheck.checkPassword(password);
@@ -61,8 +65,9 @@ public class LoginService implements ILoginService {
             throw new InvalidCredentialsException(loginResponse.getStatus().name());
         }
 
-        setConnectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList());
-        return new CurrentUser(username, encryptionService.getPublicKey(), loginResponse.getSecretHash());
+        contactStore.setCurrentUser(new CurrentUser(username, encryptionService.getPublicKey(), loginResponse.getSecretHash()));
+
+        setConnectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList(), username);
     }
 
     @Override
