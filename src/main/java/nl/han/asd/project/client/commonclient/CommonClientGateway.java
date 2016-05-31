@@ -42,14 +42,6 @@ public class CommonClientGateway {
         this.messageStore = Check.notNull(messageStore, "messageStore");
         this.registration = Check.notNull(registration, "registration");
         this.loginService = Check.notNull(loginService, "loginService");
-
-        // TODO remove test method
-        createTestContacts();
-    }
-
-    // TODO remove test method
-    private void createTestContacts() {
-        contactStore.createTestContacts();
     }
 
     /**
@@ -80,6 +72,13 @@ public class CommonClientGateway {
         }
     }
 
+    /**
+     * Logs in and returns a login status. This login status is wrapped inside a loginResponseWrapper.
+     *
+     * @param username the username to log in.
+     * @param password the password belonging to the username.
+     * @return the login status, received from the loginResponseWrapper.
+     */
     public ClientLoginResponse.Status loginRequest(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
         try {
             contactStore.setCurrentUser(loginService.login(username, password));
@@ -90,31 +89,83 @@ public class CommonClientGateway {
         }
     }
 
+    /**
+     * Retrieves messaages of current user from messagestore.
+     *
+     * @param contact the username of the contact
+     * @return
+     */
     public List<Message> getMessagesFromUser(String contact) {
         return messageStore.getMessagesFromUser(contact);
     }
 
+    /**
+     * Returns the current user that is logged in.
+     *
+     * @return the current user
+     */
     public CurrentUser getCurrentUser() {
         return contactStore.getCurrentUser();
     }
 
+    /**
+     * Adds contact to contactstore.
+     *
+     * @param username username of contact
+     */
+    public void addContact(String username) {
+        contactStore.addContact(username);
+    }
+    /**
+     * Removes contact from contactstore.
+     *
+     * @param username username of contact
+     */
+    public void removeContact(String username) {
+        contactStore.removeContact(username);
+    }
+
+    /**
+     * Returns a list of contacts of the current user.
+     *
+     * @return list of contacts of the current user
+     */
     public List<Contact> getContacts() {
         return contactStore.getAllContacts();
     }
 
+    /**
+     * Finds contact from username in contactstore.
+     *
+     * @param username the username of the contact
+     * @return found contact by username
+     */
+    public Contact findContact(String username) {
+        return contactStore.findContact(username);
+    }
+
+    /**
+     * Adds the message to the messageStore.
+     *
+     * @param message the message to be added
+     */
     public void addMessage(Message message) {
         messageStore.addMessage(message);
     }
 
+    /**
+     * Sends the message to the receiver by onion routing.
+     *
+     * @param message the to be send message
+     */
     public void sendMessage(Message message) {
         //TODO: Actually send message to a user
         messageStore.addMessage(message);
     }
 
-    public void removeContact(String username) {
-        contactStore.removeContact(username);
-    }
-
+    /**
+     * Logs out the user and deletes all user data in memory
+     */
     //TODO: Implement method. Delete all in memory user data.
     public void logout() {
 

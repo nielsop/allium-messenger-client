@@ -67,6 +67,11 @@ public interface IPersistence {
      */
     boolean deleteContact(final String username);
 
+    /**
+     * Deletes all contacts from the database.
+     *
+     * @return <tt>true</tt> if all contacts are successfully deleted, <tt>false</tt> otherwise.
+     */
     boolean deleteAllContacts();
 
     /**
