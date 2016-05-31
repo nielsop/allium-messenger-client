@@ -6,7 +6,6 @@ import nl.han.asd.project.client.commonclient.graph.Graph;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.matrix.GraphMatrix;
 import nl.han.asd.project.client.commonclient.path.matrix.GraphMatrix2;
-import nl.han.asd.project.client.commonclient.path.matrix.Matrix2;
 
 /**
  * Created by BILLPOORTS on 25-5-2016.
@@ -60,6 +59,7 @@ public class MatrixTest {
         Node nodeD = new Node("D", "127.0.0.1", 1004, new byte[] { 0x00 });
         Node nodeE = new Node("E", "127.0.0.1", 1005, new byte[] { 0x00 });
         Node nodeF = new Node("F", "127.0.0.1", 1006, new byte[] { 0x00 });
+        Node nodeG = new Node("G", "127.0.0.1", 1006, new byte[] { 0x00 });
 
         nodeA.addEdge(nodeE, 8);
         nodeA.addEdge(nodeF, 4);
@@ -68,6 +68,8 @@ public class MatrixTest {
         nodeC.addEdge(nodeB, 10);
         nodeF.addEdge(nodeB, 2);
         nodeF.addEdge(nodeD, 3);
+        nodeG.addEdge(nodeE, 1);
+        nodeG.addEdge(nodeC, 1);
 
         graph.addNodeVertex(nodeA);
         graph.addNodeVertex(nodeB);
@@ -75,6 +77,7 @@ public class MatrixTest {
         graph.addNodeVertex(nodeD);
         graph.addNodeVertex(nodeE);
         graph.addNodeVertex(nodeF);
+        graph.addNodeVertex(nodeG);
 
         GraphMatrix graphMatrix = new GraphMatrix(graph.getGraphMap());
         graphMatrix.fillMatrix();
@@ -88,9 +91,12 @@ public class MatrixTest {
         System.out.print(String.format("\n\n --- MULTIPLYING (Step = %d) --- \n\n", 9 + 1));
         System.out.print(graphMatrix.toPrintableString(3));
 
-        System.err.println(String.format("\n\n --- MULTIPLYING (Step = %d) --- \n\n", 10 + 1));
-        System.err.println(((Matrix2) graphMatrix2).toString());
+        int pathLength = 6;
 
-        System.out.println(graphMatrix2.getFormattedPath("E", "F"));
+        System.err.println(String.format("\n\n --- MULTIPLYING (Step = %d) --- \n\n", 10 + 1));
+        System.err.println(graphMatrix2.toString(pathLength));
+        System.out.println('\n');
+
+        System.out.println(graphMatrix2.getFormattedPath("G", "F", pathLength));
     }
 }
