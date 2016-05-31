@@ -1,6 +1,6 @@
 package nl.han.asd.project.client.commonclient.message;
 
-import nl.han.asd.project.client.commonclient.Configuration;
+import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.slf4j.Logger;
@@ -19,13 +19,14 @@ public class Message {
     private String text;
     private Contact sender;
     private Date timestamp;
+    private int id;
 
     public Message(Contact sender, Date timestamp, String text) {
         this(-1, sender, timestamp, text);
     }
 
     public Message(int id, Contact sender, Date timestamp, String text) {
-        this.databaseId = id;
+        databaseId = id;
         this.sender = sender;
         this.timestamp = timestamp;
         this.text = text;
@@ -36,7 +37,8 @@ public class Message {
             final int id = (Integer) result.getObject(1);
             final Contact sender = Contact.fromDatabase((String) result.getObject(2));
             final String message = (String) result.getObject(4);
-            final Date timestamp = Configuration.TIMESTAMP_FORMAT.parse(Configuration.TIMESTAMP_FORMAT.format(result.getTimestamp(3)));
+            final Date timestamp = IPersistence.TIMESTAMP_FORMAT
+                    .parse(IPersistence.TIMESTAMP_FORMAT.format(result.getTimestamp(3)));
             return new Message(id, sender, timestamp, message);
         } catch (SQLException | ParseException e) {
             LOGGER.error(e.getMessage(), e);
@@ -63,7 +65,8 @@ public class Message {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("Message[sender=").append(sender.getUsername()).append(", timestamp=").append(timestamp).append(", text=").append(text).append("]");
+        sb.append("Message[sender=").append(sender.getUsername()).append(", timestamp=").append(timestamp)
+                .append(", text=").append(text).append("]");
         return sb.toString();
     }
 
@@ -83,5 +86,13 @@ public class Message {
 
     public int getDatabaseId() {
         return databaseId;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public int getId() {
+        return id;
     }
 }

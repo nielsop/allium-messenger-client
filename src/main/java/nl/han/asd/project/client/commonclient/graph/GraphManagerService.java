@@ -1,26 +1,29 @@
 package nl.han.asd.project.client.commonclient.graph;
 
 import com.google.inject.Inject;
-import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
-import nl.han.asd.project.client.commonclient.master.wrapper.UpdatedGraphResponseWrapper;
+import com.google.protobuf.ByteString;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.connection.Parser;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class GraphManagerService implements IGetVertices {
-
     private int currentGraphVersion;
     private Graph graph;
-    private IGetGraphUpdates gateway;
+    private IGetUpdatedGraph getUpdatedGraph;
 
     @Inject
-    public GraphManagerService(IGetGraphUpdates gateway) {
+    public GraphManagerService(IGetUpdatedGraph gateway) {
         graph = new Graph();
-        this.gateway = gateway;
+        this.getUpdatedGraph = Check.notNull(gateway, "getUpdatedGraph");
         currentGraphVersion = 0;
     }
 
     /**
-     *
      * @return the current graph version
      */
     public int getCurrentGraphVersion() {
@@ -28,7 +31,7 @@ public class GraphManagerService implements IGetVertices {
     }
 
     private void setCurrentGraphVersion(int versionNumber) {
-        this.currentGraphVersion = versionNumber;
+        currentGraphVersion = versionNumber;
     }
 
     /**
@@ -36,26 +39,43 @@ public class GraphManagerService implements IGetVertices {
      * The addedNodes are iterated over twice.
      * The first iteration assures that all node objects are made.
      * The second iteration makes it possible to add the right edges to the right nodes.
+     *
+     * @throws IOException
+     * @throws MessageNotSentException
      */
-    public void processGraphUpdates() {
-        UpdatedGraphResponseWrapper updatedGraph = gateway.getUpdatedGraph(currentGraphVersion);
-        if (updatedGraph.getLast().getNewVersion() > currentGraphVersion) {
-            setCurrentGraphVersion(updatedGraph.getLast().getNewVersion());
+    public void processGraphUpdates() throws IOException, MessageNotSentException {
+        HanRoutingProtocol.GraphUpdateRequest request = HanRoutingProtocol.GraphUpdateRequest.newBuilder().setCurrentVersion(currentGraphVersion).build();
 
-            if (updatedGraph.getLast().isFullGraph()) {
-                graph.resetGraph();
-                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
-                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addEdgesToVertex(vertex));
-            } else {
-                updatedGraph.getLast().deletedNodes.forEach(vertex -> graph.removeNodeVertex(vertex));
-                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addNodeVertex(vertex));
-                updatedGraph.getLast().addedNodes.forEach(vertex -> graph.addEdgesToVertex(vertex));
+        HanRoutingProtocol.GraphUpdateResponse response = getUpdatedGraph.getUpdatedGraph(request);
+
+        HanRoutingProtocol.GraphUpdate lastUpdate = Parser.parseFrom(
+                response.getGraphUpdates(response.getGraphUpdatesCount() - 1).toByteArray(), HanRoutingProtocol.GraphUpdate.class);
+
+        if (lastUpdate.getNewVersion() <= currentGraphVersion) {
+            return;
+        }
+
+        if (lastUpdate.getIsFullGraph()) {
+            graph.resetGraph();
+        }
+
+        for (ByteString updateByteString : response.getGraphUpdatesList()) {
+            HanRoutingProtocol.GraphUpdate update = Parser.parseFrom(updateByteString.toByteArray(), HanRoutingProtocol.GraphUpdate.class);
+
+            for (nl.han.asd.project.protocol.HanRoutingProtocol.Node addedNode : update.getAddedNodesList()) {
+                graph.addNodeVertex(addedNode);
+                graph.addEdgesToVertex(addedNode);
+            }
+
+            for (nl.han.asd.project.protocol.HanRoutingProtocol.Node deletedNode : update.getDeletedNodesList()) {
+                graph.removeNodeVertex(deletedNode);
             }
         }
+
+        currentGraphVersion = lastUpdate.getNewVersion();
     }
 
     /**
-     *
      * @return the graph
      */
     public Graph getGraph() {
@@ -63,11 +83,10 @@ public class GraphManagerService implements IGetVertices {
     }
 
     /**
-     *
      * @return the vertices from the graph
      */
     @Override
-    public Map<String,Node> getVertices() {
+    public Map<String, Node> getVertices() {
         return graph.getVertexMap();
     }
 }

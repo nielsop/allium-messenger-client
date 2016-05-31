@@ -1,18 +1,19 @@
 package nl.han.asd.project.client.commonclient.store;
 
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 
 public class ContactStore implements IContactStore {
-    public IPersistence persistence;
+    private IPersistence persistence;
     private CurrentUser currentUser;
     private ArrayList<Contact> contactList = new ArrayList<>();
 
     @Inject
     public ContactStore(IPersistence persistence) {
-        this.persistence = persistence;
+        this.persistence = Check.notNull(persistence, "persistence");
     }
 
     // TODO remove test contacts
@@ -72,5 +73,15 @@ public class ContactStore implements IContactStore {
     @Override
     public void setCurrentUser(CurrentUser currentUser) {
         this.currentUser = currentUser;
+    }
+
+    /**
+     * Getter for currentUser as a Contact.
+     *
+     * @return current user that is logged in as a Contact object.
+     */
+    @Override
+    public Contact getCurrentUserAsContact() {
+        return currentUser.getCurrentUserAsContact();
     }
 }

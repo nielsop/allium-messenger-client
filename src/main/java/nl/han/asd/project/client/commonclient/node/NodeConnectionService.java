@@ -1,15 +1,28 @@
 package nl.han.asd.project.client.commonclient.node;
 
-import com.google.inject.Inject;
+import com.google.protobuf.ProtocolStringList;
 import nl.han.asd.project.client.commonclient.message.IReceiveMessage;
 
-public class NodeConnectionService implements ISetConnectedNodes, ISendData {
-    private IReceiveMessage receiveMessage;
-    private IConnectionListener nodeConnection;
+import javax.inject.Inject;
 
+public class NodeConnectionService implements ISetConnectedNodes {
+    private IReceiveMessage receiveMessage;
+
+    /**
+     * Constructor of NodeConnectionService
+     *
+     * @param receiveMessage the receiveMessage interface
+     */
     @Inject
-    public NodeConnectionService(IReceiveMessage receiveMessage, IConnectionListener nodeConnection) {
+    public NodeConnectionService(IReceiveMessage receiveMessage) {
         this.receiveMessage = receiveMessage;
-        this.nodeConnection = nodeConnection;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setConnectedNodes(ProtocolStringList connectedNodesList) {
+        // TODO implement connectedNodes after login
     }
 }

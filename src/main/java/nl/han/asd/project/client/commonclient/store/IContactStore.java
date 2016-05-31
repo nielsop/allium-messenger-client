@@ -8,8 +8,9 @@ public interface IContactStore {
 
     /**
      * Adds new contact into contactstore.
-     *  @param username username of contact
-     *  @param publicKey publicKey.
+     *
+     * @param username  username of contact
+     * @param publicKey publicKey.
      */
     void addContact(String username, byte[] publicKey);
 
@@ -41,6 +42,13 @@ public interface IContactStore {
     void deleteAllContacts();
 
     /**
+     * Getter for currentUser.
+     *
+     * @return current user that is logged in
+     */
+    CurrentUser getCurrentUser();
+
+    /**
      * Setter for currentUser.
      *
      * @param currentUser the current user that is logged in
@@ -48,9 +56,9 @@ public interface IContactStore {
     void setCurrentUser(CurrentUser currentUser);
 
     /**
-     * Getter for currentUser.
+     * Getter for currentUser as a Contact.
      *
-     * @return current user that is logged in
+     * @return current user that is logged in as a Contact object.
      */
-    CurrentUser getCurrentUser();
+    Contact getCurrentUserAsContact();
 }

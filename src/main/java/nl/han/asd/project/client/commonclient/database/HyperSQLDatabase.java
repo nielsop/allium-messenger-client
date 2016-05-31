@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.database;
 
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,15 +24,29 @@ public class HyperSQLDatabase implements IDatabase {
 
     /**
      * Creates a new HyperSQL Database connection. Creates the database if none exists for this user.
+     *
      * @param username The user's username.
      * @param password The user's password.
      * @throws SQLException if a database access error occurs.
      */
-    @Inject
     public HyperSQLDatabase(String username, String password) throws SQLException {
         final String key = generateKey(username, password);
         connection = DriverManager.getConnection("jdbc:hsqldb:" + username + "_db;crypt_key=" + key + ";crypt_type=AES", DATABASE_USERNAME, DATABASE_PASSWORD);
         initializeDatabase();
+    }
+
+    public HyperSQLDatabase() {
+
+    }
+
+    private static String generateKey(String username, String password) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance(ENCRYPTION_ALGORITHM);
+            return String.format("%064x", new java.math.BigInteger(1, messageDigest.digest((username + password).getBytes()))).substring(0, 32);
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return "";
     }
 
     @Override
@@ -88,15 +101,5 @@ public class HyperSQLDatabase implements IDatabase {
     @Override
     public boolean isOpen() throws SQLException {
         return connection != null && !connection.isClosed();
-    }
-
-    private static String generateKey(String username, String password) {
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance(ENCRYPTION_ALGORITHM);
-            return String.format("%064x", new java.math.BigInteger(1, messageDigest.digest((username + password).getBytes()))).substring(0, 32);
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return "";
     }
 }
