@@ -7,14 +7,12 @@ import java.io.IOException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
 
 import nl.han.asd.project.client.commonclient.store.ContactStore;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -49,8 +47,6 @@ public class ConnectionService implements IConnectionService {
 
     private byte[] publicKeyBytes;
 
-    private IContactStore contactStore;
-
     /**
      * Create a new ConnectionService instance used
      * to handle the communication with the specified host.
@@ -73,17 +69,6 @@ public class ConnectionService implements IConnectionService {
 
         socketHandler = new SocketHandler(host, port, encryptionService);
 
-        String currentUsername = contactStore.getCurrentUser().getCurrentUserAsContact().getUsername();
-        HanRoutingProtocol.ClientNodeConnection.Builder builder = HanRoutingProtocol.ClientNodeConnection.newBuilder();
-        builder.setUsername(currentUsername);
-
-        try {
-            Wrapper wrapper = wrap(builder.build(), Type.CLIENTNODECONNECTION);
-            write(wrapper);
-        } catch (IOException | MessageNotSentException e) {
-            e.printStackTrace();
-        }
-
         mutex = new Semaphore(1);
     }
 
@@ -104,11 +89,10 @@ public class ConnectionService implements IConnectionService {
      *          and/or publicKeyBytes is null
      */
     @AssistedInject
-    public ConnectionService(IEncryptionService encryptionService, IContactStore contactStore,
-            @Assisted String host, @Assisted int port, @Assisted byte[] publicKeyBytes) {
+    public ConnectionService(IEncryptionService encryptionService, @Assisted String host, @Assisted int port,
+            @Assisted byte[] publicKeyBytes) {
         this(host, port);
 
-        this.contactStore = Check.notNull(contactStore, "contactStore");
         this.encryptionService = Check.notNull(encryptionService, "encryptionService");
         this.publicKeyBytes = Check.notNull(publicKeyBytes, "publicKeyBytes");
     }
@@ -152,10 +136,9 @@ public class ConnectionService implements IConnectionService {
      * @throws IOException if an IOException occurs during the publicKeyFile read
      */
     @AssistedInject
-    public ConnectionService(IEncryptionService encryptionService, IContactStore contactStore,
-            @Assisted String host, @Assisted int port, @Assisted File publicKeyFile) throws IOException {
+    public ConnectionService(IEncryptionService encryptionService, @Assisted String host, @Assisted int port,
+            @Assisted File publicKeyFile) throws IOException {
         this(host, port);
-        this.contactStore = Check.notNull(contactStore, "contactStore");
         this.encryptionService = Check.notNull(encryptionService, "encryptionService");
 
         Check.notNull(publicKeyFile, "publicKeyFile");
