@@ -4,6 +4,8 @@ import nl.han.asd.project.client.commonclient.connection.MessageNotSentException
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
+import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
@@ -11,6 +13,7 @@ import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
 import org.slf4j.Logger;
@@ -20,6 +23,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.List;
 
+import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
 import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 
 /**
@@ -35,9 +39,14 @@ public class CommonClientGateway {
     private IMessageStore messageStore;
     private IRegistration registration;
     private ILoginService loginService;
+    private ISendMessage sendMessage;
+    private IMessageBuilder messageBuilder;
 
     @Inject
-    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration, ILoginService loginService) {
+    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
+                               ILoginService loginService, ISendMessage sendMessage, IMessageBuilder messageBuilder) {
+        this.messageBuilder = Check.notNull(messageBuilder, "messageBuilder");
+        this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");
         this.registration = Check.notNull(registration, "registration");
@@ -106,8 +115,16 @@ public class CommonClientGateway {
         messageStore.addMessage(message);
     }
 
-    public void sendMessage(Message message) {
-        //TODO: Actually send message to a user
+    public void sendMessage(Message message, Contact contact) {
+        HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
+        builder.setId("123");
+        builder.setSender(getCurrentUser().getCurrentUserAsContact().getUsername());
+        builder.setText(message.getText());
+        builder.setTimeSent(System.currentTimeMillis() / 1000L);
+
+        MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), contact);
+        sendMessage.sendMessage(messageWrapper);
+
         messageStore.addMessage(message);
     }
 
