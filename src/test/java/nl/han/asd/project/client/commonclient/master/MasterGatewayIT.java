@@ -52,7 +52,7 @@ public class MasterGatewayIT {
             }
         }
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty("master-server-host", master.getHostName());
         properties.setProperty("master-server-port", Integer.toString(master.getPort(1337)));
 

@@ -114,6 +114,10 @@ public class CommonClientGateway {
         messageStore.addMessage(message);
     }
 
+    public void addContact(String username) {
+        contactStore.addContact(username, username.getBytes()); //TODO: actual public key instead of username.getBytes()
+    }
+
     public void removeContact(String username) {
         contactStore.removeContact(username);
     }

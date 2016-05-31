@@ -56,7 +56,15 @@ public class PersistenceService implements IPersistence {
             if (!contactMessagesHashMap.containsKey(message.getSender())) {
                 contactMessagesHashMap.put(message.getSender(), new ArrayList<>());
             }
-            contactMessagesHashMap.get(message.getSender()).add(message);
+            while (selectMessagesResult.next()) {
+                final Message message = Message.fromDatabase(selectMessagesResult);
+                if (!contactMessagesHashMap.containsKey(message.getSender())) {
+                    contactMessagesHashMap.put(message.getSender(), new ArrayList<Message>());
+                }
+                contactMessagesHashMap.get(message.getSender()).add(message);
+            }
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
         }
         return contactMessagesHashMap;
     }
