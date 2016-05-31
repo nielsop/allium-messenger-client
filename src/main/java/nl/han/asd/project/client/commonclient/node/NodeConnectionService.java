@@ -1,9 +1,9 @@
 package nl.han.asd.project.client.commonclient.node;
 
 import com.google.inject.Inject;
-import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
 import nl.han.asd.project.client.commonclient.message.IReceiveMessage;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -15,6 +15,7 @@ import java.util.List;
 public class NodeConnectionService implements ISetConnectedNodes, ISendData {
     private IReceiveMessage receiveMessage;
     private IContactStore contactStore;
+    private IMessageConfirmation messageConfirmation;
 
     private List<NodeConnection> openConnections = new ArrayList<>();
 
@@ -24,9 +25,10 @@ public class NodeConnectionService implements ISetConnectedNodes, ISendData {
      * @param receiveMessage the receiveMessage interface
      */
     @Inject
-    public NodeConnectionService(IReceiveMessage receiveMessage, IContactStore contactStore) {
+    public NodeConnectionService(IReceiveMessage receiveMessage, IContactStore contactStore, IMessageConfirmation messageConfirmation) {
         this.receiveMessage = receiveMessage;
         this.contactStore = contactStore;
+        this.messageConfirmation = messageConfirmation;
     }
 
     /**

@@ -13,5 +13,7 @@ public class MessageModule extends AbstractModule {
         bind(IMessageStore.class).to(MessageStore.class);
         bind(ISendMessage.class).to(MessageProcessingService.class);
         bind(IReceiveMessage.class).to(MessageProcessingService.class);
+        bind(IMessageConfirmation.class).to(MessageConfirmationService.class);
+        bind(IMessageBuilder.class).to(MessageBuilderService.class);
     }
 }

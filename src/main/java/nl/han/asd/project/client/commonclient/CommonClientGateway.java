@@ -5,6 +5,7 @@ import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
+import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
@@ -34,6 +35,7 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse
 public class CommonClientGateway {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+    private final IMessageConfirmation messageConfirmation;
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
@@ -44,7 +46,9 @@ public class CommonClientGateway {
 
     @Inject
     public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
-                               ILoginService loginService, ISendMessage sendMessage, IMessageBuilder messageBuilder) {
+                               ILoginService loginService, ISendMessage sendMessage, IMessageBuilder messageBuilder,
+                               IMessageConfirmation messageConfirmation) {
+        this.messageConfirmation = Check.notNull(messageConfirmation, "messageConfirmation");
         this.messageBuilder = Check.notNull(messageBuilder, "messageBuilder");
         this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
@@ -123,8 +127,9 @@ public class CommonClientGateway {
         builder.setTimeSent(System.currentTimeMillis() / 1000L);
 
         MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), contact);
-        sendMessage.sendMessage(messageWrapper);
 
+        sendMessage.sendMessage(messageWrapper);
+        messageConfirmation.messageSent(builder.getId(), message, contact);
         messageStore.addMessage(message);
     }
 

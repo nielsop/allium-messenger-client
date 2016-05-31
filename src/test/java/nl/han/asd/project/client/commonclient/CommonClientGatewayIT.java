@@ -7,6 +7,9 @@ import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
+import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
+import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
@@ -33,6 +36,9 @@ public class CommonClientGatewayIT {
     private IEncryptionService encryptionService;
     private IRegistration registration;
     private ILoginService login;
+    private ISendMessage sendMessage;
+    private IMessageBuilder messageBuilder;
+    private IMessageConfirmation messageConfirmation;
 
     private String validUsername = "validUsername";
     private String validPassword = "validPassword";
@@ -45,8 +51,12 @@ public class CommonClientGatewayIT {
         messageStore = injector.getInstance(IMessageStore.class);
         registration = injector.getInstance(IRegistration.class);
         login = injector.getInstance(ILoginService.class);
+        sendMessage = injector.getInstance(ISendMessage.class);
+        messageBuilder = injector.getInstance(IMessageBuilder.class);
+        messageConfirmation = injector.getInstance(IMessageConfirmation.class);
 
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, sendMessage,
+                messageBuilder, messageConfirmation);
     }
 
     @After

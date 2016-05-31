@@ -3,7 +3,6 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Inject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.node.ISendData;
-import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -19,6 +18,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
     private final IMessageStore messageStore;
     private final ISendData nodeConnectionService;
+    private IMessageConfirmation messageConfirmationService;
     private final IEncryptionService encryptionService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
@@ -29,11 +29,12 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
      * @param messageStore Instance of IMessageStore.
      * @param encryptionService Instance of IEncryptionService
      */
-    @Inject public MessageProcessingService(IMessageStore messageStore,
-            IEncryptionService encryptionService, ISendData nodeConnectionService) {
+    @Inject public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService,
+                                            ISendData nodeConnectionService, IMessageConfirmation messageConfirmationService) {
         this.messageStore = messageStore;
         this.encryptionService = encryptionService;
         this.nodeConnectionService = nodeConnectionService;
+        this.messageConfirmationService = messageConfirmationService;
     }
 
     /**
@@ -51,7 +52,9 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
                 HanRoutingProtocol.MessageConfirmation messageConfirmation = HanRoutingProtocol.MessageConfirmation
                         .parseFrom(wrapper.getData());
-//                messageStore.messageReceived(messageConfirmation.getConfirmationId());
+
+                messageConfirmationService.messageConfirmationReceived(messageConfirmation.getConfirmationId());
+
             } else if (wrapper.getType()
                     == HanRoutingProtocol.Wrapper.Type.MESSAGE) {
 
