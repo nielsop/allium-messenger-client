@@ -171,8 +171,8 @@ public class CommonClientGateway {
      *
      * @param message the to be send message
      */
-    public void sendMessage(Message message, Contact contact) {
-        sendMessage.sendMessage(message, contact);
+    public void sendMessage(Message message) {
+        sendMessage.sendMessage(message, message.getReceiver());
     }
 
     /**
