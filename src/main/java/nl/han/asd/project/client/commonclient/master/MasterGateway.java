@@ -157,10 +157,11 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
 
         String get(Properties properties) {
             String property = properties.getProperty(value);
-            if (nullable)
+            if (nullable) {
                 return property;
-            else
+            } else {
                 return Check.notNull(property, value);
+            }
         }
 
         Integer getInteger(Properties properties) {
