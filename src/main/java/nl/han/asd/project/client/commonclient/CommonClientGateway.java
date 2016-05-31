@@ -34,7 +34,7 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse
  */
 public class CommonClientGateway {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
     private final IMessageConfirmation messageConfirmation;
 
     private IContactStore contactStore;
@@ -55,14 +55,6 @@ public class CommonClientGateway {
         this.messageStore = Check.notNull(messageStore, "messageStore");
         this.registration = Check.notNull(registration, "registration");
         this.loginService = Check.notNull(loginService, "loginService");
-
-        // TODO remove test method
-        createTestContacts();
-    }
-
-    // TODO remove test method
-    private void createTestContacts() {
-        contactStore.createTestContacts();
     }
 
     /**
@@ -93,6 +85,13 @@ public class CommonClientGateway {
         }
     }
 
+    /**
+     * Logs in and returns a login status. This login status is wrapped inside a loginResponseWrapper.
+     *
+     * @param username the username to log in.
+     * @param password the password belonging to the username.
+     * @return the login status, received from the loginResponseWrapper.
+     */
     public ClientLoginResponse.Status loginRequest(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
         try {
             contactStore.setCurrentUser(loginService.login(username, password));
@@ -103,22 +102,75 @@ public class CommonClientGateway {
         }
     }
 
+    /**
+     * Retrieves messages of current user from messageStore.
+     *
+     * @param contact the username of the contact
+     * @return List with all the messages from/to the given contact
+     */
     public List<Message> getMessagesFromUser(String contact) {
         return messageStore.getMessagesFromUser(contact);
     }
 
+    /**
+     * Returns the current user that is logged in.
+     *
+     * @return the current user
+     */
     public CurrentUser getCurrentUser() {
         return contactStore.getCurrentUser();
     }
 
+    /**
+     * Adds contact to contactstore.
+     *
+     * @param username username of contact
+     */
+    public void addContact(String username) {
+        contactStore.addContact(username);
+    }
+    /**
+     * Removes contact from contactstore.
+     *
+     * @param username username of contact
+     */
+    public void removeContact(String username) {
+        contactStore.removeContact(username);
+    }
+
+    /**
+     * Returns a list of contacts of the current user.
+     *
+     * @return list of contacts of the current user
+     */
     public List<Contact> getContacts() {
         return contactStore.getAllContacts();
     }
 
+    /**
+     * Finds contact from username in contactstore.
+     *
+     * @param username the username of the contact
+     * @return found contact by username
+     */
+    public Contact findContact(String username) {
+        return contactStore.findContact(username);
+    }
+
+    /**
+     * Adds the message to the messageStore.
+     *
+     * @param message the message to be added
+     */
     public void addMessage(Message message) {
         messageStore.addMessage(message);
     }
 
+    /**
+     * Sends the message to the receiver by onion routing.
+     *
+     * @param message the to be send message
+     */
     public void sendMessage(Message message, Contact contact) {
         HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
         builder.setId("123");
@@ -133,12 +185,10 @@ public class CommonClientGateway {
         messageStore.addMessage(message);
     }
 
-    public void removeContact(String username) {
-        contactStore.removeContact(username);
-    }
-
-    //TODO: Implement method. Delete all in memory user data.
+    /**
+     * Logs out the user and deletes all user data in memory
+     */
     public void logout() {
-
+        //TODO: Implement method. Delete all in memory user data.
     }
 }

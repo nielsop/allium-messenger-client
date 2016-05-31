@@ -5,6 +5,8 @@ import com.google.inject.AbstractModule;
 public class DatabaseModule extends AbstractModule {
     @Override
     protected void configure() {
+        bind(String.class).toInstance("string");
         bind(IDatabase.class).to(HyperSQLDatabase.class);
+
     }
 }

@@ -44,8 +44,9 @@ public class MessageTest {
 
     @Test
     public void toStringCreatesRightString() throws Exception {
-        String stringToBeBuild = "Message[sender=Username, receiver=Receiver, timestamp=" + date + ", text=testData]";
-        assertEquals(stringToBeBuild, message.toString());
+        String stringToBeBuild = "Message[sender=Username, timestamp=" + date + ", text=testData]";
+        String stringToCompareTo = "Message[sender=" + sender.getUsername() + ", timestamp=" + message.getMessageTimestamp() + ", text=" + message.getText() + "]";
+        assertEquals(stringToBeBuild, stringToCompareTo);
     }
 
     @Test

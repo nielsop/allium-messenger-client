@@ -6,16 +6,12 @@ package nl.han.asd.project.client.commonclient.store;
 import java.util.List;
 
 public interface IContactStore {
-    // TODO remove test method
-    void createTestContacts();
 
     /**
      * Adds new contact into contactstore.
-     *
-     * @param username  username of contact
-     * @param publicKey publicKey.
+     *  @param username username of contact
      */
-    void addContact(String username, byte[] publicKey);
+    void addContact(String username);
 
     /**
      * Removes contact from contactStore.
@@ -25,9 +21,9 @@ public interface IContactStore {
     void removeContact(String username);
 
     /**
-     * Retrieves all contacts of current user.
+     * Get a list of all the contacts in the contactstore.
      *
-     * @return List of contacts
+     * @return a list of all the contacts
      */
     List<Contact> getAllContacts();
 
@@ -42,14 +38,7 @@ public interface IContactStore {
     /**
      * Deletes all the contacts in the contactstore memory.
      */
-    void deleteAllContacts();
-
-    /**
-     * Getter for currentUser.
-     *
-     * @return current user that is logged in
-     */
-    CurrentUser getCurrentUser();
+    void deleteAllContactsFromMemory();
 
     /**
      * Setter for currentUser.
@@ -59,9 +48,16 @@ public interface IContactStore {
     void setCurrentUser(CurrentUser currentUser);
 
     /**
-     * Getter for currentUser as a Contact.
+     * Getter for currentUser as contact.
      *
-     * @return current user that is logged in as a Contact object.
+     * @return current user that is logged in as contact
      */
     Contact getCurrentUserAsContact();
+
+    /**
+     * Getter for currentUser.
+     *
+     * @return current user that is logged in
+     */
+    CurrentUser getCurrentUser();
 }
