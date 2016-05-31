@@ -14,21 +14,21 @@ import java.util.List;
 
 public class NodeConnectionService implements ISetConnectedNodes, ISendData {
     private IReceiveMessage receiveMessage;
-    private IConnectionListener nodeConnection;
+    private IConnectionListener nodeConnectionService;
     private IContactStore contactStore;
 
-    private List<ConnectionService> openConnections = new ArrayList<>();
+    private List<NodeConnection> openConnections = new ArrayList<>();
 
     /**
      * Constructor of NodeConnectionService
      *
      * @param receiveMessage the receiveMessage interface
-     * @param nodeConnection the nodeConnection interface
+     * @param nodeConnectionService the nodeConnection interface
      */
     @Inject
-    public NodeConnectionService(IReceiveMessage receiveMessage, IConnectionListener nodeConnection, IContactStore contactStore) {
+    public NodeConnectionService(IReceiveMessage receiveMessage, IConnectionListener nodeConnectionService, IContactStore contactStore) {
         this.receiveMessage = receiveMessage;
-        this.nodeConnection = nodeConnection;
+        this.nodeConnectionService = nodeConnectionService;
         this.contactStore = contactStore;
     }
 
@@ -44,7 +44,6 @@ public class NodeConnectionService implements ISetConnectedNodes, ISendData {
             int port = Integer.parseInt(parts[1]);
 
             final ConnectionService connectionService = new ConnectionService(hostname, port);
-            openConnections.add(connectionService);
 
             HanRoutingProtocol.ClientNodeConnection.Builder builder = HanRoutingProtocol.ClientNodeConnection.newBuilder();
             builder.setUsername(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());
@@ -56,16 +55,10 @@ public class NodeConnectionService implements ISetConnectedNodes, ISendData {
                 e.printStackTrace();
             }
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        connectionService.read();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+            NodeConnection nodeConnection = new NodeConnection(connectionService, receiveMessage);
+            openConnections.add(nodeConnection);
+
+            nodeConnection.start();
         }
     }
 }
