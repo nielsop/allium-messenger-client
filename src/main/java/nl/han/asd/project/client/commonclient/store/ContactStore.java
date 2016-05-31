@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.store;
 
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class ContactStore implements IContactStore {
 
     @Inject
     public ContactStore(IPersistence persistence) {
-        this.persistence = persistence;
+        this.persistence = Check.notNull(persistence, "persistence");
     }
 
     // TODO remove test contacts

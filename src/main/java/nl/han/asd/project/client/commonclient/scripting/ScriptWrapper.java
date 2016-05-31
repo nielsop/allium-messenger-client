@@ -4,16 +4,12 @@ import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.message.MessageBuilderService;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
-/**
- * @author Marius
- * @version 1.0
- * @since 19-05-16
- */
 public class ScriptWrapper implements IScriptWrapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptWrapper.class);
     private IContactStore contactStore;
@@ -22,8 +18,8 @@ public class ScriptWrapper implements IScriptWrapper {
 
     @Inject
     public ScriptWrapper(IContactStore contactStore, IMessageStore messageStore) {
-        this.contactStore = contactStore;
-        this.messageStore = messageStore;
+        this.contactStore = Check.notNull(contactStore, "contactStore");
+        this.messageStore = Check.notNull(messageStore, "messageStore");
     }
 
     public boolean sendMessage(String username, String message) {

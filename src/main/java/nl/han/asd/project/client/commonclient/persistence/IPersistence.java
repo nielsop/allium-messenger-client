@@ -4,8 +4,11 @@ import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Defines an interface for persistence functions.
@@ -15,6 +18,8 @@ import java.util.Map;
  * @since 24-05-2016
  */
 public interface IPersistence {
+
+    public static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Deletes a message from the database.
@@ -30,7 +35,7 @@ public interface IPersistence {
      * @param message The message to save.
      * @return <tt>true</tt> if the message was saved successfully, <tt>false</tt> otherwise.
      */
-    boolean saveMessage(final Message message);
+    boolean saveMessage(final Message message) throws SQLException;
 
     /**
      * Returns a list of all messages.

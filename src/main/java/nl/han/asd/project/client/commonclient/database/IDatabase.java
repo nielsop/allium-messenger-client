@@ -5,10 +5,6 @@ import java.sql.SQLException;
 
 /**
  * Defines an interface for common database functions.
- *
- * @author Niels Bokmans
- * @version 1.0
- * @since 24-05-2016
  */
 public interface IDatabase {
 

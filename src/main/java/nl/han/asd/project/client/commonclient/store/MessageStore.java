@@ -2,20 +2,22 @@ package nl.han.asd.project.client.commonclient.store;
 
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 
 import javax.inject.Inject;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MessageStore implements IMessageStore, IMessageStoreObserver {
+public class MessageStore implements IMessageStore {
     private Map<Contact, List<Message>> messagesPerContact = new HashMap<>();
     private IPersistence persistenceService;
 
     @Inject
     public MessageStore(final IPersistence persistenceService) {
-        this.persistenceService = persistenceService;
+        this.persistenceService = Check.notNull(persistenceService, "persistenceService");
         updateFromDatabase();
     }
 
@@ -41,7 +43,7 @@ public class MessageStore implements IMessageStore, IMessageStoreObserver {
     }
 
     @Override
-    public void saveToDatabase() {
+    public void saveToDatabase() throws SQLException {
         for (final Map.Entry<Contact, List<Message>> mapEntry : messagesPerContact.entrySet()) {
             for (final Message message : mapEntry.getValue()) {
                 persistenceService.saveMessage(message);

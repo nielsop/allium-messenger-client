@@ -6,6 +6,7 @@ import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,9 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
     @Inject
     public MessageProcessingService(IContactStore contactStore, IMessageStore messageStore, IEncryptionService encryptionService) {
-        this.contactStore = contactStore;
-        this.messageStore = messageStore;
-        this.encryptionService = encryptionService;
+        this.contactStore = Check.notNull(contactStore, "contactStore");
+        this.messageStore = Check.notNull(messageStore, "messageStore");
+        this.encryptionService = Check.notNull(encryptionService, "encryptionService");
     }
 
     @Override

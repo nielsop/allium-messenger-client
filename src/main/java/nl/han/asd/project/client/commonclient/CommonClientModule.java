@@ -8,31 +8,26 @@ import nl.han.asd.project.client.commonclient.heartbeat.HeartbeatModule;
 import nl.han.asd.project.client.commonclient.login.LoginModule;
 import nl.han.asd.project.client.commonclient.master.MasterModule;
 import nl.han.asd.project.client.commonclient.message.MessageModule;
-import nl.han.asd.project.client.commonclient.node.NodeModule;
 import nl.han.asd.project.client.commonclient.path.PathModule;
 import nl.han.asd.project.client.commonclient.persistence.PersistenceModule;
 import nl.han.asd.project.client.commonclient.scripting.ScriptModule;
 import nl.han.asd.project.client.commonclient.store.StoreModule;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 
-/**
- * Created by Marius on 19-04-16.
- */
 public class CommonClientModule extends AbstractModule {
     @Override
     protected void configure() {
-        this.install(new ConnectionModule());
-        this.install(new DatabaseModule());
-        this.install(new GraphModule());
-        this.install(new HeartbeatModule());
-        this.install(new LoginModule());
-        this.install(new MasterModule());
-        this.install(new MessageModule());
-        this.install(new NodeModule());
-        this.install(new PathModule());
-        this.install(new PersistenceModule());
-        this.install(new ScriptModule());
-        this.install(new StoreModule());
-        this.install(new EncryptionModule());
+        install(new ConnectionModule());
+        install(new DatabaseModule());
+        install(new GraphModule());
+        install(new HeartbeatModule());
+        install(new LoginModule());
+        install(new MasterModule());
+        install(new MessageModule());
+        install(new PathModule());
+        install(new PersistenceModule());
+        install(new ScriptModule());
+        install(new StoreModule());
+        install(new EncryptionModule());
     }
 }

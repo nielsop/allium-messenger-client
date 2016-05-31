@@ -4,6 +4,7 @@ import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +20,8 @@ public class PathDeterminationService implements IGetMessagePath {
 
     @Inject
     public PathDeterminationService(IGetUpdatedGraph graphUpdates, IGetClientGroup clientGroup) {
-        this.graphUpdates = graphUpdates;
-        this.clientGroup = clientGroup;
+        this.graphUpdates = Check.notNull(graphUpdates, "graphUpdates");
+        this.clientGroup = Check.notNull(clientGroup, "clientGroup");
     }
 
     @Override

@@ -7,10 +7,8 @@ import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.client.commonclient.store.IMessageStoreObserver;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import org.junit.After;
@@ -32,8 +30,6 @@ public class CommonClientGatewayIT {
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
-    private IMessageBuilder messageBuilder;
-    private IMessageStoreObserver messageStoreObserver;
     private IEncryptionService encryptionService;
     private IRegistration registration;
     private ILoginService login;
@@ -47,12 +43,10 @@ public class CommonClientGatewayIT {
         Injector injector = Guice.createInjector(new CommonClientModule());
         contactStore = injector.getInstance(IContactStore.class);
         messageStore = injector.getInstance(IMessageStore.class);
-        messageBuilder = injector.getInstance(IMessageBuilder.class);
-        messageStoreObserver = injector.getInstance(IMessageStoreObserver.class);
         registration = injector.getInstance(IRegistration.class);
         login = injector.getInstance(ILoginService.class);
 
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, messageBuilder, messageStoreObserver, registration, login);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login);
     }
 
     @After
@@ -62,7 +56,7 @@ public class CommonClientGatewayIT {
 
     @Test
     @Ignore("Fix?")
-    public void testRegisterRequestSuccessful() {
+    public void testRegisterRequestSuccessful() throws Exception {
         //ClientRegisterResponse.Status result = ClientRegisterResponse.Status.SUCCES;
         //Assert.assertEquals(result, commonClientGateway.registerRequest(validUsername, validPassword, validPassword));
         commonClientGateway.registerRequest(validUsername, validPassword, validPassword);
@@ -86,8 +80,8 @@ public class CommonClientGatewayIT {
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
-        gateway.setConnectionData(master.getHostName(), master.getPort(1337));
+//        gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
+//        gateway.setConnectionData(master.getHostName(), master.getPort(1337));
     }
 
 }

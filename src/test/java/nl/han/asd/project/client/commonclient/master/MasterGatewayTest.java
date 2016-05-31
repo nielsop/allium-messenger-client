@@ -1,66 +1,218 @@
 package nl.han.asd.project.client.commonclient.master;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import nl.han.asd.project.client.commonclient.Configuration;
-import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.connection.IConnectionService;
-import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import org.junit.Assert;
+import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
+import nl.han.asd.project.protocol.HanRoutingProtocol.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.io.File;
+import java.util.Properties;
 
-import static org.hsqldb.lib.StringConverter.hexStringToByteArray;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(MasterGateway.class)
 public class MasterGatewayTest {
 
-    byte[] byteArray;
-    private MasterGateway gateway;
+    private String host = "localhost";
+    private int port = 1024;
+
+    private Properties properties = new Properties();
+
+    private IConnectionService connectionServiceMock;
+    private IConnectionServiceFactory connectionServiceFactoryMock;
+
+    private MasterGateway masterGateway;
 
     @Before
     public void setup() throws Exception {
-        Injector injector = Guice.createInjector(new EncryptionModule());
-        gateway = new MasterGateway(injector.getInstance(IEncryptionService.class));
-        byteArray = hexStringToByteArray("e04fd020ea3a6910a2d808002b30309d");
+        properties.setProperty("master-server-host", host);
+        properties.setProperty("master-server-port", Integer.toString(port));
+
+        connectionServiceMock = mock(IConnectionService.class);
+        connectionServiceFactoryMock = mock(IConnectionServiceFactory.class);
+
+        when(connectionServiceFactoryMock.create(eq(host), eq(port))).thenReturn(connectionServiceMock);
+        masterGateway = new MasterGateway(properties, connectionServiceFactoryMock);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMasterGatewayGetSocketWithPort65536OutOfRange() {
-        gateway.setConnectionData(Configuration.getHostname(), 65536);
-        gateway.getSocket();
+    public void constructorNullProperties() throws Exception {
+        new MasterGateway(null, connectionServiceFactoryMock);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorNullFactory() throws Exception {
+        new MasterGateway(properties, null);
     }
 
     @Test
-    public void testGetConnectionActuallyGetsTheSetConnection() throws Exception {
-        ConnectionService actualConnService = new ConnectionService(25, byteArray, PowerMockito.mock(IConnectionService.class));
-        setPrivateConnectionService(actualConnService);
-        ConnectionService returnedConnService = getPrivateConnectionService();
-        Assert.assertEquals(actualConnService, returnedConnService);
+    public void constructorWithKey() throws Exception {
+        String keyFileLocation = ".";
+
+        properties.setProperty("master-server-keyfile", keyFileLocation);
+
+        when(connectionServiceFactoryMock.create(eq(host), eq(port))).thenReturn(connectionServiceMock);
+        new MasterGateway(properties, connectionServiceFactoryMock);
+        verify(connectionServiceFactoryMock).create(eq(host), eq(port), eq(new File(keyFileLocation)));
     }
 
-    private ConnectionService getPrivateConnectionService() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Method getConnection = gateway.getClass().getDeclaredMethod("getConnection");
-        getConnection.setAccessible(true);
-        ConnectionService returnedConnService = (ConnectionService) getConnection.invoke(gateway);
-        getConnection.setAccessible(false);
-        return returnedConnService;
+    @Test
+    public void constructorValid() throws Exception {
+        when(connectionServiceFactoryMock.create(eq(host), eq(port))).thenReturn(connectionServiceMock);
+        new MasterGateway(properties, connectionServiceFactoryMock);
+
+        // ignore the extra create from the junit setup
+        verify(connectionServiceFactoryMock, times(2)).create(eq(host), eq(port));
     }
 
-    private void setPrivateConnectionService(ConnectionService actualConnService) throws NoSuchFieldException, IllegalAccessException {
-        Field connService = gateway.getClass().getDeclaredField("connectionService");
-        connService.setAccessible(true);
-        connService.set(gateway, actualConnService);
-        connService.setAccessible(false);
+    @Test(expected = IllegalArgumentException.class)
+    public void registerNullRequest() throws Exception {
+        masterGateway.register(null);
+    }
+
+    @Test
+    public void registerValid() throws Exception {
+        ClientRegisterRequest.Builder requestBuilder = ClientRegisterRequest.newBuilder();
+        requestBuilder.setUsername("username");
+        requestBuilder.setPassword("password");
+
+        ClientRegisterRequest request = requestBuilder.build();
+
+        Wrapper.Builder wrapperBuilder = Wrapper.newBuilder();
+        wrapperBuilder.setData(request.toByteString());
+        wrapperBuilder.setType(Wrapper.Type.CLIENTREGISTERREQUEST);
+
+        Wrapper wrapper = wrapperBuilder.build();
+
+        when(connectionServiceMock.wrap(eq(request), eq(Wrapper.Type.CLIENTREGISTERREQUEST))).thenReturn(wrapper);
+
+        ClientRegisterResponse.Builder responseBuilder = ClientRegisterResponse.newBuilder();
+        responseBuilder.setStatus(ClientRegisterResponse.Status.SUCCES);
+
+        ClientRegisterResponse response = responseBuilder.build();
+
+        when(connectionServiceMock.writeAndRead(eq(wrapper))).thenReturn(response);
+
+        assertEquals(response, masterGateway.register(request));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void sendHeartbeatNullHeartbeat() throws Exception {
+        masterGateway.sendHeartbeat(null);
+    }
+
+    @Test
+    public void sendHeartbeatValid() throws Exception {
+        ClientHeartbeat.Builder heartbeatBuilder = ClientHeartbeat.newBuilder();
+        heartbeatBuilder.setUsername("username");
+        heartbeatBuilder.setSecretHash("hash");
+
+        ClientHeartbeat heartbeat = heartbeatBuilder.build();
+
+        Wrapper.Builder wrapperBuilder = Wrapper.newBuilder();
+        wrapperBuilder.setData(heartbeat.toByteString());
+        wrapperBuilder.setType(Wrapper.Type.CLIENTHEARTBEAT);
+
+        Wrapper wrapper = wrapperBuilder.build();
+
+        when(connectionServiceMock.wrap(eq(heartbeat), eq(Wrapper.Type.CLIENTHEARTBEAT))).thenReturn(wrapper);
+
+        masterGateway.sendHeartbeat(heartbeat);
+
+        verify(connectionServiceMock).write(eq(wrapper));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void loginNullRequest() throws Exception {
+        masterGateway.login(null);
+    }
+
+    @Test
+    public void loginValid() throws Exception {
+        ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
+        requestBuilder.setUsername("username");
+        requestBuilder.setPassword("password");
+        requestBuilder.setPublicKey(ByteString.copyFrom("public key".getBytes()));
+
+        ClientLoginRequest request = requestBuilder.build();
+
+        Wrapper.Builder wrapperBuilder = Wrapper.newBuilder();
+        wrapperBuilder.setData(request.toByteString());
+        wrapperBuilder.setType(Wrapper.Type.CLIENTLOGINREQUEST);
+
+        Wrapper wrapper = wrapperBuilder.build();
+
+        when(connectionServiceMock.wrap(eq(request), eq(Wrapper.Type.CLIENTLOGINREQUEST))).thenReturn(wrapper);
+
+        ClientLoginResponse.Builder responseBuilder = ClientLoginResponse.newBuilder();
+        responseBuilder.setStatus(ClientLoginResponse.Status.SUCCES);
+
+        ClientLoginResponse response = responseBuilder.build();
+
+        when(connectionServiceMock.writeAndRead(eq(wrapper))).thenReturn(response);
+
+        assertEquals(response, masterGateway.login(request));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getUpdatedGraphNullRequest() throws Exception {
+        masterGateway.getUpdatedGraph(null);
+    }
+
+    @Test
+    public void getUpdatedGraphValid() throws Exception {
+        GraphUpdateRequest.Builder requestBuilder = GraphUpdateRequest.newBuilder();
+        requestBuilder.setCurrentVersion(0);
+
+        GraphUpdateRequest request = requestBuilder.build();
+
+        Wrapper.Builder wrapperBuilder = Wrapper.newBuilder();
+        wrapperBuilder.setData(request.toByteString());
+        wrapperBuilder.setType(Wrapper.Type.GRAPHUPDATEREQUEST);
+
+        Wrapper wrapper = wrapperBuilder.build();
+
+        when(connectionServiceMock.wrap(eq(request), eq(Wrapper.Type.GRAPHUPDATEREQUEST))).thenReturn(wrapper);
+
+        GraphUpdateResponse.Builder responseBuilder = GraphUpdateResponse.newBuilder();
+        GraphUpdateResponse response = responseBuilder.build();
+
+        when(connectionServiceMock.writeAndRead(eq(wrapper))).thenReturn(response);
+
+        assertEquals(response, masterGateway.getUpdatedGraph(request));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getClientGroupNullRequest() throws Exception {
+        masterGateway.getClientGroup(null);
+    }
+
+    @Test
+    public void getClientGroupValid() throws Exception {
+        ClientRequest.Builder requestBuilder = ClientRequest.newBuilder();
+        requestBuilder.setClientGroup(0);
+
+        ClientRequest request = requestBuilder.build();
+
+        Wrapper.Builder wrapperBuilder = Wrapper.newBuilder();
+        wrapperBuilder.setData(request.toByteString());
+        wrapperBuilder.setType(Wrapper.Type.CLIENTREQUEST);
+
+        Wrapper wrapper = wrapperBuilder.build();
+
+        when(connectionServiceMock.wrap(eq(request), eq(Wrapper.Type.CLIENTREQUEST))).thenReturn(wrapper);
+
+        Client.Builder responseBuilder = Client.newBuilder();
+        responseBuilder.setUsername("username");
+        responseBuilder.setPublicKey(ByteString.copyFrom("public key".getBytes()));
+
+        Client response = responseBuilder.build();
+
+        when(connectionServiceMock.writeAndRead(eq(wrapper))).thenReturn(response);
+
+        assertEquals(response, masterGateway.getClientGroup(request));
     }
 }

@@ -1,10 +1,5 @@
 package nl.han.asd.project.client.commonclient.scripting;
 
-/**
- * @author Marius
- * @version 1.0
- * @since 20-05-16
- */
 public interface IScriptWrapper {
     boolean sendMessage(String username, String message);
 

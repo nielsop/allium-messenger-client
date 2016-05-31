@@ -7,11 +7,6 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.util.List;
 
-/**
- * @author Niels Bokmans
- * @version 1.0
- * @since 27-5-2016
- */
 public interface ICommonClientGateway {
 
     /**

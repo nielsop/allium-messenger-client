@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-/**
- * Created by Julius on 25/04/16.
- */
 public class Graph {
     private HashMap<String, Node> vertexMap = new HashMap<>();
 

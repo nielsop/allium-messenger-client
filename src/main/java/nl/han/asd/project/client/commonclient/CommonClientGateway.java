@@ -1,101 +1,55 @@
 package nl.han.asd.project.client.commonclient;
 
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
+import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
-import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
-import nl.han.asd.project.client.commonclient.master.wrapper.RegisterResponseWrapper;
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.*;
-import nl.han.asd.project.client.commonclient.utility.ICommonClientGateway;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.utility.Validation;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.List;
+
+import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 
 /**
  * Android/Desktop application
  * <p/>
  * Leave empty until we know what to do with it
  */
-public class CommonClientGateway implements ICommonClientGateway {
+public class CommonClientGateway {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
-    private IMessageBuilder messageBuilder;
-    private IMessageStoreObserver messageStoreObserver;
     private IRegistration registration;
-    private ILoginService login;
-    private String privateKey = "privateKey";
-    private byte[] publicKey = "publicKey".getBytes();
-    private String secretHash = "secretHash";
+    private ILoginService loginService;
 
     @Inject
-    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IMessageBuilder messageBuilder, IMessageStoreObserver messageStoreObserver,
-                               IRegistration registration, ILoginService login) {
-        this.contactStore = contactStore;
-        this.messageStore = messageStore;
-        this.messageBuilder = messageBuilder;
-        this.messageStoreObserver = messageStoreObserver;
-        this.registration = registration;
-        this.login = login;
+    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration, ILoginService loginService) {
+        this.contactStore = Check.notNull(contactStore, "contactStore");
+        this.messageStore = Check.notNull(messageStore, "messageStore");
+        this.registration = Check.notNull(registration, "registration");
+        this.loginService = Check.notNull(loginService, "loginService");
 
         // TODO remove test method
         createTestContacts();
     }
 
-    public static Logger getLogger() {
-        return LOGGER;
-    }
-
     // TODO remove test method
     private void createTestContacts() {
         contactStore.createTestContacts();
-    }
-
-
-    @Override
-    public List<Message> getMessagesFromUser(String contact) {
-        return messageStore.getMessagesFromUser(contact);
-    }
-
-    @Override
-    public CurrentUser getCurrentUser() {
-        return contactStore.getCurrentUser();
-    }
-
-    @Override
-    public List<Contact> getContacts() {
-        return contactStore.getAllContacts();
-    }
-
-    @Override
-    public void addMessage(Message message) {
-        messageStore.addMessage(message);
-    }
-
-    @Override
-    public void sendMessage(Message message) {
-        //TODO: Actually send message to a user
-        LOGGER.info(message.getSender().getUsername() + " sends the following massage: " + message.getText());
-        messageStore.addMessage(message);
-    }
-
-    @Override
-    public void removeContact(String username) {
-        contactStore.removeContact(username);
-    }
-
-    @Override
-    public void logout() {
-        contactStore.deleteAllContacts();
-        messageStore.saveToDatabase();
-        messageStore.clear();
-        LOGGER.info("Logout successful: " + login.logout(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername(), contactStore.getCurrentUser().getSecretHash()));
     }
 
     /**
@@ -107,28 +61,62 @@ public class CommonClientGateway implements ICommonClientGateway {
      * @param passwordRepeat repeated password given by the user.
      * @return RegisterResponse.status
      * @throws IllegalArgumentException
+     * @throws MessageNotSentException
+     * @throws IOException
      */
-    public HanRoutingProtocol.ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IllegalArgumentException {
-        RegisterResponseWrapper registerResponse = registration.register(username, password, passwordRepeat);
-        switch (registerResponse.getStatus()) {
-            case SUCCES:
-                break;
-            case FAILED:
-                break;
-            case TAKEN_USERNAME:
-                break;
-            default:
-                break;
+    public ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IOException, MessageNotSentException {
+        try {
+            Validation.passwordsEqual(password, passwordRepeat);
+            Validation.validateCredentials(username, password);
+
+            ClientRegisterRequest.Builder requestBuilder = ClientRegisterRequest.newBuilder();
+            requestBuilder.setUsername(username);
+            requestBuilder.setPassword(password);
+
+            return registration.register(requestBuilder.build()).getStatus();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         }
-        return registerResponse.getStatus();
     }
 
-    public HanRoutingProtocol.ClientLoginResponse.Status loginRequest(String username, String password) throws
-            IllegalArgumentException {
-        LoginResponseWrapper loginResponse = login.login(username, password);
-        if (loginResponse.getStatus() == HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
-            contactStore.setCurrentUser(new CurrentUser(username, publicKey, secretHash));
+    public ClientLoginResponse.Status loginRequest(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
+        try {
+            contactStore.setCurrentUser(loginService.login(username, password));
+            return ClientLoginResponse.Status.SUCCES;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         }
-        return loginResponse.getStatus();
+    }
+
+    public List<Message> getMessagesFromUser(String contact) {
+        return messageStore.getMessagesFromUser(contact);
+    }
+
+    public CurrentUser getCurrentUser() {
+        return contactStore.getCurrentUser();
+    }
+
+    public List<Contact> getContacts() {
+        return contactStore.getAllContacts();
+    }
+
+    public void addMessage(Message message) {
+        messageStore.addMessage(message);
+    }
+
+    public void sendMessage(Message message) {
+        //TODO: Actually send message to a user
+        messageStore.addMessage(message);
+    }
+
+    public void removeContact(String username) {
+        contactStore.removeContact(username);
+    }
+
+    //TODO: Implement method. Delete all in memory user data.
+    public void logout() {
+
     }
 }

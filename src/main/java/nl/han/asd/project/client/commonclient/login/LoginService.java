@@ -1,53 +1,73 @@
 package nl.han.asd.project.client.commonclient.login;
 
+import com.google.protobuf.ByteString;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
-import nl.han.asd.project.client.commonclient.master.wrapper.LoginResponseWrapper;
-import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.client.commonclient.utility.Validation;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.io.IOException;
 
+/**
+ * Provide the methods used to login.
+ *
+ * @version 1.0
+ */
 public class LoginService implements ILoginService {
-
-    private static final String REGEX_ALPHANUMERIC = "[a-zA-Z0-9]";
-    private static final String REGEX_ALPHANUMERICSPECIAL = "^(?=(?:\\D*?\\d){8,32}(?!.*?\\d))[a-zA-Z0-9@\\#$%&*()_+\\]\\[';:?.,!^-]+$";
-
+    public static final Logger LOGGER = LoggerFactory.getLogger(LoginService.class);
     private MasterGateway masterGateway;
-    private ISetConnectedNodes setConnectedNodes;
     private IAuthentication authentication;
+    private IEncryptionService encryptionService;
 
     /**
-     * Creates a loginService object using guice dependency injection.
+     * Construct a new LoginService.
      *
-     * @param setConnectedNodes interface IGetConnectedNodes.
-     * @param authentication    interface IAuthentication.
-     * @param gateway           MasterGateway gateway.
+     * @param authentication    the authentication interface
+     * @param encryptionService the encryptionservice holding
+     *                          the public key
+     * @throws IllegalArgumentException if authentication
+     *                                  or encryptionService is null
      */
     @Inject
-    public LoginService(ISetConnectedNodes setConnectedNodes, IAuthentication authentication, MasterGateway gateway) {
-        this.setConnectedNodes = setConnectedNodes;
-        this.authentication = authentication;
-        this.masterGateway = gateway;
+    public LoginService(IAuthentication authentication, IEncryptionService encryptionService, MasterGateway masterGateway) {
+        this.authentication = Check.notNull(authentication, "authentication");
+        this.encryptionService = Check.notNull(encryptionService, "encryptionService");
+        this.masterGateway = Check.notNull(masterGateway, "masterGateway");
     }
 
     /**
-     * Creates a LoginResponseWrapper using a username and a password.
-     *
-     * @param username the username to login.
-     * @param password the password to login.
-     * @return LoginResponseWrapper as a result from MasterGateway.register(username, password).
+     * {@inheritDoc}
      */
     @Override
-    public LoginResponseWrapper login(String username, String password) {
-        // DO NOT REMOVE, YET!
-        if (Validation.validateCredentials(username, password))
-            return masterGateway.authenticate(username, password);
-        else
-            return null;
+    public CurrentUser login(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
+        try {
+            Validation.validateCredentials(username, password);
+
+            HanRoutingProtocol.ClientLoginRequest.Builder loginRequest = HanRoutingProtocol.ClientLoginRequest.newBuilder();
+            loginRequest.setUsername(username);
+            loginRequest.setPassword(password);
+            loginRequest.setPublicKey(ByteString.copyFrom(encryptionService.getPublicKey()));
+
+            HanRoutingProtocol.ClientLoginResponse loginResponse = authentication.login(loginRequest.build());
+
+            if (loginResponse.getStatus() != HanRoutingProtocol.ClientLoginResponse.Status.SUCCES) {
+                throw new InvalidCredentialsException(loginResponse.getStatus().name());
+            }
+
+            return new CurrentUser(username, encryptionService.getPublicKey(), loginResponse.getSecretHash());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
+        }
     }
 
-    @Override
     public boolean logout(String username, String secretHash) {
         return masterGateway.logout(username, secretHash);
     }
