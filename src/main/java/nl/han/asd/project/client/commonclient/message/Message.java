@@ -20,12 +20,28 @@ public class Message {
     private Contact sender;
     private Contact receiver;
     private Date timestamp;
-    private int id;
 
+    /**
+     * Constructs a new Message object without a database ID.
+     *
+     * @param sender The message's sender.
+     * @param receiver The message recipient.
+     * @param timestamp Timestamp of when the message was sent.
+     * @param text The actual message.
+     */
     public Message(Contact sender, Contact receiver, Date timestamp, String text) {
         this(-1, sender, receiver, timestamp, text);
     }
 
+    /**
+     * Constructs a new Message object with a database ID.
+     *
+     * @param id The database id.
+     * @param sender The message's sender.
+     * @param receiver The message recipient.
+     * @param timestamp Timestamp of when the message was sent.
+     * @param text The actual message.
+     */
     public Message(int id, Contact sender, Contact receiver, Date timestamp, String text) {
         databaseId = id;
         this.sender = sender;
@@ -34,6 +50,12 @@ public class Message {
         this.text = text;
     }
 
+    /**
+     * Creates a new Message object from a database result.
+     *
+     * @param result The resultset (result of a database query) to parse a Message from.
+     * @return A new Message object from a database result.
+     */
     public static Message fromDatabase(ResultSet result) {
         try {
             final int id = (Integer) result.getObject(1);
@@ -48,22 +70,42 @@ public class Message {
         return null;
     }
 
+    /**
+     * Returns the message's sender.
+     * @return The message's sender.
+     */
     public Contact getSender() {
         return sender;
     }
 
+    /**
+     * Returns the actual message.
+     * @return The actual message.
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * Returns the message ID.
+     * @return The message ID.
+     */
     public String getMessageId() {
         return messageId;
     }
 
+    /**
+     * Returns the message timestamp.
+     * @return A timestamp of when the message was sent.
+     */
     public Date getMessageTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Returns the message's recipient.
+     * @return The message's recipient.
+     */
     public Contact getReceiver() {
         return receiver;
     }
@@ -90,15 +132,12 @@ public class Message {
         return new HashCodeBuilder(17, 37).append(getMessageId()).append(getSender()).append(getText()).append(getReceiver()).toHashCode();
     }
 
+    /**
+     * Returns the database ID for this Message object.
+     * @return The database ID for this Message object.
+     */
     public int getDatabaseId() {
         return databaseId;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public int getId() {
-        return id;
-    }
 }
