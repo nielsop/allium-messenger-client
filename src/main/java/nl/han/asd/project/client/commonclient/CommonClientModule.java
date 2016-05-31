@@ -8,6 +8,7 @@ import nl.han.asd.project.client.commonclient.heartbeat.HeartbeatModule;
 import nl.han.asd.project.client.commonclient.login.LoginModule;
 import nl.han.asd.project.client.commonclient.master.MasterModule;
 import nl.han.asd.project.client.commonclient.message.MessageModule;
+import nl.han.asd.project.client.commonclient.node.NodeModule;
 import nl.han.asd.project.client.commonclient.path.PathModule;
 import nl.han.asd.project.client.commonclient.persistence.PersistenceModule;
 import nl.han.asd.project.client.commonclient.scripting.ScriptModule;
@@ -24,6 +25,7 @@ public class CommonClientModule extends AbstractModule {
         install(new LoginModule());
         install(new MasterModule());
         install(new MessageModule());
+        install(new NodeModule());
         install(new PathModule());
         install(new PersistenceModule());
         install(new ScriptModule());

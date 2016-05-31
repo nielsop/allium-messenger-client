@@ -2,7 +2,7 @@ package nl.han.asd.project.client.commonclient.login;
 
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
-import nl.han.asd.project.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -16,12 +16,14 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Contact.class, LoginService.class})
+@PrepareForTest({ Contact.class, LoginService.class })
 public class LoginServiceTest {
 
     /* Valid credentials */
@@ -40,7 +42,7 @@ public class LoginServiceTest {
 
     private IAuthentication authenticationMock;
     private IEncryptionService encryptionServiceMock;
-    private MasterGateway masterGateway;
+    private ISetConnectedNodes setConnectedNodes;
 
     private ILoginService login;
 
@@ -48,8 +50,8 @@ public class LoginServiceTest {
     public void setUp() {
         authenticationMock = mock(IAuthentication.class);
         encryptionServiceMock = mock(IEncryptionService.class);
-        masterGateway = mock(MasterGateway.class);
-        login = new LoginService(authenticationMock, encryptionServiceMock, masterGateway);
+        setConnectedNodes = mock(ISetConnectedNodes.class);
+        login = new LoginService(authenticationMock, encryptionServiceMock, setConnectedNodes);
     }
 
     @Test(expected = IllegalUsernameException.class)
@@ -129,6 +131,9 @@ public class LoginServiceTest {
         ClientLoginResponse.Builder responseBuilder = ClientLoginResponse.newBuilder();
         responseBuilder.setStatus(ClientLoginResponse.Status.SUCCES);
         responseBuilder.setSecretHash("hash");
+        responseBuilder.addConnectedNodes("127.0.0.1:1331");
+        responseBuilder.addConnectedNodes("127.0.0.1:1332");
+        responseBuilder.addConnectedNodes("127.0.0.1:1333");
         ClientLoginResponse response = responseBuilder.build();
 
         when(authenticationMock.login(any())).thenReturn(response);
@@ -137,6 +142,7 @@ public class LoginServiceTest {
         whenNew(CurrentUser.class).withAnyArguments().thenReturn(contactMock);
 
         assertEquals(contactMock, login.login(VALID_USERNAME, VALID_PASSWORD));
-    }
 
+        verify(setConnectedNodes).setConnectedNodes(eq(response.getConnectedNodesList()));
+    }
 }
