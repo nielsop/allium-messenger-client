@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Inject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.node.ISendData;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -21,6 +22,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     private final ISendData nodeConnectionService;
     private IMessageConfirmation messageConfirmationService;
     private IContactStore contactStore;
+    private IMessageBuilder messageBuilder;
     private final IEncryptionService encryptionService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
@@ -33,12 +35,13 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
      */
     @Inject public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService,
                                             ISendData nodeConnectionService, IMessageConfirmation messageConfirmationService,
-                                            IContactStore contactStore) {
+                                            IContactStore contactStore, IMessageBuilder messageBuilder) {
         this.messageStore = messageStore;
         this.encryptionService = encryptionService;
         this.nodeConnectionService = nodeConnectionService;
         this.messageConfirmationService = messageConfirmationService;
         this.contactStore = contactStore;
+        this.messageBuilder = messageBuilder;
     }
 
     /**
@@ -83,7 +86,17 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     }
 
     @Override
-    public void sendMessage(HanRoutingProtocol.MessageWrapper messageWrapper) {
+    public void sendMessage(Message message, Contact contact) {
+        HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
+        builder.setId("123");
+        builder.setSender(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());
+        builder.setText(message.getText());
+        builder.setTimeSent(System.currentTimeMillis() / 1000L);
+
+        HanRoutingProtocol.MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), contact);
+
         nodeConnectionService.sendData(messageWrapper);
+        messageConfirmationService.messageSent(builder.getId(), message, contact);
+        messageStore.addMessage(message);
     }
 }

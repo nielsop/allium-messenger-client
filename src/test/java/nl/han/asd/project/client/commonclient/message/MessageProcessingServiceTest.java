@@ -32,6 +32,7 @@ public class MessageProcessingServiceTest {
     @Mock private NodeConnectionService nodeConnectionService;
     @Mock private MessageConfirmationService messageConfirmationService;
     @Mock private ContactStore contactStore;
+    @Mock private MessageBuilderService messageBuilder;
 
     private IEncryptionService encryptionService;
 
@@ -42,7 +43,7 @@ public class MessageProcessingServiceTest {
 
         encryptionService = injector.getInstance(IEncryptionService.class);
         messageProcessingService = new MessageProcessingService(messageStore,
-                encryptionService, nodeConnectionService, messageConfirmationService, contactStore);
+                encryptionService, nodeConnectionService, messageConfirmationService, contactStore, messageBuilder);
     }
 
     @Test public void testWithMessageWrapper() {

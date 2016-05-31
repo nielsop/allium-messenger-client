@@ -1,6 +1,8 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
+import nl.han.asd.project.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.node.ISendData;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -14,17 +16,17 @@ public class MessageConfirmationService implements IMessageConfirmation {
 
     private HashMap<String, RetryMessage> waitingMessages = new HashMap<>();
     private volatile boolean isRunning = true;
-    private ISendMessage sendMessage;
     private IMessageBuilder messageBuilder;
     private IContactStore contactStore;
+    private ISendData sendData;
 
     public static final int TIMEOUT = 5000;
 
     @Inject
-    public MessageConfirmationService(ISendMessage sendMessage, IMessageBuilder messageBuilder, IContactStore contactStore) {
-        this.sendMessage = sendMessage;
+    public MessageConfirmationService(IMessageBuilder messageBuilder, IContactStore contactStore, ISendData sendData) {
         this.messageBuilder = messageBuilder;
         this.contactStore = contactStore;
+        this.sendData = sendData;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -61,7 +63,7 @@ public class MessageConfirmationService implements IMessageConfirmation {
 
                 HanRoutingProtocol.MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), retryMessage.contact);
 
-                sendMessage.sendMessage(messageWrapper);
+                sendData.sendData(messageWrapper);
 
                 retryMessage.attemptCount++;
             }

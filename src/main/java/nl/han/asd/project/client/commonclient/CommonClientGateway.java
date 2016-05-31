@@ -172,17 +172,7 @@ public class CommonClientGateway {
      * @param message the to be send message
      */
     public void sendMessage(Message message, Contact contact) {
-        HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
-        builder.setId("123");
-        builder.setSender(getCurrentUser().getCurrentUserAsContact().getUsername());
-        builder.setText(message.getText());
-        builder.setTimeSent(System.currentTimeMillis() / 1000L);
-
-        MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), contact);
-
-        sendMessage.sendMessage(messageWrapper);
-        messageConfirmation.messageSent(builder.getId(), message, contact);
-        messageStore.addMessage(message);
+        sendMessage.sendMessage(message, contact);
     }
 
     /**
