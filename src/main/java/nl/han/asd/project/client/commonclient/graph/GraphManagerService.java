@@ -1,33 +1,29 @@
 package nl.han.asd.project.client.commonclient.graph;
 
+import com.google.inject.Inject;
+import com.google.protobuf.ByteString;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.connection.Parser;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+
 import java.io.IOException;
 import java.util.Map;
 
-import com.google.inject.Inject;
-import com.google.protobuf.ByteString;
-
-import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
-import nl.han.asd.project.client.commonclient.connection.Parser;
-import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
-import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdate;
-import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
-import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
-
 public class GraphManagerService implements IGetVertices {
-
     private int currentGraphVersion;
     private Graph graph;
-    private IGetGraphUpdates gateway;
+    private IGetUpdatedGraph getUpdatedGraph;
 
     @Inject
-    public GraphManagerService(IGetGraphUpdates gateway) {
+    public GraphManagerService(IGetUpdatedGraph gateway) {
         graph = new Graph();
-        this.gateway = gateway;
+        this.getUpdatedGraph = Check.notNull(gateway, "getUpdatedGraph");
         currentGraphVersion = 0;
     }
 
     /**
-     *
      * @return the current graph version
      */
     public int getCurrentGraphVersion() {
@@ -48,12 +44,12 @@ public class GraphManagerService implements IGetVertices {
      * @throws MessageNotSentException
      */
     public void processGraphUpdates() throws IOException, MessageNotSentException {
-        GraphUpdateRequest request = GraphUpdateRequest.newBuilder().setCurrentVersion(currentGraphVersion).build();
+        HanRoutingProtocol.GraphUpdateRequest request = HanRoutingProtocol.GraphUpdateRequest.newBuilder().setCurrentVersion(currentGraphVersion).build();
 
-        GraphUpdateResponse response = gateway.getUpdatedGraph(request);
+        HanRoutingProtocol.GraphUpdateResponse response = getUpdatedGraph.getUpdatedGraph(request);
 
-        GraphUpdate lastUpdate = Parser.parseFrom(
-                response.getGraphUpdates(response.getGraphUpdatesCount() - 1).toByteArray(), GraphUpdate.class);
+        HanRoutingProtocol.GraphUpdate lastUpdate = Parser.parseFrom(
+                response.getGraphUpdates(response.getGraphUpdatesCount() - 1).toByteArray(), HanRoutingProtocol.GraphUpdate.class);
 
         if (lastUpdate.getNewVersion() <= currentGraphVersion) {
             return;
@@ -64,7 +60,7 @@ public class GraphManagerService implements IGetVertices {
         }
 
         for (ByteString updateByteString : response.getGraphUpdatesList()) {
-            GraphUpdate update = Parser.parseFrom(updateByteString.toByteArray(), GraphUpdate.class);
+            HanRoutingProtocol.GraphUpdate update = Parser.parseFrom(updateByteString.toByteArray(), HanRoutingProtocol.GraphUpdate.class);
 
             for (nl.han.asd.project.protocol.HanRoutingProtocol.Node addedNode : update.getAddedNodesList()) {
                 graph.addNodeVertex(addedNode);
@@ -80,7 +76,6 @@ public class GraphManagerService implements IGetVertices {
     }
 
     /**
-     *
      * @return the graph
      */
     public Graph getGraph() {
@@ -88,7 +83,6 @@ public class GraphManagerService implements IGetVertices {
     }
 
     /**
-     *
      * @return the vertices from the graph
      */
     @Override

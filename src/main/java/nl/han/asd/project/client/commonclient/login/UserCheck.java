@@ -21,8 +21,8 @@ public class UserCheck {
     /**
      * Check the validity of the username according
      * to a predefined format.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * The rules describing a valid username are as follows:
      * <pre>
      *  LENGTH : {@code > {@value #MIN_USERNAME_LENGTH} && < {@value #MAX_USERNAME_LENGTH}}
@@ -30,11 +30,9 @@ public class UserCheck {
      * </pre>
      *
      * @param username to be checked username
-     *
      * @return the checked username
-     *
      * @throws IllegalUsernameException if the usernames
-     *          format is invalid
+     *                                  format is invalid
      */
     public static String checkUsername(String username) {
         Check.notNull(username, "username");
@@ -56,19 +54,17 @@ public class UserCheck {
     /**
      * Check the validity of the password according
      * to a predefined format.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * The rules describing a valid password are as follows:
      * <pre>
      *  LENGTH : {@code > {@value #MIN_PASSWORD_LENGTH} && < {@value #MAX_PASSWORD_LENGTH}}
      * </pre>
      *
      * @param password to be checked password
-     *
      * @return the checked password
-     *
      * @throws IllegalPasswordException if the password
-     *          format is invalid
+     *                                  format is invalid
      */
     public static String checkPassword(String password) {
         Check.notNull(password, "password");

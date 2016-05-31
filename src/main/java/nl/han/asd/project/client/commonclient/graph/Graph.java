@@ -6,12 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-/**
- * Created by Julius on 25/04/16.
- */
 public class Graph {
-
-    private Map<String,Node> vertexMap = new HashMap<>();
+    private HashMap<String, Node> vertexMap = new HashMap<>();
 
     public Node getNodeVertex(String nodeID) {
         Node vertex = vertexMap.get(nodeID);
@@ -25,7 +21,7 @@ public class Graph {
         return vertexMap.size();
     }
 
-    public void resetGraph(){
+    public void resetGraph() {
         vertexMap = new HashMap<>();
     }
 
@@ -36,7 +32,7 @@ public class Graph {
        }
     }
 
-    public void addEdgesToVertex(HanRoutingProtocol.Node vertex){
+    public void addEdgesToVertex(HanRoutingProtocol.Node vertex) {
         Node node = getNodeVertex(vertex.getId());
         for (final HanRoutingProtocol.Edge edge : vertex.getEdgeList()) {
             node.addEdge(edge);

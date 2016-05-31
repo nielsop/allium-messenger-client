@@ -1,32 +1,18 @@
 package nl.han.asd.project.client.commonclient.master;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.google.protobuf.ByteString;
+import nl.han.asd.project.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
+import nl.han.asd.project.protocol.HanRoutingProtocol.*;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.Properties;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.protobuf.ByteString;
-
-import nl.han.asd.project.client.commonclient.connection.IConnectionService;
-import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
-import nl.han.asd.project.protocol.HanRoutingProtocol.Client;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientHeartbeat;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRequest;
-import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
-import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
-import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 public class MasterGatewayTest {
 

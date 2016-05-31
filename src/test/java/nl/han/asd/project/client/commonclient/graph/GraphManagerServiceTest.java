@@ -1,9 +1,11 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import com.google.protobuf.ByteString;
+import nl.han.asd.project.client.commonclient.connection.Parser;
+import nl.han.asd.project.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdate;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -11,17 +13,11 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.google.protobuf.ByteString;
-
-import nl.han.asd.project.client.commonclient.connection.Parser;
-import nl.han.asd.project.client.commonclient.master.MasterGateway;
-import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdate;
-import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
-import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
+import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ GraphManagerService.class, GraphUpdateResponse.class, GraphUpdateRequest.class, GraphUpdate.class,
-        ByteString.class, Parser.class })
+@PrepareForTest({GraphManagerService.class, GraphUpdateResponse.class, GraphUpdateRequest.class, GraphUpdate.class,
+        ByteString.class, Parser.class})
 public class GraphManagerServiceTest {
 
     @Mock

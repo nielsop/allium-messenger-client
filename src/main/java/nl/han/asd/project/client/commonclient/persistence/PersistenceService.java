@@ -1,18 +1,17 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
+
 import nl.han.asd.project.client.commonclient.database.IDatabase;
-import nl.han.asd.project.client.commonclient.database.model.Contact;
-import nl.han.asd.project.client.commonclient.database.model.Message;
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Provides a way to communicate with the database.
@@ -23,11 +22,11 @@ public class PersistenceService implements IPersistence {
 
     @Inject
     public PersistenceService(IDatabase database) {
-        this.database = database;
+        this.database = Check.notNull(database, "database");
     }
 
     @Override
-    public boolean deleteMessage(int id)  {
+    public boolean deleteMessage(int id) {
         try {
             return getDatabase().query(String.format("DELETE FROM Message WHERE id = %d", id));
         } catch (SQLException e) {
@@ -67,6 +66,9 @@ public class PersistenceService implements IPersistence {
         final Map<Contact, List<Message>> contactMessagesHashMap = new HashMap<>();
         try {
             ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message");
+            if (selectMessagesResult == null) {
+                return Collections.emptyMap();
+            }
             while (selectMessagesResult.next()) {
                 final Message message = Message.fromDatabase(selectMessagesResult);
                 if (!contactMessagesHashMap.containsKey(message.getSender())) {
@@ -116,7 +118,7 @@ public class PersistenceService implements IPersistence {
         try {
             ResultSet selectContactsResult = getDatabase().select("SELECT * FROM Contact");
             while (selectContactsResult.next()) {
-                contactList.add(Contact.fromDatabase(selectContactsResult.getObject(2)));
+                contactList.add(Contact.fromDatabase((String) selectContactsResult.getObject(2)));
             }
             selectContactsResult.close();
         } catch (SQLException e) {

@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -23,8 +22,8 @@ public class ContactStoreTest {
     private static final byte[] publicKeyContact4 = "asdfTest4".getBytes();
     private IPersistence persistence;
     private ContactStore contactStore;
-    private List<Contact> singleContactArrayList;
-    private List<Contact> multipleContactArrayList;
+    private ArrayList<Contact> singleContactArrayList;
+    private ArrayList<Contact> multipleContactArrayList;
 
     @Before
     public void initialize() {

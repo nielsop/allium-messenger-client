@@ -2,8 +2,9 @@ package nl.han.asd.project.client.commonclient.path;
 
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,17 +15,18 @@ import java.util.Random;
 
 public class PathDeterminationService implements IGetMessagePath {
     private static final Logger LOGGER = LoggerFactory.getLogger(PathDeterminationService.class);
-    private IGetGraphUpdates graphUpdates;
+    private IGetUpdatedGraph graphUpdates;
     private IGetClientGroup clientGroup;
 
     @Inject
-    public PathDeterminationService(IGetGraphUpdates graphUpdates, IGetClientGroup clientGroup) {
-        this.graphUpdates = graphUpdates;
-        this.clientGroup = clientGroup;
+    public PathDeterminationService(IGetUpdatedGraph graphUpdates, IGetClientGroup clientGroup) {
+        this.graphUpdates = Check.notNull(graphUpdates, "graphUpdates");
+        this.clientGroup = Check.notNull(clientGroup, "clientGroup");
     }
 
     @Override
     public List<Node> getPath(int minHops, Contact contactOntvanger) {
+
         if (minHops < 1) {
             throw new IllegalArgumentException("The minimum amount of Hops should be more than 0");
         }

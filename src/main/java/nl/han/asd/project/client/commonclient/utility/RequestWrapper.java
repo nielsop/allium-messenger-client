@@ -25,9 +25,9 @@ public class RequestWrapper {
     /**
      * Creates a new request wrapper. Will automatically transform the request into an encrypted request.
      *
-     * @param message The request.
+     * @param message     The request.
      * @param requestType The request type.
-     * @param socket The socket to write to and read from.
+     * @param socket      The socket to write to and read from.
      */
     public RequestWrapper(final GeneratedMessage message, final HanRoutingProtocol.Wrapper.Type requestType, final Socket socket) {
         this.message = HanRoutingProtocol.Wrapper.newBuilder().setType(requestType).setData(message.toByteString()).build();

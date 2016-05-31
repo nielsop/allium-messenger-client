@@ -1,23 +1,22 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.io.OutputStream;
+import java.net.Socket;
+
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-import java.io.OutputStream;
-import java.net.Socket;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
-import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
-
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ SocketHandler.class, Socket.class, Wrapper.class })
+@PrepareForTest({SocketHandler.class, Socket.class, Wrapper.class})
 public class SocketHandlerTest {
 
     String host = "localhost";
