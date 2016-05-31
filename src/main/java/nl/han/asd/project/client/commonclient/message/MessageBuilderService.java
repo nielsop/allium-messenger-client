@@ -2,13 +2,17 @@ package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
 import com.google.protobuf.ByteString;
-import nl.han.asd.project.client.commonclient.connection.ConnectionService;
+import nl.han.asd.project.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,19 +20,33 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-public class MessageBuilderService implements IMessageBuilder {
+public class MessageBuilderService {
     private static final int MINIMAL_HOPS = 3;
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageBuilderService.class);
+    private static MessageBuilderService instance;
     private IGetMessagePath getPath;
     private IEncryptionService encryptionService;
-    private ConnectionService connectionService = null;
-    private IContactStore contactStore = null;
+    private IConnectionService connectionService;
+    private IContactStore contactStore;
+    private IConnectionServiceFactory connectionServiceFactory;
 
     @Inject
-    public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService, IContactStore contactStore) {
-        this.getPath = getPath;
-        this.encryptionService = encryptionService;
-        this.contactStore = contactStore;
+    public MessageBuilderService(IGetMessagePath getPath, IEncryptionService encryptionService,
+                                 IContactStore contactStore, IConnectionServiceFactory connectionServiceFactory) {
+        this.getPath = Check.notNull(getPath, "getPath");
+        this.encryptionService = Check.notNull(encryptionService, "encryptionService");
+        this.contactStore = Check.notNull(contactStore, "contactStore");
+    }
+
+    private MessageBuilderService() {
+
+    }
+
+    public static MessageBuilderService getInstance() {
+        if (instance == null) {
+            instance = new MessageBuilderService();
+        }
+        return instance;
     }
 
     public void sendMessage(String messageText, Contact contactReceiver, Contact contactSender) {
@@ -38,12 +56,15 @@ public class MessageBuilderService implements IMessageBuilder {
         HanRoutingProtocol.MessageWrapper.Builder builder = HanRoutingProtocol.MessageWrapper.newBuilder();
 
         builder.setData(messageToSend.getEncryptedData());
-        connectionService = new ConnectionService(messageToSend.getPublicKey());
+
+        connectionService = connectionServiceFactory.create(messageToSend.getIp(), messageToSend.getPort(),
+                messageToSend.getPublicKey());
+
         try {
-            connectionService.open(messageToSend.getIp(), messageToSend.getPort());
-            connectionService.write(builder);
-        } catch (IOException e) {
-            LOGGER.error("Message could not be send due to connection problems.");
+            Wrapper wrapper = connectionService.wrap(builder.build(), Wrapper.Type.MESSAGEWRAPPER);
+            connectionService.write(wrapper);
+        } catch (IOException | MessageNotSentException e) {
+            LOGGER.error("Message could not be send due to connection problems.", e);
         }
     }
 
@@ -59,7 +80,8 @@ public class MessageBuilderService implements IMessageBuilder {
 
     /**
      * Deepest layer in final message package
-     * @param node contains information about the next hop in path
+     *
+     * @param node    contains information about the next hop in path
      * @param message contains information about the message typed by the client
      * @return encrypted data from the first layer that is build
      */
@@ -74,7 +96,8 @@ public class MessageBuilderService implements IMessageBuilder {
     }
 
     private EncryptedMessage buildLastMessagePackageLayer(Node node, byte[] data) {
-        return new EncryptedMessage(null, node.getIpAddress(), node.getPort(), node.getPublicKey(), ByteString.copyFrom(data));
+        return new EncryptedMessage(null, node.getIpAddress(), node.getPort(), node.getPublicKey(),
+                ByteString.copyFrom(data));
     }
 
     private byte[] buildMessagePackageLayer(byte[] message, List<Node> remainingPath) {

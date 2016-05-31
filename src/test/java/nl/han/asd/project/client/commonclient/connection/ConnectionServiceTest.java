@@ -1,163 +1,291 @@
 package nl.han.asd.project.client.commonclient.connection;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.junit.*;
+import com.google.protobuf.GeneratedMessage;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.IOException;
-import java.net.SocketException;
+import java.io.File;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
-import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
-import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-public class ConnectionServiceTest implements IConnectionService {
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ConnectionService.class, Parser.class, Wrapper.class, Semaphore.class})
+public class ConnectionServiceTest {
 
-    private static Server server = new Server();
-    private final byte[] EMPTY_PUBLICKEY_BYTES = new byte[] { 0x00 };
-    private ConnectionService connectionService = null;
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+    @Mock
+    private IEncryptionService encryptionServiceMock;
+    @Mock
+    private File fileMock;
 
-    public ConnectionServiceTest() {
+    @Test(expected = IllegalArgumentException.class)
+    public void hostPortConstructorNullHost() throws Exception {
+        new ConnectionService(null, 1024);
     }
 
-    @BeforeClass
-    public static void InitServer() throws IOException {
-        // setup the local server for testing purposes only, executing should happen before the class is initialized.
-        server.Start(10002);
+    @Test(expected = IllegalArgumentException.class)
+    public void encrytionServiceHostPortPublicKeyConstructorNullEncryptionService() throws Exception {
+        new ConnectionService(null, "localhost", 1024, new byte[]{1, 2, 3});
     }
 
-    @AfterClass
-    public static void StopServer() {
-        // stop the local server after we ran all tests.
-        server.Stop();
-    }
-
-    @Before
-    public void InitConnectionService() throws IOException {
-        connectionService = new ConnectionService(EMPTY_PUBLICKEY_BYTES, this);
-
-        // set the public key of the server to our connection service
-        connectionService.setReceiverPublicKey(server.getMyPublicKey());
-        // set the public key of the connection server to the server
-        server.setReceiverPublicKey(connectionService.getMyPublicKey());
-        connectionService.open("127.0.0.1", 10002);
-    }
-
-    @After
-    public void CloseConnectionService() throws IOException {
-        connectionService.close();
-    }
-
-    @Test
-    public void TestProtocol() throws InvalidProtocolBufferException, SocketException {
-        ClientLoginRequest.Builder requestBuilder = ClientLoginRequest.newBuilder();
-        requestBuilder.setUsername("test");
-        requestBuilder.setPassword("test");
-        requestBuilder.setPublicKey(ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES));
-
-        connectionService.write(requestBuilder);
-
-        ClientLoginResponse response = connectionService.readGeneric(HanRoutingProtocol.ClientLoginResponse.class);
-        assertEquals(response.getSecretHash(),
-                String.format("%s:%s", requestBuilder.getUsername(), requestBuilder.getPassword()));
-        assertEquals(response.getStatus(), ClientLoginResponse.Status.SUCCES);
+    @Test(expected = IllegalArgumentException.class)
+    public void encrytionServiceHostPortPublicKeyConstructorNullHost() throws Exception {
+        new ConnectionService(encryptionServiceMock, null, 1024, new byte[]{1, 2, 3});
 
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void TestSleepTime() {
-        ConnectionService connection2 = new ConnectionService(-20,
-                EMPTY_PUBLICKEY_BYTES);
-    }
-
-    @Test(expected = SocketException.class)
-    public void TestHost() throws IOException {
-        ConnectionService connection2 = new ConnectionService(20,
-                EMPTY_PUBLICKEY_BYTES, this);
-        connection2.open("127.0.", 10);
-    }
-
-    @Test(expected = SocketException.class)
-    public void TestPort() throws IOException {
-        ConnectionService connection2 = new ConnectionService(
-                EMPTY_PUBLICKEY_BYTES);
-        connection2.open("127.0.0.1", -20);
-    }
-
-    @Test(expected = SocketException.class)
-    public void TestReadAsync() throws IOException {
-        ConnectionService connection2 = new ConnectionService(
-                EMPTY_PUBLICKEY_BYTES);
-        connection2.readAsync();
-    }
-
-    @Test(expected = SocketException.class)
-    public void TestStopReadyAsync() throws IOException {
-        ConnectionService connection2 = new ConnectionService(
-                EMPTY_PUBLICKEY_BYTES);
-        connection2.stopReadAsync();
-    }
-
-    @Test
-    public void TestGenerics() throws SocketException, InvalidProtocolBufferException {
-        ClientLoginRequest.Builder builder = ClientLoginRequest.newBuilder();
-        builder.setUsername("test");
-        builder.setPassword("test");
-        builder.setPublicKey(ByteString.copyFrom(EMPTY_PUBLICKEY_BYTES));
-        connectionService.write(builder);
-
-        ClientLoginResponse response = connectionService.readGeneric(ClientLoginResponse.class);
-        assertEquals(ClientLoginResponse.Status.SUCCES, response.getStatus());
-    }
-
-    @Test(expected = SocketException.class)
-    public void TestInvalidGeneric() throws IOException {
-        connectionService.close();
-        ClientLoginResponse response = connectionService.readGeneric(ClientLoginResponse.class);
-    }
-
-    @Test(expected = SocketException.class)
-    public void TestWriteInvalid() throws IOException {
-        connectionService.close();
-        ClientLoginRequest.Builder builder = ClientLoginRequest.newBuilder();
-        connectionService.write(builder);
-    }
-
-    @Test(expected = SocketException.class)
-    public void TestInvalidIP() throws IOException {
-        connectionService.open("127.1.1.1", 1345);
-    }
-
-    @Test(expected = SocketException.class)
-    public void TestReadInvalid() throws IOException {
-        connectionService.close();
-        connectionService.readGeneric(HanRoutingProtocol.ClientLoginRequest.class);
+    public void encrytionServiceHostPortPublicKeyConstructorNullPublicKey() throws Exception {
+        new ConnectionService(encryptionServiceMock, "localhost", 1024, (byte[]) null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void TestInvalidConstructor() throws IOException {
-        ConnectionService service = new ConnectionService(25, null);
+    public void encrytionServiceHostPortKeyFileConstructorNullEncryptionService() throws Exception {
+        new ConnectionService(null, "localhost", 1024, fileMock);
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void encrytionServiceHostPortKeyFileConstructorNullHost() throws Exception {
+        new ConnectionService(encryptionServiceMock, null, 1024, fileMock);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void encrytionServiceHostPortKeyFileConstructorNullKeyfile() throws Exception {
+        new ConnectionService(encryptionServiceMock, "localhost", 1024, (File) null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void writeNullWrapper() throws Exception {
+        new ConnectionService("localhost", 1024).write(null);
     }
 
     @Test
-    public void TestConnectedState() throws IOException {
-        connectionService.close();
-        assertEquals(false, connectionService.isConnected());
+    public void writeMutexTimeout() throws Exception {
+        Semaphore mutexMock = PowerMockito.mock(Semaphore.class);
+        whenNew(Semaphore.class).withArguments(eq(1)).thenReturn(mutexMock);
+
+        SocketHandler socketHandlerMock = mock(SocketHandler.class);
+        SocketHandler newSocketHandlerMock = mock(SocketHandler.class);
+
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(socketHandlerMock);
+        ConnectionService connectionService = new ConnectionService("localhost", 1024);
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(newSocketHandlerMock);
+
+        PowerMockito.when(mutexMock.tryAcquire(-1, TimeUnit.MILLISECONDS)).thenReturn(false);
+
+        Wrapper wrapperMock = mock(Wrapper.class);
+        connectionService.write(wrapperMock);
+
+        verifyNoMoreInteractions(socketHandlerMock);
+        verify(newSocketHandlerMock).write(wrapperMock);
+        verify(newSocketHandlerMock).close();
     }
 
     @Test
-    public void TestAsyncReadCall() throws SocketException {
-        connectionService.readAsync();
-        connectionService.stopReadAsync();
+    public void writeMutexAquiredNoWaitingThreads() throws Exception {
+        Semaphore mutexMock = PowerMockito.mock(Semaphore.class);
+        whenNew(Semaphore.class).withArguments(eq(1)).thenReturn(mutexMock);
+
+        SocketHandler socketHandlerMock = mock(SocketHandler.class);
+        SocketHandler newSocketHandlerMock = mock(SocketHandler.class);
+
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(socketHandlerMock);
+        ConnectionService connectionService = new ConnectionService("localhost", 1024);
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(newSocketHandlerMock);
+
+        PowerMockito.when(mutexMock.tryAcquire(-1, TimeUnit.MILLISECONDS)).thenReturn(true);
+        PowerMockito.when(mutexMock.hasQueuedThreads()).thenReturn(false);
+
+        Wrapper wrapperMock = mock(Wrapper.class);
+        connectionService.write(wrapperMock);
+
+        verify(mutexMock).release();
+        verifyNoMoreInteractions(newSocketHandlerMock);
+        verify(socketHandlerMock).write(wrapperMock);
+        verify(socketHandlerMock).close();
     }
 
-    @Override
-    public void onReceiveRead(UnpackedMessage message) {
-        try {
-            connectionService.stopReadAsync();
-        } catch (SocketException e) {
-            e.printStackTrace();
+    @Test
+    public void writeAndReadMutexAquiredNoWaitingThreads() throws Exception {
+        Semaphore mutexMock = PowerMockito.mock(Semaphore.class);
+        whenNew(Semaphore.class).withArguments(eq(1)).thenReturn(mutexMock);
+
+        SocketHandler socketHandlerMock = mock(SocketHandler.class);
+        SocketHandler newSocketHandlerMock = mock(SocketHandler.class);
+
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(socketHandlerMock);
+        ConnectionService connectionService = new ConnectionService("localhost", 1024);
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(newSocketHandlerMock);
+
+        PowerMockito.when(mutexMock.tryAcquire(-1, TimeUnit.MILLISECONDS)).thenReturn(true);
+        PowerMockito.when(mutexMock.hasQueuedThreads()).thenReturn(false);
+
+        Wrapper requestWrapperMock = mock(Wrapper.class);
+        GeneratedMessage responseMock = mock(Wrapper.class);
+        when(socketHandlerMock.writeAndRead(eq(requestWrapperMock))).thenReturn(responseMock);
+
+        GeneratedMessage response = connectionService.writeAndRead(requestWrapperMock);
+
+        if (!response.equals(responseMock)) {
+            fail();
         }
+
+        verifyNoMoreInteractions(newSocketHandlerMock);
+        verify(socketHandlerMock).writeAndRead(requestWrapperMock);
+        verify(socketHandlerMock).close();
     }
+
+    @Test
+    public void writeAndReadMutexAquiredWaitingThreads() throws Exception {
+        Semaphore mutexMock = PowerMockito.mock(Semaphore.class);
+        whenNew(Semaphore.class).withArguments(eq(1)).thenReturn(mutexMock);
+
+        SocketHandler socketHandlerMock = mock(SocketHandler.class);
+        SocketHandler newSocketHandlerMock = mock(SocketHandler.class);
+
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(socketHandlerMock);
+        ConnectionService connectionService = new ConnectionService("localhost", 1024);
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(newSocketHandlerMock);
+
+        PowerMockito.when(mutexMock.tryAcquire(-1, TimeUnit.MILLISECONDS)).thenReturn(true);
+        PowerMockito.when(mutexMock.hasQueuedThreads()).thenReturn(true);
+
+        Wrapper requestWrapperMock = mock(Wrapper.class);
+        GeneratedMessage responseMock = mock(Wrapper.class);
+        when(socketHandlerMock.writeAndRead(eq(requestWrapperMock))).thenReturn(responseMock);
+
+        GeneratedMessage response = connectionService.writeAndRead(requestWrapperMock);
+
+        if (!response.equals(responseMock)) {
+            fail();
+        }
+
+        verifyNoMoreInteractions(newSocketHandlerMock);
+        verify(socketHandlerMock).writeAndRead(requestWrapperMock);
+        verify(socketHandlerMock, times(0)).close();
+    }
+
+    @Test(expected = MessageNotSentException.class)
+    public void writeAndReadInterruptException() throws Exception {
+        Semaphore mutexMock = PowerMockito.mock(Semaphore.class);
+        whenNew(Semaphore.class).withArguments(eq(1)).thenReturn(mutexMock);
+
+        SocketHandler socketHandlerMock = mock(SocketHandler.class);
+        SocketHandler newSocketHandlerMock = mock(SocketHandler.class);
+
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(socketHandlerMock);
+        ConnectionService connectionService = new ConnectionService("localhost", 1024);
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(newSocketHandlerMock);
+
+        PowerMockito.when(mutexMock.tryAcquire(-1, TimeUnit.MILLISECONDS)).thenThrow(new InterruptedException());
+
+        Wrapper wrapperMock = mock(Wrapper.class);
+        connectionService.writeAndRead(wrapperMock);
+
+        verify(socketHandlerMock, times(0)).write(wrapperMock);
+    }
+
+    @Test
+    public void writeAndReadTimeoutNewSocket() throws Exception {
+        Semaphore mutexMock = PowerMockito.mock(Semaphore.class);
+        whenNew(Semaphore.class).withArguments(eq(1)).thenReturn(mutexMock);
+
+        SocketHandler socketHandlerMock = mock(SocketHandler.class);
+        SocketHandler newSocketHandlerMock = mock(SocketHandler.class);
+
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(socketHandlerMock);
+        ConnectionService connectionService = new ConnectionService("localhost", 1024);
+        whenNew(SocketHandler.class).withAnyArguments().thenReturn(newSocketHandlerMock);
+
+        PowerMockito.when(mutexMock.tryAcquire(-1, TimeUnit.MILLISECONDS)).thenReturn(false);
+
+        Wrapper requestWrapperMock = mock(Wrapper.class);
+        GeneratedMessage responseMock = mock(Wrapper.class);
+        when(newSocketHandlerMock.writeAndRead(eq(requestWrapperMock))).thenReturn(responseMock);
+
+        GeneratedMessage response = connectionService.writeAndRead(requestWrapperMock);
+        assertSame(responseMock, response);
+
+        verifyNoMoreInteractions(socketHandlerMock);
+        verify(newSocketHandlerMock).close();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void wrapperNullMessage() throws Exception {
+        new ConnectionService("localhost", 1024).wrap(null, Wrapper.Type.ADMINDELETEREQUEST);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void wraperNullType() throws Exception {
+        GeneratedMessage messageMock = mock(GeneratedMessage.class);
+        new ConnectionService("localhost", 1024).wrap(messageMock, null);
+    }
+
+    @Test
+    public void wrapperNullEncyptionService() throws Exception {
+        ByteString messageByteString = ByteString.copyFrom("message byte string".getBytes());
+
+        Wrapper.Type type = Wrapper.Type.ADMINDELETEREQUEST;
+        GeneratedMessage messageMock = mock(GeneratedMessage.class);
+        when(messageMock.toByteString()).thenReturn(messageByteString);
+
+        Wrapper.Builder builderMock = PowerMockito.mock(Wrapper.Builder.class);
+        PowerMockito.mockStatic(Wrapper.class);
+        PowerMockito.when(Wrapper.newBuilder()).thenReturn(builderMock);
+
+        Wrapper wrapperMock = mock(Wrapper.class);
+        when(builderMock.build()).thenReturn(wrapperMock);
+
+        Wrapper ret = new ConnectionService("localhost", 1024).wrap(messageMock, type);
+        assertSame(wrapperMock, ret);
+
+        verify(builderMock).setType(type);
+        verify(builderMock).setData(messageByteString);
+    }
+
+    @Test
+    public void wrapperEncryptionService() throws Exception {
+        Wrapper.Type type = Wrapper.Type.ADMINDELETEREQUEST;
+        byte[] messageBytes = "message byte string".getBytes();
+
+        GeneratedMessage messageMock = mock(GeneratedMessage.class);
+        when(messageMock.toByteArray()).thenReturn(messageBytes);
+
+        byte[] publicKeyBytes = "public key bytes".getBytes();
+        byte[] encryptedMessageBytes = "encrypted message bytes".getBytes();
+        IEncryptionService encryptionServiceMock = mock(IEncryptionService.class);
+        when(encryptionServiceMock.encryptData(publicKeyBytes, messageBytes)).thenReturn(encryptedMessageBytes);
+
+        Wrapper.Builder builderMock = PowerMockito.mock(Wrapper.Builder.class);
+        PowerMockito.mockStatic(Wrapper.class);
+        PowerMockito.when(Wrapper.newBuilder()).thenReturn(builderMock);
+
+        Wrapper wrapperMock = mock(Wrapper.class);
+        when(builderMock.build()).thenReturn(wrapperMock);
+
+        Wrapper ret = new ConnectionService(encryptionServiceMock, "localhost", 1024, publicKeyBytes).wrap(messageMock,
+                type);
+        assertSame(wrapperMock, ret);
+
+        verify(builderMock).setType(type);
+        verify(builderMock).setData(ByteString.copyFrom(encryptedMessageBytes));
+    }
+
 }

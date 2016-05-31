@@ -1,114 +1,63 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import nl.han.asd.project.client.commonclient.store.Contact;
-import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Date;
 
-/**
- * @author Julius
- * @version 1.0
- * @since 09/05/16
- */
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 public class MessageTest {
 
-    private static Message message;
-    private static Message sameMessage;
-    private static Message differentMessage;
+    private Date date = new Date();
+    private String testData = "testData";
+    private Message message;
 
-    private static final int PRIMARY_ID = 1;
-    private static final int SECONDARY_ID = 2;
-    private static final String PRIMARY_USERNAME = "TestUsername";
-    private static final String SECONDARY_USERNAME = "TestUsername2";
-    private static final Date DATE = new Date();
-    private static final Timestamp TIMESTAMP = new Timestamp(DATE.getTime());
-    private static final String PRIMARY_MESSAGE = "Testmessage";
-    private static final String SECONDARY_MESSAGE = "Testmessage2";
-    private static final String PRIMARY_MESSAGE_TOSTRING = "Message[sender=" + PRIMARY_USERNAME + ", timestamp=" + DATE + ", text=" + PRIMARY_MESSAGE + "]";
+    private String username;
+    private byte[] array;
+    private Boolean online;
+    private Contact sender;
 
-    @BeforeClass
-    public static void beforeClass() {
-        message = new Message(PRIMARY_ID, new Contact(PRIMARY_USERNAME), DATE, PRIMARY_MESSAGE);
-        sameMessage = new Message(PRIMARY_ID, new Contact(PRIMARY_USERNAME), DATE, PRIMARY_MESSAGE);
-        differentMessage = new Message(SECONDARY_ID, new Contact(SECONDARY_USERNAME), new Date(), SECONDARY_MESSAGE);
+    @Mock
+    private Contact contactReceiver;
+
+    @Before
+    public void setUp() {
+        username = "Username";
+        array = new byte[]{123, 123};
+        online = true;
+        sender = new Contact(username, array, online);
+        message = new Message(sender, date, testData);
     }
 
     @Test
-    public void testGetId() {
-        Assert.assertEquals(PRIMARY_ID, message.getDatabaseId());
+    public void testGetSender() throws Exception {
+        assertEquals(sender, message.getSender());
     }
 
     @Test
-    public void testGetText() {
-        Assert.assertEquals(PRIMARY_MESSAGE, message.getText());
+    public void testGetText() throws Exception {
+        assertEquals(testData, message.getText());
     }
 
     @Test
-    public void testGetTimestamp() {
-        Assert.assertEquals(DATE, message.getMessageTimestamp());
+    public void toStringCreatesRightString() throws Exception {
+        String stringToBeBuild = "Message[sender=Username, timestamp=" + date + ", text=testData]";
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Message[sender=").append(sender.getUsername()).append(", timestamp=").append(message.getMessageTimestamp()).append(", text=").append(message.getText()).append("]");
+        assertEquals(stringToBeBuild, message.toString());
     }
 
     @Test
-    public void testGetSender() {
-        final Contact newContact = new Contact(PRIMARY_USERNAME);
-        Assert.assertEquals(newContact, message.getSender());
+    public void equalsThrowsFalseWhenComparedWithNull() throws Exception {
+        assertFalse(message.equals(null));
     }
 
     @Test
-    public void testFromDatabaseSuccess() throws SQLException {
-        final ResultSet set = Mockito.mock(ResultSet.class);
-        Mockito.when(set.getObject(1)).thenReturn(1);
-        Mockito.when(set.getObject(2)).thenReturn(PRIMARY_USERNAME);
-        Mockito.when(set.getTimestamp(3)).thenReturn(TIMESTAMP);
-        Mockito.when(set.getObject(4)).thenReturn(PRIMARY_MESSAGE);
-        final Message messageFromDatabase = Message.fromDatabase(set);
-        Assert.assertEquals(message, messageFromDatabase);
-    }
-
-    @Test
-    public void testEqualsIsEqualWithSameObjectTypeAndSameVariables() {
-        Assert.assertEquals(sameMessage, message);
-    }
-
-    @Test
-    public void testEqualsIsNotEqualWithSameObjectTypeAndDifferentVariables() {
-        Assert.assertNotEquals(differentMessage, message);
-    }
-
-    @Test
-    public void testEqualsIsNotEqualWithDifferentObjectType() {
-        System.out.println(message);
-        Assert.assertNotEquals("Test", message);
-    }
-
-    @Test
-    public void testToStringIsEqualToExpectedToString() {
-        Assert.assertEquals(PRIMARY_MESSAGE_TOSTRING, message.toString());
-    }
-
-    @Test
-    public void testToStringIsEqualToSameObjectInDifferentVariable() {
-        Assert.assertEquals(sameMessage.toString(), message.toString());
-    }
-
-    @Test
-    public void testToStringIsNotEqualToDifferentObject() {
-        Assert.assertNotEquals(differentMessage.toString(), message.toString());
-    }
-
-    @Test
-    public void testHashCodeIsEqualWithSameObject() {
-        Assert.assertEquals(sameMessage.hashCode(), message.hashCode());
-    }
-
-    @Test
-    public void testHashCodeIsNotEqualWithDifferentObject() {
-        Assert.assertNotEquals(differentMessage.hashCode(), message.hashCode());
+    public void getMessageTimeStampReturnsRightTimeStamp() throws Exception {
+        assertEquals(message.getMessageTimestamp(), date);
     }
 }

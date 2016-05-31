@@ -1,19 +1,17 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-import nl.han.asd.project.client.commonclient.Configuration;
+
 import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Provides a way to communicate with the database.
@@ -24,7 +22,7 @@ public class PersistenceService implements IPersistence {
 
     @Inject
     public PersistenceService(IDatabase database) {
-        this.database = database;
+        this.database = Check.notNull(database, "database");
     }
 
     @Override
@@ -38,16 +36,11 @@ public class PersistenceService implements IPersistence {
     }
 
     @Override
-    public boolean saveMessage(Message message) {
-        final String messageTimestampInDatabaseFormat = Configuration.TIMESTAMP_FORMAT.format(message.getMessageTimestamp());
-        try {
-            return getDatabase().query(String
-                    .format("INSERT INTO Message (sender, message, timestamp) VALUES ('%s', '%s', '%s')", message.getSender().getUsername(), message.getText(),
-                            messageTimestampInDatabaseFormat));
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return false;
+    public boolean saveMessage(Message message) throws SQLException {
+        final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getTimestamp());
+        return getDatabase()
+                .query(String.format("INSERT INTO Message (sender, message, timestamp) VALUES ('%s', '%s', '%s')",
+                        message.getSender().getUsername(), message.getText(), messageTimestampInDatabaseFormat));
     }
 
     @Override
@@ -69,6 +62,9 @@ public class PersistenceService implements IPersistence {
         final Map<Contact, List<Message>> contactMessagesHashMap = new HashMap<>();
         try {
             ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message");
+            if (selectMessagesResult == null) {
+                return Collections.emptyMap();
+            }
             while (selectMessagesResult.next()) {
                 final Message message = Message.fromDatabase(selectMessagesResult);
                 if (!contactMessagesHashMap.containsKey(message.getSender())) {

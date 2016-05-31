@@ -17,6 +17,11 @@ public class ContactStore implements IContactStore {
     private CurrentUser currentUser;
     private List<Contact> contactList;
 
+    /**
+     * Constructor of Contactstore.
+     *
+     * @param persistence the layer where the store connects and communicates with the database
+     */
     @Inject
     public ContactStore(IPersistence persistence) {
         this.persistence = persistence;
@@ -24,12 +29,18 @@ public class ContactStore implements IContactStore {
         contactList = persistence.getContacts();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addContact(String username) {
         contactList.add(new Contact(username));
         persistence.addContact(username);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeContact(String username) {
         for (int i = 0; i < contactList.size(); i++) {
@@ -42,6 +53,9 @@ public class ContactStore implements IContactStore {
         persistence.deleteContact(username);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Contact getCurrentUserAsContact() {
         return currentUser.getCurrentUserAsContact();

@@ -2,9 +2,9 @@ package nl.han.asd.project.client.commonclient.store;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import nl.han.asd.project.client.commonclient.CommonclientModule;
-import nl.han.asd.project.client.commonclient.cryptography.EncryptionService;
+import nl.han.asd.project.client.commonclient.CommonClientModule;
 import nl.han.asd.project.client.commonclient.graph.Node;
+import nl.han.asd.project.commonservices.encryption.EncryptionService;
 
 /**
  * The contact which the current user can communicate to.
@@ -23,7 +23,7 @@ public class Contact {
      * @param username username of contact
      */
     public Contact(String username) {
-        this(username, new byte[] {}, false);
+        this(username, new byte[]{}, false);
     }
 
     /**
@@ -55,7 +55,7 @@ public class Contact {
      * @return Contact of current user by username from database.
      */
     public static Contact fromDatabase(String username) {
-        Injector injector = Guice.createInjector(new CommonclientModule());
+        Injector injector = Guice.createInjector(new CommonClientModule());
         EncryptionService service = injector.getInstance(EncryptionService.class);
         return new Contact(username, service.getPublicKey());
 
@@ -81,6 +81,7 @@ public class Contact {
             throw new NoConnectedNodesException("The connected Nodes from the contactStore are not set");
         }
         return connectedNodes;
+
     }
 
     /**
