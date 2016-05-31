@@ -112,10 +112,7 @@ public class Message {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("Message[sender=").append(sender.getUsername()).append(", receiver=").append(receiver.getUsername()).append(", timestamp=").append(timestamp).append(", text=")
-                .append(text).append("]");
-        return sb.toString();
+        return "Message[sender=" + sender.getUsername() + ", receiver=" + receiver.getUsername() + ", timestamp=" + timestamp + ", text=" + text + "]";
     }
 
     @Override

@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.login;
 
+import com.amazonaws.services.identitymanagement.model.User;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 
 /**
@@ -17,6 +18,10 @@ public class UserCheck {
 
     private static final int MAX_PASSWORD_LENGTH = 16;
     private static final int MIN_PASSWORD_LENGTH = 8;
+
+    private UserCheck() {
+
+    }
 
     /**
      * Check the validity of the username according
