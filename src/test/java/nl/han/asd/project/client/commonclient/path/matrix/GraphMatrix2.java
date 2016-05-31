@@ -2,7 +2,6 @@ package nl.han.asd.project.client.commonclient.path.matrix;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import nl.han.asd.project.client.commonclient.graph.Edge;
 import nl.han.asd.project.client.commonclient.graph.Node;
@@ -10,16 +9,18 @@ import nl.han.asd.project.client.commonclient.graph.Node;
 /**
  * Created by Jevgeni on 25-5-2016.
  */
-public class GraphMatrix extends Matrix {
+public class GraphMatrix2 extends Matrix2 {
 
     private Map<String, Integer> internalMap;
+    private Map<Integer, String> internalMap2;
     private Map<String, Node> graphMap;
     private int steps = 1;
 
-    public GraphMatrix(Map<String, Node> graphMap) {
+    public GraphMatrix2(Map<String, Node> graphMap) {
         super(graphMap.size());
 
         internalMap = new HashMap<>();
+        internalMap2 = new HashMap<>();
         this.graphMap = graphMap;
 
         prepareMatrixAndBuildInternalMap();
@@ -30,6 +31,7 @@ public class GraphMatrix extends Matrix {
         for (Map.Entry<String, Node> nodeEntry : graphMap.entrySet()) {
             if (!internalMap.containsKey(nodeEntry.getKey())) {
                 internalMap.put(nodeEntry.getKey(), index);
+                internalMap2.put(index, nodeEntry.getKey());
                 index++;
             }
         }
@@ -54,31 +56,22 @@ public class GraphMatrix extends Matrix {
      * Also saves the current matrix. A list of these can be obtained through ..
      */
     public void calculate() {
-        super.calculate(10, 0);
+        super.calculate(10);
     }
 
-    public String toPrintableString(int index) {
-        StringBuilder builder = new StringBuilder();
-        short[][][] matrix = super.getCurrentMatrix();
-        String shortMax = String.valueOf(Short.MAX_VALUE);
-        String keys = internalMap.keySet().stream().map(k -> k).collect(Collectors.joining("\t"));
-        builder.append(String.format("\t%s\n", keys));
+    public String getFormattedPath(String source, String destination) {
+        StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < matrix.length; i++) {
-            builder.append(internalMap.keySet().toArray()[i] + "\t");
-            for (int j = 0; j < matrix.length; j++) {
-                String value = String.valueOf(matrix[i][j][index]);
-                if (value.equals(shortMax)) {
-                    value = "X";
-                }
+        sb.append(source);
 
-                builder.append(value + "\t");
-            }
-
-            builder.append("\n");
+        for (Integer index : super.getPath(internalMap.get(source).intValue(),
+                internalMap.get(destination).intValue())) {
+            sb.append(" -> ").append(internalMap2.get(index));
         }
 
-        return builder.toString();
+        sb.append(" -> ").append(destination);
+
+        return sb.toString();
     }
 
 }

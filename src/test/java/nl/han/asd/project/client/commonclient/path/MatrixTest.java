@@ -1,9 +1,12 @@
 package nl.han.asd.project.client.commonclient.path;
 
+import org.junit.Test;
+
 import nl.han.asd.project.client.commonclient.graph.Graph;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.matrix.GraphMatrix;
-import org.junit.Test;
+import nl.han.asd.project.client.commonclient.path.matrix.GraphMatrix2;
+import nl.han.asd.project.client.commonclient.path.matrix.Matrix2;
 
 /**
  * Created by BILLPOORTS on 25-5-2016.
@@ -38,13 +41,13 @@ public class MatrixTest {
         GraphMatrix graphMatrix = new GraphMatrix(graph.getGraphMap());
         graphMatrix.fillMatrix();
 
-       // System.out.print(graphMatrix.toPrintableString());
+        // System.out.print(graphMatrix.toPrintableString());
 
         System.out.print("\n\n --- MULTIPLYING --- \n\n");
 
         graphMatrix.calculate();
 
-       // System.out.print(graphMatrix.toPrintableString());
+        // System.out.print(graphMatrix.toPrintableString());
     }
 
     @Test
@@ -76,13 +79,18 @@ public class MatrixTest {
         GraphMatrix graphMatrix = new GraphMatrix(graph.getGraphMap());
         graphMatrix.fillMatrix();
 
+        GraphMatrix2 graphMatrix2 = new GraphMatrix2(graph.getGraphMap());
+        graphMatrix2.fillMatrix();
+        graphMatrix2.calculate();
 
         graphMatrix.calculate();
 
-        for(int i = 0; i <= 3; i++)
-        {
-            System.out.print(String.format("\n\n --- MULTIPLYING (Step = %d) --- \n\n", i + 1));
-            System.out.print(graphMatrix.toPrintableString(i));
-        }
+        System.out.print(String.format("\n\n --- MULTIPLYING (Step = %d) --- \n\n", 9 + 1));
+        System.out.print(graphMatrix.toPrintableString(3));
+
+        System.err.println(String.format("\n\n --- MULTIPLYING (Step = %d) --- \n\n", 10 + 1));
+        System.err.println(((Matrix2) graphMatrix2).toString());
+
+        System.out.println(graphMatrix2.getFormattedPath("E", "F"));
     }
 }
