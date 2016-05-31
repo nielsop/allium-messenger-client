@@ -39,8 +39,8 @@ public class PersistenceService implements IPersistence {
     public boolean saveMessage(Message message) throws SQLException {
         final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getTimestamp());
         return getDatabase()
-                .query(String.format("INSERT INTO Message (sender, message, timestamp) VALUES ('%s', '%s', '%s')",
-                        message.getSender().getUsername(), message.getText(), messageTimestampInDatabaseFormat));
+                .query(String.format("INSERT INTO Message (sender, receiver, timestamp, message) VALUES ('%s', '%s', '%s', '%s')",
+                        message.getSender().getUsername(), message.getReceiver().getUsername(), messageTimestampInDatabaseFormat, message.getText()));
     }
 
     @Override

@@ -30,7 +30,7 @@ public class MessageTest {
         array = new byte[]{123, 123};
         online = true;
         sender = new Contact(username, array, online);
-        message = new Message(sender, date, testData);
+        message = new Message(sender, contactReceiver, date, testData);
     }
 
     @Test

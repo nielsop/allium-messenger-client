@@ -18,16 +18,18 @@ public class Message {
 
     private String text;
     private Contact sender;
+    private Contact receiver;
     private Date timestamp;
     private int id;
 
-    public Message(Contact sender, Date timestamp, String text) {
-        this(-1, sender, timestamp, text);
+    public Message(Contact sender, Contact receiver, Date timestamp, String text) {
+        this(-1, sender, receiver, timestamp, text);
     }
 
-    public Message(int id, Contact sender, Date timestamp, String text) {
+    public Message(int id, Contact sender, Contact receiver, Date timestamp, String text) {
         databaseId = id;
         this.sender = sender;
+        this.receiver = receiver;
         this.timestamp = timestamp;
         this.text = text;
     }
@@ -36,10 +38,10 @@ public class Message {
         try {
             final int id = (Integer) result.getObject(1);
             final Contact sender = Contact.fromDatabase((String) result.getObject(2));
-            final String message = (String) result.getObject(4);
-            final Date timestamp = IPersistence.TIMESTAMP_FORMAT
-                    .parse(IPersistence.TIMESTAMP_FORMAT.format(result.getTimestamp(3)));
-            return new Message(id, sender, timestamp, message);
+            final Contact receiver = Contact.fromDatabase((String) result.getObject(3));
+            final Date timestamp = IPersistence.TIMESTAMP_FORMAT.parse(IPersistence.TIMESTAMP_FORMAT.format(result.getTimestamp(4)));
+            final String message = (String) result.getObject(5);
+            return new Message(id, sender, receiver, timestamp, message);
         } catch (SQLException | ParseException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -62,11 +64,15 @@ public class Message {
         return timestamp;
     }
 
+    public Contact getReceiver() {
+        return receiver;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("Message[sender=").append(sender.getUsername()).append(", timestamp=").append(timestamp)
-                .append(", text=").append(text).append("]");
+        sb.append("Message[sender=").append(sender.getUsername()).append(", receiver=").append(receiver.getUsername()).append(", timestamp=").append(timestamp).append(", text=")
+                .append(text).append("]");
         return sb.toString();
     }
 
@@ -76,7 +82,7 @@ public class Message {
             return false;
         }
         final Message otherMessage = (Message) anotherObject;
-        return getText().equalsIgnoreCase(otherMessage.getText()) && getSender().equals(otherMessage.getSender());
+        return getText().equalsIgnoreCase(otherMessage.getText()) && getSender().equals(otherMessage.getSender()) && getReceiver().equals(otherMessage.getReceiver());
     }
 
     @Override

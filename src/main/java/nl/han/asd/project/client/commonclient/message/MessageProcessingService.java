@@ -39,11 +39,11 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
         HanRoutingProtocol.Message message = null;
         try {
             message = HanRoutingProtocol.Message.parseFrom(messageBuffer);
-            return new Message(contactStore.findContact(message.getSender()), new Date(), message.getText());
+            return new Message(contactStore.findContact(message.getSender()), null/*//TODO replace with receiver*/, new Date(), message.getText());
         } catch (InvalidProtocolBufferException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new Message(contactStore.findContact(message.getSender()), new Date(message.getTimeSent()), message.getText());
+        return new Message(contactStore.findContact(message.getSender()), null/*//TODO replace with receiver*/, new Date(message.getTimeSent()), message.getText());
     }
 
     @Override
