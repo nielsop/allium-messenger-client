@@ -13,7 +13,6 @@ public class MessageModule extends AbstractModule {
         bind(IGetMessagePath.class).to(PathDeterminationService.class);
         bind(IMessageStore.class).to(MessageStore.class);
         bind(ISendMessage.class).to(MessageProcessingService.class);
-        bind(IMessageBuilder.class).to(MessageBuilderService.class);
         bind(IReceiveMessage.class).to(MessageProcessingService.class);
     }
 }

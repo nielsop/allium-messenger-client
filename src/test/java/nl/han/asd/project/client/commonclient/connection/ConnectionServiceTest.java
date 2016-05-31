@@ -1,19 +1,9 @@
 package nl.han.asd.project.client.commonclient.connection;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-
-import java.io.File;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-
+import com.google.protobuf.ByteString;
+import com.google.protobuf.GeneratedMessage;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -23,24 +13,26 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.GeneratedMessage;
+import java.io.File;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ConnectionService.class, Parser.class, Wrapper.class, Semaphore.class })
+@PrepareForTest({ConnectionService.class, Parser.class, Wrapper.class, Semaphore.class})
 public class ConnectionServiceTest {
-
-    @Mock
-    private IEncryptionService encryptionServiceMock;
-
-    @Mock
-    private File fileMock;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+    @Mock
+    private IEncryptionService encryptionServiceMock;
+    @Mock
+    private File fileMock;
 
     @Test(expected = IllegalArgumentException.class)
     public void hostPortConstructorNullHost() throws Exception {
@@ -49,12 +41,12 @@ public class ConnectionServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void encrytionServiceHostPortPublicKeyConstructorNullEncryptionService() throws Exception {
-        new ConnectionService(null, "localhost", 1024, new byte[] { 1, 2, 3 });
+        new ConnectionService(null, "localhost", 1024, new byte[]{1, 2, 3});
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void encrytionServiceHostPortPublicKeyConstructorNullHost() throws Exception {
-        new ConnectionService(encryptionServiceMock, null, 1024, new byte[] { 1, 2, 3 });
+        new ConnectionService(encryptionServiceMock, null, 1024, new byte[]{1, 2, 3});
 
     }
 

@@ -14,11 +14,10 @@ public class CurrentUser {
 
     /**
      * Constructor of CurrentUser.
-
-     * @param username username of user
-     * @param publicKey publicKey of user
-     * @param secretHash hash of user used for identification to master server
      *
+     * @param username   username of user
+     * @param publicKey  publicKey of user
+     * @param secretHash hash of user used for identification to master server
      * @throws IllegalArgumentException if secretHash is null
      */
     public CurrentUser(String username, byte[] publicKey, String secretHash) {

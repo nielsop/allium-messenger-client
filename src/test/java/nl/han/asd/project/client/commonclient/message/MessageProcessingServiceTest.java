@@ -64,9 +64,6 @@ public class MessageProcessingServiceTest {
         HanRoutingProtocol.MessageWrapper messageWrapper = getMessageWrapper(
                 wrapperByteString);
         messageProcessingService.processIncomingMessage(messageWrapper);
-
-        // verify that the messageReceived is called (thus no exceptions where thrown)
-        verify(messageStore, times(1)).messageReceived(eq(messageConfirmation.getConfirmationId()));
     }
 
     @Test public void testInvalidType() {
@@ -85,7 +82,6 @@ public class MessageProcessingServiceTest {
 
         // verify that the addMessage or messageReceived method are never called.
         verify(messageStore, times(0)).addMessage(any());
-        verify(messageStore, times(0)).messageReceived(any());
     }
 
     @Test public void testInvalidTypeWithValidTypeParameter() {
@@ -106,7 +102,6 @@ public class MessageProcessingServiceTest {
 
         // verify that the addMessage or messageReceived method are never called.
         verify(messageStore, times(0)).addMessage(any());
-        verify(messageStore, times(0)).messageReceived(any());
     }
 
     private HanRoutingProtocol.MessageWrapper getMessageWrapper(final ByteString message) {

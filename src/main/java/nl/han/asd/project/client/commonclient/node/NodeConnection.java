@@ -14,7 +14,7 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.MessageWrapper;
  * @version 1.0
  * @since 10-5-2016
  */
-public class NodeConnection implements IConnectionListener {
+public class NodeConnection {
 
     private IConnectionService connectionService;
     private IReceiveMessage receiveMessage;

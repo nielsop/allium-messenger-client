@@ -29,10 +29,9 @@ public class NodeConnectionService implements ISetConnectedNodes, ISendData {
         this.contactStore = contactStore;
     }
 
-    @Override public void sendData(byte[] data, Contact receiver) {
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setConnectedNodes(List<String> connectedNodes) {
         for (String connectNode : connectedNodes) {
@@ -58,5 +57,10 @@ public class NodeConnectionService implements ISetConnectedNodes, ISendData {
 
             nodeConnection.start();
         }
+    }
+
+    @Override
+    public void sendData(byte[] data, Contact receiver) {
+
     }
 }

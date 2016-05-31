@@ -6,9 +6,6 @@ import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import nl.han.asd.project.client.commonclient.persistence.PersistenceService;
 
-/**
- * Created by Marius on 19-04-16.
- */
 public class StoreModule extends AbstractModule {
     @Override
     protected void configure() {
@@ -16,6 +13,5 @@ public class StoreModule extends AbstractModule {
         bind(IPersistence.class).to(PersistenceService.class);
         bind(IContactStore.class).to(ContactStore.class);
         bind(IMessageStore.class).to(MessageStore.class);
-        bind(IMessageStoreObserver.class).to(MessageStore.class);
     }
 }

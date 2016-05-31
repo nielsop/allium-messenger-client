@@ -29,6 +29,7 @@ public class Node {
 
     /**
      * add an edge
+     *
      * @param edge
      */
     public void addEdge(HanRoutingProtocol.Edge edge) {
@@ -36,11 +37,8 @@ public class Node {
     }
 
     /**
-     *
-     * @param destinationNodeId
-     *      Contains the Id from the edge's destination node.
-     * @return
-     *      The edge that has been found with the destination node id.
+     * @param destinationNodeId Contains the Id from the edge's destination node.
+     * @return The edge that has been found with the destination node id.
      */
     public Edge getEdge(String destinationNodeId) {
         Edge edge = adjacent.get(destinationNodeId);

@@ -56,7 +56,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
                 HanRoutingProtocol.MessageConfirmation messageConfirmation = HanRoutingProtocol.MessageConfirmation
                         .parseFrom(wrapper.getData());
-                messageStore.messageReceived(messageConfirmation.getConfirmationId());
+//                messageStore.messageReceived(messageConfirmation.getConfirmationId());
             } else if (wrapper.getType()
                     == HanRoutingProtocol.Wrapper.Type.MESSAGE) {
 

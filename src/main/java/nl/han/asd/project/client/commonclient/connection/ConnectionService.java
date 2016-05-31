@@ -1,5 +1,15 @@
 package nl.han.asd.project.client.commonclient.connection;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.GeneratedMessage;
+import nl.han.asd.project.commonservices.encryption.IEncryptionService;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Builder;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Type;
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,27 +17,14 @@ import java.io.IOException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.assistedinject.AssistedInject;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.GeneratedMessage;
-
-import nl.han.asd.project.client.commonclient.store.ContactStore;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
-import nl.han.asd.project.commonservices.internal.utility.Check;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
-import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Builder;
-import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Type;
-
 /**
  * {@link IConnectionService} implementation.
- *
- * <p>
+ * <p/>
+ * <p/>
  * This implementation aims to restrict the concurrent number
  * of open socket connections within a single instance of itself.
- *
- * <p>
+ * <p/>
+ * <p/>
  * This functionally can however be overwritten for time-critical
  * messages using the {@link IConnectionService#write(Wrapper, long, TimeUnit)}
  * and {@link IConnectionService#writeAndRead(Wrapper, long, TimeUnit)} for writing
@@ -52,14 +49,13 @@ public class ConnectionService implements IConnectionService {
     /**
      * Create a new ConnectionService instance used
      * to handle the communication with the specified host.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Note that this method does not check the validity
      * of the provided hostname or port.
      *
      * @param host to-be-connected to host
      * @param port port to use during connection
-     *
      * @throws IllegalArgumentException if host is null
      */
     @AssistedInject
@@ -77,22 +73,21 @@ public class ConnectionService implements IConnectionService {
     /**
      * Create a new ConnectionService instance used
      * to handle the communication with the specified host.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Note that this method does not check the validity
      * of the provided hostname or port.
      *
      * @param encryptionService service used to en-/decrypt messages
-     * @param host to-be-connected to host
-     * @param port port to use during connection
-     * @param publicKeyBytes public key of the to-be-connected to host
-     *
+     * @param host              to-be-connected to host
+     * @param port              port to use during connection
+     * @param publicKeyBytes    public key of the to-be-connected to host
      * @throws IllegalArgumentException if encryptionService, host
-     *          and/or publicKeyBytes is null
+     *                                  and/or publicKeyBytes is null
      */
     @AssistedInject
     public ConnectionService(IEncryptionService encryptionService, @Assisted String host, @Assisted int port,
-            @Assisted byte[] publicKeyBytes) {
+                             @Assisted byte[] publicKeyBytes) {
         this(host, port);
 
         this.encryptionService = Check.notNull(encryptionService, "encryptionService");
@@ -102,15 +97,15 @@ public class ConnectionService implements IConnectionService {
     /**
      * Create a new ConnectionService instance used
      * to handle the communication with the specified host.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Note that this method does not check the validity
      * of the provided hostname or port.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * The functionally provided by this constructor is
      * equal to:
-     *
+     * <p/>
      * <pre>
      *  IEncryptionService encryptionService = ...;
      *  String host = ...;
@@ -129,17 +124,16 @@ public class ConnectionService implements IConnectionService {
      * </pre>
      *
      * @param encryptionService service used to en-/decrypt messages
-     * @param host to-be-connected to host
-     * @param port port to use during connection
-     * @param publicKeyFile byte file containing the hosts public key
-     *
+     * @param host              to-be-connected to host
+     * @param port              port to use during connection
+     * @param publicKeyFile     byte file containing the hosts public key
      * @throws IllegalArgumentException if encryptionService, host
-     *          and/or publicKeyBytes is null
-     * @throws IOException if an IOException occurs during the publicKeyFile read
+     *                                  and/or publicKeyBytes is null
+     * @throws IOException              if an IOException occurs during the publicKeyFile read
      */
     @AssistedInject
     public ConnectionService(IEncryptionService encryptionService, @Assisted String host, @Assisted int port,
-            @Assisted File publicKeyFile) throws IOException {
+                             @Assisted File publicKeyFile) throws IOException {
         this(host, port);
         this.encryptionService = Check.notNull(encryptionService, "encryptionService");
 
@@ -152,7 +146,9 @@ public class ConnectionService implements IConnectionService {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T extends GeneratedMessage> Wrapper wrap(T message, Type type) {
         Check.notNull(message, "message");
@@ -177,7 +173,9 @@ public class ConnectionService implements IConnectionService {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void write(Wrapper wrapper, long timeout, TimeUnit unit) throws IOException, MessageNotSentException {
         Check.notNull(wrapper, "wrapper");
@@ -202,7 +200,9 @@ public class ConnectionService implements IConnectionService {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void write(Wrapper wrapper) throws IOException, MessageNotSentException {
         write(wrapper, -1, TimeUnit.MILLISECONDS);
@@ -214,7 +214,9 @@ public class ConnectionService implements IConnectionService {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GeneratedMessage writeAndRead(Wrapper wrapper, long timeout, TimeUnit unit)
             throws IOException, MessageNotSentException {
@@ -240,7 +242,9 @@ public class ConnectionService implements IConnectionService {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GeneratedMessage writeAndRead(Wrapper wrapper) throws IOException, MessageNotSentException {
         return writeAndRead(wrapper, -1, TimeUnit.MILLISECONDS);

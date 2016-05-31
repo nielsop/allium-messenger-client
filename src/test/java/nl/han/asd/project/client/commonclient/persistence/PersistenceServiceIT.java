@@ -1,8 +1,8 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
 import nl.han.asd.project.client.commonclient.database.HyperSQLDatabase;
-import nl.han.asd.project.client.commonclient.database.model.Contact;
-import nl.han.asd.project.client.commonclient.database.model.Message;
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
- *
  * @author Niels Bokmans
  * @version 1.0
  * @since 24-5-2016

@@ -19,7 +19,7 @@ import java.io.IOException;
  *
  * @version 1.0
  */
-public class LoginService implements ILogin {
+public class LoginService implements ILoginService {
 
     private IAuthentication authentication;
     private IEncryptionService encryptionService;
@@ -63,5 +63,10 @@ public class LoginService implements ILogin {
 
         setConnectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList());
         return new CurrentUser(username, encryptionService.getPublicKey(), loginResponse.getSecretHash());
+    }
+
+    @Override
+    public boolean logout(String username, String secretHash) {
+        return false;
     }
 }

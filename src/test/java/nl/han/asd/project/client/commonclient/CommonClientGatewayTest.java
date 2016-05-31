@@ -1,24 +1,20 @@
 package nl.han.asd.project.client.commonclient;
 
-import java.util.Properties;
-
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import nl.han.asd.project.client.commonclient.login.ILoginService;
+import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
-import nl.han.asd.project.client.commonclient.login.ILogin;
-import nl.han.asd.project.client.commonclient.master.IRegistration;
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
-import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.CurrentUser;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.client.commonclient.store.IMessageStoreObserver;
+import java.util.Properties;
 
 @Ignore
 public class CommonClientGatewayTest {
@@ -27,10 +23,8 @@ public class CommonClientGatewayTest {
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
-    private IMessageBuilder messageBuilder;
-    private IMessageStoreObserver messageStoreObserver;
     private IRegistration registration;
-    private ILogin login;
+    private ILoginService login;
 
     private String emptyPublicKey = "";
     private String privateKey = "";
@@ -42,7 +36,7 @@ public class CommonClientGatewayTest {
 
     @Before
     public void setup() {
-        Injector injector = Guice.createInjector(new CommonclientModule(), new AbstractModule() {
+        Injector injector = Guice.createInjector(new CommonClientModule(), new AbstractModule() {
 
             @Override
             protected void configure() {
@@ -56,14 +50,19 @@ public class CommonClientGatewayTest {
 
         });
 
+
         contactStore = injector.getInstance(IContactStore.class);
         messageStore = injector.getInstance(IMessageStore.class);
-        messageBuilder = injector.getInstance(IMessageBuilder.class);
-        messageStoreObserver = injector.getInstance(IMessageStoreObserver.class);
         registration = injector.getInstance(IRegistration.class);
-        login = injector.getInstance(ILogin.class);
+        login = injector.getInstance(ILoginService.class);
+
+
+        //commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login);
+
+        //TODO: Update those tests; Jasper says this is not how inject should work, but if we delete the injectors, the tests will fail.
 
         commonClientGateway = injector.getInstance(CommonClientGateway.class);
+
     }
 
     @Test

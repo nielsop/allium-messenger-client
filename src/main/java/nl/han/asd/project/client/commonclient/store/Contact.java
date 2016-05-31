@@ -2,7 +2,7 @@ package nl.han.asd.project.client.commonclient.store;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import nl.han.asd.project.client.commonclient.CommonclientModule;
+import nl.han.asd.project.client.commonclient.CommonClientModule;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.commonservices.encryption.EncryptionService;
 
@@ -13,7 +13,7 @@ public class Contact {
     private boolean online;
 
     public Contact(String username) {
-        this(username, new byte[] {}, false);
+        this(username, new byte[]{}, false);
     }
 
     public Contact(String username, byte[] publicKey) {
@@ -27,7 +27,7 @@ public class Contact {
     }
 
     public static Contact fromDatabase(String username) {
-        Injector injector = Guice.createInjector(new CommonclientModule());
+        Injector injector = Guice.createInjector(new CommonClientModule());
         EncryptionService service = injector.getInstance(EncryptionService.class);
         return new Contact(username, service.getPublicKey());
 

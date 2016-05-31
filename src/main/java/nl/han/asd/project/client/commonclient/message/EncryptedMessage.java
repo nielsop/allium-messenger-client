@@ -2,9 +2,6 @@ package nl.han.asd.project.client.commonclient.message;
 
 import com.google.protobuf.ByteString;
 
-/**
- * Created by Marius on 25-04-16.
- */
 public class EncryptedMessage {
 
     private final byte[] publicKey;
