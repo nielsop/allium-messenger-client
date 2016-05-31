@@ -1,13 +1,20 @@
 package nl.han.asd.project.client.commonclient.node;
 
 import com.google.inject.Inject;
-import com.google.protobuf.ProtocolStringList;
+import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.message.IReceiveMessage;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NodeConnectionService implements ISetConnectedNodes, ISendData {
     private IReceiveMessage receiveMessage;
     private IConnectionListener nodeConnection;
+
+    private List<ConnectionService> openConnections = new ArrayList<>();
 
     /**
      * Constructor of NodeConnectionService
@@ -23,9 +30,29 @@ public class NodeConnectionService implements ISetConnectedNodes, ISendData {
 
     @Override public void sendData(byte[] data, Contact receiver) {
     }
+
     /** {@inheritDoc} */
     @Override
-    public void setConnectedNodes(ProtocolStringList connectedNodesList) {
-        // TODO implement connectedNodes after login
+    public void setConnectedNodes(List<String> connectedNodes) {
+        for (String connectNode : connectedNodes) {
+            String[] parts = connectNode.split(":");
+            String hostname = parts[0];
+            int port = Integer.parseInt(parts[1]);
+
+            final ConnectionService newConnectionService = new ConnectionService(hostname, port);
+            openConnections.add(newConnectionService);
+
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        newConnectionService.read();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
     }
 }

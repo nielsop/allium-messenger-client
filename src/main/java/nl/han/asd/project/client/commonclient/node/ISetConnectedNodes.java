@@ -2,6 +2,8 @@ package nl.han.asd.project.client.commonclient.node;
 
 import com.google.protobuf.ProtocolStringList;
 
+import java.util.List;
+
 /**
  * Define connectedNodes related methods.
  *
@@ -13,5 +15,5 @@ public interface ISetConnectedNodes {
      *
      * @param connectedNodesList the list of connectedNodes
      */
-    void setConnectedNodes(ProtocolStringList connectedNodesList);
+    void setConnectedNodes(List<String> connectedNodesList);
 }

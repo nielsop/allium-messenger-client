@@ -130,4 +130,6 @@ public interface IConnectionService {
      *          exceptions. See IOException.
      */
     public GeneratedMessage writeAndRead(Wrapper wrapper) throws IOException, MessageNotSentException;
+
+    public GeneratedMessage read() throws IOException;
 }
