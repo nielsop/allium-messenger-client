@@ -85,12 +85,18 @@ public class CommonClientGatewayTest {
     @Test
     public void removeContactActuallyRemovesContactFromContactStore() {
         String newContact = "newContact";
-        Assert.assertTrue(contactStore.findContact(newContact) == null);
-        contactStore.addContact(newContact);
-        Assert.assertTrue(contactStore.findContact(newContact).getUsername() == newContact);
+        Assert.assertTrue(commonClientGateway.findContact(newContact) == null);
+        commonClientGateway.addContact(newContact);
+        Assert.assertTrue(contactStore.findContact(newContact).getUsername().equals(newContact));
         commonClientGateway.removeContact(newContact);
         Assert.assertTrue(contactStore.findContact(newContact) == null);
-
     }
 
+    @Test
+    public void addContactActuallyAddsContactIntoContactStore() {
+        String newContact = "newContact";
+        Assert.assertTrue(commonClientGateway.findContact(newContact) == null);
+        commonClientGateway.addContact(newContact);
+        Assert.assertTrue(commonClientGateway.findContact(newContact).getUsername() == newContact);
+    }
 }
