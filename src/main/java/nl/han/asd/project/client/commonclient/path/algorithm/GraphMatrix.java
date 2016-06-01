@@ -1,8 +1,7 @@
-package nl.han.asd.project.client.commonclient.path.matrix;
+package nl.han.asd.project.client.commonclient.path.algorithm;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import nl.han.asd.project.client.commonclient.graph.Edge;
 import nl.han.asd.project.client.commonclient.graph.Node;
@@ -49,36 +48,15 @@ public class GraphMatrix extends Matrix {
             }
         }
     }
-
+    
     /**
      * Also saves the current matrix. A list of these can be obtained through ..
      */
     public void calculate() {
-        super.calculate(10, 0);
+        super.calculate(10);
     }
 
-    public String toPrintableString(int index) {
-        StringBuilder builder = new StringBuilder();
-        short[][][] matrix = super.getCurrentMatrix();
-        String shortMax = String.valueOf(Short.MAX_VALUE);
-        String keys = internalMap.keySet().stream().map(k -> k).collect(Collectors.joining("\t"));
-        builder.append(String.format("\t%s\n", keys));
-
-        for (int i = 0; i < matrix.length; i++) {
-            builder.append(internalMap.keySet().toArray()[i] + "\t");
-            for (int j = 0; j < matrix.length; j++) {
-                String value = String.valueOf(matrix[i][j][index]);
-                if (value.equals(shortMax)) {
-                    value = "X";
-                }
-
-                builder.append(value + "\t");
-            }
-
-            builder.append("\n");
-        }
-
-        return builder.toString();
+    public int findIndexOfKey(String id) {
+        return internalMap.get(id);
     }
-
 }

@@ -4,13 +4,14 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Julius on 25/04/16.
  */
 public class Graph {
 
-    private HashMap<String, Node> graph = new HashMap<>();
+    private Map<String, Node> graph = new HashMap<>();
 
     public Node getNodeVertex(String nodeID) {
         Node vertex = graph.get(nodeID);
@@ -25,7 +26,7 @@ public class Graph {
     }
 
     public void resetGraph() {
-        graph = new HashMap<String, Node>();
+        graph = new HashMap<>();
     }
 
     public void addNodeVertex(HanRoutingProtocol.Node vertex) {
@@ -42,7 +43,7 @@ public class Graph {
         graph.remove(vertex.getId());
     }
 
-    public HashMap<String, Node> getGraphMap() {
+    public Map<String, Node> getGraphMap() {
         return this.graph;
     }
 

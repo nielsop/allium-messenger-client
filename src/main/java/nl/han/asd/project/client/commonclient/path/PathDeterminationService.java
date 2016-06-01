@@ -3,7 +3,8 @@ package nl.han.asd.project.client.commonclient.path;
 import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.path.algorithm.AStar;
+import nl.han.asd.project.client.commonclient.path.algorithm.Dijkstra;
+import nl.han.asd.project.client.commonclient.path.algorithm.GraphMatrix;
 import nl.han.asd.project.client.commonclient.path.algorithm.IPathFind;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -11,13 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class PathDeterminationService implements IGetMessagePath {
     private final Random random = new Random();
+
+    private Map<Node, List<Integer>> possibleStartingPoints = new HashMap<>();
+
+    private GraphMatrix graphMatrix;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PathDeterminationService.class);
     private IGetClientGroup clientGroup;
@@ -39,6 +41,7 @@ public class PathDeterminationService implements IGetMessagePath {
 
     private List<Node> internalGetPath(int minHops, Contact contactReceiver)
             throws Exception {
+
         if (minHops < 1) {
             throw new IllegalArgumentException(
                     "The minimum amount of Hops should be more than 0");
@@ -59,7 +62,7 @@ public class PathDeterminationService implements IGetMessagePath {
 
     private List<Node> calculatePath(Map<String, Node> vertices, Node startNode,
             Node endNode) {
-        IPathFind pathFinder = new AStar(vertices);
+        IPathFind pathFinder = new Dijkstra(vertices, graphMatrix);
         return pathFinder.findPath(startNode, endNode);
     }
 
@@ -95,4 +98,6 @@ public class PathDeterminationService implements IGetMessagePath {
                 contactReciever.getUsername()));
         throw new Exception("Cannot find Client from Contact.");
     }
+
+    //TODO: Update graphs..
 }

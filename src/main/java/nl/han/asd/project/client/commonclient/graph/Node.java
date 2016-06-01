@@ -28,16 +28,21 @@ public class Node {
     }
 
     @Override public boolean equals(Object anotherObj) {
-        return anotherObj instanceof Node;
+        if (anotherObj == null)
+            return false;
+        if (!(anotherObj instanceof  Node))
+            return false;
+        return ((Node) anotherObj).getId().equals(this.getId());
     }
 
     @Override public int hashCode() {
-        return (id + "@" + ipAddress + ":" + port).hashCode();
+        return id.hashCode();
     }
 
     public void addEdge(Node destination, double distance)
     {
         edges.add(new Edge(destination, distance));
+        destination.edges.add(new Edge(this, distance));
     }
 
     public String getIpAddress() {
