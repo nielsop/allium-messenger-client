@@ -10,7 +10,6 @@ public class MessageModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(IGetMessagePath.class).to(PathDeterminationService.class);
-        bind(IMessageStore.class).to(MessageStore.class);
         bind(ISendMessage.class).to(MessageProcessingService.class);
         bind(IReceiveMessage.class).to(MessageProcessingService.class);
         bind(IMessageConfirmation.class).to(MessageConfirmationService.class);
