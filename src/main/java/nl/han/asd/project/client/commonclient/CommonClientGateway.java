@@ -149,7 +149,7 @@ public class CommonClientGateway {
      * @param message the to be send message
      */
     public void sendMessage(Message message) {
-//        sendMessage.sendMessage(message, message.getReceiver());
+        sendMessage.sendMessage(message, message.getReceiver());
     }
 
     /**
