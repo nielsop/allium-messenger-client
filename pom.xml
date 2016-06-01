@@ -29,6 +29,7 @@
         <slf4j-log4j12.version>1.7.21</slf4j-log4j12.version>
         <protocol.version>0.0.1-SNAPSHOT</protocol.version>
         <commonservices.version>0.0.1-SNAPSHOT</commonservices.version>
+        <scripting.version>0.0.1-SNAPSHOT</scripting.version>
 
         <!-- unit test dependencies -->
         <junit.version>4.12</junit.version>
@@ -173,7 +174,11 @@
             <artifactId>commonservices</artifactId>
             <version>${commonservices.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>nl.han.asd.project</groupId>
+            <artifactId>scripting</artifactId>
+            <version>${scripting.version}</version>
+        </dependency>
         <!-- unit test dependencies -->
         <dependency>
             <groupId>junit</groupId>
