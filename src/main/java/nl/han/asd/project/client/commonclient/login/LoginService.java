@@ -3,8 +3,9 @@ package nl.han.asd.project.client.commonclient.login;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
-import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
+import nl.han.asd.project.client.commonclient.node.IConnectedNodes;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
@@ -21,9 +22,10 @@ import java.io.IOException;
  */
 public class LoginService implements ILoginService {
 
+    private IContactStore contactStore;
     private IAuthentication authentication;
     private IEncryptionService encryptionService;
-    private ISetConnectedNodes setConnectedNodes;
+    private IConnectedNodes connectedNodes;
 
     /**
      * Construct a new LoginService.
@@ -31,21 +33,23 @@ public class LoginService implements ILoginService {
      * @param authentication the authentication interface
      * @param encryptionService the encryptionservice holding
      *          the public key
-     * @param setConnectedNodes the connectedNodes interface
+     * @param connectedNodes the connectedNodes interface
      *
      * @throws IllegalArgumentException if authentication
      *          or encryptionService is null
      */
     @Inject
-    public LoginService(IAuthentication authentication, IEncryptionService encryptionService, ISetConnectedNodes setConnectedNodes) {
+    public LoginService(IAuthentication authentication, IEncryptionService encryptionService, IConnectedNodes connectedNodes,
+                        IContactStore contactStore) {
+        this.contactStore = Check.notNull(contactStore, "contactStore");
         this.authentication = Check.notNull(authentication, "authentication");
         this.encryptionService = Check.notNull(encryptionService, "encryptionService");
-        this.setConnectedNodes = Check.notNull(setConnectedNodes, "setConnectedNodes");
+        this.connectedNodes = Check.notNull(connectedNodes, "connectedNodes");
     }
 
     /** {@inheritDoc} */
     @Override
-    public CurrentUser login(String username, String password)
+    public void login(String username, String password)
             throws InvalidCredentialsException, IOException, MessageNotSentException {
         UserCheck.checkUsername(username);
         UserCheck.checkPassword(password);
@@ -61,12 +65,17 @@ public class LoginService implements ILoginService {
             throw new InvalidCredentialsException(loginResponse.getStatus().name());
         }
 
-        setConnectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList());
-        return new CurrentUser(username, encryptionService.getPublicKey(), loginResponse.getSecretHash());
+        contactStore.setCurrentUser(new CurrentUser(username, encryptionService.getPublicKey(), loginResponse.getSecretHash()));
+
+        connectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList(), username);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean logout(String username, String secretHash) {
+        connectedNodes.unsetConnectedNodes();
         return false;
     }
 }

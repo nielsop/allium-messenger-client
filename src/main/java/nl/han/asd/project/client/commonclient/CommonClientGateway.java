@@ -4,6 +4,7 @@ import nl.han.asd.project.client.commonclient.connection.MessageNotSentException
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
@@ -35,9 +36,14 @@ public class CommonClientGateway {
     private IMessageStore messageStore;
     private IRegistration registration;
     private ILoginService loginService;
+    private ISendMessage sendMessage;
+
+    private static CommonClientGateway commonClientGateway;
 
     @Inject
-    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration, ILoginService loginService) {
+    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
+                               ILoginService loginService, ISendMessage sendMessage) {
+        this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");
         this.registration = Check.notNull(registration, "registration");
@@ -81,7 +87,7 @@ public class CommonClientGateway {
      */
     public ClientLoginResponse.Status loginRequest(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
         try {
-            contactStore.setCurrentUser(loginService.login(username, password));
+            loginService.login(username, password);
             return ClientLoginResponse.Status.SUCCES;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -106,23 +112,6 @@ public class CommonClientGateway {
      */
     public CurrentUser getCurrentUser() {
         return contactStore.getCurrentUser();
-    }
-
-    /**
-     * Adds contact to contactstore.
-     *
-     * @param username username of contact
-     */
-    public void addContact(String username) {
-        contactStore.addContact(username);
-    }
-    /**
-     * Removes contact from contactstore.
-     *
-     * @param username username of contact
-     */
-    public void removeContact(String username) {
-        contactStore.removeContact(username);
     }
 
     /**
@@ -159,8 +148,25 @@ public class CommonClientGateway {
      * @param message the to be send message
      */
     public void sendMessage(Message message) {
-        //TODO: Actually send message to a user
-        messageStore.addMessage(message);
+        sendMessage.sendMessage(message, message.getReceiver());
+    }
+
+    /**
+     * Adds contact to contactstore.
+     *
+     * @param username username of contact
+     */
+    public void addContact(String username) {
+        contactStore.addContact(username);
+    }
+
+    /**
+     * Removes contact from contactstore.
+     *
+     * @param username username of contact
+     */
+    public void removeContact(String username) {
+        contactStore.removeContact(username);
     }
 
     /**

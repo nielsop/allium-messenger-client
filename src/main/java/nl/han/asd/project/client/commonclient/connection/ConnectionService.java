@@ -9,6 +9,8 @@ import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Builder;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -33,6 +35,9 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  */
 public class ConnectionService implements IConnectionService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
+
     private Semaphore mutex;
 
     private IEncryptionService encryptionService;
@@ -43,6 +48,8 @@ public class ConnectionService implements IConnectionService {
     private SocketHandler socketHandler;
 
     private byte[] publicKeyBytes;
+
+    public boolean closeOnIdle = true;
 
     /**
      * Create a new ConnectionService instance used
@@ -64,6 +71,7 @@ public class ConnectionService implements IConnectionService {
         encryptionService = null;
 
         socketHandler = new SocketHandler(host, port, encryptionService);
+
         mutex = new Semaphore(1);
     }
 
@@ -182,7 +190,7 @@ public class ConnectionService implements IConnectionService {
                 try {
                     socketHandler.write(wrapper);
                 } finally {
-                    if (!mutex.hasQueuedThreads()) {
+                    if (!mutex.hasQueuedThreads() && closeOnIdle) {
                         socketHandler.close();
                     }
 
@@ -224,7 +232,7 @@ public class ConnectionService implements IConnectionService {
                 try {
                     return socketHandler.writeAndRead(wrapper);
                 } finally {
-                    if (!mutex.hasQueuedThreads()) {
+                    if (!mutex.hasQueuedThreads() && closeOnIdle) {
                         socketHandler.close();
                     }
 
@@ -245,5 +253,25 @@ public class ConnectionService implements IConnectionService {
     @Override
     public GeneratedMessage writeAndRead(Wrapper wrapper) throws IOException, MessageNotSentException {
         return writeAndRead(wrapper, -1, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GeneratedMessage read() throws IOException {
+        return socketHandler.read();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        try {
+            socketHandler.close();
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 }

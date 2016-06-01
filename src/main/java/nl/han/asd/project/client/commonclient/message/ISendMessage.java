@@ -1,9 +1,13 @@
 package nl.han.asd.project.client.commonclient.message;
 
-import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-@FunctionalInterface
 public interface ISendMessage {
-    <T extends GeneratedMessage> void sendMessage(T message, Contact contactReciever);
+    /**
+     * Send a message to a user.
+     *
+     * @param message Message to be sent.
+     * @param contact User to send the message to.
+     */
+    public void sendMessage(Message message, Contact contact);
 }

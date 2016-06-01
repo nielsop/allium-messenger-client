@@ -1,5 +1,8 @@
 package nl.han.asd.project.client.commonclient.store;
 
+/**
+ * Created by Jevgeni on 12-5-2016.
+ */
 import java.util.List;
 
 public interface IContactStore {

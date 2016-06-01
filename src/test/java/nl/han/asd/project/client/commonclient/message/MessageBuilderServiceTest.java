@@ -4,7 +4,6 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
-import nl.han.asd.project.client.commonclient.node.ISendMessage;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
@@ -73,7 +72,7 @@ public class MessageBuilderServiceTest {
         when(contactreciever.getUsername()).thenReturn(CONTACTRECIEVERUSERNAME);
 
         when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(path);
-        when(encrypt.encryptData(any(),any())).thenReturn("encrypted data".getBytes());
+        when(encrypt.encryptData(any(byte[].class),any(byte[].class))).thenReturn("encrypted data".getBytes());
     }
 
     @Test

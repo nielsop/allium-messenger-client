@@ -2,11 +2,11 @@ package nl.han.asd.project.client.commonclient.graph;
 
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Base64;
 import java.util.NoSuchElementException;
 
 /**
@@ -20,7 +20,9 @@ public class GraphTest {
     private final int NODE1_PORT = 1337;
     private final String NODE1_IP = "192.168.2.1";
     private final String NODE1_ID = "NODE_1";
-    private final byte[] NODE1_PUBLICKEY = Base64.getEncoder().encode(("12345".getBytes()));
+
+    private final byte[] NODE1_PUBLICKEY = Base64.encodeBase64(("12345".getBytes()));
+
     private Graph graph;
     private HanRoutingProtocol.Node node;
     private HanRoutingProtocol.Edge edge;
