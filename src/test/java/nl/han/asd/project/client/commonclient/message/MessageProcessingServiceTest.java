@@ -18,9 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Jevgeni on 17-5-2016.
@@ -89,7 +87,7 @@ public class MessageProcessingServiceTest {
         messageProcessingService.processIncomingMessage(messageWrapper);
 
         // verify that the addMessage or messageReceived method are never called.
-        verify(messageStore, times(0)).addMessage(any());
+        verify(messageStore, times(0)).addMessage(any(Message.class));
     }
 
     @Test public void testInvalidTypeWithValidTypeParameter() {
@@ -109,7 +107,7 @@ public class MessageProcessingServiceTest {
         messageProcessingService.processIncomingMessage(messageWrapper);
 
         // verify that the addMessage or messageReceived method are never called.
-        verify(messageStore, times(0)).addMessage(any());
+        verify(messageStore, times(0)).addMessage(any(Message.class));
     }
 
     private HanRoutingProtocol.MessageWrapper getMessageWrapper(final ByteString message) {
