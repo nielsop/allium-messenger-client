@@ -73,7 +73,7 @@ public class MessageBuilderServiceTest {
         when(contactreciever.getUsername()).thenReturn(CONTACTRECIEVERUSERNAME);
 
         when(pathDeterminationService.getPath(anyInt(),any(Contact.class))).thenReturn(path);
-        when(encrypt.encryptData(any(),any())).thenReturn("encrypted data".getBytes());
+        when(encrypt.encryptData(any(byte[].class),any(byte[].class))).thenReturn("encrypted data".getBytes());
     }
 
     @Test

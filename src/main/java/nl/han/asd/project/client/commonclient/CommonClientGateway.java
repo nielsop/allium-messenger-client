@@ -36,6 +36,8 @@ public class CommonClientGateway {
     private IRegistration registration;
     private ILoginService loginService;
 
+    private static CommonClientGateway commonClientGateway;
+
     @Inject
     public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration, ILoginService loginService) {
         this.contactStore = Check.notNull(contactStore, "contactStore");
@@ -109,23 +111,6 @@ public class CommonClientGateway {
     }
 
     /**
-     * Adds contact to contactstore.
-     *
-     * @param username username of contact
-     */
-    public void addContact(String username) {
-        contactStore.addContact(username);
-    }
-    /**
-     * Removes contact from contactstore.
-     *
-     * @param username username of contact
-     */
-    public void removeContact(String username) {
-        contactStore.removeContact(username);
-    }
-
-    /**
      * Returns a list of contacts of the current user.
      *
      * @return list of contacts of the current user
@@ -161,6 +146,24 @@ public class CommonClientGateway {
     public void sendMessage(Message message) {
         //TODO: Actually send message to a user
         messageStore.addMessage(message);
+    }
+
+    /**
+     * Adds contact to contactstore.
+     *
+     * @param username username of contact
+     */
+    public void addContact(String username) {
+        contactStore.addContact(username);
+    }
+
+    /**
+     * Removes contact from contactstore.
+     *
+     * @param username username of contact
+     */
+    public void removeContact(String username) {
+        contactStore.removeContact(username);
     }
 
     /**
