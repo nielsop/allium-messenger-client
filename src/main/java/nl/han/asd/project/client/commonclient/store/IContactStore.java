@@ -61,5 +61,13 @@ public interface IContactStore {
      */
     CurrentUser getCurrentUser();
 
+    /**
+     * Update the information of a single Contact based on a getClientGroup response
+     *
+     * @param user Username of the user
+     * @param publicKey Public key
+     * @param online Current online status
+     * @param connectNodes List of node ID's the client is connected to
+     */
     void updateUserInformation(String user, byte[] publicKey, boolean online, List<String> connectNodes);
 }

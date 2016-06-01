@@ -69,6 +69,9 @@ public class ContactStore implements IContactStore {
         return currentUser;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateUserInformation(String user, byte[] publicKey, boolean online, List<String> connectedNodeIds) {
         Contact oldContact = findContact(user);

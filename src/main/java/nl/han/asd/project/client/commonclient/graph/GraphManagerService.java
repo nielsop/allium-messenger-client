@@ -98,6 +98,9 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
         return graph.getVertexMap();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateGraph() {
         if (System.currentTimeMillis() - lastGraphUpdate > MIN_TIMEOUT) {
@@ -126,6 +129,9 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
         }).start();
     }
 
+    /**
+     * Stop updating the graph periodically
+     */
     public void stop() {
         isRunning = false;
     }

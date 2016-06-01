@@ -24,6 +24,9 @@ public class ContactManager implements IContactManager {
         this.contactStore = contactStore;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateAllContactInformation() {
         if (System.currentTimeMillis() - lastGraphUpdate < MIN_TIMEOUT) {
