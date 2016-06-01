@@ -82,4 +82,28 @@ public interface IPersistence {
      * @return The currently open database connection.
      */
     IDatabase getDatabase();
+
+    /**
+     * Returns a map of scripts stored in the database. The has build is as follow:
+     * Key = ScriptName. Value = ScriptContent.
+     *
+     * @return A hashmap of all scripts.
+     */
+    Map<String, String> getScripts();
+
+    /**
+     * Deletes a script from the database.
+     *
+     * @param scriptName The name of the script to be deleted from the database.
+     * @return <tt>true</tt> if the script was deleted successfully, <tt>false</tt> otherwise.
+     */
+    boolean deleteScript(final String scriptName);
+
+    /**
+     * Adds a script to the database.
+     *
+     * @param scriptName The name of the script to be added to the database.
+     * @return <tt>true</tt> if the script was added successfully, <tt>false</tt> otherwise.
+     */
+    boolean addScript(final String scriptName, final String scriptContent);
 }

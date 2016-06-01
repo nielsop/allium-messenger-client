@@ -127,4 +127,41 @@ public class PersistenceService implements IPersistence {
     public IDatabase getDatabase() {
         return database;
     }
+
+    @Override
+    public Map<String, String> getScripts() {
+        Map<String, String> scripts = new HashMap<>();
+        try {
+            ResultSet selectScriptsResult = getDatabase().select("SELECT * FROM Script");
+            while (selectScriptsResult.next()) {
+                String scriptName = (String)selectScriptsResult.getObject(2); // TODO
+                String scriptContent = (String)selectScriptsResult.getObject(3);
+                scripts.put(scriptName, scriptContent);
+            }
+            selectScriptsResult.close();
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return scripts;
+    }
+
+    @Override
+    public boolean deleteScript(String scriptName) {
+        try {
+            return getDatabase().query(String.format("DELETE FROM Script WHERE scriptname = '%s'", scriptName));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean addScript(String scriptName, String scriptContent) {
+        try {
+            return getDatabase().query(String.format("INSERT INTO Script (scriptName, scriptContent) VALUES ('%s, %s')", scriptName, scriptContent));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
 }
