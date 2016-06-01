@@ -15,14 +15,10 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
-import static org.powermock.api.support.membermodification.MemberMatcher.constructor;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Contact.class, LoginService.class })
@@ -34,7 +30,7 @@ public class LoginServiceTest {
     /* Invalid credentials */
     private static final String INVALID_USERNAME_EMPTY = "";
     private static final String INVALID_PASSWORD_EMPTY = "";
-    private static final String INVALID_USERNAME_FORBIDDEN_CHARACTERS = "Test^Username";
+    private static final String INVALID_USERNAME_FORBIDDEN_CHARACTERS = "Test^User";
     private static final String INVALID_USERNAME_TOO_LONG = ""; // Aanname dat de maximum lengte van een username 12 tekens is.
     private static final String INVALID_PASSWORD_TOO_LONG = ""; // Aanname dat de maximum lengte van een password 16 tekens is.
     private static final String INVALID_USERNAME_TOO_SHORT = ""; // Aanname dat de minimum lengte van een username 3 tekens is.

@@ -39,9 +39,6 @@ public class NodeConnectionService implements IConnectedNodes, ISendData {
             String hostname = parts[0];
             int port = Integer.parseInt(parts[1]);
 
-            System.out.println(hostname);
-            System.out.println(port);
-
             final ConnectionService connectionService = new ConnectionService(hostname, port);
             connectionService.closeOnIdle = false;
 
@@ -57,7 +54,6 @@ public class NodeConnectionService implements IConnectedNodes, ISendData {
 
             NodeConnection nodeConnection = new NodeConnection(connectionService, receiveMessage);
             openConnections.add(nodeConnection);
-
             nodeConnection.start();
         }
     }

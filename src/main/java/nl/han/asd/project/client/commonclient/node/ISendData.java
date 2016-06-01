@@ -8,7 +8,6 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
  * @version 1.0
  * @since 24/05/16
  */
-@FunctionalInterface
 public interface ISendData {
 
     /**

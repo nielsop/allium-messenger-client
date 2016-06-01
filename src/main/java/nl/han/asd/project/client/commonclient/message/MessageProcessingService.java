@@ -39,7 +39,8 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
      * @param messageStore Instance of IMessageStore.
      * @param encryptionService Instance of IEncryptionService
      */
-    @Inject public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService,
+    @Inject
+    public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService,
                                             ISendData nodeConnectionService, IMessageConfirmation messageConfirmationService,
                                             IContactStore contactStore, IMessageBuilder messageBuilder) {
         this.messageStore = messageStore;
@@ -53,7 +54,8 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     /**
      * {@inheritDoc}
      */
-    @Override public void processIncomingMessage(MessageWrapper messageWrapper) {
+    @Override
+    public void processIncomingMessage(MessageWrapper messageWrapper) {
         try {
             Wrapper wrapper = decryptEncryptedWrapper(
                     messageWrapper);
