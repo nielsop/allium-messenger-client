@@ -13,8 +13,10 @@ import java.util.List;
  */
 public class ContactManager implements IContactManager {
 
+    private static final long MIN_TIMEOUT = 600000;
     private final IGetClientGroup clientGroup;
     private final IContactStore contactStore;
+    private long lastGraphUpdate = 0;
 
     @Inject
     public ContactManager(IGetClientGroup clientGroup, IContactStore contactStore) {
@@ -23,7 +25,12 @@ public class ContactManager implements IContactManager {
     }
 
     @Override
-    public void updateConnectedNodes() {
+    public void updateAllContactInformation() {
+        if (System.currentTimeMillis() - lastGraphUpdate < MIN_TIMEOUT) {
+            return;
+        }
+        lastGraphUpdate = System.currentTimeMillis();
+
         HanRoutingProtocol.ClientRequest.Builder builder = HanRoutingProtocol.ClientRequest.newBuilder();
         builder.setClientGroup(0);
         try {
