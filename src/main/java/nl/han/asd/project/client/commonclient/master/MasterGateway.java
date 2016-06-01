@@ -138,8 +138,13 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
     }
 
     @Override
-    public boolean logout(String username, String secretHash) {
-        return false;
+    public ClientLogoutResponse logout(ClientLogoutRequest request) throws IOException, MessageNotSentException {
+        Check.notNull(request, "request");
+
+        Wrapper wrapper = connectionService.wrap(request, Type.CLIENTLOGOUTREQUEST);
+        GeneratedMessage response = connectionService.writeAndRead(wrapper);
+
+        return (ClientLogoutResponse) response;
     }
 
     private enum PropertyValues {
