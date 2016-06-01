@@ -30,6 +30,7 @@ public class MessageBuilderService implements IMessageBuilder {
 
     @Override
     public <T extends GeneratedMessage> HanRoutingProtocol.MessageWrapper buildMessage(T generatedMessage , Contact contactReceiver) {
+
         HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
         wrapperBuilder.setData(generatedMessage.toByteString());
         List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);

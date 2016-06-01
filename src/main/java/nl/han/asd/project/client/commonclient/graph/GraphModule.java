@@ -6,5 +6,6 @@ public class GraphModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(IGetVertices.class).to(GraphManagerService.class);
+        bind(IUpdateGraph.class).to(GraphManagerService.class);
     }
 }
