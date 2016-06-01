@@ -58,8 +58,6 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
      * @throws MessageNotSentException
      */
     public void processGraphUpdates() throws IOException, MessageNotSentException {
-        updateGraph();
-
         GraphUpdateResponse response = getUpdatedGraph.getUpdatedGraph(GraphUpdateRequest.newBuilder().setCurrentVersion(currentGraphVersion).build());
 
         if (response.getGraphUpdatesCount() == 0) {

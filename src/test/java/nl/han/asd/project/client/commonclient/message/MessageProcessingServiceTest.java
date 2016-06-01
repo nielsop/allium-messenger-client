@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
+import nl.han.asd.project.client.commonclient.graph.GraphManagerService;
 import nl.han.asd.project.client.commonclient.node.NodeConnectionService;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.ContactStore;
@@ -31,6 +32,7 @@ public class MessageProcessingServiceTest {
     @Mock private MessageConfirmationService messageConfirmationService;
     @Mock private ContactStore contactStore;
     @Mock private MessageBuilderService messageBuilder;
+    @Mock private GraphManagerService graphManagerService;
 
     private IEncryptionService encryptionService;
 
@@ -40,8 +42,8 @@ public class MessageProcessingServiceTest {
         final Injector injector = Guice.createInjector(new EncryptionModule());
 
         encryptionService = injector.getInstance(IEncryptionService.class);
-        messageProcessingService = new MessageProcessingService(messageStore,
-                encryptionService, nodeConnectionService, messageConfirmationService, contactStore, messageBuilder);
+        messageProcessingService = new MessageProcessingService(messageStore, encryptionService,
+                nodeConnectionService, messageConfirmationService, contactStore, messageBuilder, graphManagerService);
     }
 
     @Test public void testWithMessageWrapper() {

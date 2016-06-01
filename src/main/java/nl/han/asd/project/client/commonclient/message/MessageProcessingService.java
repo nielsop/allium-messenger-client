@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Inject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.graph.IUpdateGraph;
 import nl.han.asd.project.client.commonclient.node.ISendData;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
@@ -31,6 +32,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     private IMessageConfirmation messageConfirmationService;
     private IContactStore contactStore;
     private IMessageBuilder messageBuilder;
+    private IUpdateGraph updateGraph;
     private final IEncryptionService encryptionService;
 
     /**
@@ -42,13 +44,14 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     @Inject
     public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService,
                                             ISendData nodeConnectionService, IMessageConfirmation messageConfirmationService,
-                                            IContactStore contactStore, IMessageBuilder messageBuilder) {
+                                            IContactStore contactStore, IMessageBuilder messageBuilder, IUpdateGraph updateGraph) {
         this.messageStore = messageStore;
         this.encryptionService = encryptionService;
         this.nodeConnectionService = nodeConnectionService;
         this.messageConfirmationService = messageConfirmationService;
         this.contactStore = contactStore;
         this.messageBuilder = messageBuilder;
+        this.updateGraph = updateGraph;
     }
 
     /**
@@ -97,7 +100,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
      */
     @Override
     public void sendMessage(Message message, Contact contact) {
-        // TODO: Should update graph first
+        updateGraph.updateGraph();
         // TODO: Should update client list first
 
         HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
