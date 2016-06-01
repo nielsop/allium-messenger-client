@@ -69,4 +69,14 @@ public class PathDeterminationService implements IGetMessagePath {
         return new GraphMatrixPath(vertices, graphMatrix).findPath(startingPoint, endpoint);
     }
 
+    private Set<Node> getRandomNodeFromHashmap(){
+        int randomInt = random.nextInt(startingPoints.size());
+        Iterator<Map.Entry<Contact, Set<Node>>> iterator = startingPoints.entrySet().iterator() ;
+        for(int i = 0; i< startingPoints.size(); i++){
+            if(i == randomInt){
+                return iterator.next().getValue();
+            }
+        }
+    }
+
 }
