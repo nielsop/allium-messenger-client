@@ -37,11 +37,14 @@ public class ContactManager implements IContactManager {
         lastGraphUpdate = System.currentTimeMillis();
 
         HanRoutingProtocol.ClientRequest.Builder builder = HanRoutingProtocol.ClientRequest.newBuilder();
-        builder.setClientGroup(0);
+        builder.setClientGroup(1);
         try {
             HanRoutingProtocol.ClientResponse clientWrapper = clientGroup.getClientGroup(builder.build());
+            System.out.println("Clients found:" + clientWrapper.getClientsCount());
             for (HanRoutingProtocol.Client client : clientWrapper.getClientsList()) {
+                System.out.println("Updated client: " + client.getUsername());
                 List<String> connectNodes = client.getConnectedNodesList();
+                System.out.println(connectNodes);
                 contactStore.updateUserInformation(client.getUsername(), client.getPublicKey().toByteArray(), true, connectNodes);
             }
         } catch (IOException | MessageNotSentException e) {

@@ -76,6 +76,7 @@ public class ContactStore implements IContactStore {
     public void updateUserInformation(String user, byte[] publicKey, boolean online, List<String> connectedNodeIds) {
         Contact oldContact = findContact(user);
         if (oldContact == null) {
+            System.out.println("Contact could not be found!!");
             return;
         }
 

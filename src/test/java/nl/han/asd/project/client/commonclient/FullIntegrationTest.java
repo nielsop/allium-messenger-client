@@ -6,21 +6,16 @@ import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import com.xebialabs.overcast.host.DockerHost;
-import nl.han.asd.project.client.commonclient.connection.ConnectionModule;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.graph.GraphManagerService;
 import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
-import nl.han.asd.project.client.commonclient.master.*;
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
-import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
+import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -86,18 +81,14 @@ public class FullIntegrationTest {
 
         GraphManagerService graphManagerService = (GraphManagerService) injector.getInstance(IGetVertices.class);
 
-        IMessageConfirmation messageConfirmation = injector.getInstance(IMessageConfirmation.class);
         IContactStore contactStore = injector.getInstance(IContactStore.class);
         IMessageStore messageStore = injector.getInstance(IMessageStore.class);
         IRegistration registration = injector.getInstance(IRegistration.class);
         ILoginService loginService = injector.getInstance(ILoginService.class);
         ISendMessage sendMessage = injector.getInstance(ISendMessage.class);
-        IMessageBuilder messageBuilder = injector.getInstance(IMessageBuilder.class);
 
-        CommonClientGateway commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, loginService, sendMessage, messageBuilder, messageConfirmation);
+        CommonClientGateway commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, loginService, sendMessage);
         try {
-            graphManagerService.processGraphUpdates();
-
             commonClientGateway.registerRequest("raoul", "test1234", "test1234");
             commonClientGateway.loginRequest("raoul", "test1234");
 

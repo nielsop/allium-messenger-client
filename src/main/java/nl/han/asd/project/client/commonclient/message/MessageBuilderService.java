@@ -6,8 +6,11 @@ import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.NoConnectedNodesException;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -33,6 +36,11 @@ public class MessageBuilderService implements IMessageBuilder {
 
         HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
         wrapperBuilder.setData(generatedMessage.toByteString());
+        try {
+            System.out.println(Arrays.toString(contactReceiver.getConnectedNodes()));
+        } catch (NoConnectedNodesException e) {
+            e.printStackTrace();
+        }
         List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
         if(generatedMessage.getClass() == HanRoutingProtocol.Message.class){
