@@ -113,7 +113,7 @@ public class LoginServiceTest {
         responseBuilder.setStatus(ClientLoginResponse.Status.FAILED);
         ClientLoginResponse response = responseBuilder.build();
 
-        when(authenticationMock.login(any())).thenReturn(response);
+        when(authenticationMock.login(any(ClientLoginRequest.class))).thenReturn(response);
 
         login.login(VALID_USERNAME, VALID_PASSWORD);
     }
@@ -136,7 +136,7 @@ public class LoginServiceTest {
         responseBuilder.addConnectedNodes("127.0.0.1:1333");
         ClientLoginResponse response = responseBuilder.build();
 
-        when(authenticationMock.login(any())).thenReturn(response);
+        when(authenticationMock.login(any(ClientLoginRequest.class))).thenReturn(response);
 
         CurrentUser contactMock = mock(CurrentUser.class);
         whenNew(CurrentUser.class).withAnyArguments().thenReturn(contactMock);

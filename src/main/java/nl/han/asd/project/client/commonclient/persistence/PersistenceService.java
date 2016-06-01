@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-
 import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
@@ -36,11 +35,16 @@ public class PersistenceService implements IPersistence {
     }
 
     @Override
-    public boolean saveMessage(Message message) throws SQLException {
+    public boolean saveMessage(Message message) {
         final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getMessageTimestamp());
-        return getDatabase()
-                .query(String.format("INSERT INTO Message (sender, receiver, timestamp, message) VALUES ('%s', '%s', '%s', '%s')",
-                        message.getSender().getUsername(), message.getReceiver().getUsername(), messageTimestampInDatabaseFormat, message.getText()));
+        try {
+            return getDatabase().query(String
+                    .format("INSERT INTO Message (sender, receiver, timestamp, message) VALUES ('%s', '%s', '%s', '%s')", message.getSender().getUsername(),
+                            message.getReceiver().getUsername(), messageTimestampInDatabaseFormat, message.getText()));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
     }
 
     @Override
@@ -68,7 +72,7 @@ public class PersistenceService implements IPersistence {
             while (selectMessagesResult.next()) {
                 final Message message = Message.fromDatabase(selectMessagesResult);
                 if (!contactMessagesHashMap.containsKey(message.getSender())) {
-                    contactMessagesHashMap.put(message.getSender(), new ArrayList<>());
+                    contactMessagesHashMap.put(message.getSender(), new ArrayList<Message>());
                 }
                 contactMessagesHashMap.get(message.getSender()).add(message);
             }
