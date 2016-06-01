@@ -15,5 +15,6 @@ public class StoreModule extends AbstractModule {
         bind(IPersistence.class).to(PersistenceService.class);
         bind(IContactStore.class).to(ContactStore.class).in(Singleton.class);
         bind(IMessageStore.class).to(MessageStore.class).in(Singleton.class);
+        bind(IContactManager.class).to(ContactManager.class);
     }
 }

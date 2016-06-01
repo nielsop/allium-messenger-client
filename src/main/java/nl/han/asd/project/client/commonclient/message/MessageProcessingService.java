@@ -3,8 +3,10 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.Inject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.graph.IUpdateGraph;
 import nl.han.asd.project.client.commonclient.node.ISendData;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.IContactManager;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
@@ -31,6 +33,8 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     private IMessageConfirmation messageConfirmationService;
     private IContactStore contactStore;
     private IMessageBuilder messageBuilder;
+    private IUpdateGraph updateGraph;
+    private IContactManager contactManager;
     private final IEncryptionService encryptionService;
 
     /**
@@ -42,13 +46,16 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     @Inject
     public MessageProcessingService(IMessageStore messageStore, IEncryptionService encryptionService,
                                             ISendData nodeConnectionService, IMessageConfirmation messageConfirmationService,
-                                            IContactStore contactStore, IMessageBuilder messageBuilder) {
+                                            IContactStore contactStore, IMessageBuilder messageBuilder, IUpdateGraph updateGraph,
+                                            IContactManager contactManager) {
         this.messageStore = messageStore;
         this.encryptionService = encryptionService;
         this.nodeConnectionService = nodeConnectionService;
         this.messageConfirmationService = messageConfirmationService;
         this.contactStore = contactStore;
         this.messageBuilder = messageBuilder;
+        this.updateGraph = updateGraph;
+        this.contactManager = contactManager;
     }
 
     /**
@@ -97,8 +104,8 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
      */
     @Override
     public void sendMessage(Message message, Contact contact) {
-        // TODO: Should update graph first
-        // TODO: Should update client list first
+        updateGraph.updateGraph();
+        contactManager.updateAllContactInformation();
 
         HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
         builder.setId(generateUniqueMessageId(contact.getUsername()));

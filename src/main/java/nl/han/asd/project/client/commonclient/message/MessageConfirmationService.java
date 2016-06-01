@@ -2,35 +2,40 @@ package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.graph.IUpdateGraph;
 import nl.han.asd.project.client.commonclient.node.ISendData;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.IContactManager;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Created by Raoul on 31/5/2016.
- */
 public class MessageConfirmationService implements IMessageConfirmation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageConfirmationService.class);
 
-    private HashMap<String, RetryMessage> waitingMessages = new HashMap<>();
+    private Map<String, RetryMessage> waitingMessages = new HashMap<>();
     private volatile boolean isRunning = true;
     private IMessageBuilder messageBuilder;
     private IContactStore contactStore;
     private ISendData sendData;
+    private IUpdateGraph updateGraph;
+    private IContactManager contactManager;
 
     public static final int TIMEOUT = 5000;
 
     @Inject
-    public MessageConfirmationService(IMessageBuilder messageBuilder, IContactStore contactStore, ISendData sendData) {
+    public MessageConfirmationService(IMessageBuilder messageBuilder, IContactStore contactStore, ISendData sendData,
+                                      IUpdateGraph updateGraph, IContactManager contactManager) {
         this.messageBuilder = messageBuilder;
         this.contactStore = contactStore;
         this.sendData = sendData;
+        this.updateGraph = updateGraph;
+        this.contactManager = contactManager;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -65,6 +70,9 @@ public class MessageConfirmationService implements IMessageConfirmation {
     private void checkAllMessages() {
         for (RetryMessage retryMessage : waitingMessages.values()) {
             if (retryMessage.shouldRetry()) {
+                updateGraph.updateGraph();
+                contactManager.updateAllContactInformation();
+
                 HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
                 builder.setId(retryMessage.id);
                 builder.setSender(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());

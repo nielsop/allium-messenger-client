@@ -1,5 +1,7 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import nl.han.asd.project.client.commonclient.graph.IGetVertices;
+import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactStore implements IContactStore {
+    private final IGetVertices graphManager;
     private IPersistence persistence;
     private CurrentUser currentUser;
     private List<Contact> contactList;
@@ -18,7 +21,8 @@ public class ContactStore implements IContactStore {
      * @param persistence the layer where the store connects and communicates with the database
      */
     @Inject
-    public ContactStore(IPersistence persistence) {
+    public ContactStore(IPersistence persistence, IGetVertices graphManager) {
+        this.graphManager = Check.notNull(graphManager, "graphManager");
         this.persistence = Check.notNull(persistence, "persistence");
         this.contactList = persistence.getContacts();
         if (contactList == null)
@@ -63,6 +67,29 @@ public class ContactStore implements IContactStore {
     @Override
     public CurrentUser getCurrentUser() {
         return currentUser;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateUserInformation(String user, byte[] publicKey, boolean online, List<String> connectedNodeIds) {
+        Contact oldContact = findContact(user);
+        if (oldContact == null) {
+            return;
+        }
+
+        int position = contactList.indexOf(oldContact);
+        Contact newContact = new Contact(user, publicKey, online);
+
+        List<Node> connectedNodes = new ArrayList<>(connectedNodeIds.size());
+        for (String connectedNodeId : connectedNodeIds) {
+            Node node = graphManager.getVertices().get(connectedNodeId);
+            connectedNodes.add(node);
+        }
+
+        newContact.setConnectedNodes((Node[]) connectedNodes.toArray());
+        contactList.set(position, newContact);
     }
 
     /**
