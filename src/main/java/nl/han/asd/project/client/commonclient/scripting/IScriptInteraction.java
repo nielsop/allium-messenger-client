@@ -1,6 +1,6 @@
 package nl.han.asd.project.client.commonclient.scripting;
 
-public interface IScriptWrapper {
+public interface IScriptInteraction {
     boolean sendMessage(String username, String message);
 
     SimpleMessage[] getReceivedMessages(long dateTime);

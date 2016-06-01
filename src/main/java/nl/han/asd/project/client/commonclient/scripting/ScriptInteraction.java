@@ -1,22 +1,23 @@
 package nl.han.asd.project.client.commonclient.scripting;
 
 import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.message.MessageBuilderService;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.commonservices.scripting.internal.IScriptInteraction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.Date;
 
-public class ScriptWrapper implements IScriptWrapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScriptWrapper.class);
+public class ScriptInteraction implements IScriptInteraction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScriptInteraction.class);
     private IContactStore contactStore;
     private IMessageStore messageStore;
 
     @Inject
-    public ScriptWrapper(IContactStore contactStore, IMessageStore messageStore) {
+    public ScriptInteraction(IContactStore contactStore, IMessageStore messageStore) {
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");
     }
@@ -31,18 +32,21 @@ public class ScriptWrapper implements IScriptWrapper {
         }
     }
 
-    public SimpleMessage[] getReceivedMessages(long dateTime) {
+    @Override
+    public SimpleMessage[] getReceivedMessages(Date date) {
+        long dateTime = date.getTime();
         Message[] receivedMessages = messageStore.getMessagesAfterDate(dateTime);
         SimpleMessage[] messages = new SimpleMessage[receivedMessages.length];
         for (int i = 0; i < messages.length; i++) {
             messages[i].message = receivedMessages[i].getText();
-            messages[i].username = receivedMessages[i].getSender().getUsername();
+            messages[i].sender = receivedMessages[i].getSender().getUsername();
         }
         return messages;
     }
 
     @Override
-    public void printUI(IScriptWrapper.UIMessageType type, String message) {
+    public void printUI(IScriptInteraction.UIMessageType uiMessageType,
+            String s) {
 
     }
 

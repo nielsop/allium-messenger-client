@@ -46,7 +46,7 @@ public class PersistenceServiceIT {
         persistenceService.saveMessage(TEST_MESSAGE_1);
         persistenceService.saveMessage(TEST_MESSAGE_2);
         persistenceService.deleteMessage(1);
-        Assert.assertEquals(2, persistenceService.getAllMessages().get(0).getId());
+        Assert.assertEquals(2, persistenceService.getAllMessages().get(0).getDatabaseId());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class PersistenceServiceIT {
         persistenceService.saveMessage(TEST_MESSAGE_2);
         final List<Message> messages = persistenceService.getAllMessages();
         Assert.assertEquals(2, messages.size());
-        Assert.assertEquals(2, messages.get(messages.size() - 1).getId());
+        Assert.assertEquals(2, messages.get(messages.size() - 1).getDatabaseId());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class PersistenceServiceIT {
         persistenceService.deleteMessage(1);
         persistenceService.saveMessage(TEST_MESSAGE_3);
         final List<Message> messages = persistenceService.getAllMessages();
-        Assert.assertEquals(3, messages.get(messages.size() - 1).getId());
+        Assert.assertEquals(3, messages.get(messages.size() - 1).getDatabaseId());
     }
 
     @Test
