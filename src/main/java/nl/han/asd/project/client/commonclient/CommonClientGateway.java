@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
+import nl.han.asd.project.client.commonclient.login.MisMatchingException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.Message;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLogoutResponse;
 
 /**
  * Android/Desktop application
@@ -87,8 +89,7 @@ public class CommonClientGateway {
      */
     public ClientLoginResponse.Status loginRequest(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
         try {
-            loginService.login(username, password);
-            return ClientLoginResponse.Status.SUCCES;
+            return loginService.login(username, password);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
@@ -172,7 +173,14 @@ public class CommonClientGateway {
     /**
      * Logs out the user and deletes all user data in memory
      */
-    public void logout() {
-        //TODO: Implement method. Delete all in memory user data.
+    public ClientLogoutResponse.Status logout() throws MessageNotSentException, IOException, MisMatchingException {
+        try {
+            CurrentUser user = contactStore.getCurrentUser();
+            return loginService.logout(user.getCurrentUserAsContact().getUsername(),
+                    user.getSecretHash());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
+        }
     }
 }

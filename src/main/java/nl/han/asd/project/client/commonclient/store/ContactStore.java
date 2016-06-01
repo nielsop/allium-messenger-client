@@ -70,7 +70,7 @@ public class ContactStore implements IContactStore {
      */
     @Override
     public void setCurrentUser(CurrentUser currentUser) {
-        this.currentUser = Check.notNull(currentUser, "currentUser");
+        this.currentUser = currentUser;
     }
 
     /**
