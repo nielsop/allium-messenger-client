@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
+
 /**
  *  Processes messages by decrypting their content and storing them in a MessageStore.
  *
@@ -52,26 +54,27 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
      *
      * @param messageWrapper An instance of MessageWrapper which should be processed.
      */
-    @Override public void processIncomingMessage(HanRoutingProtocol.MessageWrapper messageWrapper) {
+    @Override public void processIncomingMessage(MessageWrapper messageWrapper) {
         try {
-            HanRoutingProtocol.Wrapper wrapper = decryptEncryptedWrapper(
+            Wrapper wrapper = decryptEncryptedWrapper(
                     messageWrapper);
 
             if (wrapper.getType()
-                    == HanRoutingProtocol.Wrapper.Type.MESSAGECONFIRMATION) {
+                    == Wrapper.Type.MESSAGECONFIRMATION) {
 
-                HanRoutingProtocol.MessageConfirmation messageConfirmation = HanRoutingProtocol.MessageConfirmation
+                MessageConfirmation messageConfirmation = MessageConfirmation
                         .parseFrom(wrapper.getData());
 
                 messageConfirmationService.messageConfirmationReceived(messageConfirmation.getConfirmationId());
 
             } else if (wrapper.getType()
-                    == HanRoutingProtocol.Wrapper.Type.MESSAGE) {
+                    == Wrapper.Type.MESSAGE) {
 
                 HanRoutingProtocol.Message message = HanRoutingProtocol.Message.parseFrom(wrapper.getData());
                 Message internalMessage = Message.fromProtocolMessage(message, contactStore.getCurrentUserAsContact());
                 messageStore.addMessage(internalMessage);
 
+                confirmMessage(message);
             } else {
                 throw new InvalidProtocolBufferException(String.format(
                         "Packet didn't contain a MessageConfirmation nor a Message but %s.",
@@ -82,21 +85,24 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
         }
     }
 
-    private HanRoutingProtocol.Wrapper decryptEncryptedWrapper(HanRoutingProtocol.MessageWrapper encryptedMessageWrapper) throws InvalidProtocolBufferException {
+    private Wrapper decryptEncryptedWrapper(MessageWrapper encryptedMessageWrapper) throws InvalidProtocolBufferException {
         byte[] wrapperBuffer = encryptionService
                 .decryptData(encryptedMessageWrapper.getData().toByteArray());
-        return HanRoutingProtocol.Wrapper.parseFrom(wrapperBuffer);
+        return Wrapper.parseFrom(wrapperBuffer);
     }
 
     @Override
     public void sendMessage(Message message, Contact contact) {
+        // TODO: Should update graph first
+        // TODO: Should update client list first
+
         HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
         builder.setId(generateUniqueMessageId(contact.getUsername()));
         builder.setSender(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());
         builder.setText(message.getText());
         builder.setTimeSent(System.currentTimeMillis() / 1000L);
 
-        HanRoutingProtocol.MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), contact);
+        MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), contact);
 
         nodeConnectionService.sendData(messageWrapper);
         messageConfirmationService.messageSent(builder.getId(), message, contact);
@@ -116,5 +122,15 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
         }
 
         return id;
+    }
+
+    private void confirmMessage(HanRoutingProtocol.Message message) {
+        MessageConfirmation.Builder builder = MessageConfirmation.newBuilder();
+        builder.setConfirmationId(message.getId());
+
+        Contact sender = contactStore.findContact(message.getSender());
+
+        MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), sender);
+        nodeConnectionService.sendData(messageWrapper);
     }
 }
