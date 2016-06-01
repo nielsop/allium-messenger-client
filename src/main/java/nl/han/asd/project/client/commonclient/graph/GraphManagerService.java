@@ -21,19 +21,18 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphManagerService.class);
     public static final int PERIODIC_UPDATE = 600000;
 
-    private int currentGraphVersion;
+    private int currentGraphVersion = 0;
     private Graph graph;
     private IGetUpdatedGraph getUpdatedGraph;
 
     private long lastGraphUpdate = 0;
     private static final long MIN_TIMEOUT = 30000;
-    private boolean isRunning = true;
+    private volatile boolean isRunning = true;
 
     @Inject
     public GraphManagerService(IGetUpdatedGraph gateway) {
         graph = new Graph();
         this.getUpdatedGraph = Check.notNull(gateway, "getUpdatedGraph");
-        currentGraphVersion = 0;
         start();
     }
 
@@ -106,15 +105,15 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
         if (System.currentTimeMillis() - lastGraphUpdate > MIN_TIMEOUT) {
             try {
                 processGraphUpdates();
+                lastGraphUpdate = System.currentTimeMillis();
             } catch (IOException | MessageNotSentException e) {
                 LOGGER.error(e.getMessage(), e);
             }
-            lastGraphUpdate = System.currentTimeMillis();
         }
     }
 
     private void start() {
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (isRunning) {
@@ -126,7 +125,9 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
                     updateGraph();
                 }
             }
-        }).start();
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /**

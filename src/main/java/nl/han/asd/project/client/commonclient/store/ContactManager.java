@@ -3,15 +3,17 @@ package nl.han.asd.project.client.commonclient.store;
 import com.google.inject.Inject;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by Raoul on 1/6/2016.
- */
 public class ContactManager implements IContactManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContactManager.class);
 
     private static final long MIN_TIMEOUT = 600000;
     private final IGetClientGroup clientGroup;
@@ -20,8 +22,8 @@ public class ContactManager implements IContactManager {
 
     @Inject
     public ContactManager(IGetClientGroup clientGroup, IContactStore contactStore) {
-        this.clientGroup = clientGroup;
-        this.contactStore = contactStore;
+        this.clientGroup = Check.notNull(clientGroup, "clientGroup");
+        this.contactStore = Check.notNull(contactStore, "contactStore");
     }
 
     /**
@@ -43,7 +45,7 @@ public class ContactManager implements IContactManager {
                 contactStore.updateUserInformation(client.getUsername(), client.getPublicKey().toByteArray(), true, connectNodes);
             }
         } catch (IOException | MessageNotSentException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
     }
 }

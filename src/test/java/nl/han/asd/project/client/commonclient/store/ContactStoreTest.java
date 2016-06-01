@@ -36,7 +36,6 @@ public class ContactStoreTest {
         getVertices = Mockito.mock(IGetVertices.class);
         contactStore = new ContactStore(persistence, getVertices);
 
-        // Mock lists
         mockedSingleContactList = new ArrayList<>();
         mockedMultipleContactList = new ArrayList<>();
         mockDeletedContactList = new ArrayList<>();

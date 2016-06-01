@@ -82,7 +82,7 @@ public class ContactStore implements IContactStore {
         int position = contactList.indexOf(oldContact);
         Contact newContact = new Contact(user, publicKey, online);
 
-        List<Node> connectedNodes = new ArrayList<>();
+        List<Node> connectedNodes = new ArrayList<>(connectedNodeIds.size());
         for (String connectedNodeId : connectedNodeIds) {
             Node node = graphManager.getVertices().get(connectedNodeId);
             connectedNodes.add(node);

@@ -12,21 +12,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Created by Raoul on 31/5/2016.
- */
 public class MessageConfirmationService implements IMessageConfirmation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageConfirmationService.class);
 
-    private HashMap<String, RetryMessage> waitingMessages = new HashMap<>();
+    private Map<String, RetryMessage> waitingMessages = new HashMap<>();
     private volatile boolean isRunning = true;
     private IMessageBuilder messageBuilder;
     private IContactStore contactStore;
     private ISendData sendData;
-    private final IUpdateGraph updateGraph;
-    private final IContactManager contactManager;
+    private IUpdateGraph updateGraph;
+    private IContactManager contactManager;
 
     public static final int TIMEOUT = 5000;
 
