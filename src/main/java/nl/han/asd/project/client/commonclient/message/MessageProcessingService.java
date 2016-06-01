@@ -51,9 +51,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     }
 
     /**
-     * Processes an incoming message.
-     *
-     * @param messageWrapper An instance of MessageWrapper which should be processed.
+     * {@inheritDoc}
      */
     @Override public void processIncomingMessage(MessageWrapper messageWrapper) {
         try {
@@ -92,6 +90,9 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
         return Wrapper.parseFrom(wrapperBuffer);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void sendMessage(Message message, Contact contact) {
         // TODO: Should update graph first

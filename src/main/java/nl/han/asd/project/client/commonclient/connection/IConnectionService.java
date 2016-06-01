@@ -121,7 +121,16 @@ public interface IConnectionService {
      */
     public GeneratedMessage writeAndRead(Wrapper wrapper) throws IOException, MessageNotSentException;
 
+    /**
+     * Read a single GeneratedMessage from a connection
+     *
+     * @return GeneratedMessage The received message
+     * @throws IOException
+     */
     public GeneratedMessage read() throws IOException;
 
+    /**
+     * Close the connection
+     */
     public void close();
 }

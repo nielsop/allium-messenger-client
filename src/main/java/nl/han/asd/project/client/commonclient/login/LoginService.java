@@ -70,6 +70,9 @@ public class LoginService implements ILoginService {
         connectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList(), username);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean logout(String username, String secretHash) {
         connectedNodes.unsetConnectedNodes();

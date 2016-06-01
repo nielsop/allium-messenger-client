@@ -46,11 +46,17 @@ public class MessageConfirmationService implements IMessageConfirmation {
         }).start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void messageSent(String id, Message message, Contact contact) {
         waitingMessages.put(id, new RetryMessage(id, message, contact));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void messageConfirmationReceived(String id) {
         waitingMessages.remove(id);
@@ -78,6 +84,10 @@ public class MessageConfirmationService implements IMessageConfirmation {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void stop() {
         isRunning = false;
     }

@@ -62,6 +62,9 @@ public class NodeConnectionService implements IConnectedNodes, ISendData {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void unsetConnectedNodes() {
         for (NodeConnection openConnection : openConnections) {
@@ -70,6 +73,9 @@ public class NodeConnectionService implements IConnectedNodes, ISendData {
         openConnections = new ArrayList<>();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void sendData(HanRoutingProtocol.MessageWrapper messageWrapper) throws MessageNotSentException {
         String hostname = messageWrapper.getIPaddress();

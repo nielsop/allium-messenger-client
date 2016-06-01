@@ -6,14 +6,10 @@ import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
-import nl.han.asd.project.client.commonclient.master.MasterGateway;
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
-import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -28,17 +24,13 @@ public class CommonClientGatewayIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGatewayIT.class);
     private CloudHost master;
-    private MasterGateway gateway;
     private CommonClientGateway commonClientGateway;
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
-    private IEncryptionService encryptionService;
     private IRegistration registration;
     private ILoginService login;
     private ISendMessage sendMessage;
-    private IMessageBuilder messageBuilder;
-    private IMessageConfirmation messageConfirmation;
 
     private String validUsername = "validUsername";
     private String validPassword = "validPassword";
@@ -52,11 +44,8 @@ public class CommonClientGatewayIT {
         registration = injector.getInstance(IRegistration.class);
         login = injector.getInstance(ILoginService.class);
         sendMessage = injector.getInstance(ISendMessage.class);
-        messageBuilder = injector.getInstance(IMessageBuilder.class);
-        messageConfirmation = injector.getInstance(IMessageConfirmation.class);
 
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, sendMessage
-        );
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, sendMessage);
     }
 
     @After

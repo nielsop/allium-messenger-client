@@ -118,6 +118,12 @@ public class SocketHandler implements AutoCloseable {
         }
     }
 
+    /**
+     * Read a single GeneratedMessage from the socket
+     *
+     * @return GeneratedMessage The received message
+     * @throws IOException
+     */
     public GeneratedMessage read() throws IOException {
         if (socket == null) {
             socket = new Socket(host, port);

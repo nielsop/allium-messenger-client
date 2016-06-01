@@ -255,11 +255,18 @@ public class ConnectionService implements IConnectionService {
         return writeAndRead(wrapper, -1, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GeneratedMessage read() throws IOException {
         return socketHandler.read();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void close() {
         try {
             socketHandler.close();

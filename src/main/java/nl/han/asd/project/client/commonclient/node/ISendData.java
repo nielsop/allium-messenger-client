@@ -1,7 +1,6 @@
 package nl.han.asd.project.client.commonclient.node;
 
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
-import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 /**
@@ -11,5 +10,13 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
  */
 @FunctionalInterface
 public interface ISendData {
+
+    /**
+     * Send a MessageWrapper to a Node.
+     *
+     * @param messageWrapper The wrapper to be sent
+     *
+     * @throws MessageNotSentException
+     */
     void sendData(HanRoutingProtocol.MessageWrapper messageWrapper) throws MessageNotSentException;
 }

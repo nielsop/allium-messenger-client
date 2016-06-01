@@ -71,6 +71,14 @@ public class Message {
         return null;
     }
 
+    /**
+     * Create an internal message based on a protocol message.
+     *
+     * @param protocolMessage Received message.
+     * @param receiver User which received the message.
+     *
+     * @return Internal message object which contains the same information as the original protocol message.
+     */
     public static Message fromProtocolMessage(HanRoutingProtocol.Message protocolMessage, Contact receiver)
     {
         final int id = Integer.parseInt(protocolMessage.getId());

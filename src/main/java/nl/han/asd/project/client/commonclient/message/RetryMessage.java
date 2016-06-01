@@ -21,6 +21,11 @@ public class RetryMessage {
         lastAttempt = System.currentTimeMillis() / 1000L;
     }
 
+    /**
+     * Determines if the message should already be retried.
+     *
+     * @return If the message should be retried.
+     */
     public boolean shouldRetry() {
         return (System.currentTimeMillis() / 1000L - lastAttempt) > TIMEOUT * attemptCount * attemptCount;
     }
