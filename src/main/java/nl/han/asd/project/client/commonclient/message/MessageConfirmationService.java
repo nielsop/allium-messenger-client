@@ -2,10 +2,13 @@ package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
 import nl.han.asd.project.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.node.ISendData;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
@@ -13,6 +16,8 @@ import java.util.HashMap;
  * Created by Raoul on 31/5/2016.
  */
 public class MessageConfirmationService implements IMessageConfirmation {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageConfirmationService.class);
 
     private HashMap<String, RetryMessage> waitingMessages = new HashMap<>();
     private volatile boolean isRunning = true;
@@ -35,7 +40,7 @@ public class MessageConfirmationService implements IMessageConfirmation {
                         checkAllMessages();
                         Thread.sleep(TIMEOUT);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
             }
@@ -63,7 +68,11 @@ public class MessageConfirmationService implements IMessageConfirmation {
 
                 HanRoutingProtocol.MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), retryMessage.contact);
 
-                sendData.sendData(messageWrapper);
+                try {
+                    sendData.sendData(messageWrapper);
+                } catch (MessageNotSentException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
 
                 retryMessage.attemptCount++;
             }

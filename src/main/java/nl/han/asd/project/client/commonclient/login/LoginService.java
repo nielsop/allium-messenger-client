@@ -25,7 +25,7 @@ public class LoginService implements ILoginService {
     private IContactStore contactStore;
     private IAuthentication authentication;
     private IEncryptionService encryptionService;
-    private IConnectedNodes setConnectedNodes;
+    private IConnectedNodes connectedNodes;
 
     /**
      * Construct a new LoginService.
@@ -33,18 +33,18 @@ public class LoginService implements ILoginService {
      * @param authentication the authentication interface
      * @param encryptionService the encryptionservice holding
      *          the public key
-     * @param setConnectedNodes the connectedNodes interface
+     * @param connectedNodes the connectedNodes interface
      *
      * @throws IllegalArgumentException if authentication
      *          or encryptionService is null
      */
     @Inject
-    public LoginService(IAuthentication authentication, IEncryptionService encryptionService, IConnectedNodes setConnectedNodes,
+    public LoginService(IAuthentication authentication, IEncryptionService encryptionService, IConnectedNodes connectedNodes,
                         IContactStore contactStore) {
-        this.contactStore = contactStore;
+        this.contactStore = Check.notNull(contactStore, "contactStore");
         this.authentication = Check.notNull(authentication, "authentication");
         this.encryptionService = Check.notNull(encryptionService, "encryptionService");
-        this.setConnectedNodes = Check.notNull(setConnectedNodes, "setConnectedNodes");
+        this.connectedNodes = Check.notNull(connectedNodes, "connectedNodes");
     }
 
     /** {@inheritDoc} */
@@ -67,11 +67,12 @@ public class LoginService implements ILoginService {
 
         contactStore.setCurrentUser(new CurrentUser(username, encryptionService.getPublicKey(), loginResponse.getSecretHash()));
 
-        setConnectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList(), username);
+        connectedNodes.setConnectedNodes(loginResponse.getConnectedNodesList(), username);
     }
 
     @Override
     public boolean logout(String username, String secretHash) {
+        connectedNodes.unsetConnectedNodes();
         return false;
     }
 }

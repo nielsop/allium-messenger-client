@@ -7,12 +7,17 @@ import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
 import nl.han.asd.project.client.commonclient.message.IReceiveMessage;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class NodeConnectionService implements IConnectedNodes, ISendData {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodeConnectionService.class);
+
     private IReceiveMessage receiveMessage;
 
     private List<NodeConnection> openConnections = new ArrayList<>();
@@ -50,7 +55,7 @@ public class NodeConnectionService implements IConnectedNodes, ISendData {
                 HanRoutingProtocol.Wrapper wrapper = connectionService.wrap(builder.build(), HanRoutingProtocol.Wrapper.Type.CLIENTNODECONNECTION);
                 connectionService.write(wrapper);
             } catch (IOException | MessageNotSentException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
 
             NodeConnection nodeConnection = new NodeConnection(connectionService, receiveMessage);
@@ -69,7 +74,7 @@ public class NodeConnectionService implements IConnectedNodes, ISendData {
     }
 
     @Override
-    public void sendData(HanRoutingProtocol.MessageWrapper messageWrapper) {
+    public void sendData(HanRoutingProtocol.MessageWrapper messageWrapper) throws MessageNotSentException {
         String hostname = messageWrapper.getIPaddress();
         int port = messageWrapper.getPort();
 
@@ -79,7 +84,7 @@ public class NodeConnectionService implements IConnectedNodes, ISendData {
             ConnectionService connectionService = new ConnectionService(hostname, port);
             connectionService.write(wrapper);
         } catch (MessageNotSentException | IOException e) {
-            e.printStackTrace();
+            throw new MessageNotSentException(e);
         }
     }
 }

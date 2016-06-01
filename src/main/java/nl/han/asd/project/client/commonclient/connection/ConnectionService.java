@@ -9,6 +9,8 @@ import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Builder;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -33,6 +35,9 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  */
 public class ConnectionService implements IConnectionService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
+
     private Semaphore mutex;
 
     private IEncryptionService encryptionService;
@@ -259,7 +264,7 @@ public class ConnectionService implements IConnectionService {
         try {
             socketHandler.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
     }
 }

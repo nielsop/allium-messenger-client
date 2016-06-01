@@ -2,6 +2,7 @@ package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
 import com.google.protobuf.InvalidProtocolBufferException;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.node.ISendData;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
@@ -104,9 +105,13 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
         MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), contact);
 
-        nodeConnectionService.sendData(messageWrapper);
-        messageConfirmationService.messageSent(builder.getId(), message, contact);
-        messageStore.addMessage(message);
+        try {
+            nodeConnectionService.sendData(messageWrapper);
+            messageConfirmationService.messageSent(builder.getId(), message, contact);
+            messageStore.addMessage(message);
+        } catch (MessageNotSentException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     private String generateUniqueMessageId(String seed) {
@@ -118,7 +123,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
             byte[] digest = messageDigest.digest();
             id = String.format("%064x", new java.math.BigInteger(1, digest));
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
 
         return id;
@@ -131,6 +136,10 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
         Contact sender = contactStore.findContact(message.getSender());
 
         MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), sender);
-        nodeConnectionService.sendData(messageWrapper);
+        try {
+            nodeConnectionService.sendData(messageWrapper);
+        } catch (MessageNotSentException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 }

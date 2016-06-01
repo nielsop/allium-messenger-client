@@ -119,6 +119,10 @@ public class SocketHandler implements AutoCloseable {
     }
 
     public GeneratedMessage read() throws IOException {
+        if (socket == null) {
+            socket = new Socket(host, port);
+        }
+
         Wrapper responseWrapper = Wrapper.parseDelimitedFrom(socket.getInputStream());
 
         if (encryptionService == null) {
