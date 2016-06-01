@@ -6,6 +6,7 @@ import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Raoul on 1/6/2016.
@@ -26,7 +27,11 @@ public class ContactManager implements IContactManager {
         HanRoutingProtocol.ClientRequest.Builder builder = HanRoutingProtocol.ClientRequest.newBuilder();
         builder.setClientGroup(0);
         try {
-            HanRoutingProtocol.Client clients = clientGroup.getClientGroup(builder.build());
+            HanRoutingProtocol.ClientResponse clientWrapper = clientGroup.getClientGroup(builder.build());
+            for (HanRoutingProtocol.Client client : clientWrapper.getClientsList()) {
+                List<String> connectNodes = client.getConnectedNodesList();
+                contactStore.updateUserInformation(client.getUsername(), client.getPublicKey().toByteArray(), true, connectNodes);
+            }
         } catch (IOException | MessageNotSentException e) {
             e.printStackTrace();
         }

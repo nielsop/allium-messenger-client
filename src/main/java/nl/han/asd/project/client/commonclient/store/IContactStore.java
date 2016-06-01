@@ -60,4 +60,6 @@ public interface IContactStore {
      * @return current user that is logged in
      */
     CurrentUser getCurrentUser();
+
+    void updateUserInformation(String user, byte[] publicKey, boolean online, List<String> connectNodes);
 }

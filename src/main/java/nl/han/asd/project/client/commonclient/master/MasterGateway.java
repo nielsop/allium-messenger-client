@@ -128,13 +128,13 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
      * {@inheritDoc}
      */
     @Override
-    public Client getClientGroup(ClientRequest request) throws IOException, MessageNotSentException {
+    public ClientResponse getClientGroup(ClientRequest request) throws IOException, MessageNotSentException {
         Check.notNull(request, "request");
 
         Wrapper wrapper = connectionService.wrap(request, Type.CLIENTREQUEST);
         GeneratedMessage response = connectionService.writeAndRead(wrapper);
 
-        return (Client) response;
+        return (ClientResponse) response;
     }
 
     @Override

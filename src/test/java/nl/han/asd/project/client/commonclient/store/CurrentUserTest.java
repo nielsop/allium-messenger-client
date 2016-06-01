@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class CurrentUserTest {
 
     @Before
     public void initialize() throws Exception {
-        contactStore = new ContactStore(Mockito.mock(IPersistence.class));
+        contactStore = new ContactStore(Mockito.mock(IPersistence.class), Mockito.mock(IGetVertices.class));
     }
 
     @Test

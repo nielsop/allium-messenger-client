@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ public class ContactStoreTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContactStoreTest.class);
 
     private IPersistence persistence;
+    private IGetVertices getVertices;
     private ContactStore contactStore;
 
     private  static final String TEST_CONTACT1 = "testContact1";
@@ -31,7 +33,8 @@ public class ContactStoreTest {
     @Before
     public void initialize() {
         persistence = Mockito.mock(IPersistence.class);
-        contactStore = new ContactStore(persistence);
+        getVertices = Mockito.mock(IGetVertices.class);
+        contactStore = new ContactStore(persistence, getVertices);
 
         // Mock lists
         mockedSingleContactList = new ArrayList<>();
