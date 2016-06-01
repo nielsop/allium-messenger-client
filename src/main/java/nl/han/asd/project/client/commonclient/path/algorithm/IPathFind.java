@@ -1,10 +1,8 @@
 package nl.han.asd.project.client.commonclient.path.algorithm;
 
-import nl.han.asd.project.client.commonclient.graph.Node;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import nl.han.asd.project.client.commonclient.graph.Node;
 
 /**
  * Created by Jevgeni on 19-5-2016.

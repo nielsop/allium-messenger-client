@@ -1,9 +1,5 @@
 package nl.han.asd.project.client.commonclient.path.algorithm;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 public class Matrix {
     private final int size;
     private short[] data;
@@ -32,17 +28,6 @@ public class Matrix {
 
     public short get(int row, int col) {
         return data[index(row, col)];
-    }
-
-    public List<Integer> getPossibleStartingPoints(int endIndex) {
-        List<Integer> possibleStartingPoints = new ArrayList<>();
-
-        for (int currentIndex = 0; currentIndex < size; currentIndex++) {
-            if (data[index(endIndex, currentIndex)] != 0)
-                possibleStartingPoints.add(currentIndex);
-        }
-
-        return possibleStartingPoints;
     }
 
     public void calculate(int steps) {
@@ -89,7 +74,8 @@ public class Matrix {
         }
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
 
         for (int colNr = 0; colNr < size; colNr++) {

@@ -6,14 +6,12 @@ import java.util.Map;
 import nl.han.asd.project.client.commonclient.graph.Edge;
 import nl.han.asd.project.client.commonclient.graph.Node;
 
-/**
- * Created by Jevgeni on 25-5-2016.
- */
 public class GraphMatrix extends Matrix {
+
+    private static final int ITERATIONS = 10;
 
     private Map<String, Integer> internalMap;
     private Map<String, Node> graphMap;
-    private int steps = 1;
 
     public GraphMatrix(Map<String, Node> graphMap) {
         super(graphMap.size());
@@ -22,6 +20,8 @@ public class GraphMatrix extends Matrix {
         this.graphMap = graphMap;
 
         prepareMatrixAndBuildInternalMap();
+        fillMatrix();
+        calculate(ITERATIONS);
     }
 
     private void prepareMatrixAndBuildInternalMap() {
@@ -47,13 +47,6 @@ public class GraphMatrix extends Matrix {
                 super.set(destinationNodeIndex, currentNodeIndex, weight);
             }
         }
-    }
-    
-    /**
-     * Also saves the current matrix. A list of these can be obtained through ..
-     */
-    public void calculate() {
-        super.calculate(10);
     }
 
     public int findIndexOfKey(String id) {

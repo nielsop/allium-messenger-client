@@ -26,7 +26,7 @@ public class Contact {
     public String getUsername() {
         return username;
     }
-    
+
     public String getPublicKey() {
         return publicKey;
     }
@@ -38,4 +38,9 @@ public class Contact {
     public void setOnline(boolean online) {
         this.online = online;
     }
+
+    public Node[] getConnectedNodes() {
+        return connectedNodes;
+    }
+
 }

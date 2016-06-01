@@ -1,103 +1,72 @@
 package nl.han.asd.project.client.commonclient.path;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.path.algorithm.Dijkstra;
 import nl.han.asd.project.client.commonclient.path.algorithm.GraphMatrix;
-import nl.han.asd.project.client.commonclient.path.algorithm.IPathFind;
+import nl.han.asd.project.client.commonclient.path.algorithm.GraphMatrixPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import java.util.*;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 
 public class PathDeterminationService implements IGetMessagePath {
-    private final Random random = new Random();
+    private Map<Contact, Set<Node>> startingPoints = new HashMap<>();
 
-    private Map<Node, List<Integer>> possibleStartingPoints = new HashMap<>();
-
+    private Random random = new Random();
     private GraphMatrix graphMatrix;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PathDeterminationService.class);
-    private IGetClientGroup clientGroup;
-    private IGetVertices vertices;
+    private IGetVertices getVertices;
+    private IGetClientGroup getClientGroup;
 
     @Inject
-    public PathDeterminationService(IGetVertices vertices, IGetClientGroup clientGroup) {
-        this.vertices = vertices;
-        this.clientGroup = clientGroup;
+    public PathDeterminationService(IGetVertices getVertices, IGetClientGroup getClientGroup) {
+        this.getVertices = Check.notNull(getVertices, "getVertices");
+        this.getClientGroup = Check.notNull(getClientGroup, "getClientGroup");
     }
 
-    @Override public List<Node> getPath(int minHops, Contact contactReciever) {
-        try {
-            return internalGetPath(minHops, contactReciever);
-        } catch (Exception e) {
-            return null;
-        }
-    }
+    @Override
+    public List<Node> getPath(int minHops, Contact contactReciever) {
+        Check.notNull(contactReciever, "contactReciever");
 
-    private List<Node> internalGetPath(int minHops, Contact contactReceiver)
-            throws Exception {
-
-        if (minHops < 1) {
-            throw new IllegalArgumentException(
-                    "The minimum amount of Hops should be more than 0");
+        Node[] receiverConnectedNodes = contactReciever.getConnectedNodes();
+        if (receiverConnectedNodes == null || receiverConnectedNodes.length == 0) {
+            throw new IllegalArgumentException("No connected nodes for: " + contactReciever);
         }
 
-        Map<String, Node> mapVertices = this.vertices.getVertices();
+        graphMatrix = new GraphMatrix(getVertices.getVertices());
 
-        List<Node> listOfNodes = new ArrayList<>(mapVertices.values());
-        Node startNode = getRandomConnectedNode(listOfNodes);
-
-        HanRoutingProtocol.Client receiver = getClientFromContact(
-                contactReceiver);
-        String nodeId = getRandomConnectedNode(receiver.getConnectedNodesList());
-        Node endNode = nodeIdentifierToNodeFromGraph(mapVertices, nodeId);
-
-        return calculatePath(mapVertices, startNode, endNode);
-    }
-
-    private List<Node> calculatePath(Map<String, Node> vertices, Node startNode,
-            Node endNode) {
-        IPathFind pathFinder = new Dijkstra(vertices, graphMatrix);
-        return pathFinder.findPath(startNode, endNode);
-    }
-
-    private Node nodeIdentifierToNodeFromGraph(Map<String, Node> mapOfNodes,
-            String identifier) {
-        for (Map.Entry<String, Node> entry : mapOfNodes.entrySet()) {
-            if (entry.getKey() == identifier)
-                return entry.getValue();
+        Set<Node> usedStartingPointsForContact = startingPoints.get(contactReciever);
+        if (usedStartingPointsForContact == null) {
+            usedStartingPointsForContact = new HashSet<>();
         }
 
-        LOGGER.error("Couldn't find matching identifier in the map.");
-        throw new RuntimeException(
-                "Couldn't find matching identifier in the map.");
-    }
-
-    private <T> T getRandomConnectedNode(List<T> nodeList) throws Exception {
-        if (nodeList.isEmpty())
-            throw new Exception("Empty list");
-
-        T genericNode = nodeList.get(random.nextInt(nodeList.size()));
-        return genericNode;
-    }
-
-    private HanRoutingProtocol.Client getClientFromContact(Contact contactReciever)
-            throws Exception {
-        List<HanRoutingProtocol.Client> clients = clientGroup.getClientGroup();
-        for (HanRoutingProtocol.Client client : clients) {
-            if (client.getUsername() == contactReciever.getUsername())
-                return client;
+        List<Node> path = null;
+        for (int i = 0; path == null && i < 10; i++) {
+            Node connectedEndpoint = receiverConnectedNodes[random.nextInt(receiverConnectedNodes.length)];
+            path = getPathTo(connectedEndpoint, usedStartingPointsForContact);
         }
 
-        LOGGER.error(String.format("Cannot find Client for contact %s.",
-                contactReciever.getUsername()));
-        throw new Exception("Cannot find Client from Contact.");
+        return path;
     }
 
-    //TODO: Update graphs..
+    private List<Node> getPathTo(Node endpoint, Set<Node> usedStartingPoints) {
+        Map<String, Node> vertices = getVertices.getVertices();
+
+        Node startingPoint = null;
+        for (int i = 0; usedStartingPoints.contains(startingPoint) && i < 10; i++) {
+            startingPoint = vertices.get(random.nextInt(vertices.size()));
+        }
+
+        usedStartingPoints.add(startingPoint);
+        return new GraphMatrixPath(vertices, graphMatrix).findPath(startingPoint, endpoint);
+    }
+
 }

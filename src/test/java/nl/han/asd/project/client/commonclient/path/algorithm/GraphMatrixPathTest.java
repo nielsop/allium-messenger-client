@@ -1,7 +1,13 @@
 package nl.han.asd.project.client.commonclient.path.algorithm;
 
-import nl.han.asd.project.client.commonclient.graph.Graph;
-import nl.han.asd.project.client.commonclient.graph.Node;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,34 +16,37 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import nl.han.asd.project.client.commonclient.graph.Graph;
+import nl.han.asd.project.client.commonclient.graph.Node;
 
 @RunWith(PowerMockRunner.class)
-public class DijkstraTest {
+public class GraphMatrixPathTest {
 
     @Mock
     private Map<String, Node> verticesMock;
 
     @InjectMocks
-    private Dijkstra dijkstraMock;
+    private GraphMatrixPath dijkstraMock;
 
     private Map<String, Node> vertices;
-    private Dijkstra dijkstra;
+    private GraphMatrix graphMatrix;
+    private GraphMatrixPath dijkstra;
 
     @Before
     public void setUp() {
-        this.vertices = buildGraph();
-        this.dijkstra = new Dijkstra(vertices);
+        vertices = buildGraph();
+        graphMatrix = new GraphMatrix(vertices);
+        dijkstra = new GraphMatrixPath(vertices, graphMatrix);
+    }
+
+    @Test
+    public void testConstructorNullGraphMatrix() throws Exception {
+        new GraphMatrixPath(vertices, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorNullVertices() {
-        Dijkstra instance = new Dijkstra(null);
+        new GraphMatrixPath(null, graphMatrix);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -61,7 +70,7 @@ public class DijkstraTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-        public void testFindPathStartNodeNotInGraph() {
+    public void testFindPathStartNodeNotInGraph() {
         Node tempStartNode = mock(Node.class);
         Node tempEndNode = mock(Node.class);
 
@@ -91,13 +100,13 @@ public class DijkstraTest {
     @Test
     public void testNoPathDiscovered() {
         Map<String, Node> vertices = buildGraph();
-        Dijkstra dijkstra = new Dijkstra(vertices);
+        GraphMatrixPath dijkstra = new GraphMatrixPath(vertices, graphMatrix);
 
         Node startNode = vertices.get("A");
         Node endNode = vertices.get("H");
 
         List<Node> path = dijkstra.findPath(startNode, endNode);
-        Assert.assertEquals(null, path);
+        Assert.assertEquals(Collections.emptyList(), path);
     }
 
     @Test
@@ -108,8 +117,9 @@ public class DijkstraTest {
 
     @Test
     public void testPathDiscovered_AtoG() {
-        Node[] expectedPath = new Node[] { vertices.get("A"), vertices.get("F"), vertices.get("D"), vertices.get("C"),  vertices.get("G") };
-        Node[] expectedPath2 = new Node[] { vertices.get("A"), vertices.get("E"), vertices.get("G")};
+        Node[] expectedPath = new Node[] { vertices.get("A"), vertices.get("F"), vertices.get("D"), vertices.get("C"),
+                vertices.get("G") };
+        Node[] expectedPath2 = new Node[] { vertices.get("A"), vertices.get("E"), vertices.get("G") };
         findAndAssertPath("A", "G", expectedPath, expectedPath2);
     }
 
@@ -126,13 +136,16 @@ public class DijkstraTest {
         List<Node> path = dijkstra.findPath(startNode, endNode);
 
         boolean result = false;
-        for(Node[] nodeArray : expectedPaths) {
-            result = (Arrays.asList(nodeArray).equals(path));
-            if (result) return;
+        for (Node[] nodeArray : expectedPaths) {
+            result = Arrays.equals(nodeArray, path.toArray());
+
+            if (result) {
+                return;
+            }
         }
+
         Assert.fail();
     }
-
 
     public Map<String, Node> buildGraph() {
         Graph graph = new Graph();

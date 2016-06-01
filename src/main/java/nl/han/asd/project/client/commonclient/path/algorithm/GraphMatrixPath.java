@@ -1,64 +1,71 @@
 package nl.han.asd.project.client.commonclient.path.algorithm;
 
-import nl.han.asd.project.client.commonclient.graph.Edge;
-import nl.han.asd.project.client.commonclient.graph.Graph;
-import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.commonservices.internal.utility.Check;
-
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import nl.han.asd.project.client.commonclient.graph.Edge;
+import nl.han.asd.project.client.commonclient.graph.Node;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+
 /**
  * Provides basic utilities for Dijkstra's algorithm.
  */
-public class Dijkstra implements IPathFind {
+public class GraphMatrixPath implements IPathFind {
     private Map<String, Node> vertices;
     private GraphMatrix graphMatrix;
 
-    public Dijkstra(Map<String, Node> vertices, GraphMatrix graphMatrix) {
+    public GraphMatrixPath(Map<String, Node> vertices, GraphMatrix graphMatrix) {
         this.vertices = Check.notNull(vertices, "vertices");
         this.graphMatrix = graphMatrix;
     }
 
-
-    @Override public List<Node> findPath(Node startNode, Node endNode) {
+    @Override
+    public List<Node> findPath(Node startNode, Node endNode) {
         Check.notNull(startNode, "startNode");
         Check.notNull(endNode, "endNode");
 
-        if (!vertices.containsKey(startNode.getId()))
+        if (!vertices.containsKey(startNode.getId())) {
             throw new IllegalArgumentException("startNode not in graph.");
-        if (!vertices.containsKey(endNode.getId()))
+        }
+        if (!vertices.containsKey(endNode.getId())) {
             throw new IllegalArgumentException("endNode not in graph.");
+        }
 
-        if (startNode == endNode)
+        if (startNode == endNode) {
             return Arrays.asList(new Node[] { startNode, endNode });
+        }
 
-        int cost = graphMatrix
-                .get(graphMatrix.findIndexOfKey(startNode.getId()), graphMatrix.findIndexOfKey(endNode.getId()));
+        int cost = graphMatrix.get(graphMatrix.findIndexOfKey(startNode.getId()),
+                graphMatrix.findIndexOfKey(endNode.getId()));
+
+        if (cost == 0) {
+            return Collections.emptyList();
+        }
+
         return func(cost, startNode, endNode);
     }
 
     private List<Node> func(int cost, Node currentNode, Node endNode) {
-        System.out.println(String.format("Current: %s, Cost: %d, End: %s", currentNode.getId(), cost, endNode.getId()));
-
-        if (cost < 0)
+        if (cost < 0) {
             return null;
+        }
 
+        List<Node> listOfNodes;
         if (currentNode == endNode) {
-            List<Node> listOfNodes = new LinkedList<>();
+            listOfNodes = new LinkedList<>();
             listOfNodes.add(currentNode);
             return listOfNodes;
         }
 
         for (Edge edge : currentNode.getEdges()) {
             Node linkedNode = vertices.get(edge.getDestinationId());
-            List<Node> l;
 
-            if ((l = func((int) (cost - edge.getDistance()), linkedNode, endNode)) != null) {
-                l.add(0, currentNode);
-                return l;
+            if ((listOfNodes = func((int) (cost - edge.getDistance()), linkedNode, endNode)) != null) {
+                listOfNodes.add(0, currentNode);
+                return listOfNodes;
             }
         }
 

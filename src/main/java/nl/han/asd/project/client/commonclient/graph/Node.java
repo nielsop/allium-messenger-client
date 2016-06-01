@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,31 +15,34 @@ public class Node {
     private int port;
     private byte[] publicKey;
     private double distanceToSource; // g
-    private double f;  // f = g + h
+    private double f; // f = g + h
 
     public Node(String id, String ipAddress, int port, byte[] publicKey) {
         this.id = id;
         this.ipAddress = ipAddress;
         this.port = port;
         this.publicKey = publicKey;
-        this.distanceToSource = Double.MAX_VALUE;
-        this.edges = new LinkedList<>();
+        distanceToSource = Double.MAX_VALUE;
+        edges = new LinkedList<>();
     }
 
-    @Override public boolean equals(Object anotherObj) {
-        if (anotherObj == null)
+    @Override
+    public boolean equals(Object anotherObj) {
+        if (anotherObj == null) {
             return false;
-        if (!(anotherObj instanceof  Node))
+        }
+        if (!(anotherObj instanceof Node)) {
             return false;
-        return ((Node) anotherObj).getId().equals(this.getId());
+        }
+        return ((Node) anotherObj).getId().equals(getId());
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return id.hashCode();
     }
 
-    public void addEdge(Node destination, double distance)
-    {
+    public void addEdge(Node destination, double distance) {
         edges.add(new Edge(destination, distance));
         destination.edges.add(new Edge(this, distance));
     }
@@ -61,10 +63,9 @@ public class Node {
         return id;
     }
 
-
     public void calcF(Node destination) {
         double h = findDistanceToDestination(destination);
-        this.f = distanceToSource + h; // f = g + h
+        f = distanceToSource + h; // f = g + h
     }
 
     public double getF() {
@@ -72,11 +73,11 @@ public class Node {
     }
 
     public double getDistanceToSource() {
-        return this.distanceToSource;
+        return distanceToSource;
     }
 
     public void setDistanceToSource(double value) {
-        this.distanceToSource = value;
+        distanceToSource = value;
     }
 
     private double findDistanceToDestination(Node destination) {
@@ -90,7 +91,7 @@ public class Node {
     }
 
     public List<Edge> getEdges() {
-        return this.edges;
+        return edges;
     }
 
 }
