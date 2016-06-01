@@ -36,7 +36,8 @@ public class PathDeterminationService implements IGetMessagePath {
             throw new IllegalArgumentException("No connected nodes for: " + contactReciever);
         }
 
-        graphMatrix = new GraphMatrix(getVertices.getVertices());
+        Map<String, Node> vertices = getVertices.getVertices();
+        graphMatrix = new GraphMatrix(vertices);
 
         Set<Node> usedStartingPointsForContact = startingPoints.get(contactReciever);
         if (usedStartingPointsForContact == null) {
@@ -55,7 +56,7 @@ public class PathDeterminationService implements IGetMessagePath {
     private List<Node> getPathTo(Node endpoint, Set<Node> usedStartingPoints) {
         Map<String, Node> vertices = getVertices.getVertices();
 
-        Node startingPoint = null;
+        Node startingPoint = vertices.get(random.nextInt(vertices.size()));
         for (int i = 0; usedStartingPoints.contains(startingPoint) && i < 10; i++) {
             startingPoint = vertices.get(random.nextInt(vertices.size()));
         }
