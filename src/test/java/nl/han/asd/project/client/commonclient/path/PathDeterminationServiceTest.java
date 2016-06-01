@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -33,16 +34,26 @@ public class PathDeterminationServiceTest {
     PathDeterminationService pathDeterminationService;
 
     @Test
-    public void testName() throws Exception {
+    public void testNoDuplicateStartNodes() throws Exception {
         Map<String, Node> graph = buildGraph();
         when(getVertices.getVertices()).thenReturn(graph);
 
         when(contactReciever.getConnectedNodes()).thenReturn(new Node[] { graph.get("C") });
 
         List<Node> path = pathDeterminationService.getPath(0, contactReciever);
-        for (Node node : path) {
-            System.out.println(node.getId());
-        }
+        List<Node> path2 = pathDeterminationService.getPath(0, contactReciever);
+
+        Assert.assertNotEquals(path, path2);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorIGetVerticesNull() {
+        PathDeterminationService pds = new PathDeterminationService(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetPathContactReceiverNull() {
+        pathDeterminationService.getPath(0, null);
     }
 
     public Map<String, Node> buildGraph() {

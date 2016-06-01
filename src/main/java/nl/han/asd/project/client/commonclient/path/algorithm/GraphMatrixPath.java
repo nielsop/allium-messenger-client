@@ -45,10 +45,10 @@ public class GraphMatrixPath implements IPathFind {
             return Collections.emptyList();
         }
 
-        return func(cost, startNode, endNode);
+        return buildPath(cost, startNode, endNode);
     }
 
-    private List<Node> func(int cost, Node currentNode, Node endNode) {
+    private List<Node> buildPath(int cost, Node currentNode, Node endNode) {
         if (cost < 0) {
             return null;
         }
@@ -63,7 +63,7 @@ public class GraphMatrixPath implements IPathFind {
         for (Edge edge : currentNode.getEdges()) {
             Node linkedNode = vertices.get(edge.getDestinationId());
 
-            if ((listOfNodes = func((int) (cost - edge.getDistance()), linkedNode, endNode)) != null) {
+            if ((listOfNodes = buildPath((int) (cost - edge.getDistance()), linkedNode, endNode)) != null) {
                 listOfNodes.add(0, currentNode);
                 return listOfNodes;
             }

@@ -1,11 +1,6 @@
 package nl.han.asd.project.client.commonclient.path;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
 
@@ -16,6 +11,7 @@ import nl.han.asd.project.client.commonclient.path.algorithm.GraphMatrix;
 import nl.han.asd.project.client.commonclient.path.algorithm.GraphMatrixPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 public class PathDeterminationService implements IGetMessagePath {
     private Map<Contact, Set<Node>> startingPoints = new HashMap<>();
@@ -24,36 +20,39 @@ public class PathDeterminationService implements IGetMessagePath {
     private GraphMatrix graphMatrix;
 
     private IGetVertices getVertices;
-    private IGetClientGroup getClientGroup;
 
     @Inject
-    public PathDeterminationService(IGetVertices getVertices, IGetClientGroup getClientGroup) {
+    public PathDeterminationService(IGetVertices getVertices) {
         this.getVertices = Check.notNull(getVertices, "getVertices");
-        this.getClientGroup = Check.notNull(getClientGroup, "getClientGroup");
     }
 
     @Override
-    public List<Node> getPath(int minHops, Contact contactReciever) {
-        Check.notNull(contactReciever, "contactReciever");
+    public List<Node> getPath(int minHops, Contact contactReceiver) {
+        Check.notNull(contactReceiver, "contactReceiver");
 
-        Node[] receiverConnectedNodes = contactReciever.getConnectedNodes();
+        Node[] receiverConnectedNodes = contactReceiver.getConnectedNodes();
         if (receiverConnectedNodes == null || receiverConnectedNodes.length == 0) {
-            throw new IllegalArgumentException("No connected nodes for: " + contactReciever);
+            throw new IllegalArgumentException("No connected nodes for: " + contactReceiver);
         }
 
         Map<String, Node> vertices = getVertices.getVertices();
         graphMatrix = new GraphMatrix(vertices);
 
-        Set<Node> usedStartingPointsForContact = startingPoints.get(contactReciever);
-        if (usedStartingPointsForContact == null) {
-            usedStartingPointsForContact = new HashSet<>();
-        }
-
         List<Node> path = null;
-        for (int i = 0; path == null && i < 10; i++) {
-            Node connectedEndpoint = receiverConnectedNodes[random.nextInt(receiverConnectedNodes.length)];
-            path = getPathTo(connectedEndpoint, usedStartingPointsForContact);
-        }
+        do {
+            Set<Node> usedStartingPointsForContact = startingPoints.get(contactReceiver);
+            if (usedStartingPointsForContact == null) {
+                usedStartingPointsForContact = new HashSet<>();
+            }
+
+            for (int i = 0; path == null && i < 10; i++) {
+                Node connectedEndpoint = receiverConnectedNodes[random.nextInt(receiverConnectedNodes.length)];
+                path = getPathTo(connectedEndpoint, usedStartingPointsForContact);
+            }
+
+            if (path == null) continue;
+
+        } while(path.size() < (minHops + 2));
 
         return path;
     }
