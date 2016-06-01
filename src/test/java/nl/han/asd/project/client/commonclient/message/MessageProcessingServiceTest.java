@@ -6,6 +6,7 @@ import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.graph.GraphManagerService;
 import nl.han.asd.project.client.commonclient.node.NodeConnectionService;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.ContactManager;
 import nl.han.asd.project.client.commonclient.store.ContactStore;
 import nl.han.asd.project.client.commonclient.store.MessageStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
@@ -33,6 +34,7 @@ public class MessageProcessingServiceTest {
     @Mock private ContactStore contactStore;
     @Mock private MessageBuilderService messageBuilder;
     @Mock private GraphManagerService graphManagerService;
+    @Mock private ContactManager contactManager;
 
     private IEncryptionService encryptionService;
 
@@ -43,7 +45,8 @@ public class MessageProcessingServiceTest {
 
         encryptionService = injector.getInstance(IEncryptionService.class);
         messageProcessingService = new MessageProcessingService(messageStore, encryptionService,
-                nodeConnectionService, messageConfirmationService, contactStore, messageBuilder, graphManagerService);
+                nodeConnectionService, messageConfirmationService, contactStore, messageBuilder,
+                graphManagerService, contactManager);
     }
 
     @Test public void testWithMessageWrapper() {
