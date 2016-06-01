@@ -1,7 +1,6 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
-import nl.han.asd.project.client.commonclient.connection.IConnectionService;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.node.ISendData;
 import nl.han.asd.project.client.commonclient.store.Contact;

@@ -3,9 +3,7 @@ package nl.han.asd.project.client.commonclient.node;
 import com.google.inject.Inject;
 import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
-import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
 import nl.han.asd.project.client.commonclient.message.IReceiveMessage;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +17,6 @@ public class NodeConnectionService implements IConnectedNodes, ISendData {
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeConnectionService.class);
 
     private IReceiveMessage receiveMessage;
-
     private List<NodeConnection> openConnections = new ArrayList<>();
 
     /**

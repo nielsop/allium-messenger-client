@@ -2,7 +2,6 @@ package nl.han.asd.project.client.commonclient.scripting;
 
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.message.MessageBuilderService;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
@@ -15,6 +14,7 @@ import java.util.Date;
 
 public class ScriptWrapper implements IScriptWrapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptWrapper.class);
+
     private IContactStore contactStore;
     private IMessageStore messageStore;
     private ISendMessage sendMessage;

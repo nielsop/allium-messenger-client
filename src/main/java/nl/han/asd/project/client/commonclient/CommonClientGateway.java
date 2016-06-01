@@ -4,8 +4,6 @@ import nl.han.asd.project.client.commonclient.connection.MessageNotSentException
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
-import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
@@ -14,7 +12,6 @@ import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.internal.utility.Check;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
 import org.slf4j.Logger;
@@ -24,7 +21,6 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.List;
 
-import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
 import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 
 /**
@@ -35,21 +31,16 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse
 public class CommonClientGateway {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
-    private final IMessageConfirmation messageConfirmation;
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
     private IRegistration registration;
     private ILoginService loginService;
     private ISendMessage sendMessage;
-    private IMessageBuilder messageBuilder;
 
     @Inject
     public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
-                               ILoginService loginService, ISendMessage sendMessage, IMessageBuilder messageBuilder,
-                               IMessageConfirmation messageConfirmation) {
-        this.messageConfirmation = Check.notNull(messageConfirmation, "messageConfirmation");
-        this.messageBuilder = Check.notNull(messageBuilder, "messageBuilder");
+                               ILoginService loginService, ISendMessage sendMessage) {
         this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");

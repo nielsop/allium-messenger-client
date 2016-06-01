@@ -55,8 +55,8 @@ public class CommonClientGatewayIT {
         messageBuilder = injector.getInstance(IMessageBuilder.class);
         messageConfirmation = injector.getInstance(IMessageConfirmation.class);
 
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, sendMessage,
-                messageBuilder, messageConfirmation);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, sendMessage
+        );
     }
 
     @After

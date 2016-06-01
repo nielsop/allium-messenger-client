@@ -24,14 +24,14 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
  */
 public class MessageProcessingService implements IReceiveMessage, ISendMessage {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
+
     private final IMessageStore messageStore;
     private final ISendData nodeConnectionService;
     private IMessageConfirmation messageConfirmationService;
     private IContactStore contactStore;
     private IMessageBuilder messageBuilder;
     private final IEncryptionService encryptionService;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
 
     /**
      * Initialises the class.

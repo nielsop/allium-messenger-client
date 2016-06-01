@@ -6,13 +6,13 @@ import nl.han.asd.project.client.commonclient.connection.MessageNotSentException
 import nl.han.asd.project.client.commonclient.connection.Parser;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.commonservices.internal.utility.Check;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
 
 import java.io.IOException;
 import java.util.Map;
 
-import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdate;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
 
 public class GraphManagerService implements IGetVertices {
     private int currentGraphVersion;
