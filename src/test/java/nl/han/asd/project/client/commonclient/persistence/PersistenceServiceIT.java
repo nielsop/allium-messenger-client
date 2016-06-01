@@ -155,9 +155,9 @@ public class PersistenceServiceIT {
         persistenceService.addScript("name1", "Script");
         persistenceService.addScript("name2", "Script");
         persistenceService.deleteScript("name1");
-        assertEquals(2, persistenceService.getScripts().size());
+        assertEquals(1, persistenceService.getScripts().size());
         persistenceService.deleteScript("name1");
-        assertEquals(2, persistenceService.getScripts().size());
+        assertEquals(1, persistenceService.getScripts().size());
     }
 
 
