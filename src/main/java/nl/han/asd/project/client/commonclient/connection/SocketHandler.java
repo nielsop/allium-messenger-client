@@ -119,8 +119,32 @@ public class SocketHandler implements AutoCloseable {
     }
 
     /**
-     * {@inheritDoc}
+     * Read a single GeneratedMessage from the socket
+     *
+     * @return GeneratedMessage The received message
+     * @throws IOException
      */
+    public GeneratedMessage read() throws IOException {
+        if (socket == null) {
+            socket = new Socket(host, port);
+        }
+
+        Wrapper responseWrapper = Wrapper.parseDelimitedFrom(socket.getInputStream());
+
+        if (encryptionService == null) {
+            return Parser.parseFrom(responseWrapper);
+        } else {
+            byte[] decryptedData = encryptionService.decryptData(responseWrapper.getData().toByteArray());
+
+            Builder wrapperBuilder = Wrapper.newBuilder();
+            wrapperBuilder.setType(responseWrapper.getType());
+            wrapperBuilder.setData(ByteString.copyFrom(decryptedData));
+
+            return Parser.parseFrom(wrapperBuilder.build());
+        }
+    }
+
+    /** {@inheritDoc} */
     @Override
     public void close() throws IOException {
         socket.close();

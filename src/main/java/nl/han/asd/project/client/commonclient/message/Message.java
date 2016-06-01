@@ -2,6 +2,7 @@ package nl.han.asd.project.client.commonclient.message;
 
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,24 @@ public class Message {
         }
         return null;
     }
+
+    /**
+     * Create an internal message based on a protocol message.
+     *
+     * @param protocolMessage Received message.
+     * @param receiver User which received the message.
+     *
+     * @return Internal message object which contains the same information as the original protocol message.
+     */
+    public static Message fromProtocolMessage(HanRoutingProtocol.Message protocolMessage, Contact receiver)
+    {
+        final int id = Integer.parseInt(protocolMessage.getId());
+        final Contact sender = Contact.fromDatabase(protocolMessage.getSender());
+        final String text = protocolMessage.getText();
+        final Date timestamp = new Date(protocolMessage.getTimeSent());
+        return new Message(id, receiver, sender, timestamp, text);
+    }
+
 
     /**
      * Returns the message's sender.

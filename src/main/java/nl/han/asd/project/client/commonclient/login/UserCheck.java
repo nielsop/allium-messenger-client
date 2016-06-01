@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.login;
 
-import com.amazonaws.services.identitymanagement.model.User;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 
 /**

@@ -6,13 +6,13 @@ import nl.han.asd.project.client.commonclient.connection.MessageNotSentException
 import nl.han.asd.project.client.commonclient.connection.Parser;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.commonservices.internal.utility.Check;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
 
 import java.io.IOException;
 import java.util.Map;
 
-import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdate;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
 
 public class GraphManagerService implements IGetVertices {
     private int currentGraphVersion;
@@ -48,12 +48,16 @@ public class GraphManagerService implements IGetVertices {
      */
     public void processGraphUpdates() throws IOException, MessageNotSentException {
         GraphUpdateResponse response = getUpdatedGraph.getUpdatedGraph(GraphUpdateRequest.newBuilder().setCurrentVersion(currentGraphVersion).build());
+
+        if (response.getGraphUpdatesCount() == 0) {
+            return;
+        }
+
         GraphUpdate lastUpdate = Parser.parseFrom(response.getGraphUpdates(response.getGraphUpdatesCount() - 1).toByteArray(), GraphUpdate.class);
 
-        if (lastUpdate.getNewVersion() <= currentGraphVersion)
-            return;
-        if (lastUpdate.getIsFullGraph())
+        if (lastUpdate.getIsFullGraph()) {
             graph.resetGraph();
+        }
 
         for (ByteString updateByteString : response.getGraphUpdatesList()) {
             GraphUpdate update = Parser.parseFrom(updateByteString.toByteArray(), GraphUpdate.class);

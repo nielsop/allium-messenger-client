@@ -2,9 +2,10 @@ package nl.han.asd.project.client.commonclient.login;
 
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.master.IAuthentication;
-import nl.han.asd.project.client.commonclient.node.ISetConnectedNodes;
+import nl.han.asd.project.client.commonclient.node.IConnectedNodes;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
@@ -14,12 +15,9 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
@@ -32,7 +30,7 @@ public class LoginServiceTest {
     /* Invalid credentials */
     private static final String INVALID_USERNAME_EMPTY = "";
     private static final String INVALID_PASSWORD_EMPTY = "";
-    private static final String INVALID_USERNAME_FORBIDDEN_CHARACTERS = "Test^Username";
+    private static final String INVALID_USERNAME_FORBIDDEN_CHARACTERS = "Test^User";
     private static final String INVALID_USERNAME_TOO_LONG = ""; // Aanname dat de maximum lengte van een username 12 tekens is.
     private static final String INVALID_PASSWORD_TOO_LONG = ""; // Aanname dat de maximum lengte van een password 16 tekens is.
     private static final String INVALID_USERNAME_TOO_SHORT = ""; // Aanname dat de minimum lengte van een username 3 tekens is.
@@ -42,7 +40,8 @@ public class LoginServiceTest {
 
     private IAuthentication authenticationMock;
     private IEncryptionService encryptionServiceMock;
-    private ISetConnectedNodes setConnectedNodes;
+    private IConnectedNodes setConnectedNodes;
+    private IContactStore contactStore;
 
     private ILoginService login;
 
@@ -50,8 +49,9 @@ public class LoginServiceTest {
     public void setUp() {
         authenticationMock = mock(IAuthentication.class);
         encryptionServiceMock = mock(IEncryptionService.class);
-        setConnectedNodes = mock(ISetConnectedNodes.class);
-        login = new LoginService(authenticationMock, encryptionServiceMock, setConnectedNodes);
+        setConnectedNodes = mock(IConnectedNodes.class);
+        contactStore = mock(IContactStore.class);
+        login = new LoginService(authenticationMock, encryptionServiceMock, setConnectedNodes, contactStore);
     }
 
     @Test(expected = IllegalUsernameException.class)
@@ -141,8 +141,8 @@ public class LoginServiceTest {
         CurrentUser contactMock = mock(CurrentUser.class);
         whenNew(CurrentUser.class).withAnyArguments().thenReturn(contactMock);
 
-        assertEquals(contactMock, login.login(VALID_USERNAME, VALID_PASSWORD));
+        login.login(VALID_USERNAME, VALID_PASSWORD);
 
-        verify(setConnectedNodes).setConnectedNodes(eq(response.getConnectedNodesList()));
+        verify(setConnectedNodes).setConnectedNodes(eq(response.getConnectedNodesList()), eq(VALID_USERNAME));
     }
 }

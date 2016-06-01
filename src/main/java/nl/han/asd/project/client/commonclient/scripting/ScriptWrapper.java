@@ -1,7 +1,8 @@
 package nl.han.asd.project.client.commonclient.scripting;
 
+import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.message.MessageBuilderService;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.commonservices.internal.utility.Check;
@@ -9,21 +10,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.Date;
 
 public class ScriptWrapper implements IScriptWrapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptWrapper.class);
+
     private IContactStore contactStore;
     private IMessageStore messageStore;
+    private ISendMessage sendMessage;
 
     @Inject
-    public ScriptWrapper(IContactStore contactStore, IMessageStore messageStore) {
+    public ScriptWrapper(IContactStore contactStore, IMessageStore messageStore, ISendMessage sendMessage) {
+        this.sendMessage = sendMessage;
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");
     }
 
-    public boolean sendMessage(String username, String message) {
+    public boolean sendMessage(String username, String messageText) {
         try {
-            // TODO: actually send message
+            Contact contact = contactStore.findContact(username);
+            Message message = new Message(contactStore.getCurrentUserAsContact(), contact, new Date(), messageText);
+            sendMessage.sendMessage(message, contact);
             return true;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

@@ -1,18 +1,13 @@
 package nl.han.asd.project.client.commonclient.store;
 
-import nl.han.asd.project.client.commonclient.CommonClientGateway;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import nl.han.asd.project.commonservices.internal.utility.Check;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContactStore implements IContactStore {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
-
     private IPersistence persistence;
     private CurrentUser currentUser;
     private List<Contact> contactList;
