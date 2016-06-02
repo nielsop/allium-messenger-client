@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.node;
 
+import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.client.commonclient.connection.IConnectionService;
 import nl.han.asd.project.client.commonclient.message.IReceiveMessage;
 import org.slf4j.Logger;
@@ -37,8 +38,8 @@ public class NodeConnection {
             public void run() {
                 while (isRunning) {
                     try {
-                        MessageWrapper message = (MessageWrapper) connectionService.read();
-                        receiveMessage.processIncomingMessage(message);
+                        GeneratedMessage readMessage = connectionService.read();
+                        receiveMessage.processIncomingMessage(readMessage);
                     } catch (IOException e) {
                         LOGGER.error(e.getMessage(), e);
                     }

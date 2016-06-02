@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.message;
 
+import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 public interface IReceiveMessage {
@@ -9,5 +10,5 @@ public interface IReceiveMessage {
      *
      * @param messageWrapper Wrapper containing the received message
      */
-    void processIncomingMessage(HanRoutingProtocol.MessageWrapper messageWrapper);
+    void processIncomingMessage(GeneratedMessage messageWrapper);
 }
