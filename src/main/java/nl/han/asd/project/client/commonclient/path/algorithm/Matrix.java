@@ -1,7 +1,7 @@
 package nl.han.asd.project.client.commonclient.path.algorithm;
 
 /**
- * Provides functionality for
+ * Provides functionality for uses the Matrix classes.
  */
 public class Matrix {
     private final int size;
