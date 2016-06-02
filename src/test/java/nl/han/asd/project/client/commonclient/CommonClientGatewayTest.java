@@ -8,6 +8,7 @@ import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
+import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
@@ -28,6 +29,7 @@ public class CommonClientGatewayTest {
     private ISendMessage sendMessage;
     private IMessageBuilder messageBuilder;
     private IMessageConfirmation messageConfirmation;
+    private ISubscribeMessageReceiver subscribeMessageReceiver;
 
     private byte[] emptyPublicKey = "".getBytes();
     private byte[] privateKey = "".getBytes();
@@ -58,9 +60,10 @@ public class CommonClientGatewayTest {
         sendMessage = injector.getInstance(ISendMessage.class);
         messageBuilder = injector.getInstance(IMessageBuilder.class);
         messageConfirmation = injector.getInstance(IMessageConfirmation.class);
+        subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
 
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, sendMessage
-        );
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, sendMessage,
+                subscribeMessageReceiver);
     }
 
     @Test
