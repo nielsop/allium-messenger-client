@@ -6,13 +6,16 @@ import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
+<<<<<<< HEAD
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.scripting.IRunningScriptTracker;
+=======
+import nl.han.asd.project.client.commonclient.message.ISendMessage;
+>>>>>>> 6442ab56af0052be2666d55f1ae81a617ad7a969
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.client.commonclient.store.IScriptStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -27,16 +30,18 @@ public class CommonClientGatewayIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGatewayIT.class);
     private CloudHost master;
-    private MasterGateway gateway;
     private CommonClientGateway commonClientGateway;
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
-    private IEncryptionService encryptionService;
     private IRegistration registration;
     private ILoginService login;
+<<<<<<< HEAD
     private IScriptStore scriptStore;
     private IRunningScriptTracker runningScriptTracker;
+=======
+    private ISendMessage sendMessage;
+>>>>>>> 6442ab56af0052be2666d55f1ae81a617ad7a969
 
     private String validUsername = "validUsername";
     private String validPassword = "validPassword";
@@ -49,11 +54,17 @@ public class CommonClientGatewayIT {
         messageStore = injector.getInstance(IMessageStore.class);
         registration = injector.getInstance(IRegistration.class);
         login = injector.getInstance(ILoginService.class);
+<<<<<<< HEAD
         scriptStore = injector.getInstance(IScriptStore.class);
         runningScriptTracker = injector.getInstance(IRunningScriptTracker.class);
 
 
         commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, runningScriptTracker);
+=======
+        sendMessage = injector.getInstance(ISendMessage.class);
+
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, sendMessage);
+>>>>>>> 6442ab56af0052be2666d55f1ae81a617ad7a969
     }
 
     @After

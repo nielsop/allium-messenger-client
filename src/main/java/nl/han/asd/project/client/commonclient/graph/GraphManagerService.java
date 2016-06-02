@@ -6,21 +6,34 @@ import nl.han.asd.project.client.commonclient.connection.MessageNotSentException
 import nl.han.asd.project.client.commonclient.connection.Parser;
 import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
 import nl.han.asd.project.commonservices.internal.utility.Check;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class GraphManagerService implements IGetVertices {
-    private int currentGraphVersion;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdate;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
+
+public class GraphManagerService implements IGetVertices, IUpdateGraph {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphManagerService.class);
+    public static final int PERIODIC_UPDATE = 600000;
+
+    private int currentGraphVersion = 0;
     private Graph graph;
     private IGetUpdatedGraph getUpdatedGraph;
+
+    private long lastGraphUpdate = 0;
+    private static final long MIN_TIMEOUT = 30000;
+    private volatile boolean isRunning = true;
 
     @Inject
     public GraphManagerService(IGetUpdatedGraph gateway) {
         graph = new Graph();
         this.getUpdatedGraph = Check.notNull(gateway, "getUpdatedGraph");
-        currentGraphVersion = 0;
+        start();
     }
 
     /**
@@ -44,34 +57,28 @@ public class GraphManagerService implements IGetVertices {
      * @throws MessageNotSentException
      */
     public void processGraphUpdates() throws IOException, MessageNotSentException {
-        HanRoutingProtocol.GraphUpdateRequest request = HanRoutingProtocol.GraphUpdateRequest.newBuilder().setCurrentVersion(currentGraphVersion).build();
+        GraphUpdateResponse response = getUpdatedGraph.getUpdatedGraph(GraphUpdateRequest.newBuilder().setCurrentVersion(currentGraphVersion).build());
 
-        HanRoutingProtocol.GraphUpdateResponse response = getUpdatedGraph.getUpdatedGraph(request);
-
-        HanRoutingProtocol.GraphUpdate lastUpdate = Parser.parseFrom(
-                response.getGraphUpdates(response.getGraphUpdatesCount() - 1).toByteArray(), HanRoutingProtocol.GraphUpdate.class);
-
-        if (lastUpdate.getNewVersion() <= currentGraphVersion) {
+        if (response.getGraphUpdatesCount() == 0) {
             return;
         }
+
+        GraphUpdate lastUpdate = Parser.parseFrom(response.getGraphUpdates(response.getGraphUpdatesCount() - 1).toByteArray(), GraphUpdate.class);
 
         if (lastUpdate.getIsFullGraph()) {
             graph.resetGraph();
         }
 
         for (ByteString updateByteString : response.getGraphUpdatesList()) {
-            HanRoutingProtocol.GraphUpdate update = Parser.parseFrom(updateByteString.toByteArray(), HanRoutingProtocol.GraphUpdate.class);
-
+            GraphUpdate update = Parser.parseFrom(updateByteString.toByteArray(), GraphUpdate.class);
             for (nl.han.asd.project.protocol.HanRoutingProtocol.Node addedNode : update.getAddedNodesList()) {
                 graph.addNodeVertex(addedNode);
                 graph.addEdgesToVertex(addedNode);
             }
-
             for (nl.han.asd.project.protocol.HanRoutingProtocol.Node deletedNode : update.getDeletedNodesList()) {
                 graph.removeNodeVertex(deletedNode);
             }
         }
-
         currentGraphVersion = lastUpdate.getNewVersion();
     }
 
@@ -88,5 +95,45 @@ public class GraphManagerService implements IGetVertices {
     @Override
     public Map<String, Node> getVertices() {
         return graph.getVertexMap();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateGraph() {
+        if (System.currentTimeMillis() - lastGraphUpdate > MIN_TIMEOUT) {
+            try {
+                processGraphUpdates();
+                lastGraphUpdate = System.currentTimeMillis();
+            } catch (IOException | MessageNotSentException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    private void start() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (isRunning) {
+                    try {
+                        Thread.sleep(PERIODIC_UPDATE);
+                    } catch (InterruptedException e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                    updateGraph();
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    /**
+     * Stop updating the graph periodically
+     */
+    public void stop() {
+        isRunning = false;
     }
 }

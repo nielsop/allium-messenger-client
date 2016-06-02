@@ -1,10 +1,11 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertEquals;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 /**
  * @author Julius
@@ -13,19 +14,20 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class NodeTest {
 
+    private Node node;
+    private HanRoutingProtocol.Edge edge;
     private final String EDGE_DESTINATIONNODE_ID = "NODE_2";
     private final float EDGE_WEIGHT = 12.0f;
     private final String NODE_ID = "NODE_1";
     private final String NODE_IP = "192.168.2.16";
     private final int NODE_PORT = 1337;
-    private final byte[] NODE_PUBLICKEY = new byte[]{0x00};
-    private Node node;
-    private HanRoutingProtocol.Edge edge;
+    private final byte[] NODE_PUBLICKEY = new byte[] { 0x00 };
 
     @Before
     public void setup() {
         node = new Node(NODE_ID, NODE_IP, NODE_PORT, NODE_PUBLICKEY);
-        edge = HanRoutingProtocol.Edge.newBuilder().setTargetNodeId(EDGE_DESTINATIONNODE_ID).setWeight(EDGE_WEIGHT).build();
+        edge = HanRoutingProtocol.Edge.newBuilder().setTargetNodeId(EDGE_DESTINATIONNODE_ID).setWeight(EDGE_WEIGHT)
+                .build();
     }
 
     @Test
@@ -38,7 +40,7 @@ public class NodeTest {
     public void testGetEdge() throws Exception {
         node.addEdge(edge);
         Edge getEdge = node.getEdge(EDGE_DESTINATIONNODE_ID);
-        assertEquals(getEdge.getWeight(), EDGE_WEIGHT, 0);
+        assertEquals(getEdge.getWeight(), EDGE_WEIGHT, 0.0002);
         assertEquals(getEdge.getDestinationNodeId(), EDGE_DESTINATIONNODE_ID);
     }
 }

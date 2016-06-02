@@ -27,5 +27,5 @@ public interface IGetClientGroup {
      *                                  this exception is not thrown on Socket related
      *                                  exceptions. See IOException.
      */
-    HanRoutingProtocol.Client getClientGroup(ClientRequest request) throws IOException, MessageNotSentException;
+    HanRoutingProtocol.ClientResponse getClientGroup(ClientRequest request) throws IOException, MessageNotSentException;
 }
