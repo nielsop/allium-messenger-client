@@ -223,6 +223,7 @@ public class CommonClientGateway {
      * @return A boolean indicating wheter the script started successfully
      */
     public boolean startScript(String scriptName, String scriptContent) {
+        scriptStore.updateScript(scriptName, scriptContent);
         return scriptTracker.startScript(scriptName, scriptContent);
     }
 

@@ -15,6 +15,9 @@ public class ScriptStore implements IScriptStore {
         this.persistence = Check.notNull(persistence, "persistence");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addScript(String scriptName, String scriptContent) {
         Check.notNull(scriptName, SCRIPT_NAME);
@@ -24,6 +27,9 @@ public class ScriptStore implements IScriptStore {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeScript(String scriptName) {
         Check.notNull(scriptName, SCRIPT_NAME);
@@ -31,16 +37,25 @@ public class ScriptStore implements IScriptStore {
         persistence.deleteScript(scriptName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> getAllScriptNames() {
         return persistence.getAllScriptNames();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getScriptContent(String scriptName) {
         return persistence.getScriptContent(scriptName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateScript(String scriptName, String scriptContent) {
        persistence.updateScript(scriptName, scriptContent);
