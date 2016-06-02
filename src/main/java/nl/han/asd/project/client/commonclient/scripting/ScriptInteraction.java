@@ -56,6 +56,7 @@ public class ScriptInteraction implements IScriptInteraction {
         Message[] receivedMessages = messageStore.getMessagesAfterDate(dateTime);
         SimpleMessage[] messages = new SimpleMessage[receivedMessages.length];
         for (int i = 0; i < messages.length; i++) {
+            messages[i] = new SimpleMessage();
             messages[i].message = receivedMessages[i].getText();
             messages[i].sender = receivedMessages[i].getSender().getUsername();
         }
