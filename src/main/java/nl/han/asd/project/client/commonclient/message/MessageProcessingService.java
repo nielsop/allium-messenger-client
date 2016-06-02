@@ -79,6 +79,12 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage, 
 
                 messageConfirmationService.messageConfirmationReceived(messageConfirmation.getConfirmationId());
 
+                for (IMessageReceiver receiver : receivers) {
+                    if (receiver != null) {
+                        receiver.confirmedMessage(messageConfirmation.getConfirmationId());
+                    }
+                }
+
             } else if (wrapper.getType()
                     == Wrapper.Type.MESSAGE) {
 
