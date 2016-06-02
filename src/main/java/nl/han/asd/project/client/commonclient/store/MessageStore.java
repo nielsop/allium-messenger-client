@@ -2,13 +2,14 @@ package nl.han.asd.project.client.commonclient.store;
 
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
-public class MessageStore implements IMessageStore, IMessageObserver {
-    public IPersistence persistence;
+public class MessageStore implements IMessageStore, IMessageStoreObserver {
+    List<Message> messages = new ArrayList<>();
+    private IPersistence persistence;
 
     @Inject
     public MessageStore(IPersistence persistence) {
@@ -16,22 +17,24 @@ public class MessageStore implements IMessageStore, IMessageObserver {
     }
 
     @Override
-    public void addMessage(HanRoutingProtocol.Message message) {
+    public void addMessage(Message message) {
+        messages.add(message);
+    }
+
+    @Override
+    public void findMessage(Message message) {
         //TODO: implement!
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public void findMessage(HanRoutingProtocol.Message message) {
-        //TODO: implement!
-    }
-
-    @Override
-    public List<Message> getMessages(String contact) {
-        return null;
-    }
-
-    @Override
-    public void sendMessage(Message message) {
-
+    public List<Message> getMessagesFromUser(String contact) {
+        List<Message> msgs = new ArrayList<>();
+        for (Message msg : messages) {
+            if (msg.getSender().getUsername().equals(contact)) {
+                msgs.add(msg);
+            }
+        }
+        return msgs;
     }
 }

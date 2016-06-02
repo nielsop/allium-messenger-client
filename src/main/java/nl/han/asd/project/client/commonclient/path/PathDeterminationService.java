@@ -4,17 +4,23 @@ import java.util.*;
 
 import javax.inject.Inject;
 
+import nl.han.asd.project.client.commonclient.CommonClientGateway;
 import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.algorithm.GraphMatrix;
 import nl.han.asd.project.client.commonclient.path.algorithm.GraphMatrixPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.NoConnectedNodesException;
 import nl.han.asd.project.commonservices.internal.utility.Check;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to determinate paths.
  */
 public class PathDeterminationService implements IGetMessagePath {
+    public static final Logger LOGGER = LoggerFactory
+            .getLogger(CommonClientGateway.class);
     private Map<Contact, Set<Node>> startingPoints = new HashMap<>();
 
     private Random random = new Random();
@@ -37,7 +43,13 @@ public class PathDeterminationService implements IGetMessagePath {
     @Override public List<Node> getPath(int minHops, Contact contactReceiver) {
         Check.notNull(contactReceiver, "contactReceiver");
 
-        Node[] receiverConnectedNodes = contactReceiver.getConnectedNodes();
+        Node[] receiverConnectedNodes;
+        try {
+            receiverConnectedNodes = contactReceiver.getConnectedNodes();
+        } catch (NoConnectedNodesException e) {
+            LOGGER.error("No connected nodes.", e);
+            return null;
+        }
         if (receiverConnectedNodes == null || receiverConnectedNodes.length == 0) {
             throw new IllegalArgumentException("No connected nodes for: " + contactReceiver);
         }
@@ -46,7 +58,7 @@ public class PathDeterminationService implements IGetMessagePath {
         graphMatrix = new GraphMatrix(vertices);
         graphMatrix.fillAndCalculateMatrix();
 
-        List<Node> path = null;
+        List<Node> path;
         do {
             path = findPath(contactReceiver, receiverConnectedNodes[random
                     .nextInt(receiverConnectedNodes.length)]);
@@ -55,6 +67,8 @@ public class PathDeterminationService implements IGetMessagePath {
 
         return path;
     }
+
+
 
     private List<Node> findPath(Contact contactReceiver,
             Node receiverConnectedNode) {

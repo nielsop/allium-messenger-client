@@ -1,7 +1,8 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import java.util.LinkedList;
-import java.util.List;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
+
+import java.util.*;
 
 /**
  * @author Niels Bokmans
@@ -10,19 +11,17 @@ import java.util.List;
  */
 public class Node {
     List<Edge> edges;
+    private Map<String, Edge> adjacent;
     private String id;
     private String ipAddress;
     private int port;
     private byte[] publicKey;
-    private double distanceToSource; // g
-    private double f; // f = g + h
 
     public Node(String id, String ipAddress, int port, byte[] publicKey) {
         this.id = id;
         this.ipAddress = ipAddress;
         this.port = port;
         this.publicKey = publicKey;
-        distanceToSource = Double.MAX_VALUE;
         edges = new LinkedList<>();
     }
 
@@ -42,9 +41,36 @@ public class Node {
         return id.hashCode();
     }
 
-    public void addEdge(Node destination, double distance) {
-        edges.add(new Edge(destination, distance));
-        destination.edges.add(new Edge(this, distance));
+    public void addEdge(Node destination, float distance) {
+        edges.add(new Edge(destination.getId(), distance));
+        destination.edges.add(new Edge(this.getId(), distance));
+        this.adjacent = new HashMap<>();
+    }
+
+    /**
+     * add an edge
+     * @param edge
+     */
+    public void addEdge(HanRoutingProtocol.Edge edge) {
+        adjacent.put(edge.getTargetNodeId(), new Edge(edge.getTargetNodeId(), edge.getWeight()));
+    }
+
+    /**
+     *
+     * @param destinationNodeId
+     *      Contains the Id from the edge's destination node.
+     * @return
+     *      The edge that has been found with the destination node id.
+     */
+    public Edge getEdge(String destinationNodeId) {
+        Edge edge = adjacent.get(destinationNodeId);
+        if (edge == null)
+            throw new NoSuchElementException();
+        return edge;
+    }
+
+    public Map<String, Edge> getAdjacent() {
+        return adjacent;
     }
 
     public String getIpAddress() {
@@ -63,35 +89,7 @@ public class Node {
         return id;
     }
 
-    public void calcF(Node destination) {
-        double h = findDistanceToDestination(destination);
-        f = distanceToSource + h; // f = g + h
-    }
-
-    public double getF() {
-        return f;
-    }
-
-    public double getDistanceToSource() {
-        return distanceToSource;
-    }
-
-    public void setDistanceToSource(double value) {
-        distanceToSource = value;
-    }
-
-    private double findDistanceToDestination(Node destination) {
-        for (Edge edge : edges) {
-            if (edge.getDestinationId() == destination.getId()) {
-                return edge.getDistance();
-            }
-        }
-
-        return Double.MAX_VALUE;
-    }
-
     public List<Edge> getEdges() {
         return edges;
     }
-
 }

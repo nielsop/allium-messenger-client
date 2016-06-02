@@ -2,10 +2,10 @@ package nl.han.asd.project.client.commonclient.path;
 
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import nl.han.asd.project.client.commonclient.store.NoConnectedNodesException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +16,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import nl.han.asd.project.client.commonclient.graph.Graph;
 import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,7 +45,7 @@ public class PathDeterminationServiceTest {
     }
 
     @Test
-    public void testNoPathFromConnectedNode() {
+    public void testNoPathFromConnectedNode() throws NoConnectedNodesException {
         Map<String, Node> graph = buildGraph();
         when(getVertices.getVertices()).thenReturn(graph);
 
@@ -62,12 +61,25 @@ public class PathDeterminationServiceTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetPathContactReceiverNull() {
+    public void testGetPathContactReceiverNull()
+            throws NoConnectedNodesException {
         pathDeterminationService.getPath(0, null);
     }
 
+    @Test
+    public void testNoConnectedNodes() throws NoConnectedNodesException {
+        Map<String, Node> graph = buildGraph();
+        when(getVertices.getVertices()).thenReturn(graph);
+
+        when(contactReciever.getConnectedNodes()).thenThrow(new NoConnectedNodesException());
+        List<Node> path = pathDeterminationService.getPath(0, contactReciever);
+
+        Assert.assertEquals(null, path);
+    }
+
     @Test(expected = IllegalArgumentException.class)
-    public void testReceiverHasNoConnectedNodes() {
+    public void testReceiverHasNoConnectedNodes()
+            throws NoConnectedNodesException {
         Map<String, Node> graph = buildGraph();
         when(getVertices.getVertices()).thenReturn(graph);
 

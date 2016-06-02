@@ -5,18 +5,19 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Julius on 25/04/16.
  */
 public class Graph {
-
     private Map<String, Node> graph = new HashMap<>();
+    private Map<String,Node> vertexMap = new HashMap<>();
 
     public Node getNodeVertex(String nodeID) {
         Node vertex = graph.get(nodeID);
         if (vertex == null) {
-            throw new IllegalArgumentException("Node vertex with ID " + nodeID + " does not exist in the Graph");
+            throw new NoSuchElementException();
         }
         return vertex;
     }
@@ -39,6 +40,11 @@ public class Graph {
         graph.putIfAbsent(vertex.getId(), vertex);
     }
 
+    public void addEdgesToVertex(HanRoutingProtocol.Node vertex){
+        Node node = getNodeVertex(vertex.getId());
+        vertex.getEdgeList().forEach(node::addEdge);
+    }
+
     public void removeNodeVertex(HanRoutingProtocol.Node vertex) {
         graph.remove(vertex.getId());
     }
@@ -47,5 +53,8 @@ public class Graph {
         return this.graph;
     }
 
+    public Map<String, Node> getVertexMap() {
+        return vertexMap;
+    }
 
 }

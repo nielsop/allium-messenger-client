@@ -1,24 +1,48 @@
 package nl.han.asd.project.client.commonclient.graph;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Created by Julius on 26/04/16.
  */
 public class Edge {
-    private Node destination;
+    private String destinationNodeId;
 
-    private double distance;  // h is the heuristic of destination.
+    private float weight;
 
-    public Edge(Node destination, double distance) {
-        this.destination = destination;
-        this.distance = distance;
-    }
-    // getH
-    public double getDistance() {
-        return this.distance;
+    public Edge(String destinationNodeId, float weight) {
+        this.destinationNodeId = destinationNodeId;
+        this.weight = weight;
     }
 
-    public String getDestinationId() {
-        return destination.getId();
+    public String getDestinationNodeId() {
+        return destinationNodeId;
     }
 
+    public float getWeight() {
+        return weight;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Edge))
+            return false;
+        if (obj == this)
+            return true;
+
+        Edge edgeToCompare = (Edge) obj;
+        return new EqualsBuilder().
+                        append(destinationNodeId, edgeToCompare.destinationNodeId).
+                        append(weight, edgeToCompare.weight).
+                        isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+                        append(destinationNodeId).
+                        append(weight).
+                        toHashCode();
+    }
 }

@@ -60,20 +60,7 @@ public class GraphMatrixPathTest {
         graphMatrixPathMock.findPath(null, tempEndNode);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testFindPathNoValidEndNode() {
-        Node tempStartNode = mock(Node.class);
-        Node tempEndNode = mock(Node.class);
-
-        when(tempStartNode.getId()).thenReturn("localhost:1024");
-        when(tempEndNode.getId()).thenReturn("localhost:1000");
-        when(verticesMock.containsKey(tempStartNode.getId())).thenReturn(true);
-        when(verticesMock.containsKey(tempEndNode.getId())).thenReturn(false);
-
-        graphMatrixPathMock.findPath(tempStartNode, tempEndNode);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NodeNotInGraphException.class)
     public void testFindPathStartNodeNotInGraph() {
         Node tempStartNode = mock(Node.class);
         Node tempEndNode = mock(Node.class);
@@ -87,7 +74,7 @@ public class GraphMatrixPathTest {
         graphMatrixPathMock.findPath(tempStartNode, tempEndNode);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NodeNotInGraphException.class)
     public void testFindPathEndNodeNotInGraph() {
         Node tempStartNode = mock(Node.class);
         Node tempEndNode = mock(Node.class);

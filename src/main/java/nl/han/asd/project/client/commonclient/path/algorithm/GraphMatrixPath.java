@@ -37,10 +37,10 @@ public class GraphMatrixPath implements IPathFind {
         Check.notNull(endNode, "endNode");
 
         if (!vertices.containsKey(startNode.getId())) {
-            throw new IllegalArgumentException("startNode not in graph.");
+            throw new NodeNotInGraphException("startNode not in graph.");
         }
         if (!vertices.containsKey(endNode.getId())) {
-            throw new IllegalArgumentException("endNode not in graph.");
+            throw new NodeNotInGraphException("endNode not in graph.");
         }
 
         if (startNode.equals(endNode)) {
@@ -69,8 +69,8 @@ public class GraphMatrixPath implements IPathFind {
         }
 
         for (Edge edge : currentNode.getEdges()) {
-            Node linkedNode = vertices.get(edge.getDestinationId());
-            if ((listOfNodes = buildPath((int) (cost - edge.getDistance()), linkedNode, endNode)) != null) {
+            Node linkedNode = vertices.get(edge.getDestinationNodeId());
+            if ((listOfNodes = buildPath((int) (cost - edge.getWeight()), linkedNode, endNode)) != null) {
                 listOfNodes.add(0, currentNode);
                 return listOfNodes;
             }

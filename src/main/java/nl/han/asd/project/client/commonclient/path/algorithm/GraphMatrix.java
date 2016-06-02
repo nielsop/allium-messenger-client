@@ -41,9 +41,9 @@ public class GraphMatrix extends Matrix {
             int currentNodeIndex = internalMap.get(currentNode.getId());
 
             for (Edge edge : currentNode.getEdges()) {
-                int destinationNodeIndex = internalMap.get(edge.getDestinationId());
+                int destinationNodeIndex = internalMap.get(edge.getDestinationNodeId());
 
-                short weight = (short) edge.getDistance();
+                short weight = (short) edge.getWeight();
                 super.set(currentNodeIndex, destinationNodeIndex, weight);
                 super.set(destinationNodeIndex, currentNodeIndex, weight);
             }
