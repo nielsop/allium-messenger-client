@@ -1,11 +1,8 @@
 package nl.han.asd.project.client.commonclient.graph;
 
 import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * @author Niels Bokmans
@@ -13,6 +10,7 @@ import java.util.NoSuchElementException;
  * @since 20-4-2016
  */
 public class Node {
+    private List<Edge> edges;
     private Map<String, Edge> adjacent;
     private String id;
     private String ipAddress;
@@ -24,6 +22,28 @@ public class Node {
         this.ipAddress = ipAddress;
         this.port = port;
         this.publicKey = publicKey;
+        edges = new LinkedList<>();
+    }
+
+    @Override
+    public boolean equals(Object anotherObj) {
+        if (anotherObj == null) {
+            return false;
+        }
+        if (!(anotherObj instanceof Node)) {
+            return false;
+        }
+        return ((Node) anotherObj).getId().equals(getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    public void addEdge(Node destination, float distance) {
+        edges.add(new Edge(destination.getId(), distance));
+        destination.edges.add(new Edge(this.getId(), distance));
         this.adjacent = new HashMap<>();
     }
 
@@ -67,13 +87,7 @@ public class Node {
         return id;
     }
 
-    @Override
-    public boolean equals(Object anotherObject) {
-        return !(anotherObject == null || !(anotherObject instanceof Node));
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getId()).toHashCode();
+    public List<Edge> getEdges() {
+        return edges;
     }
 }

@@ -42,6 +42,4 @@ public class Edge {
                 append(weight).
                 toHashCode();
     }
-
-
 }

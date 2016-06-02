@@ -94,7 +94,7 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
      */
     @Override
     public Map<String, Node> getVertices() {
-        return graph.getVertexMap();
+        return graph.getGraphMap();
     }
 
     /**
