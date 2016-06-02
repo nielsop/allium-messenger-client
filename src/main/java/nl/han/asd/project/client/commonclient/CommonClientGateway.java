@@ -5,7 +5,9 @@ import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.login.MisMatchingException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
+import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
@@ -39,12 +41,15 @@ public class CommonClientGateway {
     private IRegistration registration;
     private ILoginService loginService;
     private ISendMessage sendMessage;
+    private ISubscribeMessageReceiver subscribeMessageReceiver;
 
     private static CommonClientGateway commonClientGateway;
 
     @Inject
     public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
-                               ILoginService loginService, ISendMessage sendMessage) {
+                               ILoginService loginService, ISendMessage sendMessage,
+                               ISubscribeMessageReceiver subscribeMessageReceiver) {
+        this.subscribeMessageReceiver = Check.notNull(subscribeMessageReceiver, "subscribeMessageReceiver");
         this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");
@@ -182,5 +187,14 @@ public class CommonClientGateway {
             LOGGER.error(e.getMessage(), e);
             throw e;
         }
+    }
+
+    /**
+     * Subscribe to any messages received by MessageProcessingService
+     *
+     * @param messageReceiver An instance of IMessageReceiver that will be triggered on received messages
+     */
+    public void subscribeReceivedMessages(IMessageReceiver messageReceiver) {
+        subscribeMessageReceiver.subscribe(messageReceiver);
     }
 }
