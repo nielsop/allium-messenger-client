@@ -6,13 +6,14 @@ import javax.inject.Inject;
 
 import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.path.algorithm.GraphMatrix;
 import nl.han.asd.project.client.commonclient.path.algorithm.GraphMatrixPath;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.commonservices.internal.utility.Check;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
 
+/**
+ * Class to determinate paths.
+ */
 public class PathDeterminationService implements IGetMessagePath {
     private Map<Contact, Set<Node>> startingPoints = new HashMap<>();
 
@@ -21,13 +22,19 @@ public class PathDeterminationService implements IGetMessagePath {
 
     private IGetVertices getVertices;
 
-    @Inject
-    public PathDeterminationService(IGetVertices getVertices) {
+    /**
+     * Creates an instance of PathDeterminationService.
+     *
+     * @param getVertices Instance of IGetVertices; used to get the graph vertices.
+     */
+    @Inject public PathDeterminationService(IGetVertices getVertices) {
         this.getVertices = Check.notNull(getVertices, "getVertices");
     }
 
-    @Override
-    public List<Node> getPath(int minHops, Contact contactReceiver) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override public List<Node> getPath(int minHops, Contact contactReceiver) {
         Check.notNull(contactReceiver, "contactReceiver");
 
         Node[] receiverConnectedNodes = contactReceiver.getConnectedNodes();
@@ -37,22 +44,33 @@ public class PathDeterminationService implements IGetMessagePath {
 
         Map<String, Node> vertices = getVertices.getVertices();
         graphMatrix = new GraphMatrix(vertices);
+        graphMatrix.fillAndCalculateMatrix();
 
         List<Node> path = null;
         do {
-            Set<Node> usedStartingPointsForContact = startingPoints.get(contactReceiver);
-            if (usedStartingPointsForContact == null) {
-                usedStartingPointsForContact = new HashSet<>();
-            }
+            path = findPath(contactReceiver, receiverConnectedNodes[random
+                    .nextInt(receiverConnectedNodes.length)]);
 
-            for (int i = 0; path == null && i < 10; i++) {
-                Node connectedEndpoint = receiverConnectedNodes[random.nextInt(receiverConnectedNodes.length)];
-                path = getPathTo(connectedEndpoint, usedStartingPointsForContact);
-            }
+        } while (path.size() < (minHops + 2));
 
-            if (path == null) continue;
+        return path;
+    }
 
-        } while(path.size() < (minHops + 2));
+    private List<Node> findPath(Contact contactReceiver,
+            Node receiverConnectedNode) {
+        List<Node> path = null;
+        Set<Node> usedStartingPointsForContact = startingPoints.get(contactReceiver);
+        if (usedStartingPointsForContact == null) {
+            usedStartingPointsForContact = new HashSet<>();
+        }
+
+        for (int i = 0; path == null && i < 10; i++) {
+            Node connectedEndpoint = receiverConnectedNode;
+            path = getPathTo(connectedEndpoint, usedStartingPointsForContact);
+        }
+
+        if (path == null)
+            path = Collections.emptyList();
 
         return path;
     }
@@ -60,23 +78,26 @@ public class PathDeterminationService implements IGetMessagePath {
     private List<Node> getPathTo(Node endpoint, Set<Node> usedStartingPoints) {
         Map<String, Node> vertices = getVertices.getVertices();
 
-        Node startingPoint = vertices.get(random.nextInt(vertices.size()));
+        Node startingPoint = getRandomNodeFromMap(vertices);
         for (int i = 0; usedStartingPoints.contains(startingPoint) && i < 10; i++) {
-            startingPoint = vertices.get(random.nextInt(vertices.size()));
+            startingPoint = getRandomNodeFromMap(vertices);
         }
-
         usedStartingPoints.add(startingPoint);
-        return new GraphMatrixPath(vertices, graphMatrix).findPath(startingPoint, endpoint);
+
+        return new GraphMatrixPath(vertices, graphMatrix)
+                .findPath(startingPoint, endpoint);
     }
 
-    private Set<Node> getRandomNodeFromHashmap(){
-        int randomInt = random.nextInt(startingPoints.size());
-        Iterator<Map.Entry<Contact, Set<Node>>> iterator = startingPoints.entrySet().iterator() ;
-        for(int i = 0; i< startingPoints.size(); i++){
-            if(i == randomInt){
-                return iterator.next().getValue();
-            }
+    private Node getRandomNodeFromMap(Map<String, Node> map) {
+        Iterator<Map.Entry<String, Node>> iterator = map.entrySet().iterator();
+
+        int randomIndex = random.nextInt(map.size());
+        while (randomIndex > 0) {
+            iterator.next();
+            randomIndex--;
         }
+
+        return iterator.next().getValue();
     }
 
 }

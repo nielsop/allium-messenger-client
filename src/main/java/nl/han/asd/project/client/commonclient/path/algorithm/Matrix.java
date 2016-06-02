@@ -1,16 +1,34 @@
 package nl.han.asd.project.client.commonclient.path.algorithm;
 
+/**
+ * Provides functionality for
+ */
 public class Matrix {
     private final int size;
     private short[] data;
 
+    /**
+     * Initializes the class.
+     *
+     * @param size THe size of the matrix, must be bigger then 2 (otherwise we can't find a path).
+     */
     public Matrix(int size) {
+        if (size < 2) {
+            throw new IllegalArgumentException("Size cannot be lower than 2.");
+        }
         this.size = size;
 
         data = new short[(size * size - size) / 2];
     }
 
-    public void set(int row, int col, short value) {
+    /**
+     * Set a value inside the matrix.
+     *
+     * @param row Index of row to write to.
+     * @param col Index of column to write to.
+     * @param value Value to write to row + column index inside the matrix.
+     */
+    void set(int row, int col, short value) {
         if (row == col || value == 0) {
             return;
         }
@@ -26,11 +44,23 @@ public class Matrix {
         return col * (size - 1) - col * (col - 1) / 2 + row - col - 1;
     }
 
-    public short get(int row, int col) {
+    /**
+     * Gets a value from the matrix.
+     *
+     * @param row Index of the row to read from.
+     * @param col Index of the column to read from.
+     * @return The value at the row + column index inside the matrix.
+     */
+    short get(int row, int col) {
         return data[index(row, col)];
     }
 
-    public void calculate(int steps) {
+    /**
+     * Calculates the new matrix.
+     *
+     * @param steps Amount of times the matrix should calculate.
+     */
+    void calculate(int steps) {
         short[] alternate = new short[data.length];
 
         for (int step = 0; step < steps; step++) {
@@ -53,55 +83,38 @@ public class Matrix {
                 current[actualIndex] = previous[actualIndex];
 
                 for (int rowColNr = 0; rowColNr < size; rowColNr++) {
-                    if (rowColNr == rowNr || rowColNr == colNr) {
-                        continue;
-                    }
-
-                    if (previous[index(rowNr, rowColNr)] == 0) {
-                        continue;
-                    }
-
-                    if (previous[index(colNr, rowColNr)] == 0) {
-                        continue;
-                    }
-
-                    short cost = (short) (previous[index(rowNr, rowColNr)] + previous[index(colNr, rowColNr)]);
-                    if (cost < previous[actualIndex] || previous[actualIndex] == 0) {
-                        current[actualIndex] = cost;
-                    }
+                    calculateNewStep(previous, current, rowNr, colNr,
+                            actualIndex, rowColNr);
                 }
             }
         }
     }
 
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
+    private void calculateNewStep(short[] previous, short[] current, int rowNr,
+            int colNr, int actualIndex, int rowColNr) {
+        if (checkCollisionsAndPreviousValues(previous, rowNr, colNr,
+                rowColNr))
+            return;
 
-        for (int colNr = 0; colNr < size; colNr++) {
-            stringBuilder.append("\t" + colNr);
+        short cost = (short) (previous[index(rowNr, rowColNr)] + previous[index(colNr, rowColNr)]);
+        if (cost < previous[actualIndex] || previous[actualIndex] == 0) {
+            current[actualIndex] = cost;
+        }
+    }
+
+    private boolean checkCollisionsAndPreviousValues(short[] previous,
+            int rowNr, int colNr, int rowColNr) {
+        if (rowColNr == rowNr || rowColNr == colNr) {
+            return true;
         }
 
-        stringBuilder.append("\n");
-
-        for (int rowNr = 0; rowNr < size; rowNr++) {
-            stringBuilder.append(rowNr + "\t");
-
-            for (int colNr = 0; colNr < size; colNr++) {
-                if (colNr <= rowNr) {
-                    stringBuilder.append("-\t");
-                } else {
-                    if (get(rowNr, colNr) == Short.MAX_VALUE) {
-                        stringBuilder.append("X\t");
-                    } else {
-                        stringBuilder.append(get(rowNr, colNr) + "\t");
-                    }
-                }
-            }
-
-            stringBuilder.append("\n");
+        if (previous[index(rowNr, rowColNr)] == 0) {
+            return true;
         }
 
-        return stringBuilder.toString();
+        if (previous[index(colNr, rowColNr)] == 0) {
+            return true;
+        }
+        return false;
     }
 }

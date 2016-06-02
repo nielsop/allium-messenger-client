@@ -26,17 +26,18 @@ public class GraphMatrixPathTest {
     private Map<String, Node> verticesMock;
 
     @InjectMocks
-    private GraphMatrixPath dijkstraMock;
+    private GraphMatrixPath graphMatrixPathMock;
 
     private Map<String, Node> vertices;
     private GraphMatrix graphMatrix;
-    private GraphMatrixPath dijkstra;
+    private GraphMatrixPath graphMatrixPath;
 
     @Before
     public void setUp() {
         vertices = buildGraph();
         graphMatrix = new GraphMatrix(vertices);
-        dijkstra = new GraphMatrixPath(vertices, graphMatrix);
+        graphMatrix.fillAndCalculateMatrix();
+        graphMatrixPath = new GraphMatrixPath(vertices, graphMatrix);
     }
 
     @Test
@@ -56,17 +57,20 @@ public class GraphMatrixPathTest {
         when(tempEndNode.getId()).thenReturn("localhost:1024");
         when(verticesMock.containsKey(tempEndNode.getId())).thenReturn(true);
 
-        dijkstra.findPath(null, tempEndNode);
+        graphMatrixPathMock.findPath(null, tempEndNode);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testFindPathNullEndNode() {
+    public void testFindPathNoValidEndNode() {
         Node tempStartNode = mock(Node.class);
+        Node tempEndNode = mock(Node.class);
 
         when(tempStartNode.getId()).thenReturn("localhost:1024");
+        when(tempEndNode.getId()).thenReturn("localhost:1000");
         when(verticesMock.containsKey(tempStartNode.getId())).thenReturn(true);
+        when(verticesMock.containsKey(tempEndNode.getId())).thenReturn(false);
 
-        dijkstra.findPath(tempStartNode, null);
+        graphMatrixPathMock.findPath(tempStartNode, tempEndNode);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -80,7 +84,7 @@ public class GraphMatrixPathTest {
         when(tempStartNode.getId()).thenReturn("localhost:1025");
         when(verticesMock.containsKey(tempStartNode.getId())).thenReturn(false);
 
-        dijkstra.findPath(tempStartNode, tempEndNode);
+        graphMatrixPathMock.findPath(tempStartNode, tempEndNode);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -94,7 +98,18 @@ public class GraphMatrixPathTest {
         when(tempStartNode.getId()).thenReturn("localhost:1025");
         when(verticesMock.containsKey(tempStartNode.getId())).thenReturn(true);
 
-        dijkstra.findPath(tempStartNode, tempEndNode);
+        graphMatrixPathMock.findPath(tempStartNode, tempEndNode);
+    }
+
+    @Test
+    public void testEndAndSameNodeAreEqual() {
+        Node tempNode = mock(Node.class);
+
+        when(tempNode.getId()).thenReturn("localhost:1025");
+        when(verticesMock.containsKey(tempNode.getId())).thenReturn(true);
+
+        List<Node> result = graphMatrixPathMock.findPath(tempNode, tempNode);
+        Assert.assertArrayEquals(new Node[] { tempNode, tempNode }, result.toArray());
     }
 
     @Test
@@ -133,9 +148,9 @@ public class GraphMatrixPathTest {
         Node startNode = vertices.get(startNodeId);
         Node endNode = vertices.get(endNodeId);
 
-        List<Node> path = dijkstra.findPath(startNode, endNode);
+        List<Node> path = graphMatrixPath.findPath(startNode, endNode);
 
-        boolean result = false;
+        boolean result;
         for (Node[] nodeArray : expectedPaths) {
             result = Arrays.equals(nodeArray, path.toArray());
 

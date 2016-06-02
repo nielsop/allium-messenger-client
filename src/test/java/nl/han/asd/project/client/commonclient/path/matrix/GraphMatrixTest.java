@@ -1,21 +1,48 @@
 package nl.han.asd.project.client.commonclient.path.matrix;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import nl.han.asd.project.client.commonclient.graph.Graph;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.algorithm.GraphMatrix;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.mockito.Mockito.when;
+
+@RunWith(PowerMockRunner.class)
 public class GraphMatrixTest {
+    @Mock
+    private Map<String, Node> verticesMock;
 
-    @Test
-    public void testName() throws Exception {
-        Map<String, Node> vertices = buildGraph();
+    private GraphMatrix graphMatrix;
+    private Map<String, Node> vertices = buildGraph();
 
-        GraphMatrix graphMatrix = new GraphMatrix(vertices);
-        System.out.println(graphMatrix);
+    @Before
+    public void setUp() {
+        graphMatrix = new GraphMatrix(vertices);
+        graphMatrix.fillAndCalculateMatrix();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNullConstructor() throws Exception {
+        GraphMatrix graphMatrix = new GraphMatrix(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToSmallGraph() throws Exception {
+        when(verticesMock.size()).thenReturn(1);
+        GraphMatrix graphMatrix = new GraphMatrix(verticesMock);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testFindIndexOfKeyThatDoesNotExists() {
+        graphMatrix.findIndexOfKey("Z");
     }
 
     public Map<String, Node> buildGraph() {

@@ -8,5 +8,12 @@ import nl.han.asd.project.client.commonclient.graph.Node;
  * Created by Jevgeni on 19-5-2016.
  */
 public interface IPathFind {
+    /**
+     * Finds a path between a start node and end node.
+     *
+     * @param startNode A node the path has to start from.
+     * @param endNode A node the path has to end at.
+     * @return A path if succeed, null if no path was found.
+     */
     List<Node> findPath(Node startNode, Node endNode);
 }

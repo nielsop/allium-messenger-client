@@ -11,17 +11,26 @@ import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 
 /**
- * Provides basic utilities for Dijkstra's algorithm.
+ * Provides a path using the {@link Matrix}.
  */
 public class GraphMatrixPath implements IPathFind {
     private Map<String, Node> vertices;
     private GraphMatrix graphMatrix;
 
+    /**
+     * Initializes the class.
+     *
+     * @param vertices Map that represents the graph.
+     * @param graphMatrix The Matrix that
+     */
     public GraphMatrixPath(Map<String, Node> vertices, GraphMatrix graphMatrix) {
         this.vertices = Check.notNull(vertices, "vertices");
         this.graphMatrix = graphMatrix;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Node> findPath(Node startNode, Node endNode) {
         Check.notNull(startNode, "startNode");
@@ -34,7 +43,7 @@ public class GraphMatrixPath implements IPathFind {
             throw new IllegalArgumentException("endNode not in graph.");
         }
 
-        if (startNode == endNode) {
+        if (startNode.equals(endNode)) {
             return Arrays.asList(new Node[] { startNode, endNode });
         }
 
@@ -49,9 +58,8 @@ public class GraphMatrixPath implements IPathFind {
     }
 
     private List<Node> buildPath(int cost, Node currentNode, Node endNode) {
-        if (cost < 0) {
+        if (cost < 0)
             return null;
-        }
 
         List<Node> listOfNodes;
         if (currentNode == endNode) {
@@ -62,7 +70,6 @@ public class GraphMatrixPath implements IPathFind {
 
         for (Edge edge : currentNode.getEdges()) {
             Node linkedNode = vertices.get(edge.getDestinationId());
-
             if ((listOfNodes = buildPath((int) (cost - edge.getDistance()), linkedNode, endNode)) != null) {
                 listOfNodes.add(0, currentNode);
                 return listOfNodes;
