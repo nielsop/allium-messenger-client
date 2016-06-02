@@ -107,6 +107,8 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
         updateGraph.updateGraph();
         contactManager.updateAllContactInformation();
 
+        contact = contactStore.findContact(contact.getUsername());
+
         HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
         builder.setId(generateUniqueMessageId(contact.getUsername()));
         builder.setSender(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());

@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import nl.han.asd.project.client.commonclient.graph.GraphManagerService;
 import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
@@ -83,13 +84,15 @@ public class ContactStore implements IContactStore {
         int position = contactList.indexOf(oldContact);
         Contact newContact = new Contact(user, publicKey, online);
 
-        List<Node> connectedNodes = new ArrayList<>(connectedNodeIds.size());
+        Node[] connectedNodes = new Node[connectedNodeIds.size()];
+        int i = 0;
         for (String connectedNodeId : connectedNodeIds) {
             Node node = graphManager.getVertices().get(connectedNodeId);
-            connectedNodes.add(node);
+            connectedNodes[i] = node;
+            i++;
         }
 
-        newContact.setConnectedNodes((Node[]) connectedNodes.toArray());
+        newContact.setConnectedNodes(connectedNodes);
         contactList.set(position, newContact);
     }
 
