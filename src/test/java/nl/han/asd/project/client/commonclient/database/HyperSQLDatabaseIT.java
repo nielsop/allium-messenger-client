@@ -33,8 +33,10 @@ public class HyperSQLDatabaseIT {
     public void testResetDatabaseSuccessful() throws SQLException {
         ResultSet messages = database.select("SELECT * FROM Message");
         ResultSet contacts = database.select("SELECT * FROM Contact");
+        ResultSet scripts = database.select("SELECT * FROM Script");
         Assert.assertFalse(contacts.next());
         Assert.assertFalse(messages.next());
+        Assert.assertFalse(scripts.next());
     }
 
     @Test
@@ -44,8 +46,8 @@ public class HyperSQLDatabaseIT {
 
     @Test(expected = SQLIntegrityConstraintViolationException.class)
     public void testQueryPrimaryKeyViolation() throws SQLException {
-        database.query("INSERT INTO Contact(username) VALUES ('Test')");
-        database.query("INSERT INTO Contact(username) VALUES ('Test')");
+        database.query("INSERT INTO Contact(id, username) VALUES (1, 'Test')");
+        database.query("INSERT INTO Contact(id, username) VALUES (1, 'Test')");
     }
 
     @Test

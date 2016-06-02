@@ -78,7 +78,7 @@ public final class Validation {
      */
     private static boolean isValidPassword(String password) {
         if (password == null || password.isEmpty() || !password.matches(REGEX_ALPHANUMERIC)) {
-            throw new IllegalArgumentException("Invalid username! Username may only consist of digits, numbers, underscores and dashes.");
+            throw new IllegalArgumentException("Invalid password! Username may only consist of digits, numbers, underscores and dashes.");
         }
         if (password.length() < 8 || password.length() > 40) {
             throw new IllegalArgumentException("Invalid password! Passwordt length should be between 8 and 40 characters.");
