@@ -2,15 +2,16 @@ package nl.han.asd.project.client.commonclient.graph;
 
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class Graph {
-    private HashMap<String, Node> vertexMap = new HashMap<>();
+    private Map<String, Node> graph = new HashMap<>();
 
     public Node getNodeVertex(String nodeID) {
-        Node vertex = vertexMap.get(nodeID);
+        Node vertex = graph.get(nodeID);
         if (vertex == null) {
             throw new NoSuchElementException();
         }
@@ -18,18 +19,23 @@ public class Graph {
     }
 
     public int getVertexMapSize() {
-        return vertexMap.size();
+        return graph.size();
     }
 
     public void resetGraph() {
-        vertexMap = new HashMap<>();
+        graph = new HashMap<>();
     }
 
     public void addNodeVertex(HanRoutingProtocol.Node vertex) {
-        Node node = new Node(vertex.getId(), vertex.getIPaddress(), vertex.getPort(), vertex.getPublicKey().toByteArray());
-       if (!vertexMap.containsKey(node.getId())) {
-           vertexMap.put(node.getId(), node);
-       }
+        Node node = new Node(vertex.getId(), vertex.getIPaddress(), vertex.getPort(),
+                vertex.getPublicKey().toByteArray());
+        addNodeVertex(node);
+    }
+
+    public void addNodeVertex(Node vertex) {
+        if (!graph.containsKey(vertex.getId())) {
+            graph.put(vertex.getId(), vertex);
+        }
     }
 
     public void addEdgesToVertex(HanRoutingProtocol.Node vertex) {
@@ -40,12 +46,11 @@ public class Graph {
     }
 
     public void removeNodeVertex(HanRoutingProtocol.Node vertex) {
-        vertexMap.remove(vertex.getId());
+        graph.remove(vertex.getId());
     }
 
-
-    public Map<String, Node> getVertexMap() {
-        return vertexMap;
+    public Map<String, Node> getGraphMap() {
+        return this.graph;
     }
 
 }
