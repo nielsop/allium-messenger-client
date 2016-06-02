@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MessageStore implements IMessageStore {
-    private Map<Contact, List<Message>> messagesPerContact = new HashMap<>();
+    private HashMap<Contact, List<Message>> messagesPerContact = new HashMap<>();
     private IPersistence persistenceService;
 
     @Inject
