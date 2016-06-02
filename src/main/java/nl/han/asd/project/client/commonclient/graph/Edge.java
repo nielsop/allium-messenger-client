@@ -3,9 +3,6 @@ package nl.han.asd.project.client.commonclient.graph;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-/**
- * Created by Julius on 26/04/16.
- */
 public class Edge {
     private String destinationNodeId;
 
@@ -33,16 +30,16 @@ public class Edge {
 
         Edge edgeToCompare = (Edge) obj;
         return new EqualsBuilder().
-                        append(destinationNodeId, edgeToCompare.destinationNodeId).
-                        append(weight, edgeToCompare.weight).
-                        isEquals();
+                append(destinationNodeId, edgeToCompare.destinationNodeId).
+                append(weight, edgeToCompare.weight).
+                isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 31).
-                        append(destinationNodeId).
-                        append(weight).
-                        toHashCode();
+                append(destinationNodeId).
+                append(weight).
+                toHashCode();
     }
 }

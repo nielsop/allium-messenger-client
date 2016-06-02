@@ -1,29 +1,27 @@
 package nl.han.asd.project.client.commonclient.master;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-import java.net.Socket;
-import java.util.Properties;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
-
 import nl.han.asd.project.client.commonclient.connection.ConnectionModule;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
 
 public class MasterGatewayIT {
 
@@ -52,7 +50,7 @@ public class MasterGatewayIT {
             }
         }
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty("master-server-host", master.getHostName());
         properties.setProperty("master-server-port", Integer.toString(master.getPort(1337)));
 

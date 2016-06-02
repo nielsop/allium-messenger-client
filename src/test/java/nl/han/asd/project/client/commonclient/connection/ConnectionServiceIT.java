@@ -1,22 +1,20 @@
 package nl.han.asd.project.client.commonclient.connection;
 
-import static org.junit.Assert.assertEquals;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.protobuf.ByteString;
+import nl.han.asd.project.commonservices.encryption.EncryptionModule;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
+import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.protobuf.ByteString;
-
-import nl.han.asd.project.commonservices.encryption.EncryptionModule;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
-import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
-import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
+import static org.junit.Assert.assertEquals;
 
 public class ConnectionServiceIT {
 
@@ -33,30 +31,33 @@ public class ConnectionServiceIT {
     @Test
     public void testProtocol() throws Exception {
 
-        Thread t = new Thread(() -> {
-            ServerSocket serverSocket = null;
-            Socket socket = null;
-            try {
-                serverSocket = new ServerSocket(10002);
-                socket = serverSocket.accept();
-
-                ClientLoginResponse.Builder responseBuilder = ClientLoginResponse.newBuilder();
-                responseBuilder.setStatus(ClientLoginResponse.Status.SUCCES);
-
-                Wrapper wrapper = connectionService.wrap(responseBuilder.build(), Wrapper.Type.CLIENTLOGINRESPONSE);
-
-                wrapper.writeDelimitedTo(socket.getOutputStream());
-
-            } catch (Exception e) {
-            } finally {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ServerSocket serverSocket = null;
+                Socket socket = null;
                 try {
-                    serverSocket.close();
-                } catch (Exception e) {
-                }
+                    serverSocket = new ServerSocket(10002);
+                    socket = serverSocket.accept();
 
-                try {
-                    socket.close();
+                    ClientLoginResponse.Builder responseBuilder = ClientLoginResponse.newBuilder();
+                    responseBuilder.setStatus(ClientLoginResponse.Status.SUCCES);
+
+                    Wrapper wrapper = connectionService.wrap(responseBuilder.build(), Wrapper.Type.CLIENTLOGINRESPONSE);
+
+                    wrapper.writeDelimitedTo(socket.getOutputStream());
+
                 } catch (Exception e) {
+                } finally {
+                    try {
+                        serverSocket.close();
+                    } catch (Exception e) {
+                    }
+
+                    try {
+                        socket.close();
+                    } catch (Exception e) {
+                    }
                 }
             }
         });
@@ -77,36 +78,39 @@ public class ConnectionServiceIT {
 
     @Test
     public void testMultipleWriteReads() throws Exception {
-        Thread t = new Thread(() -> {
-            ServerSocket serverSocket = null;
-            Socket socket = null;
-            try {
-                serverSocket = new ServerSocket(10002);
-                socket = serverSocket.accept();
-
-                ClientLoginResponse.Builder responseBuilder = ClientLoginResponse.newBuilder();
-                responseBuilder.setStatus(ClientLoginResponse.Status.SUCCES);
-
-                Wrapper wrapper = connectionService.wrap(responseBuilder.build(), Wrapper.Type.CLIENTLOGINRESPONSE);
-                wrapper.writeDelimitedTo(socket.getOutputStream());
-
-                socket = serverSocket.accept();
-
-                responseBuilder = ClientLoginResponse.newBuilder();
-                responseBuilder.setStatus(ClientLoginResponse.Status.FAILED);
-
-                wrapper = connectionService.wrap(responseBuilder.build(), Wrapper.Type.CLIENTLOGINRESPONSE);
-                wrapper.writeDelimitedTo(socket.getOutputStream());
-            } catch (Exception e) {
-            } finally {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ServerSocket serverSocket = null;
+                Socket socket = null;
                 try {
-                    serverSocket.close();
-                } catch (Exception e) {
-                }
+                    serverSocket = new ServerSocket(10002);
+                    socket = serverSocket.accept();
 
-                try {
-                    socket.close();
+                    ClientLoginResponse.Builder responseBuilder = ClientLoginResponse.newBuilder();
+                    responseBuilder.setStatus(ClientLoginResponse.Status.SUCCES);
+
+                    Wrapper wrapper = connectionService.wrap(responseBuilder.build(), Wrapper.Type.CLIENTLOGINRESPONSE);
+                    wrapper.writeDelimitedTo(socket.getOutputStream());
+
+                    socket = serverSocket.accept();
+
+                    responseBuilder = ClientLoginResponse.newBuilder();
+                    responseBuilder.setStatus(ClientLoginResponse.Status.FAILED);
+
+                    wrapper = connectionService.wrap(responseBuilder.build(), Wrapper.Type.CLIENTLOGINRESPONSE);
+                    wrapper.writeDelimitedTo(socket.getOutputStream());
                 } catch (Exception e) {
+                } finally {
+                    try {
+                        serverSocket.close();
+                    } catch (Exception e) {
+                    }
+
+                    try {
+                        socket.close();
+                    } catch (Exception e) {
+                    }
                 }
             }
         });

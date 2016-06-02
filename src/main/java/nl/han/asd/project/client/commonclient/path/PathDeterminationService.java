@@ -4,7 +4,6 @@ import java.util.*;
 
 import javax.inject.Inject;
 
-import nl.han.asd.project.client.commonclient.CommonClientGateway;
 import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.algorithm.GraphMatrix;
@@ -19,14 +18,12 @@ import org.slf4j.LoggerFactory;
  * Class to determinate paths.
  */
 public class PathDeterminationService implements IGetMessagePath {
-    public static final Logger LOGGER = LoggerFactory
-            .getLogger(CommonClientGateway.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PathDeterminationService.class);
+
     private Map<Contact, Set<Node>> startingPoints = new HashMap<>();
-
     private Random random = new Random();
-    private GraphMatrix graphMatrix;
-
     private IGetVertices getVertices;
+    private GraphMatrix graphMatrix;
 
     /**
      * Creates an instance of PathDeterminationService.

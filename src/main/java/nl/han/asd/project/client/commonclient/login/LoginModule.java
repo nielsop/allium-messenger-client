@@ -9,10 +9,8 @@ import com.google.inject.AbstractModule;
  * @version 1.0
  */
 public class LoginModule extends AbstractModule {
-
     @Override
     protected void configure() {
-        bind(ILogin.class).to(LoginService.class);
+        bind(ILoginService.class).to(LoginService.class);
     }
-
 }

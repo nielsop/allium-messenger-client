@@ -1,17 +1,17 @@
 package nl.han.asd.project.client.commonclient.store;
 
+/**
+ * Created by Jevgeni on 12-5-2016.
+ */
 import java.util.List;
 
 public interface IContactStore {
-    // TODO remove test method
-    void createTestContacts();
 
     /**
      * Adds new contact into contactstore.
      *  @param username username of contact
-     *  @param publicKey publicKey.
      */
-    void addContact(String username, byte[] publicKey);
+    void addContact(String username);
 
     /**
      * Removes contact from contactStore.
@@ -21,9 +21,9 @@ public interface IContactStore {
     void removeContact(String username);
 
     /**
-     * Retrieves all contacts of current user.
+     * Get a list of all the contacts in the contactstore.
      *
-     * @return List of contacts
+     * @return a list of all the contacts
      */
     List<Contact> getAllContacts();
 
@@ -38,7 +38,7 @@ public interface IContactStore {
     /**
      * Deletes all the contacts in the contactstore memory.
      */
-    void deleteAllContacts();
+    void deleteAllContactsFromMemory();
 
     /**
      * Setter for currentUser.
@@ -48,9 +48,26 @@ public interface IContactStore {
     void setCurrentUser(CurrentUser currentUser);
 
     /**
+     * Getter for currentUser as contact.
+     *
+     * @return current user that is logged in as contact
+     */
+    Contact getCurrentUserAsContact();
+
+    /**
      * Getter for currentUser.
      *
      * @return current user that is logged in
      */
     CurrentUser getCurrentUser();
+
+    /**
+     * Update the information of a single Contact based on a getClientGroup response
+     *
+     * @param user Username of the user
+     * @param publicKey Public key
+     * @param online Current online status
+     * @param connectNodes List of node ID's the client is connected to
+     */
+    void updateUserInformation(String user, byte[] publicKey, boolean online, List<String> connectNodes);
 }

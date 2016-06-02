@@ -1,94 +1,140 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 public class ContactStoreTest {
-    private static final String usernameContact1 = "testContact1";
-    private static final byte[] publicKeyContact1 = "asdfTest1".getBytes();
-    private static final String usernameContact2 = "testContact2";
-    private static final byte[] publicKeyContact2 = "asdfTest2".getBytes();
-    private static final String usernameContact3 = "testContact3";
-    private static final byte[] publicKeyContact3 = "asdfTest3".getBytes();
-    private static final String usernameContact4 = "testContact4";
-    private static final byte[] publicKeyContact4 = "asdfTest4".getBytes();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContactStoreTest.class);
+
     private IPersistence persistence;
+    private IGetVertices getVertices;
     private ContactStore contactStore;
-    private List<Contact> singleContactArrayList;
-    private List<Contact> multipleContactArrayList;
+
+    private  static final String TEST_CONTACT1 = "testContact1";
+    private  static final String TEST_CONTACT2 = "testContact2";
+    private  static final String TEST_CONTACT3 = "testContact3";
+    private  static final String TEST_CONTACT4 = "testContact4";
+    private List<Contact> mockedSingleContactList; // Groovy must be installed for import aliasing!
+    private List<Contact> mockedMultipleContactList; // Groovy must be installed for import aliasing!
+    private List<Contact> mockDeletedContactList; // Groovy must be installed for import aliasing!
 
     @Before
     public void initialize() {
         persistence = Mockito.mock(IPersistence.class);
-        contactStore = new ContactStore(persistence);
-        singleContactArrayList = new ArrayList<>();
-        multipleContactArrayList = new ArrayList<>();
+        getVertices = Mockito.mock(IGetVertices.class);
+        contactStore = new ContactStore(persistence, getVertices);
 
-        initializeTestContacts();
+        mockedSingleContactList = new ArrayList<>();
+        mockedMultipleContactList = new ArrayList<>();
+        mockDeletedContactList = new ArrayList<>();
+        initializeMockContacts();
+    }
+
+    private void initializeMockContacts() {
+        mockedSingleContactList.add(new Contact(TEST_CONTACT1));
+
+        mockedMultipleContactList.add(new Contact(TEST_CONTACT1));
+        mockedMultipleContactList.add(new Contact(TEST_CONTACT2));
+        mockedMultipleContactList.add(new Contact(TEST_CONTACT3));
+        mockedMultipleContactList.add(new Contact(TEST_CONTACT4));
+
+        mockDeletedContactList.add(new Contact(TEST_CONTACT1));
+        mockDeletedContactList.add(new Contact(TEST_CONTACT3));
+        mockDeletedContactList.add(new Contact(TEST_CONTACT4));
     }
 
     private void addTestContacts() {
-        contactStore.addContact(usernameContact1, publicKeyContact1);
-        contactStore.addContact(usernameContact2, publicKeyContact2);
-        contactStore.addContact(usernameContact3, publicKeyContact3);
-        contactStore.addContact(usernameContact4, publicKeyContact4);
-    }
+        // Mock
+        when(persistence.addContact(TEST_CONTACT1)).thenReturn(true);
+        when(persistence.addContact(TEST_CONTACT2)).thenReturn(true);
+        when(persistence.addContact(TEST_CONTACT3)).thenReturn(true);
+        when(persistence.addContact(TEST_CONTACT4)).thenReturn(true);
 
-    private void initializeTestContacts() {
-        singleContactArrayList.add(new Contact(usernameContact1, publicKeyContact1));
-
-        multipleContactArrayList.add(new Contact(usernameContact1, publicKeyContact1));
-        multipleContactArrayList.add(new Contact(usernameContact2, publicKeyContact2));
-        multipleContactArrayList.add(new Contact(usernameContact3, publicKeyContact3));
-        multipleContactArrayList.add(new Contact(usernameContact4, publicKeyContact4));
-    }
-
-    @Test
-    public void testAddSingleContactToList() {
-        contactStore.addContact(usernameContact1, publicKeyContact1);
-        Contact tempContact = contactStore.getAllContacts().get(0);
-        assertEquals(usernameContact1, tempContact.getUsername());
-        assertEquals(publicKeyContact1, tempContact.getPublicKey());
+        // Test
+        contactStore.addContact(TEST_CONTACT1);
+        contactStore.addContact(TEST_CONTACT2);
+        contactStore.addContact(TEST_CONTACT3);
+        contactStore.addContact(TEST_CONTACT4);
     }
 
     @Test
-    public void testAddMultipleContactsToList() {
+    public void testAddSingleContactToList() throws SQLException {
+        // Mock
+        when(persistence.addContact(TEST_CONTACT1)).thenReturn(true);
+        when(persistence.getContacts()).thenReturn(mockedSingleContactList);
+
+        // Test
+        contactStore.addContact(TEST_CONTACT1);
+        nl.han.asd.project.client.commonclient.store.Contact tempContact = contactStore.getAllContacts().get(0);
+
+        // Assert
+        assertEquals(TEST_CONTACT1, tempContact.getUsername());
+    }
+
+    @Test
+    public void testAddMultipleContactsToList() throws SQLException {
+        // Mock
+        when(persistence.getContacts()).thenReturn(mockedMultipleContactList);
+
+        // Test
         addTestContacts();
+
+        // Assert
         assertEquals(4, contactStore.getAllContacts().size());
     }
 
     @Test
-    public void testFindContactInListWithUsername() {
+    public void testFindContactInListWithUsername() throws SQLException {
+        // Mock
+        when(persistence.getContacts()).thenReturn(mockedMultipleContactList);
+
+        // Test
         addTestContacts();
-        Contact selectedContact = contactStore.findContact(usernameContact3);
-        assertEquals(usernameContact3, selectedContact.getUsername());
-        assertEquals(publicKeyContact3, selectedContact.getPublicKey());
+        nl.han.asd.project.client.commonclient.store.Contact selectedContact = contactStore.findContact(TEST_CONTACT3);
+
+        // Assert
+        assertEquals(TEST_CONTACT3, selectedContact.getUsername());
     }
 
     @Test
-    public void testFindContactGivesNullWhenNotExistsInList() {
-        contactStore.addContact(usernameContact1, publicKeyContact1);
-        contactStore.addContact(usernameContact2, publicKeyContact2);
-        contactStore.addContact(usernameContact3, publicKeyContact3);
-        contactStore.addContact(usernameContact4, publicKeyContact4);
-        Assert.assertNull(contactStore.findContact("testContact5"));
+    public void testFindContactGivesNullWhenNotExistsInList() throws SQLException {
+        // Mock
+        when(persistence.getContacts()).thenReturn(mockedMultipleContactList);
+
+        // Test
+        addTestContacts();
+        nl.han.asd.project.client.commonclient.store.Contact selectedContact = contactStore.findContact("testContact5");
+
+        // Assert
+        assertEquals(null, selectedContact);
     }
 
     @Test
-    public void testDeleteSingleContactFromList() {
+    public void testDeleteSingleContactFromList() throws SQLException {
+        // Mock
+        when(persistence.deleteContact(TEST_CONTACT2)).thenReturn(true);
+        when(persistence.getContacts()).thenReturn(mockDeletedContactList);
+
+        // Test
         addTestContacts();
-        Assert.assertNotNull(contactStore.findContact(usernameContact2));
-        contactStore.removeContact(usernameContact2);
-        Assert.assertNull(contactStore.findContact(usernameContact2));
+
+        // Assert
+        assertNotNull(contactStore.findContact(TEST_CONTACT2));
+        assertEquals(4, contactStore.getAllContacts().size());
+        contactStore.removeContact(TEST_CONTACT2);
+        assertNull(contactStore.findContact(TEST_CONTACT2));
         assertEquals(3, contactStore.getAllContacts().size());
     }
 
@@ -96,7 +142,7 @@ public class ContactStoreTest {
     public void testClearAllContactsFromList() {
         addTestContacts();
         assertTrue(contactStore.getAllContacts().size() > 0);
-        contactStore.deleteAllContacts();
-        assertEquals(0, contactStore.getAllContacts().size());
+        contactStore.deleteAllContactsFromMemory();
+        assertTrue(contactStore.getAllContacts().size() == 0);
     }
 }

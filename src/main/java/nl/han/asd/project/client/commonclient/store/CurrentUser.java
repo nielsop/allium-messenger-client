@@ -14,7 +14,7 @@ public class CurrentUser {
 
     /**
      * Constructor of CurrentUser.
-
+     *
      * @param username username of user
      * @param publicKey publicKey of user
      * @param secretHash hash of user used for identification to master server
@@ -36,18 +36,9 @@ public class CurrentUser {
     }
 
     /**
-     * Sets the received secretHash from the response after successful login.
+     * Retrieves the current user as a contact.
      *
-     * @param newSecretHash the newly received secretHash
-     */
-    public void setSecretHash(String newSecretHash) {
-        secretHash = newSecretHash;
-    }
-
-    /**
-     * Retrieves the current user as a contactStore.
-     *
-     * @return current user that is logged in
+     * @return current user that is logged in as contact
      */
     public Contact getCurrentUserAsContact() {
         return contact;

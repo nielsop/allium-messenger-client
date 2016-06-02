@@ -1,89 +1,133 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import nl.han.asd.project.client.commonclient.database.IDatabase;
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-
-import nl.han.asd.project.client.commonclient.database.IDatabase;
-import nl.han.asd.project.client.commonclient.database.model.Contact;
-import nl.han.asd.project.client.commonclient.database.model.Message;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Provides a way to communicate with the database.
  */
 public class PersistenceService implements IPersistence {
-    public IDatabase database;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersistenceService.class);
+    private IDatabase database;
 
     @Inject
     public PersistenceService(IDatabase database) {
-        this.database = database;
+        this.database = Check.notNull(database, "database");
     }
 
     @Override
-    public boolean deleteMessage(int id) throws SQLException {
-        return getDatabase().query(String.format("DELETE FROM Message WHERE id = %d", id));
+    public boolean deleteMessage(int id) {
+        try {
+            return getDatabase().query(String.format("DELETE FROM Message WHERE id = %d", id));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
     }
 
     @Override
-    public boolean saveMessage(Message message) throws SQLException {
-        final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getTimestamp());
-        return getDatabase()
-                .query(String.format("INSERT INTO Message (sender, message, timestamp) VALUES ('%s', '%s', '%s')",
-                        message.getSender().getUsername(), message.getText(), messageTimestampInDatabaseFormat));
+    public boolean saveMessage(Message message) {
+        final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getMessageTimestamp());
+        try {
+            return getDatabase().query(String
+                    .format("INSERT INTO Message (sender, receiver, timestamp, message) VALUES ('%s', '%s', '%s', '%s')", message.getSender().getUsername(),
+                            message.getReceiver().getUsername(), messageTimestampInDatabaseFormat, message.getText()));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
     }
 
     @Override
-    public List<Message> getAllMessages() throws SQLException {
+    public List<Message> getAllMessages() {
         final List<Message> messageList = new ArrayList<>();
-        ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message");
-        while (selectMessagesResult.next()) {
-            messageList.add(Message.fromDatabase(selectMessagesResult));
+        try {
+            ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message");
+            while (selectMessagesResult.next()) {
+                messageList.add(Message.fromDatabase(selectMessagesResult));
+            }
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
         }
         return messageList;
     }
 
     @Override
-    public Map<Contact, List<Message>> getAllMessagesPerContact() throws SQLException {
+    public Map<Contact, List<Message>> getAllMessagesPerContact() {
         final Map<Contact, List<Message>> contactMessagesHashMap = new HashMap<>();
-        ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message");
-        while (selectMessagesResult.next()) {
-            final Message message = Message.fromDatabase(selectMessagesResult);
-            if (!contactMessagesHashMap.containsKey(message.getSender())) {
-                contactMessagesHashMap.put(message.getSender(), new ArrayList<>());
+        try {
+            ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message");
+            if (selectMessagesResult == null) {
+                return Collections.emptyMap();
             }
-            contactMessagesHashMap.get(message.getSender()).add(message);
+            while (selectMessagesResult.next()) {
+                final Message message = Message.fromDatabase(selectMessagesResult);
+                if (!contactMessagesHashMap.containsKey(message.getSender())) {
+                    contactMessagesHashMap.put(message.getSender(), new ArrayList<Message>());
+                }
+                contactMessagesHashMap.get(message.getSender()).add(message);
+            }
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
         }
         return contactMessagesHashMap;
     }
 
     @Override
-    public boolean addContact(String username) throws SQLException {
-        return getDatabase().query(String.format("INSERT INTO Contact (username) VALUES ('%s')", username));
-    }
-
-    @Override
-    public boolean deleteContact(String username) throws SQLException {
-        return getDatabase().query(String.format("DELETE FROM Contact WHERE username = '%s'", username));
-    }
-
-    @Override
-    public boolean deleteAllContacts() throws SQLException {
-        return getDatabase().query(String.format("DELETE FROM Contact"));
-    }
-
-    @Override
-    public List<Contact> getContacts() throws SQLException {
-        final List<Contact> contactList = new ArrayList<>();
-        ResultSet selectContactsResult = getDatabase().select("SELECT * FROM Contact");
-        while (selectContactsResult.next()) {
-            contactList.add(Contact.fromDatabase(selectContactsResult.getObject(2)));
+    public boolean addContact(String username) {
+        try {
+            return getDatabase().query(String.format("INSERT INTO Contact (username) VALUES ('%s')", username));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
         }
-        selectContactsResult.close();
+        return false;
+    }
+
+    @Override
+    public boolean deleteContact(String username) {
+        try {
+            return getDatabase().query(String.format("DELETE FROM Contact WHERE username = '%s'", username));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteAllContacts() {
+        try {
+            return getDatabase().query(String.format("DELETE FROM Contact"));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    @Override
+    public List<Contact> getContacts() {
+        final List<Contact> contactList = new ArrayList<>();
+        try {
+            ResultSet selectContactsResult = getDatabase().select("SELECT * FROM Contact");
+
+            if (selectContactsResult == null)
+                return new ArrayList<>();
+
+            while (selectContactsResult.next()) {
+                contactList.add(Contact.fromDatabase((String) selectContactsResult.getObject(2)));
+            }
+            selectContactsResult.close();
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
         return contactList;
     }
 

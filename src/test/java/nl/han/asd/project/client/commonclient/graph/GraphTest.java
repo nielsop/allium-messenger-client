@@ -2,11 +2,11 @@ package nl.han.asd.project.client.commonclient.graph;
 
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Base64;
 import java.util.NoSuchElementException;
 
 /**
@@ -15,22 +15,24 @@ import java.util.NoSuchElementException;
  * @since 29/04/16
  */
 public class GraphTest {
-    private Graph graph;
-    private HanRoutingProtocol.Node node;
-    private HanRoutingProtocol.Edge edge;
-    private Edge edgeNode1;
     private final String EDGEDESTINATIONNODE = "NODE_2";
     private final int EDGEDESTINATIONNODEWEIGHT = 12;
     private final int NODE1_PORT = 1337;
     private final String NODE1_IP = "192.168.2.1";
     private final String NODE1_ID = "NODE_1";
-    private final byte[] NODE1_PUBLICKEY = Base64.getEncoder().encode(("12345".getBytes()));
+
+    private final byte[] NODE1_PUBLICKEY = Base64.encodeBase64(("12345".getBytes()));
+
+    private Graph graph;
+    private HanRoutingProtocol.Node node;
+    private HanRoutingProtocol.Edge edge;
+    private Edge edgeNode1;
 
     @Before
     public void setUp() throws Exception {
         graph = new Graph();
         edge = HanRoutingProtocol.Edge.newBuilder().setTargetNodeId(EDGEDESTINATIONNODE).setWeight(EDGEDESTINATIONNODEWEIGHT).build();
-        edgeNode1 = new Edge(EDGEDESTINATIONNODE,EDGEDESTINATIONNODEWEIGHT);
+        edgeNode1 = new Edge(EDGEDESTINATIONNODE, EDGEDESTINATIONNODEWEIGHT);
         node = HanRoutingProtocol.Node.newBuilder().setPort(NODE1_PORT).setIPaddress(NODE1_IP).setId(NODE1_ID).setPublicKey(ByteString.copyFrom(NODE1_PUBLICKEY)).addEdge(edge).build();
     }
 
@@ -59,13 +61,13 @@ public class GraphTest {
     }
 
     @Test
-    public void testAddEdgesToVertex() throws Exception{
+    public void testAddEdgesToVertex() throws Exception {
         graph.addNodeVertex(node);
         graph.addEdgesToVertex(node);
 
         Node nodeWithEdges = graph.getNodeVertex(node.getId());
         Assert.assertEquals(nodeWithEdges.getAdjacent().size(), 1);
-        Assert.assertEquals(nodeWithEdges.getAdjacent().get(EDGEDESTINATIONNODE).getDestinationNodeId(),EDGEDESTINATIONNODE);
+        Assert.assertEquals(nodeWithEdges.getAdjacent().get(EDGEDESTINATIONNODE).getDestinationNodeId(), EDGEDESTINATIONNODE);
     }
 
     @Test
@@ -85,11 +87,11 @@ public class GraphTest {
         graph.addEdgesToVertex(node);
 
         Node nodeVertex = graph.getNodeVertex("NODE_1");
-        Assert.assertEquals(nodeVertex.getId(),NODE1_ID);
-        Assert.assertEquals(nodeVertex.getIpAddress(),NODE1_IP);
-        Assert.assertEquals(nodeVertex.getPort(),NODE1_PORT);
-        Assert.assertArrayEquals(nodeVertex.getPublicKey(),NODE1_PUBLICKEY);
-        Assert.assertEquals(nodeVertex.getEdge(EDGEDESTINATIONNODE),edgeNode1);
+        Assert.assertEquals(nodeVertex.getId(), NODE1_ID);
+        Assert.assertEquals(nodeVertex.getIpAddress(), NODE1_IP);
+        Assert.assertEquals(nodeVertex.getPort(), NODE1_PORT);
+        Assert.assertArrayEquals(nodeVertex.getPublicKey(), NODE1_PUBLICKEY);
+        Assert.assertEquals(nodeVertex.getEdge(EDGEDESTINATIONNODE), edgeNode1);
     }
 
     @Test(expected = NoSuchElementException.class)

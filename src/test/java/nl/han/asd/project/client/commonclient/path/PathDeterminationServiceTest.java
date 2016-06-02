@@ -25,7 +25,7 @@ public class PathDeterminationServiceTest {
     IGetVertices getVertices;
 
     @Mock
-    Contact contactReciever;
+    Contact contactReceiver;
 
     @InjectMocks
     PathDeterminationService pathDeterminationService;
@@ -35,12 +35,11 @@ public class PathDeterminationServiceTest {
         Map<String, Node> graph = buildGraph();
         when(getVertices.getVertices()).thenReturn(graph);
 
-        when(contactReciever.getConnectedNodes()).thenReturn(new Node[] { graph.get("C") });
+        when(contactReceiver.getConnectedNodes()).thenReturn(new Node[] { graph.get("C") });
 
-        List<Node> path = pathDeterminationService.getPath(0, contactReciever);
-        List<Node> path2 = pathDeterminationService.getPath(0, contactReciever);
+        List<Node> path = pathDeterminationService.getPath(0, contactReceiver);
+        List<Node> path2 = pathDeterminationService.getPath(0, contactReceiver);
 
-        path.stream().forEach(p -> System.out.println(p.getId()));
         Assert.assertNotEquals(path.get(0), path2.get(0));
     }
 
@@ -49,8 +48,8 @@ public class PathDeterminationServiceTest {
         Map<String, Node> graph = buildGraph();
         when(getVertices.getVertices()).thenReturn(graph);
 
-        when(contactReciever.getConnectedNodes()).thenReturn(new Node[] { graph.get("H") });
-        List<Node> path = pathDeterminationService.getPath(0, contactReciever);
+        when(contactReceiver.getConnectedNodes()).thenReturn(new Node[] { graph.get("H") });
+        List<Node> path = pathDeterminationService.getPath(0, contactReceiver);
 
         Assert.assertArrayEquals(new Node[] { graph.get("H"), graph.get("H") }, path.toArray());
     }
@@ -71,8 +70,8 @@ public class PathDeterminationServiceTest {
         Map<String, Node> graph = buildGraph();
         when(getVertices.getVertices()).thenReturn(graph);
 
-        when(contactReciever.getConnectedNodes()).thenThrow(new NoConnectedNodesException());
-        List<Node> path = pathDeterminationService.getPath(0, contactReciever);
+        when(contactReceiver.getConnectedNodes()).thenThrow(new NoConnectedNodesException(""));
+        List<Node> path = pathDeterminationService.getPath(0, contactReceiver);
 
         Assert.assertEquals(null, path);
     }
@@ -83,9 +82,9 @@ public class PathDeterminationServiceTest {
         Map<String, Node> graph = buildGraph();
         when(getVertices.getVertices()).thenReturn(graph);
 
-        when(contactReciever.getConnectedNodes()).thenReturn(new Node[] { });
+        when(contactReceiver.getConnectedNodes()).thenReturn(new Node[] { });
 
-        pathDeterminationService.getPath(0, contactReciever);
+        pathDeterminationService.getPath(0, contactReceiver);
 
         Assert.fail("Test failed. The service should've throwed an exception.");
     }

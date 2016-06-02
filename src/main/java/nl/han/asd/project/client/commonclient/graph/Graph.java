@@ -7,12 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-/**
- * Created by Julius on 25/04/16.
- */
 public class Graph {
     private Map<String, Node> graph = new HashMap<>();
-    private Map<String,Node> vertexMap = new HashMap<>();
 
     public Node getNodeVertex(String nodeID) {
         Node vertex = graph.get(nodeID);
@@ -40,9 +36,11 @@ public class Graph {
         graph.putIfAbsent(vertex.getId(), vertex);
     }
 
-    public void addEdgesToVertex(HanRoutingProtocol.Node vertex){
+    public void addEdgesToVertex(HanRoutingProtocol.Node vertex) {
         Node node = getNodeVertex(vertex.getId());
-        vertex.getEdgeList().forEach(node::addEdge);
+        for (final HanRoutingProtocol.Edge edge : vertex.getEdgeList()) {
+            node.addEdge(edge);
+        }
     }
 
     public void removeNodeVertex(HanRoutingProtocol.Node vertex) {
@@ -51,10 +49,6 @@ public class Graph {
 
     public Map<String, Node> getGraphMap() {
         return this.graph;
-    }
-
-    public Map<String, Node> getVertexMap() {
-        return vertexMap;
     }
 
 }

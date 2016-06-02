@@ -1,12 +1,11 @@
 package nl.han.asd.project.client.commonclient.connection;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper;
 import nl.han.asd.project.protocol.HanRoutingProtocol.Wrapper.Type;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ParserTest {
     @Test

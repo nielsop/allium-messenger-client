@@ -1,33 +1,42 @@
 package nl.han.asd.project.client.commonclient.graph;
 
+import com.google.inject.Inject;
+import com.google.protobuf.ByteString;
+import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.connection.Parser;
+import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.Map;
 
-import com.google.inject.Inject;
-import com.google.protobuf.ByteString;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdate;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
 
-import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
-import nl.han.asd.project.client.commonclient.connection.Parser;
-import nl.han.asd.project.client.commonclient.master.IGetGraphUpdates;
-import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdate;
-import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateRequest;
-import nl.han.asd.project.protocol.HanRoutingProtocol.GraphUpdateResponse;
+public class GraphManagerService implements IGetVertices, IUpdateGraph {
 
-public class GraphManagerService implements IGetVertices {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphManagerService.class);
+    public static final int PERIODIC_UPDATE = 600000;
 
-    private int currentGraphVersion;
+    private int currentGraphVersion = 0;
     private Graph graph;
-    private IGetGraphUpdates gateway;
+    private IGetUpdatedGraph getUpdatedGraph;
+
+    private long lastGraphUpdate = 0;
+    private static final long MIN_TIMEOUT = 30000;
+    private volatile boolean isRunning = true;
 
     @Inject
-    public GraphManagerService(IGetGraphUpdates gateway) {
+    public GraphManagerService(IGetUpdatedGraph gateway) {
         graph = new Graph();
-        this.gateway = gateway;
-        currentGraphVersion = 0;
+        this.getUpdatedGraph = Check.notNull(gateway, "getUpdatedGraph");
+        start();
     }
 
     /**
-     *
      * @return the current graph version
      */
     public int getCurrentGraphVersion() {
@@ -48,16 +57,13 @@ public class GraphManagerService implements IGetVertices {
      * @throws MessageNotSentException
      */
     public void processGraphUpdates() throws IOException, MessageNotSentException {
-        GraphUpdateRequest request = GraphUpdateRequest.newBuilder().setCurrentVersion(currentGraphVersion).build();
+        GraphUpdateResponse response = getUpdatedGraph.getUpdatedGraph(GraphUpdateRequest.newBuilder().setCurrentVersion(currentGraphVersion).build());
 
-        GraphUpdateResponse response = gateway.getUpdatedGraph(request);
-
-        GraphUpdate lastUpdate = Parser.parseFrom(
-                response.getGraphUpdates(response.getGraphUpdatesCount() - 1).toByteArray(), GraphUpdate.class);
-
-        if (lastUpdate.getNewVersion() <= currentGraphVersion) {
+        if (response.getGraphUpdatesCount() == 0) {
             return;
         }
+
+        GraphUpdate lastUpdate = Parser.parseFrom(response.getGraphUpdates(response.getGraphUpdatesCount() - 1).toByteArray(), GraphUpdate.class);
 
         if (lastUpdate.getIsFullGraph()) {
             graph.resetGraph();
@@ -65,22 +71,18 @@ public class GraphManagerService implements IGetVertices {
 
         for (ByteString updateByteString : response.getGraphUpdatesList()) {
             GraphUpdate update = Parser.parseFrom(updateByteString.toByteArray(), GraphUpdate.class);
-
             for (nl.han.asd.project.protocol.HanRoutingProtocol.Node addedNode : update.getAddedNodesList()) {
                 graph.addNodeVertex(addedNode);
                 graph.addEdgesToVertex(addedNode);
             }
-
             for (nl.han.asd.project.protocol.HanRoutingProtocol.Node deletedNode : update.getDeletedNodesList()) {
                 graph.removeNodeVertex(deletedNode);
             }
         }
-
         currentGraphVersion = lastUpdate.getNewVersion();
     }
 
     /**
-     *
      * @return the graph
      */
     public Graph getGraph() {
@@ -88,11 +90,50 @@ public class GraphManagerService implements IGetVertices {
     }
 
     /**
-     *
      * @return the vertices from the graph
      */
     @Override
     public Map<String, Node> getVertices() {
-        return graph.getVertexMap();
+        return graph.getGraphMap();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateGraph() {
+        if (System.currentTimeMillis() - lastGraphUpdate > MIN_TIMEOUT) {
+            try {
+                processGraphUpdates();
+                lastGraphUpdate = System.currentTimeMillis();
+            } catch (IOException | MessageNotSentException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    private void start() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (isRunning) {
+                    try {
+                        Thread.sleep(PERIODIC_UPDATE);
+                    } catch (InterruptedException e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                    updateGraph();
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    /**
+     * Stop updating the graph periodically
+     */
+    public void stop() {
+        isRunning = false;
     }
 }

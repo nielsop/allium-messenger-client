@@ -7,8 +7,8 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
-        <project.source.version>1.8</project.source.version>
-        <project.target.version>1.8</project.target.version>
+        <project.source.version>1.7</project.source.version>
+        <project.target.version>1.7</project.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- plugins -->
@@ -215,7 +215,7 @@
             <version>3.1</version>
         </dependency>
         <dependency>
-        <groupId>org.hsqldb</groupId>
+            <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>2.3.3</version>
         </dependency>
