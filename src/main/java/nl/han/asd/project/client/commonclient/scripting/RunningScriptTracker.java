@@ -23,6 +23,9 @@ public class RunningScriptTracker implements IRunningScriptTracker {
         this.scriptInteraction = scriptInteraction;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean startScript(String scriptName, String scriptContent) {
         try {
@@ -39,6 +42,9 @@ public class RunningScriptTracker implements IRunningScriptTracker {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void stopScript(String scriptName) {
         Script scriptToStop = scripts.get(scriptName);

@@ -214,6 +214,9 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> getAllScriptNames() {
         List<String> scripts = new ArrayList<>();
@@ -230,6 +233,9 @@ public class PersistenceService implements IPersistence {
         return scripts;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getScriptContent(String scriptName) {
         String result = "";
@@ -246,6 +252,9 @@ public class PersistenceService implements IPersistence {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateScript(String scriptName, String scriptContent) {
         try {

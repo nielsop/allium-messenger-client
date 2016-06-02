@@ -20,50 +20,62 @@ public class ScriptInteraction implements IScriptInteraction {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptInteraction.class);
 
 
-        private IContactStore contactStore;
-        private IMessageStore messageStore;
-        private ISendMessage sendMessage;
+    private IContactStore contactStore;
+    private IMessageStore messageStore;
+    private ISendMessage sendMessage;
 
-        @Inject
+    @Inject
+    public ScriptInteraction(IContactStore contactStore, IMessageStore messageStore, ISendMessage sendMessage) {
+        this.sendMessage = sendMessage;
+        this.contactStore = Check.notNull(contactStore, "contactStore");
+        this.messageStore = Check.notNull(messageStore, "messageStore");
+    }
 
-        public ScriptInteraction(IContactStore contactStore, IMessageStore messageStore, ISendMessage sendMessage) {
-            this.sendMessage = sendMessage;
-            this.contactStore = Check.notNull(contactStore, "contactStore");
-            this.messageStore = Check.notNull(messageStore, "messageStore");
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean sendMessage(String username, String messageText) {
+        try {
+            Contact contact = contactStore.findContact(username);
+            Message message = new Message(contactStore.getCurrentUserAsContact(), contact, new Date(), messageText);
+            sendMessage.sendMessage(message, contact);
+            return true;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return false;
         }
+    }
 
-        public boolean sendMessage(String username, String messageText) {
-            try {
-                Contact contact = contactStore.findContact(username);
-                Message message = new Message(contactStore.getCurrentUserAsContact(), contact, new Date(), messageText);
-                sendMessage.sendMessage(message, contact);
-                return true;
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                return false;
-            }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SimpleMessage[] getReceivedMessages(Date date) {
+        long dateTime = date.getTime();
+        Message[] receivedMessages = messageStore.getMessagesAfterDate(dateTime);
+        SimpleMessage[] messages = new SimpleMessage[receivedMessages.length];
+        for (int i = 0; i < messages.length; i++) {
+            messages[i].message = receivedMessages[i].getText();
+            messages[i].sender = receivedMessages[i].getSender().getUsername();
         }
+        return messages;
+    }
 
-        @Override
-        public SimpleMessage[] getReceivedMessages(Date date) {
-            long dateTime = date.getTime();
-            Message[] receivedMessages = messageStore.getMessagesAfterDate(dateTime);
-            SimpleMessage[] messages = new SimpleMessage[receivedMessages.length];
-            for (int i = 0; i < messages.length; i++) {
-                messages[i].message = receivedMessages[i].getText();
-                messages[i].sender = receivedMessages[i].getSender().getUsername();
-            }
-            return messages;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void printUI(IScriptInteraction.UIMessageType uiMessageType,  String s) {
+        //ToDo implement
 
-        @Override
-        public void printUI(IScriptInteraction.UIMessageType uiMessageType,  String s) {
-            //ToDo implement
+    }
 
-        }
-
-            public enum UIMessageType {
-                INFO, ERROR, DEBUG
-            }
-        }
+    /**
+     * Different types of UImessage, used by the UI to display messages in a different manner.
+     */
+    public enum UIMessageType {
+        INFO, ERROR, DEBUG
+    }
+}
 
