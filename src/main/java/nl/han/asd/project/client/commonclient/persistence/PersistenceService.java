@@ -24,6 +24,9 @@ public class PersistenceService implements IPersistence {
         this.database = Check.notNull(database, "database");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean deleteMessage(int id) {
         try {
@@ -34,6 +37,9 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean saveMessage(Message message) {
         final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getMessageTimestamp());
@@ -47,6 +53,9 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Message> getAllMessages() {
         final List<Message> messageList = new ArrayList<>();
@@ -61,6 +70,9 @@ public class PersistenceService implements IPersistence {
         return messageList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HashMap<Contact, List<Message>> getAllMessagesPerContact() {
         final HashMap<Contact, List<Message>> contactMessagesHashMap = new HashMap<>();
@@ -82,6 +94,9 @@ public class PersistenceService implements IPersistence {
         return contactMessagesHashMap;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean addContact(String username) {
         try {
@@ -92,6 +107,9 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean deleteContact(String username) {
         try {
@@ -102,6 +120,9 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean deleteAllContacts() {
         try {
@@ -112,6 +133,9 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Contact> getContacts() {
         final List<Contact> contactList = new ArrayList<>();
@@ -131,8 +155,57 @@ public class PersistenceService implements IPersistence {
         return contactList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDatabase getDatabase() {
         return database;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> getScripts() {
+        Map<String, String> scripts = new HashMap<>();
+        try {
+            ResultSet selectScriptsResult = getDatabase().select("SELECT * FROM Script");
+            while (selectScriptsResult.next()) {
+                String scriptName = (String) selectScriptsResult.getObject(2);
+                String scriptContent = (String) selectScriptsResult.getObject(3);
+                scripts.put(scriptName, scriptContent);
+            }
+            selectScriptsResult.close();
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return scripts;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean deleteScript(String scriptName) {
+        try {
+            return getDatabase().query(String.format("DELETE FROM Script WHERE scriptName = '%s'", scriptName));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean addScript(String scriptName, String scriptContent) {
+        try {
+            return getDatabase().query(String.format("INSERT INTO Script (scriptName, scriptContent) VALUES ('%s', '%s')", scriptName, scriptContent));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
     }
 }

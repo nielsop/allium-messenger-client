@@ -3,8 +3,6 @@ package nl.han.asd.project.client.commonclient.message;
 import com.google.inject.AbstractModule;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.path.PathDeterminationService;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.client.commonclient.store.MessageStore;
 
 public class MessageModule extends AbstractModule {
     @Override
@@ -14,5 +12,6 @@ public class MessageModule extends AbstractModule {
         bind(IReceiveMessage.class).to(MessageProcessingService.class);
         bind(IMessageConfirmation.class).to(MessageConfirmationService.class);
         bind(IMessageBuilder.class).to(MessageBuilderService.class);
+        bind(ISubscribeMessageReceiver.class).to(MessageProcessingService.class);
     }
 }

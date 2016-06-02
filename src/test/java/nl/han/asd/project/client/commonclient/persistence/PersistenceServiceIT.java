@@ -27,6 +27,13 @@ public class PersistenceServiceIT {
     private static final Message TEST_MESSAGE_1 = new Message(-1, CONTACT_1, CONTACT_2, new Date(), "Testmessage", "messageid1");
     private static final Message TEST_MESSAGE_2 = new Message(-1, CONTACT_1, CONTACT_2, new Date(), "Testmessage2", "messageid2");
     private static final Message TEST_MESSAGE_3 = new Message(-1, CONTACT_2, CONTACT_1, new Date(), "Testmessage3", "messageid3");
+    private static final String SCRIPT_1_NAME = "TestScript";
+    private static final String NONEXISTANT_SCRIPT_NAME = "TestScript";
+    private static final String SCRIPT_1_CONTENT = "segment data begin " + "     text testMessage value \"If you receive this message, I did not delay it and I am in trouble. Send help! \" "
+            + "     text reactionMessage value \"delayMessage abq1\" " + "     datetime testMessageSendTime value 2020-05-18 " + "segment end "
+            + "segment contact begin " + "     person mark value \"MarkVaessen\" " + "segment end " + "segment main begin " + "     schedule testMessageSendTime begin "
+            + "         send using testMessage as message mark as contact " + "     end " + "     react reactionMessage begin "
+            + "         set testMessageSendTime value 2040-05-18 " + "     end " + "segment end ";
     private IPersistence persistenceService;
 
     @Before
@@ -120,6 +127,31 @@ public class PersistenceServiceIT {
         persistenceService.addContact("Testcontact3");
         persistenceService.deleteContact("Testcontact2");
         Assert.assertEquals(2, persistenceService.getContacts().size());
+    }
+
+    @Test
+    public void testGetAllScriptsSuccessful() {
+        persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT);
+        final Map<String, String> scripts = persistenceService.getScripts();
+        Assert.assertEquals(1, scripts.size());
+        final Map.Entry<String, String> firstScript = scripts.entrySet().iterator().next();
+        Assert.assertEquals(SCRIPT_1_NAME, firstScript.getKey());
+        Assert.assertEquals(SCRIPT_1_CONTENT, firstScript.getValue());
+    }
+
+    @Test
+    public void testAddScriptSuccessful() {
+        Assert.assertTrue(persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT));
+        Assert.assertTrue(persistenceService.getScripts().containsKey(SCRIPT_1_NAME));
+    }
+
+    @Test
+    public void testDeleteScriptSuccessful() {
+        persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT);
+        Assert.assertEquals(1, persistenceService.getScripts().size());
+        Assert.assertTrue(persistenceService.deleteScript(SCRIPT_1_NAME));
+        Assert.assertFalse(persistenceService.getScripts().containsKey(SCRIPT_1_NAME));
+
     }
 
 }

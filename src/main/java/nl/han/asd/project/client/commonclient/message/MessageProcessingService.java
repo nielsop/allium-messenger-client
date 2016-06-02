@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
 
@@ -25,7 +27,7 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
  *
  *  @author Jevgeni Geurtsen
  */
-public class MessageProcessingService implements IReceiveMessage, ISendMessage {
+public class MessageProcessingService implements IReceiveMessage, ISendMessage, ISubscribeMessageReceiver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessingService.class);
 
@@ -37,6 +39,8 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
     private IUpdateGraph updateGraph;
     private IContactManager contactManager;
     private final IEncryptionService encryptionService;
+
+    private static List<IMessageReceiver> receivers = new ArrayList<>();
 
     /**
      * Initialises the class.
@@ -69,10 +73,22 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
                 MessageConfirmation messageConfirmation = (MessageConfirmation) messageWrapper;
                 messageConfirmationService.messageConfirmationReceived(messageConfirmation.getConfirmationId());
 
+                for (IMessageReceiver receiver : receivers) {
+                    if (receiver != null) {
+                        receiver.confirmedMessage(messageConfirmation.getConfirmationId());
+                    }
+                }
             } else if (messageWrapper instanceof HanRoutingProtocol.Message) {
                 HanRoutingProtocol.Message message = (HanRoutingProtocol.Message) messageWrapper;
                 Message internalMessage = Message.fromProtocolMessage(message, contactStore.getCurrentUserAsContact());
                 messageStore.addMessage(internalMessage);
+
+                for (IMessageReceiver receiver : receivers) {
+                    if (receiver != null) {
+                        receiver.receivedMessage(internalMessage);
+                    }
+                }
+
                 confirmMessage(message);
             } else {
                 throw new InvalidProtocolBufferException(String.format(
@@ -153,5 +169,13 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage {
         } catch (MessageNotSentException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void subscribe(IMessageReceiver receiver) {
+        receivers.add(receiver);
     }
 }
