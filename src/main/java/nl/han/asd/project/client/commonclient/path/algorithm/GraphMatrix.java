@@ -12,7 +12,7 @@ import nl.han.asd.project.commonservices.internal.utility.Check;
  */
 public class GraphMatrix extends Matrix {
 
-    private static final int ITERATIONS = 10;
+    private final int iterations;
 
     private Map<String, Integer> internalMap;
     private Map<String, Node> graphMap;
@@ -22,11 +22,12 @@ public class GraphMatrix extends Matrix {
      *
      * @param graphMap Map that represents the graph.
      */
-    public GraphMatrix(Map<String, Node> graphMap) {
+    public GraphMatrix(Map<String, Node> graphMap, int iterations) {
         super(Check.notNull(graphMap, "Graphmap").size());
 
         internalMap = new HashMap<>();
         this.graphMap = graphMap;
+        this.iterations = iterations;
 
         prepareMatrixAndBuildInternalMap();
     }
@@ -49,7 +50,7 @@ public class GraphMatrix extends Matrix {
             }
         }
 
-        calculate(ITERATIONS);
+        calculate(iterations);
     }
 
     /**

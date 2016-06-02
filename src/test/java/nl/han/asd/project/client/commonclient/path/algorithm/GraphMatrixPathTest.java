@@ -35,7 +35,7 @@ public class GraphMatrixPathTest {
     @Before
     public void setUp() {
         vertices = buildGraph();
-        graphMatrix = new GraphMatrix(vertices);
+        graphMatrix = new GraphMatrix(vertices, 10);
         graphMatrix.fillAndCalculateMatrix();
         graphMatrixPath = new GraphMatrixPath(vertices, graphMatrix);
     }

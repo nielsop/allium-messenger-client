@@ -10,7 +10,7 @@ public class Matrix {
     /**
      * Initializes the class.
      *
-     * @param size THe size of the matrix, must be bigger then 2 (otherwise we can't find a path).
+     * @param size The size of the matrix, must be bigger then 2 (otherwise we can't find a path).
      */
     public Matrix(int size) {
         if (size < 2) {

@@ -10,7 +10,7 @@ import java.util.*;
  * @since 20-4-2016
  */
 public class Node {
-    List<Edge> edges;
+    private List<Edge> edges;
     private Map<String, Edge> adjacent;
     private String id;
     private String ipAddress;

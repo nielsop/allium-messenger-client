@@ -3,7 +3,7 @@ package nl.han.asd.project.client.commonclient.graph;
 import java.util.Map;
 
 /**
- * Created by Julius on 18-5-2016.
+ * Provides a bridge between the graph and any class that wants to use the graph.
  */
 public interface IGetVertices {
     Map<String, Node> getVertices();

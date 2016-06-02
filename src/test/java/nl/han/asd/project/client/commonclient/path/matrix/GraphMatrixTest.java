@@ -17,6 +17,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 public class GraphMatrixTest {
+    private static int ITERATIONS = 10;
+
     @Mock
     private Map<String, Node> verticesMock;
 
@@ -25,19 +27,19 @@ public class GraphMatrixTest {
 
     @Before
     public void setUp() {
-        graphMatrix = new GraphMatrix(vertices);
+        graphMatrix = new GraphMatrix(vertices, ITERATIONS);
         graphMatrix.fillAndCalculateMatrix();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullConstructor() throws Exception {
-        GraphMatrix graphMatrix = new GraphMatrix(null);
+        GraphMatrix graphMatrix = new GraphMatrix(null, ITERATIONS);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testToSmallGraph() throws Exception {
         when(verticesMock.size()).thenReturn(1);
-        GraphMatrix graphMatrix = new GraphMatrix(verticesMock);
+        GraphMatrix graphMatrix = new GraphMatrix(verticesMock, ITERATIONS);
     }
 
     @Test(expected = IllegalArgumentException.class)

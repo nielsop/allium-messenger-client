@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PathDeterminationService implements IGetMessagePath {
     private static final Logger LOGGER = LoggerFactory.getLogger(PathDeterminationService.class);
+    public static final int ITERATIONS = 10;
 
     private Map<Contact, Set<Node>> startingPoints = new HashMap<>();
     private Random random = new Random();
@@ -52,7 +53,7 @@ public class PathDeterminationService implements IGetMessagePath {
         }
 
         Map<String, Node> vertices = getVertices.getVertices();
-        graphMatrix = new GraphMatrix(vertices);
+        graphMatrix = new GraphMatrix(vertices, ITERATIONS);
         graphMatrix.fillAndCalculateMatrix();
 
         List<Node> path;
@@ -75,7 +76,7 @@ public class PathDeterminationService implements IGetMessagePath {
             usedStartingPointsForContact = new HashSet<>();
         }
 
-        for (int i = 0; path == null && i < 10; i++) {
+        for (int i = 0; path == null && i < ITERATIONS; i++) {
             Node connectedEndpoint = receiverConnectedNode;
             path = getPathTo(connectedEndpoint, usedStartingPointsForContact);
         }
@@ -90,7 +91,7 @@ public class PathDeterminationService implements IGetMessagePath {
         Map<String, Node> vertices = getVertices.getVertices();
 
         Node startingPoint = getRandomNodeFromMap(vertices);
-        for (int i = 0; usedStartingPoints.contains(startingPoint) && i < 10; i++) {
+        for (int i = 0; usedStartingPoints.contains(startingPoint) && i < ITERATIONS; i++) {
             startingPoint = getRandomNodeFromMap(vertices);
         }
         usedStartingPoints.add(startingPoint);

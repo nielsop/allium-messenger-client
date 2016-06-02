@@ -5,7 +5,7 @@ import java.util.List;
 import nl.han.asd.project.client.commonclient.graph.Node;
 
 /**
- * Created by Jevgeni on 19-5-2016.
+ * Used for pathfinding classes.
  */
 public interface IPathFind {
     /**

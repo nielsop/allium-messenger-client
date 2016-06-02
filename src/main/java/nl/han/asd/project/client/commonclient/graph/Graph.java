@@ -29,11 +29,13 @@ public class Graph {
     public void addNodeVertex(HanRoutingProtocol.Node vertex) {
         Node node = new Node(vertex.getId(), vertex.getIPaddress(), vertex.getPort(),
                 vertex.getPublicKey().toByteArray());
-        graph.putIfAbsent(node.getId(), node);
+        addNodeVertex(node);
     }
 
     public void addNodeVertex(Node vertex) {
-        graph.putIfAbsent(vertex.getId(), vertex);
+        if (!graph.containsKey(vertex.getId())) {
+            graph.put(vertex.getId(), vertex);
+        }
     }
 
     public void addEdgesToVertex(HanRoutingProtocol.Node vertex) {
