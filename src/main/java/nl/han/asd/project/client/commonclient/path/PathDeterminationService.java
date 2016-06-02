@@ -49,11 +49,13 @@ public class PathDeterminationService implements IGetMessagePath {
 
     private ArrayList<Node> buildPath(Node hostConnectedNode, int minHops) {
         ArrayList<Node> path = new ArrayList<Node>();
-        path.add(hostConnectedNode);
+//        path.add(hostConnectedNode);
 
-        for (int i = 1; i < minHops; i++) {
-            path.add(i, new Node("Node_ID1", "192.168.2.empty", 1234, "123456789".getBytes()));
-        }
+//        for (int i = 1; i < minHops; i++) {
+        path.add(new Node("195.169.194.234:32832", "195.169.194.234", 32832, "123456789".getBytes()));
+        path.add(new Node("195.169.194.234:32833", "195.169.194.234", 32833, "123456789".getBytes()));
+        path.add(new Node("195.169.194.234:32834", "195.169.194.234", 32834, "123456789".getBytes()));
+//        }
 
         return path;
     }

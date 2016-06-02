@@ -74,7 +74,12 @@ public class MessageBuilderService implements IMessageBuilder {
         messageWrapperBuilder.setIPaddress(node.getIpAddress());
         messageWrapperBuilder.setPort(node.getPort());
         messageWrapperBuilder.setData(wrapper.toByteString());
-        return messageWrapperBuilder.build().toByteArray();
+
+        HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
+        wrapperBuilder.setType(HanRoutingProtocol.Wrapper.Type.MESSAGEWRAPPER);
+        wrapperBuilder.setData(messageWrapperBuilder.build().toByteString());
+
+        return wrapperBuilder.build().toByteArray();
 //        return encryptionService.encryptData(messageWrapperBuilder.build().toByteArray(), node.getPublicKey());
     }
 
