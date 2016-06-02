@@ -134,7 +134,7 @@ public class PersistenceService implements IPersistence {
         try {
             ResultSet selectScriptsResult = getDatabase().select("SELECT * FROM Script");
             while (selectScriptsResult.next()) {
-                String scriptName = (String)selectScriptsResult.getObject(2); // TODO
+                String scriptName = (String)selectScriptsResult.getObject(2);
                 String scriptContent = (String)selectScriptsResult.getObject(3);
                 scripts.put(scriptName, scriptContent);
             }
