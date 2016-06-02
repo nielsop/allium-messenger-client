@@ -187,30 +187,70 @@ public class CommonClientGateway {
         }
     }
 
+    /**
+     * Gets the content of a script.
+     *
+     * @param scriptName name of the script of which the content will be fetched
+     * @return The content of a script
+     */
     public String getScriptContent(String scriptName) {
         return scriptStore.getScriptContent(scriptName);
     }
 
+    /**
+     * Gets the names of all the users scripts.
+     *
+     * @return A list containing the names of all the script of the user.
+     */
     public List<String> getAllScriptNames() {
         return scriptStore.getAllScriptNames();
     }
 
+    /**
+     * Stops a running script from exeuting
+     *
+     * @param scriptName The name of the script that will be stopped from executing
+     */
     public void stopScript(String scriptName) {
         scriptTracker.stopScript(scriptName);
     }
 
+    /**
+     * Starts the execution of a script
+     *
+     * @param scriptName The name of the script that will be started
+     * @param scriptContent The content of the script that will be started
+     * @return A boolean indicating wheter the script started successfully
+     */
     public boolean startScript(String scriptName, String scriptContent) {
         return scriptTracker.startScript(scriptName, scriptContent);
     }
 
+    /**
+     * Adds a new script into the database
+     *
+     * @param scriptName The name of the script that will be added
+     * @param scriptContent The content of the script that will be added
+     */
     public void addScript(String scriptName, String scriptContent) {
         scriptStore.addScript(scriptName, scriptContent);
     }
 
+    /**
+     * Updates the content of a script
+     *
+     * @param scriptName The name of the script that will be updated
+     * @param scriptContent The newly entered content for the script that will be updated
+     */
     public void updateScript(String scriptName, String scriptContent) {
         scriptStore.updateScript(scriptName, scriptContent);
     }
 
+    /**
+     * Removes a script from the database
+     *
+     * @param scriptName The name of the script that will be removed
+     */
     public void removeScript(String scriptName) {
         scriptStore.removeScript(scriptName);
     }
