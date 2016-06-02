@@ -18,7 +18,7 @@ public class MessageConfirmationService implements IMessageConfirmation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageConfirmationService.class);
 
-    private Map<String, RetryMessage> waitingMessages = new HashMap<>();
+    private static Map<String, RetryMessage> waitingMessages = new HashMap<>();
     private volatile boolean isRunning = true;
     private IMessageBuilder messageBuilder;
     private IContactStore contactStore;
