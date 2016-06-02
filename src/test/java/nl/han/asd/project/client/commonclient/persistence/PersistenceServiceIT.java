@@ -15,20 +15,23 @@ import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertFalse;
 
-/**
- * @author Niels Bokmans
- * @version 1.0
- * @since 24-5-2016
- */
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceServiceIT {
 
     private static final Contact CONTACT_1 = new Contact("Testcontact");
     private static final Contact CONTACT_2 = new Contact("Testcontact2");
-    private static final Message TEST_MESSAGE_1 = new Message(-1, CONTACT_1, new Date(), "Testmessage");
-    private static final Message TEST_MESSAGE_2 = new Message(-1, CONTACT_1, new Date(), "Testmessage2");
-    private static final Message TEST_MESSAGE_3 = new Message(-1, CONTACT_2, new Date(), "Testmessage3");
+    private static final Message TEST_MESSAGE_1 = new Message(-1, CONTACT_1, CONTACT_2, new Date(), "Testmessage");
+    private static final Message TEST_MESSAGE_2 = new Message(-1, CONTACT_1, CONTACT_2, new Date(), "Testmessage2");
+    private static final Message TEST_MESSAGE_3 = new Message(-1, CONTACT_2, CONTACT_1, new Date(), "Testmessage3");
+    private static final String SCRIPT_1_NAME = "TestScript";
+    private static final String NONEXISTANT_SCRIPT_NAME = "TestScript";
+    private static final String SCRIPT_1_CONTENT = "segment data begin " + "     text testMessage value \"If you receive this message, I did not delay it and I am in trouble. Send help! \" "
+            + "     text reactionMessage value \"delayMessage abq1\" " + "     datetime testMessageSendTime value 2020-05-18 " + "segment end "
+            + "segment contact begin " + "     person mark value \"MarkVaessen\" " + "segment end " + "segment main begin " + "     schedule testMessageSendTime begin "
+            + "         send using testMessage as message mark as contact " + "     end " + "     react reactionMessage begin "
+            + "         set testMessageSendTime value 2040-05-18 " + "     end " + "segment end ";
     private IPersistence persistenceService;
 
     @Before
@@ -47,7 +50,9 @@ public class PersistenceServiceIT {
     public void testSaveMessageThenDeleteMessageSuccessful() throws SQLException {
         persistenceService.saveMessage(TEST_MESSAGE_1);
         persistenceService.saveMessage(TEST_MESSAGE_2);
+        List<Message> allMessages = persistenceService.getAllMessages();
         persistenceService.deleteMessage(1);
+
         assertEquals(2, persistenceService.getAllMessages().get(0).getDatabaseId());
     }
 
@@ -160,9 +165,30 @@ public class PersistenceServiceIT {
     }
 
 
+    @Test
+    public void testGetAllScriptsSuccessful() {
+        persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT);
+        final Map<String, String> scripts = persistenceService.getScripts();
+        assertEquals(1, scripts.size());
+        final Map.Entry<String, String> firstScript = scripts.entrySet().iterator().next();
+        assertEquals(SCRIPT_1_NAME, firstScript.getKey());
+        assertEquals(SCRIPT_1_CONTENT, firstScript.getValue());
+    }
 
+    @Test
+    public void testAddScriptSuccessful() {
+        assertTrue(persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT));
+        assertTrue(persistenceService.getScripts().containsKey(SCRIPT_1_NAME));
+    }
 
+    @Test
+    public void testDeleteScriptSuccessful() {
+        persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT);
+        assertEquals(1, persistenceService.getScripts().size());
+        assertTrue(persistenceService.deleteScript(SCRIPT_1_NAME));
+        assertFalse(persistenceService.getScripts().containsKey(SCRIPT_1_NAME));
 
+    }
 
 
 }

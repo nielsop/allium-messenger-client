@@ -128,18 +128,23 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
      * {@inheritDoc}
      */
     @Override
-    public Client getClientGroup(ClientRequest request) throws IOException, MessageNotSentException {
+    public ClientResponse getClientGroup(ClientRequest request) throws IOException, MessageNotSentException {
         Check.notNull(request, "request");
 
         Wrapper wrapper = connectionService.wrap(request, Type.CLIENTREQUEST);
         GeneratedMessage response = connectionService.writeAndRead(wrapper);
 
-        return (Client) response;
+        return (ClientResponse) response;
     }
 
     @Override
-    public boolean logout(String username, String secretHash) {
-        return false;
+    public ClientLogoutResponse logout(ClientLogoutRequest request) throws IOException, MessageNotSentException {
+        Check.notNull(request, "request");
+
+        Wrapper wrapper = connectionService.wrap(request, Type.CLIENTLOGOUTREQUEST);
+        GeneratedMessage response = connectionService.writeAndRead(wrapper);
+
+        return (ClientLogoutResponse) response;
     }
 
     private enum PropertyValues {
@@ -157,7 +162,11 @@ public class MasterGateway implements IRegistration, IHeartbeat, IAuthentication
 
         String get(Properties properties) {
             String property = properties.getProperty(value);
-            return nullable ? property : Check.notNull(property, value);
+            if (nullable) {
+                return property;
+            } else {
+                return Check.notNull(property, value);
+            }
         }
 
         Integer getInteger(Properties properties) {

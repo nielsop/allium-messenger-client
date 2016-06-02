@@ -4,11 +4,9 @@ import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * Defines an interface for persistence functions.
@@ -19,7 +17,7 @@ import java.util.Map;
  */
 public interface IPersistence {
 
-    public static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Deletes a message from the database.
@@ -35,7 +33,7 @@ public interface IPersistence {
      * @param message The message to save.
      * @return <tt>true</tt> if the message was saved successfully, <tt>false</tt> otherwise.
      */
-    boolean saveMessage(final Message message) throws SQLException;
+    boolean saveMessage(final Message message);
 
     /**
      * Returns a list of all messages.
@@ -67,6 +65,11 @@ public interface IPersistence {
      */
     boolean deleteContact(final String username);
 
+    /**
+     * Deletes all contacts from the database.
+     *
+     * @return <tt>true</tt> if all contacts are successfully deleted, <tt>false</tt> otherwise.
+     */
     boolean deleteAllContacts();
 
     /**
@@ -84,26 +87,26 @@ public interface IPersistence {
     IDatabase getDatabase();
 
     /**
-     * Returns a map of scripts stored in the database. The has build is as follow:
-     * Key = ScriptName. Value = ScriptContent.
+     * Fetches a list of all saved scripts from the database.
      *
-     * @return A hashmap of all scripts.
+     * @return A map containing all scripts, with the script name as the key, and the content of the script as the value.
      */
     Map<String, String> getScripts();
 
     /**
-     * Deletes a script from the database.
+     * Deletes a script from the database by name.
      *
-     * @param scriptName The name of the script to be deleted from the database.
-     * @return <tt>true</tt> if the script was deleted successfully, <tt>false</tt> otherwise.
+     * @param scriptName The name of the script to remove.
+     * @return <tt>true</tt> if the deletion was successful, <tt>false</tt> otherwise.
      */
     boolean deleteScript(final String scriptName);
 
     /**
-     * Adds a script to the database.
+     * Adds a scripts to the database.
      *
-     * @param scriptName The name of the script to be added to the database.
-     * @return <tt>true</tt> if the script was added successfully, <tt>false</tt> otherwise.
+     * @param scriptName The name of the script to add to the database.
+     * @param scriptContent The content of the script to add to the database.
+     * @return <tt>true</tt> if the insertion was successful, <tt>false</tt> otherwise.
      */
     boolean addScript(final String scriptName, final String scriptContent);
 }

@@ -3,7 +3,9 @@ package nl.han.asd.project.client.commonclient;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
+import nl.han.asd.project.client.commonclient.login.MisMatchingException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
+import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLogoutResponse;
 
 /**
  * Android/Desktop application
@@ -29,27 +32,24 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse
  */
 public class CommonClientGateway {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
     private IRegistration registration;
     private ILoginService loginService;
+    private ISendMessage sendMessage;
+
+    private static CommonClientGateway commonClientGateway;
 
     @Inject
-    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration, ILoginService loginService) {
+    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
+                               ILoginService loginService, ISendMessage sendMessage) {
+        this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");
         this.registration = Check.notNull(registration, "registration");
         this.loginService = Check.notNull(loginService, "loginService");
-
-        // TODO remove test method
-        createTestContacts();
-    }
-
-    // TODO remove test method
-    private void createTestContacts() {
-        contactStore.createTestContacts();
     }
 
     /**
@@ -80,43 +80,107 @@ public class CommonClientGateway {
         }
     }
 
+    /**
+     * Logs in and returns a login status. This login status is wrapped inside a loginResponseWrapper.
+     *
+     * @param username the username to log in.
+     * @param password the password belonging to the username.
+     * @return the login status, received from the loginResponseWrapper.
+     */
     public ClientLoginResponse.Status loginRequest(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
         try {
-            contactStore.setCurrentUser(loginService.login(username, password));
-            return ClientLoginResponse.Status.SUCCES;
+            return loginService.login(username, password);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
         }
     }
 
+    /**
+     * Retrieves messages of current user from messageStore.
+     *
+     * @param contact the username of the contact
+     * @return List with all the messages from/to the given contact
+     */
     public List<Message> getMessagesFromUser(String contact) {
         return messageStore.getMessagesFromUser(contact);
     }
 
+    /**
+     * Returns the current user that is logged in.
+     *
+     * @return the current user
+     */
     public CurrentUser getCurrentUser() {
         return contactStore.getCurrentUser();
     }
 
+    /**
+     * Returns a list of contacts of the current user.
+     *
+     * @return list of contacts of the current user
+     */
     public List<Contact> getContacts() {
         return contactStore.getAllContacts();
     }
 
+    /**
+     * Finds contact from username in contactstore.
+     *
+     * @param username the username of the contact
+     * @return found contact by username
+     */
+    public Contact findContact(String username) {
+        return contactStore.findContact(username);
+    }
+
+    /**
+     * Adds the message to the messageStore.
+     *
+     * @param message the message to be added
+     */
     public void addMessage(Message message) {
         messageStore.addMessage(message);
     }
 
+    /**
+     * Sends the message to the receiver by onion routing.
+     *
+     * @param message the to be send message
+     */
     public void sendMessage(Message message) {
-        //TODO: Actually send message to a user
-        messageStore.addMessage(message);
+        sendMessage.sendMessage(message, message.getReceiver());
     }
 
+    /**
+     * Adds contact to contactstore.
+     *
+     * @param username username of contact
+     */
+    public void addContact(String username) {
+        contactStore.addContact(username);
+    }
+
+    /**
+     * Removes contact from contactstore.
+     *
+     * @param username username of contact
+     */
     public void removeContact(String username) {
         contactStore.removeContact(username);
     }
 
-    //TODO: Implement method. Delete all in memory user data.
-    public void logout() {
-
+    /**
+     * Logs out the user and deletes all user data in memory
+     */
+    public ClientLogoutResponse.Status logout() throws MessageNotSentException, IOException, MisMatchingException {
+        try {
+            CurrentUser user = contactStore.getCurrentUser();
+            return loginService.logout(user.getCurrentUserAsContact().getUsername(),
+                    user.getSecretHash());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
+        }
     }
 }

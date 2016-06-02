@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -208,8 +209,14 @@ public class MasterGatewayTest {
         Client.Builder responseBuilder = Client.newBuilder();
         responseBuilder.setUsername("username");
         responseBuilder.setPublicKey(ByteString.copyFrom("public key".getBytes()));
+        responseBuilder.addAllConnectedNodes(new ArrayList<String>());
 
-        Client response = responseBuilder.build();
+        Client client = responseBuilder.build();
+
+        ClientResponse.Builder builder = ClientResponse.newBuilder();
+        builder.addClients(client);
+
+        ClientResponse response = builder.build();
 
         when(connectionServiceMock.writeAndRead(eq(wrapper))).thenReturn(response);
 

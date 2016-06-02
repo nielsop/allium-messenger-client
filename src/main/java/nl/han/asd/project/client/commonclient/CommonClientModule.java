@@ -31,5 +31,6 @@ public class CommonClientModule extends AbstractModule {
         install(new ScriptModule());
         install(new StoreModule());
         install(new EncryptionModule());
+        install(new NodeModule());
     }
 }

@@ -1,6 +1,5 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-
 import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
@@ -25,6 +24,9 @@ public class PersistenceService implements IPersistence {
         this.database = Check.notNull(database, "database");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean deleteMessage(int id) {
         try {
@@ -35,14 +37,25 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean saveMessage(Message message) throws SQLException {
-        final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getTimestamp());
-        return getDatabase()
-                .query(String.format("INSERT INTO Message (sender, message, timestamp) VALUES ('%s', '%s', '%s')",
-                        message.getSender().getUsername(), message.getText(), messageTimestampInDatabaseFormat));
+    public boolean saveMessage(Message message) {
+        final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getMessageTimestamp());
+        try {
+            return getDatabase().query(String
+                    .format("INSERT INTO Message (sender, receiver, timestamp, message) VALUES ('%s', '%s', '%s', '%s')", message.getSender().getUsername(),
+                            message.getReceiver().getUsername(), messageTimestampInDatabaseFormat, message.getText()));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Message> getAllMessages() {
         final List<Message> messageList = new ArrayList<>();
@@ -57,6 +70,9 @@ public class PersistenceService implements IPersistence {
         return messageList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<Contact, List<Message>> getAllMessagesPerContact() {
         final Map<Contact, List<Message>> contactMessagesHashMap = new HashMap<>();
@@ -68,7 +84,7 @@ public class PersistenceService implements IPersistence {
             while (selectMessagesResult.next()) {
                 final Message message = Message.fromDatabase(selectMessagesResult);
                 if (!contactMessagesHashMap.containsKey(message.getSender())) {
-                    contactMessagesHashMap.put(message.getSender(), new ArrayList<>());
+                    contactMessagesHashMap.put(message.getSender(), new ArrayList<Message>());
                 }
                 contactMessagesHashMap.get(message.getSender()).add(message);
             }
@@ -78,6 +94,9 @@ public class PersistenceService implements IPersistence {
         return contactMessagesHashMap;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean addContact(String username) {
         try {
@@ -88,6 +107,9 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean deleteContact(String username) {
         try {
@@ -98,6 +120,9 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean deleteAllContacts() {
         try {
@@ -108,11 +133,18 @@ public class PersistenceService implements IPersistence {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Contact> getContacts() {
         final List<Contact> contactList = new ArrayList<>();
         try {
             ResultSet selectContactsResult = getDatabase().select("SELECT * FROM Contact");
+
+            if (selectContactsResult == null)
+                return new ArrayList<>();
+
             while (selectContactsResult.next()) {
                 contactList.add(Contact.fromDatabase((String) selectContactsResult.getObject(2)));
             }
@@ -123,11 +155,19 @@ public class PersistenceService implements IPersistence {
         return contactList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDatabase getDatabase() {
         return database;
     }
 
+
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, String> getScripts() {
         Map<String, String> scripts = new HashMap<>();
@@ -136,6 +176,7 @@ public class PersistenceService implements IPersistence {
             while (selectScriptsResult.next()) {
                 String scriptName = (String)selectScriptsResult.getObject(2);
                 String scriptContent = (String)selectScriptsResult.getObject(3);
+
                 scripts.put(scriptName, scriptContent);
             }
             selectScriptsResult.close();
@@ -145,20 +186,28 @@ public class PersistenceService implements IPersistence {
         return scripts;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean deleteScript(String scriptName) {
         try {
-            return getDatabase().query(String.format("DELETE FROM Script WHERE scriptname = '%s'", scriptName));
+            return getDatabase().query(String.format("DELETE FROM Script WHERE scriptName = '%s'", scriptName));
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return false;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean addScript(String scriptName, String scriptContent) {
         try {
-            return getDatabase().query(String.format("INSERT INTO Script (scriptName, scriptContent) VALUES ('%s, %s')", scriptName, scriptContent));
+            return getDatabase().query(String.format("INSERT INTO Script (scriptName, scriptContent) VALUES ('%s', '%s')", scriptName, scriptContent));
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
         }
