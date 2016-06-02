@@ -149,5 +149,5 @@ public class PersistenceServiceIT {
         persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT);
         Assert.assertTrue(persistenceService.deleteScript(SCRIPT_1_NAME));
     }
-    
+
 }
