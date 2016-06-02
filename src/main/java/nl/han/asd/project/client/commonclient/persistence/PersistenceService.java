@@ -134,7 +134,7 @@ public class PersistenceService implements IPersistence {
         try {
             ResultSet selectScriptsResult = getDatabase().select("SELECT * FROM Script");
             while (selectScriptsResult.next()) {
-                String scriptName = (String)selectScriptsResult.getObject(2); // TODO
+                String scriptName = (String)selectScriptsResult.getObject(2);
                 String scriptContent = (String)selectScriptsResult.getObject(3);
                 scripts.put(scriptName, scriptContent);
             }
@@ -158,10 +158,51 @@ public class PersistenceService implements IPersistence {
     @Override
     public boolean addScript(String scriptName, String scriptContent) {
         try {
-            return getDatabase().query(String.format("INSERT INTO Script (scriptName, scriptContent) VALUES ('%s, %s')", scriptName, scriptContent));
+            return getDatabase().query(String.format("INSERT INTO Script (scriptname, scriptcontent) VALUES ('%s', '%s')", scriptName, scriptContent));
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    @Override
+    public List<String> getAllScriptNames() {
+        List<String> scripts = new ArrayList<>();
+        try {
+            ResultSet selectScriptsResult = getDatabase().select("SELECT scriptname FROM Script");
+            while (selectScriptsResult.next()) {
+                String scriptName = (String)selectScriptsResult.getObject(1);
+                scripts.add(scriptName);
+            }
+            selectScriptsResult.close();
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return scripts;
+    }
+
+    @Override
+    public String getScriptContent(String scriptName) {
+        String result = "";
+        try {
+            ResultSet selectScriptsResult = getDatabase().select(String.format("SELECT scriptcontent FROM Script WHERE scriptname = '%s'", scriptName));
+
+            result = (String)selectScriptsResult.getObject(1);
+
+            selectScriptsResult.close();
+
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return result;
+    }
+
+    @Override
+    public void updateScript(String scriptName, String scriptContent) {
+        try {
+            getDatabase().query(String.format("UPDATE Script SET scriptcontent = '%s' WHERE scriptname = '%s'", scriptContent, scriptName));
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 }

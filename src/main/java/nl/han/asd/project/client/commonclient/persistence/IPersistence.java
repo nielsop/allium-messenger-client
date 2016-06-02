@@ -3,6 +3,7 @@ package nl.han.asd.project.client.commonclient.persistence;
 import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.commonservices.scripting.Script;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -106,4 +107,26 @@ public interface IPersistence {
      * @return <tt>true</tt> if the script was added successfully, <tt>false</tt> otherwise.
      */
     boolean addScript(final String scriptName, final String scriptContent);
+
+    /**
+     * Gets a list containing the names of all saved scripts.
+     *
+     * @return <tt>List<String></tt> containing the names of all saved scripts.
+     */
+    List<String> getAllScriptNames();
+
+    /**
+     * Gets the content of a script.
+     *
+     * @param scriptName The name of the script of which the content will be fetched.
+     * @return <tt>String</tt> containing the content of a script.
+     */
+    String getScriptContent(String scriptName);
+
+    /**
+     * Updates the content of a script.
+     *
+     * @return <tt>String</tt> containing the content of a script.
+     */
+    void updateScript(String scriptName, String scriptContent);
 }

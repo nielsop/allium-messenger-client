@@ -2,11 +2,9 @@ package nl.han.asd.project.client.commonclient.store;
 
 import nl.han.asd.project.commonservices.scripting.Script;
 
-import java.util.Map;
+import java.util.List;
 
 public interface IScriptStore {
-    // TODO remove test method
-    void createTestScripts();
 
     /**
      * Adds a new script into the scriptstore.
@@ -24,22 +22,25 @@ public interface IScriptStore {
     void removeScript(String scriptName);
 
     /**
-     * Gets a script from the scriptstore by scriptname.
+     * Gets a list of all scriptnames.
      *
-     * @param scriptName name of the script to be fetched.
-     * @return <tt>Script</tt> if found, <tt>null</tt> otherwise.
+     * @return <tt>List<String></tt>.
      */
-    Script getScript(String scriptName);
+    List<String> getAllScriptNames();
 
-//    /**
-//     * Retrieves all scripts of the current user.
-//     *
-//     * @return List of Scripts
-//     */
-//    Map<String, Script> getAllScripts();
-//
-//    /**
-//     * Deletes all scripts in the scriptstore memory.
-//     */
-//    void deleteAllScripts();
+    /**
+     * Gets the content of a script
+     *
+     * @param scriptName name of the script of which the content will be fetched.
+     * @return <tt>String</tt> containing the content of a script
+     */
+    String getScriptContent(String scriptName);
+
+    /**
+     * Updates the content of a script
+     *
+     * @param scriptName name of the script to be updated.
+     * @param scriptContent the content of the script that will be replaced.
+     */
+    void updateScript(String scriptName, String scriptContent);
 }

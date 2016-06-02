@@ -5,10 +5,8 @@ import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.CurrentUser;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.scripting.IRunningScriptTracker;
+import nl.han.asd.project.client.commonclient.store.*;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
@@ -35,13 +33,18 @@ public class CommonClientGateway {
     private IMessageStore messageStore;
     private IRegistration registration;
     private ILoginService loginService;
+    private IScriptStore scriptStore;
+    private IRunningScriptTracker scriptTracker;
 
     @Inject
-    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration, ILoginService loginService) {
+    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
+            ILoginService loginService, IScriptStore scriptStore, IRunningScriptTracker scriptTracker) {
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");
         this.registration = Check.notNull(registration, "registration");
         this.loginService = Check.notNull(loginService, "loginService");
+        this.scriptStore = Check.notNull(scriptStore, "scriptStore");
+        this.scriptTracker = Check.notNull(scriptTracker, "scriptTracker");
 
         // TODO remove test method
         createTestContacts();
@@ -118,5 +121,33 @@ public class CommonClientGateway {
     //TODO: Implement method. Delete all in memory user data.
     public void logout() {
 
+    }
+
+    public String getScriptContent(String scriptName) {
+        return scriptStore.getScriptContent(scriptName);
+    }
+
+    public List<String> getAllScriptNames() {
+        return scriptStore.getAllScriptNames();
+    }
+
+    public void stopScript(String scriptName) {
+        scriptTracker.stopScript(scriptName);
+    }
+
+    public boolean startScript(String scriptName, String scriptContent) {
+        return scriptTracker.startScript(scriptName, scriptContent);
+    }
+
+    public void addScript(String scriptName, String scriptContent) {
+        scriptStore.addScript(scriptName, scriptContent);
+    }
+
+    public void updateScript(String scriptName, String scriptContent) {
+        scriptStore.updateScript(scriptName, scriptContent);
+    }
+
+    public void removeScript(String scriptName) {
+        scriptStore.removeScript(scriptName);
     }
 }
