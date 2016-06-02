@@ -200,6 +200,7 @@ public class CommonClientGateway {
     }
 
     public boolean startScript(String scriptName, String scriptContent) {
+        scriptStore.updateScript(scriptName, scriptContent);
         return scriptTracker.startScript(scriptName, scriptContent);
     }
 
