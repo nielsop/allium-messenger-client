@@ -15,6 +15,7 @@ public class MessageTest {
     private Date date = new Date();
     private String testData = "testData";
     private Message message;
+    private String messageId = "messageId12345";
 
     private String username;
     private byte[] array;
@@ -29,7 +30,7 @@ public class MessageTest {
         online = true;
         sender = new Contact(username, array, online);
         contactReceiver = new Contact("username2", array, online);
-        message = new Message(sender, contactReceiver, date, testData);
+        message = new Message(sender, contactReceiver, date, testData, messageId);
     }
 
     @Test

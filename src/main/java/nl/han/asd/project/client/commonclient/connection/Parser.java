@@ -68,7 +68,8 @@ public class Parser {
         REGISTER_RESPONSE(Type.CLIENTREGISTERRESPONSE, ClientRegisterResponse.class),
         CLIENT_LOGIN_RESPONSE(Type.CLIENTLOGINRESPONSE, ClientLoginResponse.class),
         GRAPH_UPDATE_RESPONSE(Type.GRAPHUPDATERESPONSE, GraphUpdateResponse.class),
-        CLIENT_RESPONSE(Type.CLIENTRESPONSE, HanRoutingProtocol.ClientResponse.class);
+        CLIENT_RESPONSE(Type.CLIENTRESPONSE, HanRoutingProtocol.ClientResponse.class),
+        MESSAGE(Type.MESSAGE, HanRoutingProtocol.Message.class);
 
         private static Map<Type, ResponseTypes> map;
 
