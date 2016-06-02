@@ -13,6 +13,7 @@ import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
+import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
@@ -86,13 +87,14 @@ public class FullIntegrationTest {
         IRegistration registration = injector.getInstance(IRegistration.class);
         ILoginService loginService = injector.getInstance(ILoginService.class);
         ISendMessage sendMessage = injector.getInstance(ISendMessage.class);
+        ISubscribeMessageReceiver subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
 
-        CommonClientGateway commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, loginService, sendMessage);
+        CommonClientGateway commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, loginService, sendMessage, subscribeMessageReceiver);
         try {
             commonClientGateway.registerRequest("raoul", "test1234", "test1234");
             commonClientGateway.loginRequest("raoul", "test1234");
 
-            Message message = new Message(contactStore.getCurrentUserAsContact(), contactStore.getCurrentUserAsContact(), new Date(), "TEST BOODSCHAP");
+            Message message = new Message(contactStore.getCurrentUserAsContact(), contactStore.getCurrentUserAsContact(), new Date(), "TEST BOODSCHAP", "MessageId1");
             commonClientGateway.sendMessage(message);
         } catch (IOException | InvalidCredentialsException | MessageNotSentException e) {
             e.printStackTrace();
