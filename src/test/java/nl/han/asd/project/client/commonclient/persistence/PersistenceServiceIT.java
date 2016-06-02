@@ -142,12 +142,16 @@ public class PersistenceServiceIT {
     @Test
     public void testAddScriptSuccessful() {
         Assert.assertTrue(persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT));
+        Assert.assertTrue(persistenceService.getScripts().containsKey(SCRIPT_1_NAME));
     }
 
     @Test
     public void testDeleteScriptSuccessful() {
         persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT);
+        Assert.assertEquals(1, persistenceService.getScripts().size());
         Assert.assertTrue(persistenceService.deleteScript(SCRIPT_1_NAME));
+        Assert.assertFalse(persistenceService.getScripts().containsKey(SCRIPT_1_NAME));
+
     }
 
 }
