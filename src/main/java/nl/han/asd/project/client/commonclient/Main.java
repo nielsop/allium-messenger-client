@@ -4,6 +4,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
+import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
+import nl.han.asd.project.client.commonclient.message.Message;
 
 import java.io.IOException;
 
@@ -30,6 +32,34 @@ public class Main {
 
         if (integrationType.equals("default")) {
             defaultType();
+        }
+
+        if (integrationType.equals("echo")) {
+            echoType();
+        }
+    }
+
+    private static void echoType() {
+        try {
+            commonClientGateway.registerRequest("user", "password", "password");
+            commonClientGateway.loginRequest("user", "password");
+
+            commonClientGateway.subscribeReceivedMessages(new IMessageReceiver() {
+                @Override
+                public void receivedMessage(Message message) {
+                    commonClientGateway.addContact(message.getSender().getUsername());
+                    commonClientGateway.sendMessage(message);
+                }
+
+                @Override
+                public void confirmedMessage(String messageId) {
+
+                }
+            });
+
+            Thread.sleep(60000);
+        } catch (IOException | MessageNotSentException | InvalidCredentialsException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
