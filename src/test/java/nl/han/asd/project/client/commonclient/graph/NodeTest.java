@@ -2,10 +2,12 @@ package nl.han.asd.project.client.commonclient.graph;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+import org.mockito.Mock;
 
 /**
  * @author Julius
@@ -14,33 +16,38 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
  */
 public class NodeTest {
 
-    private Node node;
-    private HanRoutingProtocol.Edge edge;
-    private final String EDGE_DESTINATIONNODE_ID = "NODE_2";
-    private final float EDGE_WEIGHT = 12.0f;
-    private final String NODE_ID = "NODE_1";
-    private final String NODE_IP = "192.168.2.16";
-    private final int NODE_PORT = 1337;
-    private final byte[] NODE_PUBLICKEY = new byte[] { 0x00 };
+    private final byte[] EMPTY = new byte[0];
+
+    private Node node1, node2;
 
     @Before
-    public void setup() {
-        node = new Node(NODE_ID, NODE_IP, NODE_PORT, NODE_PUBLICKEY);
-        edge = HanRoutingProtocol.Edge.newBuilder().setTargetNodeId(EDGE_DESTINATIONNODE_ID).setWeight(EDGE_WEIGHT)
-                .build();
+    public void setUp() {
+        node1 = new Node("1", "localhost", 1024, EMPTY);
+        node2 = new Node("2", "localhost", 1025, EMPTY);
     }
 
     @Test
-    public void testAddEdge() throws Exception {
-        node.addEdge(edge);
-        assertEquals(node.getAdjacent().size(), 1);
+    public void testInvalidEdge() throws Exception {
+        Edge edge = node1.getEdge("3");
+        Assert.assertEquals(null, edge);
     }
 
     @Test
-    public void testGetEdge() throws Exception {
-        node.addEdge(edge);
-        Edge getEdge = node.getEdge(EDGE_DESTINATIONNODE_ID);
-        assertEquals(getEdge.getWeight(), EDGE_WEIGHT, 0.0002);
-        assertEquals(getEdge.getDestinationNodeId(), EDGE_DESTINATIONNODE_ID);
+    public void testValidEdge() throws Exception {
+        node1.addEdge(node2, 10);
+        Edge edge = node1.getEdge("2");
+        Assert.assertEquals(node2.getId(), edge.getDestinationNodeId());
+    }
+
+    @Test
+    public void testEqualsImplementation() {
+        Assert.assertEquals(false, node1.equals(node2));
+        Assert.assertEquals(false, node1.equals(null));
+        Assert.assertEquals(false, node1.equals(new Edge("X", 10)));
+    }
+
+    @Test
+    public void testHashcodeImplemenation() {
+        Assert.assertEquals(false, node1.hashCode() == node2.hashCode());
     }
 }

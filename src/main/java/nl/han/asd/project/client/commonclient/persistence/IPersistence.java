@@ -11,10 +11,6 @@ import java.util.Map;
 
 /**
  * Defines an interface for persistence functions.
- *
- * @author Niels Bokmans
- * @version 1.0
- * @since 24-05-2016
  */
 public interface IPersistence {
 
@@ -110,4 +106,26 @@ public interface IPersistence {
      * @return <tt>true</tt> if the insertion was successful, <tt>false</tt> otherwise.
      */
     boolean addScript(final String scriptName, final String scriptContent);
+
+    /**
+     * Gets a list containing the names of all saved scripts.
+     *
+     * @return <tt>List<String></tt> containing the names of all saved scripts.
+     */
+    List<String> getAllScriptNames();
+
+    /**
+     * Gets the content of a script.
+     *
+     * @param scriptName The name of the script of which the content will be fetched.
+     * @return <tt>String</tt> containing the content of a script.
+     */
+    String getScriptContent(String scriptName);
+
+    /**
+     * Updates the content of a script.
+     *
+     * @return <tt>String</tt> containing the content of a script.
+     */
+    void updateScript(String scriptName, String scriptContent);
 }
