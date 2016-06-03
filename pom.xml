@@ -34,6 +34,9 @@
         <junit.version>4.12</junit.version>
         <mockito.version>2.0.2-beta</mockito.version>
         <powermock.version>1.6.4</powermock.version>
+
+        <!-- used in Jenkins build to allow building Docker container without running tests, don't remove! -->
+        <maven.test.skip>false</maven.test.skip>
     </properties>
 
     <build>
@@ -98,6 +101,20 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!-- release jar config, used in Jenkins build to allow running of application in Docker container -->
+                    <finalName>out</finalName>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>nl.han.asd.project.client.commonclient.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
