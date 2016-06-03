@@ -75,7 +75,6 @@ public interface ICommonClient {
     /**
      * Logs out the user and deletes all user data in memory
      */
-    //TODO: Implement method. Delete all in memory user data.
     void logout();
 
     /**

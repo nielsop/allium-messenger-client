@@ -6,7 +6,7 @@ import nl.han.asd.project.client.commonclient.path.matrix.PathMatrix;
 import nl.han.asd.project.client.commonclient.path.matrix.PathMatrix.PathOption;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.NoConnectedNodesException;
-import nl.han.asd.project.internal.utility.Check;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 
 import javax.inject.Inject;
 import java.util.Collections;

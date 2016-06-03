@@ -80,7 +80,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage, 
                 }
             } else if (messageWrapper instanceof HanRoutingProtocol.Message) {
                 HanRoutingProtocol.Message message = (HanRoutingProtocol.Message) messageWrapper;
-                Message internalMessage = Message.fromProtocolMessage(message, contactStore.getCurrentUserAsContact());
+                Message internalMessage = Message.fromProtocolMessage(message, contactStore.getCurrentUser().asContact());
                 messageStore.addMessage(internalMessage);
 
                 for (IMessageReceiver receiver : receivers) {
@@ -118,7 +118,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage, 
 
         HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
         builder.setId(generateUniqueMessageId(contact.getUsername()));
-        builder.setSender(contactStore.getCurrentUser().getCurrentUserAsContact().getUsername());
+        builder.setSender(contactStore.getCurrentUser().asContact().getUsername());
         builder.setText(message.getText());
         builder.setTimeSent(System.currentTimeMillis() / 1000L);
 

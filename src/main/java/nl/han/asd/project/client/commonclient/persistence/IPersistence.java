@@ -1,18 +1,19 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-import nl.han.asd.project.client.commonclient.database.IDatabase;
-import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.Contact;
-
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nl.han.asd.project.client.commonclient.database.IDatabase;
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.Contact;
+
 /**
  * Defines an interface for persistence functions.
  */
-public interface IPersistence {
+public interface IPersistence extends AutoCloseable {
 
     SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -70,11 +71,11 @@ public interface IPersistence {
     boolean deleteAllContacts();
 
     /**
-     * Returns a list of all contacts.
+     * Returns a map of all contacts.
      *
-     * @return A list of all contacts.
+     * @return A map of all contacts.
      */
-    List<Contact> getContacts();
+    Map<String, Contact> getContacts();
 
     /**
      * Retuns the currently open database connection.
@@ -128,4 +129,11 @@ public interface IPersistence {
      * @return <tt>String</tt> containing the content of a script.
      */
     void updateScript(String scriptName, String scriptContent);
+
+    /**
+     * @param username The user's username.
+     * @param password The user's password.
+     */
+    void init(String username, String password) throws SQLException;
+
 }

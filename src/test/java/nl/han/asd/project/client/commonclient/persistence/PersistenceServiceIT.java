@@ -1,9 +1,9 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-import junit.framework.Assert;
 import nl.han.asd.project.client.commonclient.database.HyperSQLDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,10 +14,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertFalse;
-
+/**
+ * @author Niels Bokmans
+ * @version 1.0
+ * @since 24-5-2016
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceServiceIT {
 
@@ -27,24 +28,27 @@ public class PersistenceServiceIT {
     private static final Message TEST_MESSAGE_2 = new Message(-1, CONTACT_1, CONTACT_2, new Date(), "Testmessage2", "messageid2");
     private static final Message TEST_MESSAGE_3 = new Message(-1, CONTACT_2, CONTACT_1, new Date(), "Testmessage3", "messageid3");
     private static final String SCRIPT_1_NAME = "TestScript";
-    private static final String NONEXISTANT_SCRIPT_NAME = "TestScript";
-    private static final String SCRIPT_1_CONTENT = "segment data begin " + "     text testMessage value \"If you receive this message, I did not delay it and I am in trouble. Send help! \" "
-            + "     text reactionMessage value \"delayMessage abq1\" " + "     datetime testMessageSendTime value 2020-05-18 " + "segment end "
-            + "segment contact begin " + "     person mark value \"MarkVaessen\" " + "segment end " + "segment main begin " + "     schedule testMessageSendTime begin "
-            + "         send using testMessage as message mark as contact " + "     end " + "     react reactionMessage begin "
-            + "         set testMessageSendTime value 2040-05-18 " + "     end " + "segment end ";
+    private static final String SCRIPT_1_CONTENT = "segment data begin "
+            + "     text testMessage value \"If you receive this message, I did not delay it and I am in trouble. Send help! \" "
+            + "     text reactionMessage value \"delayMessage abq1\" "
+            + "     datetime testMessageSendTime value 2020-05-18 " + "segment end " + "segment contact begin "
+            + "     person mark value \"MarkVaessen\" " + "segment end " + "segment main begin "
+            + "     schedule testMessageSendTime begin " + "         send using testMessage as message mark as contact "
+            + "     end " + "     react reactionMessage begin " + "         set testMessageSendTime value 2040-05-18 "
+            + "     end " + "segment end ";
     private IPersistence persistenceService;
 
     @Before
     public void setupTest() throws SQLException {
-        final HyperSQLDatabase database = new HyperSQLDatabase("test", "test123");
+        final HyperSQLDatabase database = new HyperSQLDatabase();
+        database.init("test", "test123");
         database.resetDatabase();
         persistenceService = new PersistenceService(database);
     }
 
     @Test
     public void testSaveMessageSuccessful() throws SQLException {
-        assertTrue(persistenceService.saveMessage(TEST_MESSAGE_1));
+        Assert.assertTrue(persistenceService.saveMessage(TEST_MESSAGE_1));
     }
 
     @Test
@@ -53,8 +57,7 @@ public class PersistenceServiceIT {
         persistenceService.saveMessage(TEST_MESSAGE_2);
         Assert.assertEquals(3, persistenceService.getAllMessages().get(0).getDatabaseId());
         persistenceService.deleteMessage(1);
-
-        assertEquals(2, persistenceService.getAllMessages().get(0).getDatabaseId());
+        Assert.assertEquals(2, persistenceService.getAllMessages().get(0).getDatabaseId());
     }
 
     @Test
@@ -62,8 +65,8 @@ public class PersistenceServiceIT {
         persistenceService.saveMessage(TEST_MESSAGE_1);
         persistenceService.saveMessage(TEST_MESSAGE_2);
         final List<Message> messages = persistenceService.getAllMessages();
-        assertEquals(2, messages.size());
-        assertEquals(2, messages.get(messages.size() - 1).getDatabaseId());
+        Assert.assertEquals(2, messages.size());
+        Assert.assertEquals(2, messages.get(messages.size() - 1).getDatabaseId());
     }
 
     @Test
@@ -73,18 +76,18 @@ public class PersistenceServiceIT {
         persistenceService.deleteMessage(1);
         persistenceService.saveMessage(TEST_MESSAGE_3);
         final List<Message> messages = persistenceService.getAllMessages();
-        assertEquals(3, messages.get(messages.size() - 1).getDatabaseId());
+        Assert.assertEquals(3, messages.get(messages.size() - 1).getDatabaseId());
     }
 
     @Test
     public void testGetAllMessagesIsEmptyWithoutAdding() throws SQLException {
-        assertTrue(persistenceService.getAllMessages().size() == 0);
+        Assert.assertTrue(persistenceService.getAllMessages().size() == 0);
     }
 
     @Test
     public void testGetAllMessagesReturnsOneMessageAfterSavingAMessage() throws SQLException {
         persistenceService.saveMessage(TEST_MESSAGE_1);
-        assertTrue(persistenceService.getAllMessages().size() == 1);
+        Assert.assertTrue(persistenceService.getAllMessages().size() == 1);
     }
 
     @Test
@@ -93,31 +96,31 @@ public class PersistenceServiceIT {
         persistenceService.saveMessage(TEST_MESSAGE_2);
         persistenceService.saveMessage(TEST_MESSAGE_3);
         final Map<Contact, List<Message>> contactMessagesMap = persistenceService.getAllMessagesPerContact();
-        assertEquals(2, contactMessagesMap.size());
-        assertEquals(2, contactMessagesMap.get(CONTACT_1).size());
+        Assert.assertEquals(2, contactMessagesMap.size());
+        Assert.assertEquals(2, contactMessagesMap.get(CONTACT_1).size());
     }
 
     @Test
     public void testAddContactSuccessful() throws SQLException {
-        assertTrue(persistenceService.addContact(CONTACT_1.getUsername()));
-        assertTrue(persistenceService.getContacts().contains(CONTACT_1));
+        Assert.assertTrue(persistenceService.addContact(CONTACT_1.getUsername()));
+        Assert.assertTrue(persistenceService.getContacts().containsKey(CONTACT_1.getUsername()));
     }
 
     @Test
     public void testDeleteContactSuccessfulIfContactExists() throws SQLException {
-        assertTrue(persistenceService.addContact("Testcontact"));
-        assertTrue(persistenceService.deleteContact("Testcontact"));
+        Assert.assertTrue(persistenceService.addContact("Testcontact"));
+        Assert.assertTrue(persistenceService.deleteContact("Testcontact"));
     }
 
     @Test
     public void testGetContactsEmptyUponStart() throws SQLException {
-        assertTrue(persistenceService.getContacts().isEmpty());
+        Assert.assertTrue(persistenceService.getContacts().isEmpty());
     }
 
     @Test
     public void testGetContactsSuccessfulAfterAdd() throws SQLException {
         persistenceService.addContact("Testcontact");
-        assertEquals(1, persistenceService.getContacts().size());
+        Assert.assertEquals(1, persistenceService.getContacts().size());
     }
 
     @Test
@@ -126,70 +129,32 @@ public class PersistenceServiceIT {
         persistenceService.addContact("Testcontact2");
         persistenceService.addContact("Testcontact3");
         persistenceService.deleteContact("Testcontact2");
-        assertEquals(2, persistenceService.getContacts().size());
+        Assert.assertEquals(2, persistenceService.getContacts().size());
     }
-
-    @Test
-    public void testGetScriptSuccessAfterAdd()
-    {
-        persistenceService.addScript("name1", "Script");
-        assertEquals(1, persistenceService.getScripts().size());
-        persistenceService.addScript("name2", "Script");
-        persistenceService.addScript("name3", "Script");
-        assertEquals(3, persistenceService.getScripts().size());
-    }
-
-    @Test
-    public void testGetScriptSuccessAfterAddAndDelete()
-    {
-        persistenceService.addScript("name1", "Script");
-        persistenceService.addScript("name2", "Script");
-        persistenceService.deleteScript("name1");
-        assertEquals(1, persistenceService.getScripts().size());
-        persistenceService.addScript("name3", "Script");
-        persistenceService.addScript("name4", "Script");
-        persistenceService.deleteScript("name3");
-        assertEquals(2, persistenceService.getScripts().size());
-        persistenceService.deleteScript("name3");
-        assertEquals(2, persistenceService.getScripts().size());
-    }
-
-    @Test
-    public void testGetScriptDontDeleteDuplication()
-    {
-        persistenceService.addScript("name1", "Script");
-        persistenceService.addScript("name2", "Script");
-        persistenceService.deleteScript("name1");
-        assertEquals(1, persistenceService.getScripts().size());
-        persistenceService.deleteScript("name1");
-        assertEquals(1, persistenceService.getScripts().size());
-    }
-
 
     @Test
     public void testGetAllScriptsSuccessful() {
         persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT);
         final Map<String, String> scripts = persistenceService.getScripts();
-        assertEquals(1, scripts.size());
+        Assert.assertEquals(1, scripts.size());
         final Map.Entry<String, String> firstScript = scripts.entrySet().iterator().next();
-        assertEquals(SCRIPT_1_NAME, firstScript.getKey());
-        assertEquals(SCRIPT_1_CONTENT, firstScript.getValue());
+        Assert.assertEquals(SCRIPT_1_NAME, firstScript.getKey());
+        Assert.assertEquals(SCRIPT_1_CONTENT, firstScript.getValue());
     }
 
     @Test
     public void testAddScriptSuccessful() {
-        assertTrue(persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT));
-        assertTrue(persistenceService.getScripts().containsKey(SCRIPT_1_NAME));
+        Assert.assertTrue(persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT));
+        Assert.assertTrue(persistenceService.getScripts().containsKey(SCRIPT_1_NAME));
     }
 
     @Test
     public void testDeleteScriptSuccessful() {
         persistenceService.addScript(SCRIPT_1_NAME, SCRIPT_1_CONTENT);
-        assertEquals(1, persistenceService.getScripts().size());
-        assertTrue(persistenceService.deleteScript(SCRIPT_1_NAME));
-        assertFalse(persistenceService.getScripts().containsKey(SCRIPT_1_NAME));
+        Assert.assertEquals(1, persistenceService.getScripts().size());
+        Assert.assertTrue(persistenceService.deleteScript(SCRIPT_1_NAME));
+        Assert.assertFalse(persistenceService.getScripts().containsKey(SCRIPT_1_NAME));
 
     }
-
 
 }

@@ -1,11 +1,15 @@
 package nl.han.asd.project.client.commonclient.database;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HyperSQL Database implementation.
@@ -22,35 +26,25 @@ public class HyperSQLDatabase implements IDatabase {
     private static final Logger LOGGER = LoggerFactory.getLogger(HyperSQLDatabase.class);
     private Connection connection;
 
-    /**
-     * Creates a new HyperSQL Database connection. Creates the database if none exists for this user.
-     *
-     * @param username The user's username.
-     * @param password The user's password.
-     * @throws SQLException if a database access error occurs.
-     */
-    public HyperSQLDatabase(String username, String password) throws SQLException {
+    @Override
+    public void init(String username, String password) throws SQLException {
         final String key = generateKey(username, password);
-        connection = DriverManager.getConnection("jdbc:hsqldb:" + username + "_db;crypt_key=" + key + ";crypt_type=AES", DATABASE_USERNAME, DATABASE_PASSWORD);
+        connection = DriverManager.getConnection("jdbc:hsqldb:" + username + "_db;crypt_key=" + key + ";crypt_type=AES",
+                DATABASE_USERNAME, DATABASE_PASSWORD);
         initializeDatabase();
-    }
-
-    /**
-     * This constructor is only meant to be used by Guice.
-     * DO NOT manually instantiate this class with this empty constructor!
-     */
-    public HyperSQLDatabase() {
-        //Needed for GUICE to word?
     }
 
     private static String generateKey(String username, String password) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance(ENCRYPTION_ALGORITHM);
-            return String.format("%064x", new java.math.BigInteger(1, messageDigest.digest((username + password).getBytes()))).substring(0, 32);
+            return String
+                    .format("%064x",
+                            new java.math.BigInteger(1, messageDigest.digest((username + password).getBytes())))
+                    .substring(0, 32);
         } catch (NoSuchAlgorithmException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return "";
+        return null;
     }
 
     /**
@@ -58,7 +52,8 @@ public class HyperSQLDatabase implements IDatabase {
      */
     @Override
     public boolean resetDatabase() throws SQLException {
-        final boolean databaseIsReset = query("DROP TABLE IF EXISTS Contact") && query("DROP TABLE IF EXISTS Message") && query("DROP TABLE IF EXISTS Script");
+        final boolean databaseIsReset = query("DROP TABLE IF EXISTS Contact") && query("DROP TABLE IF EXISTS Message")
+                && query("DROP TABLE IF EXISTS Script");
         if (databaseIsReset) {
             initializeDatabase();
             return true;
@@ -108,7 +103,12 @@ public class HyperSQLDatabase implements IDatabase {
      * {@inheritDoc}
      */
     @Override
-    public void stop() throws SQLException {
+    public boolean isOpen() throws SQLException {
+        return connection != null && !connection.isClosed();
+    }
+
+    @Override
+    public void close() throws Exception {
         if (!isOpen()) {
             return;
         }
@@ -118,11 +118,4 @@ public class HyperSQLDatabase implements IDatabase {
         connection.close();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isOpen() throws SQLException {
-        return connection != null && !connection.isClosed();
-    }
 }

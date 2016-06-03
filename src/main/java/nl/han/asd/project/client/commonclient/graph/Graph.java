@@ -1,8 +1,10 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
-import java.util.*;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 public class Graph {
     private Map<String, Node> graph = new HashMap<>();
@@ -50,7 +52,7 @@ public class Graph {
     }
 
     public Map<String, Node> getGraphMap() {
-        return this.graph;
+        return graph;
     }
 
 }

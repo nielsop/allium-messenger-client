@@ -6,70 +6,65 @@ import nl.han.asd.project.commonservices.internal.utility.Check;
 
 import javax.inject.Inject;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+/**
+ * Manage stored messages.
+ *
+ * @version 1.0
+ */
 public class MessageStore implements IMessageStore {
-    private HashMap<Contact, List<Message>> messagesPerContact = new HashMap<>();
     private IPersistence persistenceService;
 
+    /**
+     * Construct a new MessageStore instance.
+     *
+     * @param persistenceService persistence service used to
+     *          write the messages to persistent storage
+     */
     @Inject
     public MessageStore(final IPersistence persistenceService) {
         this.persistenceService = Check.notNull(persistenceService, "persistenceService");
-        updateFromDatabase();
+    }
+
+    @Override
+    public void init(String username, String password) throws SQLException {
+        persistenceService.init(username, password);
     }
 
     @Override
     public void addMessage(final Message message) {
-        if (!messagesPerContact.containsKey(message.getSender())) {
-            final List<Message> newMessageList = new ArrayList<>();
-            newMessageList.add(message);
-            messagesPerContact.put(message.getSender(), newMessageList);
-        } else {
-            messagesPerContact.get(message.getSender()).add(message);
-        }
+        persistenceService.saveMessage(message);
     }
 
     @Override
-    public Map<Contact, List<Message>> getAllMessagesFromAllUsers() {
-        return persistenceService.getAllMessagesPerContact();
+    public List<Message> getMessagesFromUser(String username) {
+        Map<Contact, List<Message>> messagesPerContact = persistenceService.getAllMessagesPerContact();
+
+        return messagesPerContact.get(new Contact(username));
     }
 
     @Override
-    public List<Message> getMessagesFromUser(String contact) {
-        return getAllMessagesFromAllUsers().get(new Contact(contact));
-    }
+    public Message[] getMessagesAfterDate(long dateTimeSince) {
+        Date dateSince = new Date(dateTimeSince);
 
-    @Override
-    public void saveToDatabase() throws SQLException {
-        for (final Map.Entry<Contact, List<Message>> mapEntry : messagesPerContact.entrySet()) {
-            for (final Message message : mapEntry.getValue()) {
-                persistenceService.saveMessage(message);
+        Map<Contact, List<Message>> messagesPerContact = persistenceService.getAllMessagesPerContact();
+
+        List<Message> messagesAfterDate = new ArrayList<>();
+
+        for (List<Message> messages : messagesPerContact.values()) {
+            for (Message message : messages) {
+                if (message.getMessageTimestamp().compareTo(dateSince) > 0) {
+                    messagesAfterDate.add(message);
+                }
             }
         }
+
+        return (Message[]) messagesAfterDate.toArray();
     }
 
     @Override
-    public void updateFromDatabase() {
-        messagesPerContact = persistenceService.getAllMessagesPerContact();
-    }
-
-    @Override
-    public void clear() {
-        messagesPerContact.clear();
-    }
-
-    /**
-     * Returns all messages for a certain user after a certain dateTime.
-     *
-     * @param dateTime unix time stamp.
-     * @return an arrayList of messages.
-     */
-    @Override
-    public Message[] getMessagesAfterDate(long dateTime) {
-        //ToDo implement
-        return new Message[0];
+    public void close() throws Exception {
+        persistenceService.close();
     }
 }

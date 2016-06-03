@@ -5,10 +5,7 @@ import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.graph.GraphManagerService;
 import nl.han.asd.project.client.commonclient.node.NodeConnectionService;
-import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.ContactManager;
-import nl.han.asd.project.client.commonclient.store.ContactStore;
-import nl.han.asd.project.client.commonclient.store.MessageStore;
+import nl.han.asd.project.client.commonclient.store.*;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -55,8 +52,12 @@ public class MessageProcessingServiceTest {
         ByteString wrapperByteString = HanRoutingProtocol.Wrapper.newBuilder().setData(message.toByteString())
                 .setType(HanRoutingProtocol.Wrapper.Type.MESSAGE).build().toByteString();
 
+        CurrentUser currentUser = mock(CurrentUser.class);
         Contact contact = new Contact("receiver");
-        when(contactStore.getCurrentUserAsContact()).thenReturn(contact);
+
+        when(contactStore.getCurrentUser()).thenReturn(currentUser);
+        when(currentUser.asContact()).thenReturn(contact);
+
         HanRoutingProtocol.MessageWrapper messageWrapper = getMessageWrapper(
                 wrapperByteString);
         messageProcessingService.processIncomingMessage(messageWrapper);
