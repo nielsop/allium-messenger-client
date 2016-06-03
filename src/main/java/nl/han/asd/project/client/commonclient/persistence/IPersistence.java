@@ -3,7 +3,6 @@ package nl.han.asd.project.client.commonclient.persistence;
 import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.commonservices.scripting.Script;
 
 import java.text.SimpleDateFormat;
 import java.util.List;

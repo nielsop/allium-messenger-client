@@ -7,8 +7,8 @@ import nl.han.asd.project.client.commonclient.store.Contact;
 
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.commonservices.internal.utility.Check;
-import nl.han.asd.project.commonservices.scripting.internal.IScriptInteraction;
+import nl.han.asd.project.internal.utility.Check;
+import nl.han.asd.project.scripting.internal.IScriptInteraction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
