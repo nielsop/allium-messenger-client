@@ -1,8 +1,11 @@
-package nl.han.asd.project.client.commonclient.connection;
+package integration.nl.han.asd.project.client.commonclient.connection;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
+import nl.han.asd.project.client.commonclient.connection.ConnectionModule;
+import nl.han.asd.project.client.commonclient.connection.IConnectionService;
+import nl.han.asd.project.client.commonclient.connection.IConnectionServiceFactory;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;

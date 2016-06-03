@@ -17,6 +17,9 @@ import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
+
+import nl.han.asd.project.client.commonclient.store.*;
+
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
@@ -28,6 +31,8 @@ import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLogoutResponse;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
+
+import java.util.Date;
 
 /**
  * Android/Desktop application
@@ -57,7 +62,6 @@ public class CommonClientGateway {
      * @param registration used for registration
      * @param loginService used to login
      * @param scriptStore used to store scripts
-     * @param scriptTracker used to track running scripts
      * @param sendMessage used to send a message
      * @param subscribeMessageReceiver used to handle message listeners.
      */
@@ -263,4 +267,28 @@ public class CommonClientGateway {
     public void subscribeReceivedMessages(IMessageReceiver messageReceiver) {
         subscribeMessageReceiver.subscribe(messageReceiver);
     }
+
+    public boolean sendMessage(String username, String messageText)
+    {
+        try {
+            Contact contact = contactStore.findContact(username);
+            Message message = new Message(contactStore.getCurrentUser().asContact(), contact, new Date(), messageText);
+            sendMessage.sendMessage(message, contact);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
+            return false;
+        }
+    }
+
+    public Message[] getReceivedMessageAfterDate(Date date)
+    {
+        long dateTime = date.getTime();
+        Message[] receivedMessages = messageStore.getMessagesAfterDate(dateTime);
+
+        return receivedMessages;
+    }
+
+
 }

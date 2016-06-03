@@ -1,7 +1,9 @@
-package nl.han.asd.project.client.commonclient.persistence;
+package integration.nl.han.asd.project.client.commonclient.persistence;
 
 import nl.han.asd.project.client.commonclient.database.HyperSQLDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.persistence.IPersistence;
+import nl.han.asd.project.client.commonclient.persistence.PersistenceService;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.Assert;
 import org.junit.Before;
