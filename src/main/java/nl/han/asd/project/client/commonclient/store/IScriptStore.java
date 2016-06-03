@@ -1,7 +1,5 @@
 package nl.han.asd.project.client.commonclient.store;
 
-import nl.han.asd.project.commonservices.scripting.Script;
-
 import java.util.List;
 
 /**

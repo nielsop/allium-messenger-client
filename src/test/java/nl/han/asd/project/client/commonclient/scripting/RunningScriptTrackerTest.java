@@ -1,6 +1,6 @@
 package nl.han.asd.project.client.commonclient.scripting;
 
-import nl.han.asd.project.commonservices.scripting.internal.IScriptInteraction;
+import nl.han.asd.project.scripting.internal.IScriptInteraction;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
