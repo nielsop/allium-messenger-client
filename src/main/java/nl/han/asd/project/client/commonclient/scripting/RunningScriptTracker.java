@@ -11,6 +11,9 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * {@inheritDoc}
+ */
 public class RunningScriptTracker implements IRunningScriptTracker {
 
     private Map<String, Script> scripts = new HashMap<>();
@@ -28,18 +31,16 @@ public class RunningScriptTracker implements IRunningScriptTracker {
      */
     @Override
     public boolean startScript(String scriptName, String scriptContent) {
-        try {
-            Script script = new ScriptingService()
-                    .newScriptBuilder(scriptContent, scriptInteraction).build();
 
-            scripts.put(scriptName, script);
-            script.start();
-            return true;
+        Script script = new ScriptingService()
+                .newScriptBuilder(scriptContent, scriptInteraction).build();
+        if(script == null){
+            LOGGER.debug("Invalid script entered: ");
+            return false;
         }
-        catch(NullPointerException e){
-            LOGGER.debug("Invalid script entered: "+e);
-        }
-        return false;
+        scripts.put(scriptName, script);
+        script.start();
+        return true;
     }
 
     /**

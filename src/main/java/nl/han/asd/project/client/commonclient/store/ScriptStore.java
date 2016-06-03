@@ -6,6 +6,9 @@ import nl.han.asd.project.commonservices.internal.utility.Check;
 import javax.inject.Inject;
 import java.util.List;
 
+/**
+ * {@inheritDoc}
+ */
 public class ScriptStore implements IScriptStore {
     private static final String SCRIPT_NAME = "scriptName";
     private IPersistence persistence;
@@ -50,6 +53,7 @@ public class ScriptStore implements IScriptStore {
      */
     @Override
     public String getScriptContent(String scriptName) {
+        Check.notNull(scriptName, SCRIPT_NAME);
         return persistence.getScriptContent(scriptName);
     }
 
@@ -58,6 +62,8 @@ public class ScriptStore implements IScriptStore {
      */
     @Override
     public void updateScript(String scriptName, String scriptContent) {
-       persistence.updateScript(scriptName, scriptContent);
+        Check.notNull(scriptName, SCRIPT_NAME);
+        Check.notNull(scriptName, "Script content");
+        persistence.updateScript(scriptName, scriptContent);
     }
 }

@@ -1,9 +1,14 @@
 package nl.han.asd.project.client.commonclient.scripting;
 
+/**
+ * Keeps track of which scripts are running.
+ * Provides functionality to start a existing script
+ * Provides functionality to stop a running script.
+ */
 public interface IRunningScriptTracker {
 
     /**
-     * Makes a script start running
+     * Starts a script. A script runs on it own Thread.
      *
      * @param scriptName name of the to script to be started.
      * @param scriptContent content of the to script to be started.

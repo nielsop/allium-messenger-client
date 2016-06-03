@@ -4,6 +4,12 @@ import nl.han.asd.project.commonservices.scripting.Script;
 
 import java.util.List;
 
+/**
+ * Scriptstore provides functionality to read from and write to persistence.
+ * The persistence class is used to achieve this.
+ *
+ * @version 1.0
+ */
 public interface IScriptStore {
 
     /**

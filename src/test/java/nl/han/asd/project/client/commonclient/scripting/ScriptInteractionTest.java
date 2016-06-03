@@ -7,7 +7,6 @@ import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.sql.Timestamp;
@@ -19,7 +18,7 @@ import static org.mockito.Matchers.any;
 
 public class ScriptInteractionTest
 {
-    private ScriptInteraction sut;
+    private ScriptInteraction scriptInteraction;
     IContactStore contactStore;
     IMessageStore messageStore;
     ISendMessage sendMessage;
@@ -29,13 +28,13 @@ public class ScriptInteractionTest
         contactStore = Mockito.mock(IContactStore.class);
         messageStore = Mockito.mock(IMessageStore.class);
         sendMessage = Mockito.mock(ISendMessage.class);
-        sut = new ScriptInteraction(contactStore, messageStore, sendMessage);
+        scriptInteraction = new ScriptInteraction(contactStore, messageStore, sendMessage);
     }
 
     @Test
     public void sendMessageTest()
     {
-        assertTrue(sut.sendMessage("username", "message"));
+        assertTrue(scriptInteraction.sendMessage("username", "message"));
         Mockito.verify(contactStore, Mockito.times(1)).findContact(any(String.class));
         Mockito.verify(contactStore, Mockito.times(1)).getCurrentUserAsContact();
         Mockito.verify(sendMessage, Mockito.times(1)).sendMessage(any(Message.class), any(Contact.class));
@@ -44,8 +43,8 @@ public class ScriptInteractionTest
     @Test
     public void sendMessageWithNullValueTest()
     {
-        sut = new ScriptInteraction(contactStore, messageStore, null);
-        assertFalse(sut.sendMessage("username", "message"));
+        scriptInteraction = new ScriptInteraction(contactStore, messageStore, null);
+        assertFalse(scriptInteraction.sendMessage("username", "message"));
     }
 
     @Test
@@ -53,7 +52,7 @@ public class ScriptInteractionTest
     {
         Message message = new Message(new Contact("username"), new Contact("username2"), new Timestamp(1), "text");
         Mockito.when(messageStore.getMessagesAfterDate(any(long.class))).thenReturn(new Message[]{message});
-        sut.getReceivedMessages(new Date());
+        scriptInteraction.getReceivedMessages(new Date());
         Mockito.verify(messageStore, Mockito.times(1)).getMessagesAfterDate(any(long.class));
     }
 

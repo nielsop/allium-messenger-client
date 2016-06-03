@@ -9,13 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Defines an interface for persistence functions.
- *
- * @author Niels Bokmans
- * @version 1.0
- * @since 24-05-2016
- */
+
 public interface IPersistence {
 
     SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
