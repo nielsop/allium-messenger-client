@@ -9,6 +9,7 @@ import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.master.MasterGateway;
 import nl.han.asd.project.client.commonclient.scripting.IRunningScriptTracker;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
+import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.client.commonclient.store.IScriptStore;
@@ -36,6 +37,7 @@ public class CommonClientGatewayIT {
     private IScriptStore scriptStore;
     private IRunningScriptTracker runningScriptTracker;
     private ISendMessage sendMessage;
+    private ISubscribeMessageReceiver subscribeMessageReceiver;
 
     private String validUsername = "validUsername";
     private String validPassword = "validPassword";
@@ -51,8 +53,10 @@ public class CommonClientGatewayIT {
         scriptStore = injector.getInstance(IScriptStore.class);
         runningScriptTracker = injector.getInstance(IRunningScriptTracker.class);
         sendMessage = injector.getInstance(ISendMessage.class);
+        subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
 
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, runningScriptTracker, sendMessage);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, runningScriptTracker, sendMessage, subscribeMessageReceiver);
+
     }
 
     @After

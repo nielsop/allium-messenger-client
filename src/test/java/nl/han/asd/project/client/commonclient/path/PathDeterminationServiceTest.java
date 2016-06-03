@@ -1,110 +1,125 @@
 package nl.han.asd.project.client.commonclient.path;
 
-import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
-import nl.han.asd.project.client.commonclient.store.Contact;
-import org.junit.After;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Map;
+
+import nl.han.asd.project.client.commonclient.store.NoConnectedNodesException;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.List;
+import nl.han.asd.project.client.commonclient.graph.Graph;
+import nl.han.asd.project.client.commonclient.graph.IGetVertices;
+import nl.han.asd.project.client.commonclient.graph.Node;
+import nl.han.asd.project.client.commonclient.store.Contact;
 
-/**
- * Created by Julius on 15/04/16.
- */
 @RunWith(MockitoJUnitRunner.class)
 public class PathDeterminationServiceTest {
-    @Mock
-    IGetUpdatedGraph updatedGraphMock;
 
     @Mock
-    IGetClientGroup clientGroupMock;
+    IGetVertices getVertices;
+
+    @Mock
+    Contact contactReceiver;
+
     @InjectMocks
-    private PathDeterminationService pathDeterminationService;
-    private Contact contact;
+    PathDeterminationService pathDeterminationService;
 
-    @Before
-    public void setUp() throws Exception {
-        contact = new Contact("Username", "1234".getBytes());
-        contact.setConnectedNodes(new Node[]{new Node("NODE_ID_1", "192.168.2.8", 1234, "123456789".getBytes()),
-                new Node("NODE_ID_2", "192.168.2.9", 1234, "123456789".getBytes()),
-                new Node("NODE_ID_3", "192.168.2.10", 1234, "123456789".getBytes())});
-    }
-
-    /*
-    Comparing self created path with a pathDeterminationService generated path
-     */
     @Test
-    public void whenMiniumHops() {
-        //Node[] selfMadePath = {new Node(),new Node(),new Node()};
+    public void testNoDuplicateStartNodes() throws Exception {
+        Map<String, Node> graph = buildGraph();
+        when(getVertices.getVertices()).thenReturn(graph);
 
-        int minimunNodes = 3;
-        List<Node> generatePath = pathDeterminationService.getPath(3, contact);
+        when(contactReceiver.getConnectedNodes()).thenReturn(new Node[] { graph.get("C") });
 
-        Assert.assertEquals(minimunNodes, generatePath.size());
+        List<Node> path = pathDeterminationService.getPath(0, contactReceiver);
+        List<Node> path2 = pathDeterminationService.getPath(0, contactReceiver);
+
+        Assert.assertNotEquals(path.get(0), path2.get(0));
     }
 
-    /*
-    Checking if generatedPath contains Node objects
-    */
     @Test
-    public void checkIfGeneratedPathContainsNodes() {
-        Node[] selfMadePath = {new Node("NODE_ID_1", "192.168.2.8", 1234, "123456789".getBytes()),
-                new Node("NODE_ID_2", "192.168.2.9", 1234, "123456789".getBytes()),
-                new Node("NODE_ID_3", "192.168.2.10", 1234, "123456789".getBytes())};
+    public void testNoPathFromConnectedNode() throws NoConnectedNodesException {
+        Map<String, Node> graph = buildGraph();
+        when(getVertices.getVertices()).thenReturn(graph);
 
-        List<Node> generatePath = pathDeterminationService.getPath(3, contact);
+        when(contactReceiver.getConnectedNodes()).thenReturn(new Node[] { graph.get("H") });
+        List<Node> path = pathDeterminationService.getPath(0, contactReceiver);
 
-        for (int i = 0; i < selfMadePath.length; i++) {
-            Assert.assertEquals(selfMadePath[i], generatePath.get(i));
-        }
+        Assert.assertArrayEquals(new Node[] { graph.get("H"), graph.get("H") }, path.toArray());
     }
 
-    /*
-    Checking if error is trown when miniumHops is negative number
-    */
     @Test(expected = IllegalArgumentException.class)
-    public void whenMinimunHopsIsNegativeThrowError() {
-        List<Node> generatePath = pathDeterminationService.getPath(-1, contact);
+    public void testConstructorIGetVerticesNull() {
+        PathDeterminationService pds = new PathDeterminationService(null);
     }
 
-    /*
-    Check if the first Node in the generated path is a ConnectedNode from the host client.
-     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetPathContactReceiverNull()
+            throws NoConnectedNodesException {
+        pathDeterminationService.getPath(0, null);
+    }
+
     @Test
-    public void firstNodeInPathIsAConnectedNodeFromHostClient() {
-        List<Node> generatePath = pathDeterminationService.getPath(3, contact);
-        Node[] contactConnectedNodes = new Node[0];
-        try {
-            contactConnectedNodes = contact.getConnectedNodes();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Assert.assertTrue(inArray(generatePath.get(0), contactConnectedNodes));
+    public void testNoConnectedNodes() throws NoConnectedNodesException {
+        Map<String, Node> graph = buildGraph();
+        when(getVertices.getVertices()).thenReturn(graph);
+
+        when(contactReceiver.getConnectedNodes()).thenThrow(new NoConnectedNodesException(""));
+        List<Node> path = pathDeterminationService.getPath(0, contactReceiver);
+
+        Assert.assertEquals(null, path);
     }
 
-    //    @Test
-    //    public void clientHostConnectedNodesAreUpdatedIfLastUpdateIsExpired() {
-    //        throw new NotImplementedException();
-    //    }
+    @Test(expected = IllegalArgumentException.class)
+    public void testReceiverHasNoConnectedNodes()
+            throws NoConnectedNodesException {
+        Map<String, Node> graph = buildGraph();
+        when(getVertices.getVertices()).thenReturn(graph);
 
-    private boolean inArray(Node needle, Node[] haystack) {
-        for (Node n : haystack) {
-            if (n == needle) {
-                return true;
-            }
-        }
-        return false;
+        when(contactReceiver.getConnectedNodes()).thenReturn(new Node[] { });
+
+        pathDeterminationService.getPath(0, contactReceiver);
+
+        Assert.fail("Test failed. The service should've throwed an exception.");
     }
 
-    @After
-    public void tearDown() throws Exception {
+    public Map<String, Node> buildGraph() {
+        Graph graph = new Graph();
 
+        Node nodeA = new Node("A", "127.0.0.1", 1001, new byte[] { 0x00 });
+        Node nodeB = new Node("B", "127.0.0.1", 1002, new byte[] { 0x00 });
+        Node nodeC = new Node("C", "127.0.0.1", 1003, new byte[] { 0x00 });
+        Node nodeD = new Node("D", "127.0.0.1", 1004, new byte[] { 0x00 });
+        Node nodeE = new Node("E", "127.0.0.1", 1005, new byte[] { 0x00 });
+        Node nodeF = new Node("F", "127.0.0.1", 1006, new byte[] { 0x00 });
+        Node nodeG = new Node("G", "127.0.0.1", 1006, new byte[] { 0x00 });
+        Node nodeH = new Node("H", "127.0.0.1", 1007, new byte[] { 0x00 });
+
+        nodeA.addEdge(nodeE, 8);
+        nodeA.addEdge(nodeF, 4);
+        nodeE.addEdge(nodeC, 3);
+        nodeC.addEdge(nodeD, 1);
+        nodeC.addEdge(nodeB, 10);
+        nodeF.addEdge(nodeB, 2);
+        nodeF.addEdge(nodeD, 3);
+        nodeG.addEdge(nodeE, 1);
+        nodeG.addEdge(nodeC, 1);
+
+        graph.addNodeVertex(nodeA);
+        graph.addNodeVertex(nodeB);
+        graph.addNodeVertex(nodeC);
+        graph.addNodeVertex(nodeD);
+        graph.addNodeVertex(nodeE);
+        graph.addNodeVertex(nodeF);
+        graph.addNodeVertex(nodeG);
+        graph.addNodeVertex(nodeH);
+
+        return graph.getGraphMap();
     }
 }

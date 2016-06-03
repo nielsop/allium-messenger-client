@@ -5,7 +5,9 @@ import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.login.MisMatchingException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
+import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.scripting.IRunningScriptTracker;
 import nl.han.asd.project.client.commonclient.store.*;
@@ -40,12 +42,18 @@ public class CommonClientGateway {
     private IRunningScriptTracker scriptTracker;
 
     private ISendMessage sendMessage;
+    private ISubscribeMessageReceiver subscribeMessageReceiver;
 
     private static CommonClientGateway commonClientGateway;
 
     @Inject
+
         public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
-            ILoginService loginService, IScriptStore scriptStore, IRunningScriptTracker scriptTracker, ISendMessage sendMessage) {
+            ILoginService loginService, IScriptStore scriptStore, IRunningScriptTracker scriptTracker, ISendMessage sendMessage,
+            ISubscribeMessageReceiver subscribeMessageReceiver) {
+
+        this.subscribeMessageReceiver = Check.notNull(subscribeMessageReceiver, "subscribeMessageReceiver");
+
         this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");
@@ -188,6 +196,7 @@ public class CommonClientGateway {
     }
 
     /**
+<<<<<<< HEAD
      * Gets the content of a script.
      *
      * @param scriptName name of the script of which the content will be fetched
@@ -254,5 +263,13 @@ public class CommonClientGateway {
      */
     public void removeScript(String scriptName) {
         scriptStore.removeScript(scriptName);
+    }
+    /**
+     * Subscribe to any messages received by MessageProcessingService
+     *
+     * @param messageReceiver An instance of IMessageReceiver that will be triggered on received messages
+     */
+    public void subscribeReceivedMessages(IMessageReceiver messageReceiver) {
+        subscribeMessageReceiver.subscribe(messageReceiver);
     }
 }
