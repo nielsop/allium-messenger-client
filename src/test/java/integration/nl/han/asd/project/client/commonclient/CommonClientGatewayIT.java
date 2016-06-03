@@ -1,4 +1,4 @@
-package integration;
+package integration.nl.han.asd.project.client.commonclient;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

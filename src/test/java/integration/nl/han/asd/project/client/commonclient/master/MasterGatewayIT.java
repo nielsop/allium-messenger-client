@@ -1,4 +1,4 @@
-package integration.master;
+package integration.nl.han.asd.project.client.commonclient.master;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;

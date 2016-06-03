@@ -1,4 +1,4 @@
-package integration.message;
+package integration.nl.han.asd.project.client.commonclient.message;
 
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
