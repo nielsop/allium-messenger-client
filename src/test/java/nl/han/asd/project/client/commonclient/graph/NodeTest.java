@@ -40,13 +40,6 @@ public class NodeTest {
     }
 
     @Test
-    public void testBidirectionalEdgeCreation() throws Exception {
-        node1.addEdge(node2, 10);
-        Edge edge = node2.getEdge("1");
-        Assert.assertEquals(node1.getId(), edge.getDestinationNodeId());
-    }
-
-    @Test
     public void testEqualsImplementation() {
         Assert.assertEquals(false, node1.equals(node2));
         Assert.assertEquals(false, node1.equals(null));

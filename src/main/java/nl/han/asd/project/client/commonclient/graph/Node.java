@@ -44,7 +44,6 @@ public class Node {
         Check.notNull(distance, "distance");
 
         edges.add(new Edge(destination.getId(), distance));
-        destination.edges.add(new Edge(this.getId(), distance));
     }
 
     /**
