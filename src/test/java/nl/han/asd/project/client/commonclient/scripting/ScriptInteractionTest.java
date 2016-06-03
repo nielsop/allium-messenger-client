@@ -56,11 +56,5 @@ public class ScriptInteractionTest
         Mockito.verify(messageStore, Mockito.times(1)).getMessagesAfterDate(any(long.class));
     }
 
-    @Test
-    public void printUITest()
-    {
-
-    }
-
 
 }

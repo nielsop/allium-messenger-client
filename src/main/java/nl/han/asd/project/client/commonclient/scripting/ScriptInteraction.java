@@ -15,15 +15,25 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.Date;
 
-
 public class ScriptInteraction implements IScriptInteraction {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptInteraction.class);
-
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
     private ISendMessage sendMessage;
 
+    /**
+     * Construct a new ScriptInteraction instance
+     * using the supplied contacStore, messageStore and sendMessage
+     * <p/>
+     * <p/>
+     * Note that this constructor only checks if the contact and
+     * message stores are not null
+     *
+     * @param contactStore used to store contacts ;
+     * @param messageStore used to save messages;
+     * @param sendMessage used to send a message
+     */
     @Inject
     public ScriptInteraction(IContactStore contactStore, IMessageStore messageStore, ISendMessage sendMessage) {
         this.sendMessage = sendMessage;

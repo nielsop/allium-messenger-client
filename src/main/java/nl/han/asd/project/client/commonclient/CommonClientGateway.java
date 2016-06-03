@@ -32,7 +32,8 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLogoutRespons
  */
 public class CommonClientGateway {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(CommonClientGateway.class);
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
@@ -46,14 +47,28 @@ public class CommonClientGateway {
 
     private static CommonClientGateway commonClientGateway;
 
+    /**
+     * Constructor of the CommonClientGateway
+     *
+     * Validates that all parameters arent null
+     *
+     * @param contactStore used to store contacts
+     * @param messageStore used to store messages
+     * @param registration used for registration
+     * @param loginService used to login
+     * @param scriptStore used to store scripts
+     * @param scriptTracker used to track running scripts
+     * @param sendMessage used to send a message
+     * @param subscribeMessageReceiver used to handle message listeners.
+     */
     @Inject
-
-        public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
-            ILoginService loginService, IScriptStore scriptStore, IRunningScriptTracker scriptTracker, ISendMessage sendMessage,
+    public CommonClientGateway(IContactStore contactStore,
+            IMessageStore messageStore, IRegistration registration,
+            ILoginService loginService, IScriptStore scriptStore,
+            IRunningScriptTracker scriptTracker, ISendMessage sendMessage,
             ISubscribeMessageReceiver subscribeMessageReceiver) {
-
-        this.subscribeMessageReceiver = Check.notNull(subscribeMessageReceiver, "subscribeMessageReceiver");
-
+        this.subscribeMessageReceiver = Check
+                .notNull(subscribeMessageReceiver, "subscribeMessageReceiver");
         this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");
@@ -75,12 +90,15 @@ public class CommonClientGateway {
      * @throws MessageNotSentException
      * @throws IOException
      */
-    public ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IOException, MessageNotSentException {
+    public ClientRegisterResponse.Status registerRequest(String username,
+            String password, String passwordRepeat)
+            throws IOException, MessageNotSentException {
         try {
             Validation.passwordsEqual(password, passwordRepeat);
             Validation.validateCredentials(username, password);
 
-            ClientRegisterRequest.Builder requestBuilder = ClientRegisterRequest.newBuilder();
+            ClientRegisterRequest.Builder requestBuilder = ClientRegisterRequest
+                    .newBuilder();
             requestBuilder.setUsername(username);
             requestBuilder.setPassword(password);
 
@@ -98,7 +116,9 @@ public class CommonClientGateway {
      * @param password the password belonging to the username.
      * @return the login status, received from the loginResponseWrapper.
      */
-    public ClientLoginResponse.Status loginRequest(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
+    public ClientLoginResponse.Status loginRequest(String username,
+            String password) throws InvalidCredentialsException, IOException,
+            MessageNotSentException {
         try {
             return loginService.login(username, password);
         } catch (Exception e) {
@@ -184,11 +204,13 @@ public class CommonClientGateway {
     /**
      * Logs out the user and deletes all user data in memory
      */
-    public ClientLogoutResponse.Status logout() throws MessageNotSentException, IOException, MisMatchingException {
+    public ClientLogoutResponse.Status logout()
+            throws MessageNotSentException, IOException, MisMatchingException {
         try {
             CurrentUser user = contactStore.getCurrentUser();
-            return loginService.logout(user.getCurrentUserAsContact().getUsername(),
-                    user.getSecretHash());
+            return loginService
+                    .logout(user.getCurrentUserAsContact().getUsername(),
+                            user.getSecretHash());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
@@ -196,7 +218,6 @@ public class CommonClientGateway {
     }
 
     /**
-<<<<<<< HEAD
      * Gets the content of a script.
      *
      * @param scriptName name of the script of which the content will be fetched
@@ -264,6 +285,7 @@ public class CommonClientGateway {
     public void removeScript(String scriptName) {
         scriptStore.removeScript(scriptName);
     }
+
     /**
      * Subscribe to any messages received by MessageProcessingService
      *
