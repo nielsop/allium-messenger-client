@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 
 import nl.han.asd.project.client.commonclient.graph.Edge;
 import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.client.commonclient.path.algorithm.NodeNotInGraphException;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 
 /**

@@ -27,7 +27,7 @@ public class PathDeterminationServiceTest {
     @Mock
     Contact contactReceiver;
 
-    MatrixPathDeterminationService pathDeterminationService;
+    PathDeterminationService pathDeterminationService;
 
     @Test
     public void testNoDuplicateStartNodes() throws Exception {
@@ -37,7 +37,7 @@ public class PathDeterminationServiceTest {
         when(contactReceiver.getConnectedNodes())
                 .thenReturn(new Node[] { graph.get("C") });
 
-        pathDeterminationService = new MatrixPathDeterminationService(
+        pathDeterminationService = new PathDeterminationService(
                 getVertices);
 
         List<Node> path = pathDeterminationService.getPath(0, contactReceiver);
@@ -54,7 +54,7 @@ public class PathDeterminationServiceTest {
         when(contactReceiver.getConnectedNodes())
                 .thenReturn(new Node[] { graph.get("H") });
 
-        pathDeterminationService = new MatrixPathDeterminationService(
+        pathDeterminationService = new PathDeterminationService(
                 getVertices);
 
         List<Node> path = pathDeterminationService.getPath(0, contactReceiver);
@@ -70,7 +70,7 @@ public class PathDeterminationServiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetPathContactReceiverNull()
             throws NoConnectedNodesException {
-        pathDeterminationService = new MatrixPathDeterminationService(
+        pathDeterminationService = new PathDeterminationService(
                 getVertices);
         pathDeterminationService.getPath(0, null);
     }
@@ -83,7 +83,7 @@ public class PathDeterminationServiceTest {
         when(contactReceiver.getConnectedNodes())
                 .thenThrow(new NoConnectedNodesException(""));
 
-        pathDeterminationService = new MatrixPathDeterminationService(
+        pathDeterminationService = new PathDeterminationService(
                 getVertices);
 
         List<Node> path = pathDeterminationService.getPath(0, contactReceiver);
@@ -99,7 +99,7 @@ public class PathDeterminationServiceTest {
 
         when(contactReceiver.getConnectedNodes()).thenReturn(new Node[] {});
 
-        pathDeterminationService = new MatrixPathDeterminationService(
+        pathDeterminationService = new PathDeterminationService(
                 getVertices);
 
         pathDeterminationService.getPath(0, contactReceiver);

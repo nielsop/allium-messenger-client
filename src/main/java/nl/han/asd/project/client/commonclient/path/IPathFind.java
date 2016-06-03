@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.path.algorithm;
+package nl.han.asd.project.client.commonclient.path;
 
 import java.util.List;
 

@@ -29,11 +29,10 @@ public class PathMatrixTest {
 
         @Parameters
         public static Collection<Case> data() {
-            return Arrays.asList(new Case(1, "A",
-                    new Node[][] { { get("G"), get("E"), get("A") },
-                            { get("C"), get("E"), get("A") },
-                            { get("B"), get("F"), get("A") },
-                            { get("D"), get("F"), get("A") } }));
+            return Arrays.asList(new Case(1, "B",
+                    new Node[][] { { get("E"), get("C"), get("B") },
+                            { get("A"), get("F"), get("B") },
+                            { get("G"), get("C"), get("B") } }));
         }
 
         public WithParameters(Case testCase) {

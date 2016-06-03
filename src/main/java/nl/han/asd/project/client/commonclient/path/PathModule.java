@@ -5,6 +5,6 @@ import com.google.inject.AbstractModule;
 public class PathModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(IGetMessagePath.class).to(MatrixPathDeterminationService.class);
+        bind(IGetMessagePath.class).to(PathDeterminationService.class);
     }
 }
