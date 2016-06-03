@@ -1,13 +1,23 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 
-import javax.inject.Inject;
-import java.util.*;
-
+/**
+ * Manage the current and stored contacts
+ *
+ * @version 1.0
+ */
 public class ContactStore implements IContactStore {
     private final IGetVertices graphManager;
     private IPersistence persistence;
@@ -28,7 +38,7 @@ public class ContactStore implements IContactStore {
     }
 
     @Override
-    public void init(String username, String password) {
+    public void init(String username, String password) throws SQLException {
         persistence.init(username, password);
     }
 
@@ -70,8 +80,8 @@ public class ContactStore implements IContactStore {
      * {@inheritDoc}
      */
     @Override
-    public void updateUserInformation(String username, byte[] publicKey,
-            boolean online, List<String> connectedNodeIds) {
+    public void updateUserInformation(String username, byte[] publicKey, boolean online,
+            List<String> connectedNodeIds) {
         Contact oldContact = findContact(username);
         if (oldContact == null) {
             return;
@@ -116,7 +126,7 @@ public class ContactStore implements IContactStore {
      */
     @Override
     public Contact findContact(String username) {
-        if (username == null || username.equals("")) {
+        if (username == null || username.isEmpty()) {
             return null;
         }
 

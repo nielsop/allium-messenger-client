@@ -23,23 +23,20 @@ public class Edge {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Edge))
+        if (!(obj instanceof Edge)) {
             return false;
-        if (obj == this)
+        }
+        if (obj == this) {
             return true;
+        }
 
         Edge edgeToCompare = (Edge) obj;
-        return new EqualsBuilder().
-                append(destinationNodeId, edgeToCompare.destinationNodeId).
-                append(weight, edgeToCompare.weight).
-                isEquals();
+        return new EqualsBuilder().append(destinationNodeId, edgeToCompare.destinationNodeId)
+                .append(weight, edgeToCompare.weight).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 31).
-                append(destinationNodeId).
-                append(weight).
-                toHashCode();
+        return new HashCodeBuilder(17, 31).append(destinationNodeId).append(weight).toHashCode();
     }
 }

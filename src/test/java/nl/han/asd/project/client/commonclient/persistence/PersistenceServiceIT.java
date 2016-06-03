@@ -1,18 +1,19 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-import nl.han.asd.project.client.commonclient.database.HyperSQLDatabase;
-import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.Contact;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import nl.han.asd.project.client.commonclient.database.HyperSQLDatabase;
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.Contact;
 
 /**
  * @author Niels Bokmans
@@ -28,11 +29,14 @@ public class PersistenceServiceIT {
     private static final Message TEST_MESSAGE_2 = new Message(-1, CONTACT_1, CONTACT_2, new Date(), "Testmessage2");
     private static final Message TEST_MESSAGE_3 = new Message(-1, CONTACT_2, CONTACT_1, new Date(), "Testmessage3");
     private static final String SCRIPT_1_NAME = "TestScript";
-    private static final String SCRIPT_1_CONTENT = "segment data begin " + "     text testMessage value \"If you receive this message, I did not delay it and I am in trouble. Send help! \" "
-            + "     text reactionMessage value \"delayMessage abq1\" " + "     datetime testMessageSendTime value 2020-05-18 " + "segment end "
-            + "segment contact begin " + "     person mark value \"MarkVaessen\" " + "segment end " + "segment main begin " + "     schedule testMessageSendTime begin "
-            + "         send using testMessage as message mark as contact " + "     end " + "     react reactionMessage begin "
-            + "         set testMessageSendTime value 2040-05-18 " + "     end " + "segment end ";
+    private static final String SCRIPT_1_CONTENT = "segment data begin "
+            + "     text testMessage value \"If you receive this message, I did not delay it and I am in trouble. Send help! \" "
+            + "     text reactionMessage value \"delayMessage abq1\" "
+            + "     datetime testMessageSendTime value 2020-05-18 " + "segment end " + "segment contact begin "
+            + "     person mark value \"MarkVaessen\" " + "segment end " + "segment main begin "
+            + "     schedule testMessageSendTime begin " + "         send using testMessage as message mark as contact "
+            + "     end " + "     react reactionMessage begin " + "         set testMessageSendTime value 2040-05-18 "
+            + "     end " + "segment end ";
     private IPersistence persistenceService;
 
     @Before
@@ -100,7 +104,7 @@ public class PersistenceServiceIT {
     @Test
     public void testAddContactSuccessful() throws SQLException {
         Assert.assertTrue(persistenceService.addContact(CONTACT_1.getUsername()));
-        Assert.assertTrue(persistenceService.getContacts().containsKey(CONTACT_1));
+        Assert.assertTrue(persistenceService.getContacts().containsKey(CONTACT_1.getUsername()));
     }
 
     @Test

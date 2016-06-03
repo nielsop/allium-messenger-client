@@ -1,8 +1,9 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import java.util.LinkedList;
+import java.util.List;
 
-import java.util.*;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 
 /**
  * @author Niels Bokmans
@@ -11,7 +12,6 @@ import java.util.*;
  */
 public class Node {
     private List<Edge> edges;
-    private Map<String, Edge> adjacent;
     private String id;
     private String ipAddress;
     private int port;
@@ -42,18 +42,10 @@ public class Node {
     }
 
     public void addEdge(Node destination, float distance) {
-        edges.add(new Edge(destination.getId(), distance));
-        destination.edges.add(new Edge(this.getId(), distance));
-        this.adjacent = new HashMap<>();
-    }
+        Check.notNull(destination, "destination");
+        Check.notNull(distance, "distance");
 
-    /**
-     * add an edge
-     *
-     * @param edge
-     */
-    public void addEdge(HanRoutingProtocol.Edge edge) {
-        adjacent.put(edge.getTargetNodeId(), new Edge(edge.getTargetNodeId(), edge.getWeight()));
+        edges.add(new Edge(destination.getId(), distance));
     }
 
     /**
@@ -61,14 +53,14 @@ public class Node {
      * @return The edge that has been found with the destination node id.
      */
     public Edge getEdge(String destinationNodeId) {
-        Edge edge = adjacent.get(destinationNodeId);
-        if (edge == null)
-            throw new NoSuchElementException();
-        return edge;
-    }
+        Check.notNull(destinationNodeId, "destinationNodeId");
 
-    public Map<String, Edge> getAdjacent() {
-        return adjacent;
+        for (Edge edge : edges) {
+            if (edge.getDestinationNodeId() == destinationNodeId) {
+                return edge;
+            }
+        }
+        return null;
     }
 
     public String getIpAddress() {

@@ -1,25 +1,38 @@
 package nl.han.asd.project.client.commonclient.store;
 
-import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.persistence.IPersistence;
-import nl.han.asd.project.commonservices.internal.utility.Check;
-
-import javax.inject.Inject;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.persistence.IPersistence;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+
+/**
+ * Manage stored messages.
+ *
+ * @version 1.0
+ */
 public class MessageStore implements IMessageStore {
     private IPersistence persistenceService;
 
+    /**
+     * Construct a new MessageStore instance.
+     *
+     * @param persistenceService persistence service used to
+     *          write the messages to persistent storage
+     */
     @Inject
     public MessageStore(final IPersistence persistenceService) {
         this.persistenceService = Check.notNull(persistenceService, "persistenceService");
     }
 
     @Override
-    public void init(String username, String password) {
+    public void init(String username, String password) throws SQLException {
         persistenceService.init(username, password);
     }
 

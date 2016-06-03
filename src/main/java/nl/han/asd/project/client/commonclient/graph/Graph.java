@@ -1,11 +1,10 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 public class Graph {
     private Map<String, Node> graph = new HashMap<>();
@@ -41,7 +40,10 @@ public class Graph {
     public void addEdgesToVertex(HanRoutingProtocol.Node vertex) {
         Node node = getNodeVertex(vertex.getId());
         for (final HanRoutingProtocol.Edge edge : vertex.getEdgeList()) {
-            node.addEdge(edge);
+            if (node.getEdge(edge.getTargetNodeId()) == null) {
+                Node destinationNode = getNodeVertex(edge.getTargetNodeId());
+                node.addEdge(destinationNode, edge.getWeight());
+            }
         }
     }
 
@@ -50,7 +52,7 @@ public class Graph {
     }
 
     public Map<String, Node> getGraphMap() {
-        return this.graph;
+        return graph;
     }
 
 }

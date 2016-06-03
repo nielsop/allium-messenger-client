@@ -1,8 +1,9 @@
 package nl.han.asd.project.client.commonclient.store;
 
-import nl.han.asd.project.client.commonclient.message.Message;
-
+import java.sql.SQLException;
 import java.util.List;
+
+import nl.han.asd.project.client.commonclient.message.Message;
 
 public interface IMessageStore extends AutoCloseable {
     /**
@@ -35,5 +36,5 @@ public interface IMessageStore extends AutoCloseable {
      * @param username The user's username.
      * @param password The user's password.
      */
-    void init(String username, String password);
+    void init(String username, String password) throws SQLException;
 }

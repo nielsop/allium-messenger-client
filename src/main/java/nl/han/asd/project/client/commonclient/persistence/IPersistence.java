@@ -1,19 +1,16 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-import nl.han.asd.project.client.commonclient.database.IDatabase;
-import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.Contact;
-
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
+import nl.han.asd.project.client.commonclient.database.IDatabase;
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.Contact;
+
 /**
  * Defines an interface for persistence functions.
- *
- * @author Niels Bokmans
- * @version 1.0
- * @since 24-05-2016
  */
 public interface IPersistence extends AutoCloseable {
 
@@ -73,9 +70,9 @@ public interface IPersistence extends AutoCloseable {
     boolean deleteAllContacts();
 
     /**
-     * Returns a list of all contacts.
+     * Returns a map of all contacts.
      *
-     * @return A list of all contacts.
+     * @return A map of all contacts.
      */
     Map<String, Contact> getContacts();
 
@@ -109,14 +106,33 @@ public interface IPersistence extends AutoCloseable {
      * @return <tt>true</tt> if the insertion was successful, <tt>false</tt> otherwise.
      */
     boolean addScript(final String scriptName, final String scriptContent);
-    
+
     /**
-     * Creates a new Database connection. Creates the database if none exists for this user.
+     * Gets a list containing the names of all saved scripts.
      *
+     * @return <tt>List<String></tt> containing the names of all saved scripts.
+     */
+    List<String> getAllScriptNames();
+
+    /**
+     * Gets the content of a script.
+     *
+     * @param scriptName The name of the script of which the content will be fetched.
+     * @return <tt>String</tt> containing the content of a script.
+     */
+    String getScriptContent(String scriptName);
+
+    /**
+     * Updates the content of a script.
+     *
+     * @return <tt>String</tt> containing the content of a script.
+     */
+    void updateScript(String scriptName, String scriptContent);
+
+    /**
      * @param username The user's username.
      * @param password The user's password.
-     * 
-     * @return true if the database was instantiated, false otherwise
      */
-    boolean init(String username, String password);
+    void init(String username, String password) throws SQLException;
+
 }

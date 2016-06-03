@@ -1,7 +1,14 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Define methods to add/remove and fetch
+ * contacts from storage.
+ *
+ * @version 1.0
+ */
 public interface IContactStore extends AutoCloseable {
 
     /**
@@ -54,8 +61,7 @@ public interface IContactStore extends AutoCloseable {
      * @param online Current online status
      * @param connectNodes List of node ID's the client is connected to
      */
-    void updateUserInformation(String user, byte[] publicKey, boolean online,
-            List<String> connectNodes);
+    void updateUserInformation(String user, byte[] publicKey, boolean online, List<String> connectNodes);
 
     /**
      * Initiate the store using the provided username and password.
@@ -63,5 +69,5 @@ public interface IContactStore extends AutoCloseable {
      * @param username The user's username.
      * @param password The user's password.
      */
-    void init(String username, String password);
+    void init(String username, String password) throws SQLException;
 }

@@ -5,13 +5,12 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
-import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
-import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.store.IScriptStore;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,11 +26,10 @@ public class CommonClientGatewayTest {
     private IRegistration registration;
     private ILoginService login;
     private ISendMessage sendMessage;
-    private IMessageBuilder messageBuilder;
-    private IMessageConfirmation messageConfirmation;
-    private ISubscribeMessageReceiver subscribeMessageReceiver;
 
-    private byte[] emptyPublicKey = "".getBytes();
+    private IScriptStore scriptStore;
+
+    private ISubscribeMessageReceiver subscribeMessageReceiver;
     private byte[] privateKey = "".getBytes();
     private String secretHash = "";
     private String testContact = "testUserName";
@@ -58,12 +56,9 @@ public class CommonClientGatewayTest {
         registration = injector.getInstance(IRegistration.class);
         login = injector.getInstance(ILoginService.class);
         sendMessage = injector.getInstance(ISendMessage.class);
-        messageBuilder = injector.getInstance(IMessageBuilder.class);
-        messageConfirmation = injector.getInstance(IMessageConfirmation.class);
+        scriptStore = injector.getInstance(IScriptStore.class);
         subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
-
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, sendMessage,
-                subscribeMessageReceiver);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, sendMessage,subscribeMessageReceiver);
     }
 
     @Test
