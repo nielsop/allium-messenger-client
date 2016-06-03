@@ -9,17 +9,17 @@ import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.scripting.IRunningScriptTracker;
 import nl.han.asd.project.client.commonclient.store.*;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
+import nl.han.asd.project.scripting.internal.IScriptInteraction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
@@ -40,7 +40,6 @@ public class CommonClientGateway {
     private IRegistration registration;
     private ILoginService loginService;
     private IScriptStore scriptStore;
-    private IRunningScriptTracker scriptTracker;
 
     private ISendMessage sendMessage;
     private ISubscribeMessageReceiver subscribeMessageReceiver;
@@ -57,7 +56,6 @@ public class CommonClientGateway {
      * @param registration used for registration
      * @param loginService used to login
      * @param scriptStore used to store scripts
-     * @param scriptTracker used to track running scripts
      * @param sendMessage used to send a message
      * @param subscribeMessageReceiver used to handle message listeners.
      */
@@ -65,7 +63,7 @@ public class CommonClientGateway {
     public CommonClientGateway(IContactStore contactStore,
             IMessageStore messageStore, IRegistration registration,
             ILoginService loginService, IScriptStore scriptStore,
-            IRunningScriptTracker scriptTracker, ISendMessage sendMessage,
+            ISendMessage sendMessage,
             ISubscribeMessageReceiver subscribeMessageReceiver) {
         this.subscribeMessageReceiver = Check
                 .notNull(subscribeMessageReceiver, "subscribeMessageReceiver");
@@ -75,7 +73,6 @@ public class CommonClientGateway {
         this.registration = Check.notNull(registration, "registration");
         this.loginService = Check.notNull(loginService, "loginService");
         this.scriptStore = Check.notNull(scriptStore, "scriptStore");
-        this.scriptTracker = Check.notNull(scriptTracker, "scriptTracker");
     }
 
     /**
@@ -237,27 +234,6 @@ public class CommonClientGateway {
     }
 
     /**
-     * Stops a running script from exeuting
-     *
-     * @param scriptName The name of the script that will be stopped from executing
-     */
-    public void stopScript(String scriptName) {
-        scriptTracker.stopScript(scriptName);
-    }
-
-    /**
-     * Starts the execution of a script
-     *
-     * @param scriptName The name of the script that will be started
-     * @param scriptContent The content of the script that will be started
-     * @return A boolean indicating wheter the script started successfully
-     */
-    public boolean startScript(String scriptName, String scriptContent) {
-        scriptStore.updateScript(scriptName, scriptContent);
-        return scriptTracker.startScript(scriptName, scriptContent);
-    }
-
-    /**
      * Adds a new script into the database
      *
      * @param scriptName The name of the script that will be added
@@ -294,4 +270,27 @@ public class CommonClientGateway {
     public void subscribeReceivedMessages(IMessageReceiver messageReceiver) {
         subscribeMessageReceiver.subscribe(messageReceiver);
     }
+
+    public boolean sendMessage(String username, String messageText)
+    {
+        try {
+            Contact contact = contactStore.findContact(username);
+            Message message = new Message(contactStore.getCurrentUserAsContact(), contact, new Date(), messageText);
+            sendMessage.sendMessage(message, contact);
+            return true;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return false;
+        }
+    }
+
+    public Message[] getReceivedMessageAfterDate(Date date)
+    {
+        long dateTime = date.getTime();
+        Message[] receivedMessages = messageStore.getMessagesAfterDate(dateTime);
+
+        return receivedMessages;
+    }
+
+
 }

@@ -11,7 +11,6 @@ import nl.han.asd.project.client.commonclient.message.MessageModule;
 import nl.han.asd.project.client.commonclient.node.NodeModule;
 import nl.han.asd.project.client.commonclient.path.PathModule;
 import nl.han.asd.project.client.commonclient.persistence.PersistenceModule;
-import nl.han.asd.project.client.commonclient.scripting.ScriptModule;
 import nl.han.asd.project.client.commonclient.store.StoreModule;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 
@@ -28,7 +27,6 @@ public class CommonClientModule extends AbstractModule {
         install(new NodeModule());
         install(new PathModule());
         install(new PersistenceModule());
-        install(new ScriptModule());
         install(new StoreModule());
         install(new EncryptionModule());
         install(new NodeModule());
