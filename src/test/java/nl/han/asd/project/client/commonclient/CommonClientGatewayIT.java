@@ -6,9 +6,13 @@ import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.client.commonclient.scripting.IRunningScriptTracker;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
+import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.store.IScriptStore;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +34,10 @@ public class CommonClientGatewayIT {
     private IMessageStore messageStore;
     private IRegistration registration;
     private ILoginService login;
+    private IScriptStore scriptStore;
+    private IRunningScriptTracker runningScriptTracker;
     private ISendMessage sendMessage;
+    private ISubscribeMessageReceiver subscribeMessageReceiver;
 
     private String validUsername = "validUsername";
     private String validPassword = "validPassword";
@@ -43,9 +50,13 @@ public class CommonClientGatewayIT {
         messageStore = injector.getInstance(IMessageStore.class);
         registration = injector.getInstance(IRegistration.class);
         login = injector.getInstance(ILoginService.class);
+        scriptStore = injector.getInstance(IScriptStore.class);
+        runningScriptTracker = injector.getInstance(IRunningScriptTracker.class);
         sendMessage = injector.getInstance(ISendMessage.class);
+        subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
 
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, sendMessage);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, runningScriptTracker, sendMessage, subscribeMessageReceiver);
+
     }
 
     @After

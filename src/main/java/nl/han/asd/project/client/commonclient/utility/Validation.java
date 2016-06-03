@@ -54,12 +54,6 @@ public final class Validation {
         return isValidUsername(username) && isValidPassword(password);
     }
 
-    /**
-     * Checks if the username is a valid username
-     *
-     * @param username The username to check.
-     * @return <tt>true</tt> if it's a valid username, <tt>false</tt> otherwise.
-     */
     private static boolean isValidUsername(String username) {
         if (username == null || username.isEmpty() || !username.matches(REGEX_ALPHANUMERIC)) {
             throw new IllegalArgumentException("Invalid username! Username may only consist of digits, numbers, underscores and dashes.");
@@ -70,18 +64,12 @@ public final class Validation {
         return true;
     }
 
-    /**
-     * Checks if the password is a valid password
-     *
-     * @param password The password to check.
-     * @return <tt>true</tt> if it's a valid password, <tt>false</tt> otherwise.
-     */
     private static boolean isValidPassword(String password) {
         if (password == null || password.isEmpty() || !password.matches(REGEX_ALPHANUMERIC)) {
-            throw new IllegalArgumentException("Invalid username! Username may only consist of digits, numbers, underscores and dashes.");
+            throw new IllegalArgumentException("Invalid password! Password may only consist of digits, numbers, underscores and dashes.");
         }
         if (password.length() < 8 || password.length() > 40) {
-            throw new IllegalArgumentException("Invalid password! Passwordt length should be between 8 and 40 characters.");
+            throw new IllegalArgumentException("Invalid password! Password length should be between 8 and 40 characters.");
         }
         return true;
     }

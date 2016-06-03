@@ -1,21 +1,16 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
 import nl.han.asd.project.client.commonclient.database.IDatabase;
-
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.commonservices.scripting.Script;
 
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Defines an interface for persistence functions.
- *
- * @author Niels Bokmans
- * @version 1.0
- * @since 24-05-2016
  */
 public interface IPersistence {
 
@@ -87,4 +82,50 @@ public interface IPersistence {
      * @return The currently open database connection.
      */
     IDatabase getDatabase();
+
+    /**
+     * Fetches a list of all saved scripts from the database.
+     *
+     * @return A map containing all scripts, with the script name as the key, and the content of the script as the value.
+     */
+    Map<String, String> getScripts();
+
+    /**
+     * Deletes a script from the database by name.
+     *
+     * @param scriptName The name of the script to remove.
+     * @return <tt>true</tt> if the deletion was successful, <tt>false</tt> otherwise.
+     */
+    boolean deleteScript(final String scriptName);
+
+    /**
+     * Adds a scripts to the database.
+     *
+     * @param scriptName The name of the script to add to the database.
+     * @param scriptContent The content of the script to add to the database.
+     * @return <tt>true</tt> if the insertion was successful, <tt>false</tt> otherwise.
+     */
+    boolean addScript(final String scriptName, final String scriptContent);
+
+    /**
+     * Gets a list containing the names of all saved scripts.
+     *
+     * @return <tt>List<String></tt> containing the names of all saved scripts.
+     */
+    List<String> getAllScriptNames();
+
+    /**
+     * Gets the content of a script.
+     *
+     * @param scriptName The name of the script of which the content will be fetched.
+     * @return <tt>String</tt> containing the content of a script.
+     */
+    String getScriptContent(String scriptName);
+
+    /**
+     * Updates the content of a script.
+     *
+     * @return <tt>String</tt> containing the content of a script.
+     */
+    void updateScript(String scriptName, String scriptContent);
 }

@@ -5,12 +5,12 @@ import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.login.MisMatchingException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
+import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.CurrentUser;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.scripting.IRunningScriptTracker;
+import nl.han.asd.project.client.commonclient.store.*;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
@@ -32,24 +32,50 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLogoutRespons
  */
 public class CommonClientGateway {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(CommonClientGateway.class);
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
     private IRegistration registration;
     private ILoginService loginService;
+    private IScriptStore scriptStore;
+    private IRunningScriptTracker scriptTracker;
+
     private ISendMessage sendMessage;
+    private ISubscribeMessageReceiver subscribeMessageReceiver;
 
     private static CommonClientGateway commonClientGateway;
 
+    /**
+     * Constructor of the CommonClientGateway
+     *
+     * Validates that all parameters arent null
+     *
+     * @param contactStore used to store contacts
+     * @param messageStore used to store messages
+     * @param registration used for registration
+     * @param loginService used to login
+     * @param scriptStore used to store scripts
+     * @param scriptTracker used to track running scripts
+     * @param sendMessage used to send a message
+     * @param subscribeMessageReceiver used to handle message listeners.
+     */
     @Inject
-    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
-                               ILoginService loginService, ISendMessage sendMessage) {
+    public CommonClientGateway(IContactStore contactStore,
+            IMessageStore messageStore, IRegistration registration,
+            ILoginService loginService, IScriptStore scriptStore,
+            IRunningScriptTracker scriptTracker, ISendMessage sendMessage,
+            ISubscribeMessageReceiver subscribeMessageReceiver) {
+        this.subscribeMessageReceiver = Check
+                .notNull(subscribeMessageReceiver, "subscribeMessageReceiver");
         this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");
         this.registration = Check.notNull(registration, "registration");
         this.loginService = Check.notNull(loginService, "loginService");
+        this.scriptStore = Check.notNull(scriptStore, "scriptStore");
+        this.scriptTracker = Check.notNull(scriptTracker, "scriptTracker");
     }
 
     /**
@@ -64,12 +90,15 @@ public class CommonClientGateway {
      * @throws MessageNotSentException
      * @throws IOException
      */
-    public ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat) throws IOException, MessageNotSentException {
+    public ClientRegisterResponse.Status registerRequest(String username,
+            String password, String passwordRepeat)
+            throws IOException, MessageNotSentException {
         try {
             Validation.passwordsEqual(password, passwordRepeat);
             Validation.validateCredentials(username, password);
 
-            ClientRegisterRequest.Builder requestBuilder = ClientRegisterRequest.newBuilder();
+            ClientRegisterRequest.Builder requestBuilder = ClientRegisterRequest
+                    .newBuilder();
             requestBuilder.setUsername(username);
             requestBuilder.setPassword(password);
 
@@ -87,7 +116,9 @@ public class CommonClientGateway {
      * @param password the password belonging to the username.
      * @return the login status, received from the loginResponseWrapper.
      */
-    public ClientLoginResponse.Status loginRequest(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
+    public ClientLoginResponse.Status loginRequest(String username,
+            String password) throws InvalidCredentialsException, IOException,
+            MessageNotSentException {
         try {
             return loginService.login(username, password);
         } catch (Exception e) {
@@ -173,14 +204,94 @@ public class CommonClientGateway {
     /**
      * Logs out the user and deletes all user data in memory
      */
-    public ClientLogoutResponse.Status logout() throws MessageNotSentException, IOException, MisMatchingException {
+    public ClientLogoutResponse.Status logout()
+            throws MessageNotSentException, IOException, MisMatchingException {
         try {
             CurrentUser user = contactStore.getCurrentUser();
-            return loginService.logout(user.getCurrentUserAsContact().getUsername(),
-                    user.getSecretHash());
+            return loginService
+                    .logout(user.getCurrentUserAsContact().getUsername(),
+                            user.getSecretHash());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
         }
+    }
+
+    /**
+     * Gets the content of a script.
+     *
+     * @param scriptName name of the script of which the content will be fetched
+     * @return The content of a script
+     */
+    public String getScriptContent(String scriptName) {
+        return scriptStore.getScriptContent(scriptName);
+    }
+
+    /**
+     * Gets the names of all the users scripts.
+     *
+     * @return A list containing the names of all the script of the user.
+     */
+    public List<String> getAllScriptNames() {
+        return scriptStore.getAllScriptNames();
+    }
+
+    /**
+     * Stops a running script from exeuting
+     *
+     * @param scriptName The name of the script that will be stopped from executing
+     */
+    public void stopScript(String scriptName) {
+        scriptTracker.stopScript(scriptName);
+    }
+
+    /**
+     * Starts the execution of a script
+     *
+     * @param scriptName The name of the script that will be started
+     * @param scriptContent The content of the script that will be started
+     * @return A boolean indicating wheter the script started successfully
+     */
+    public boolean startScript(String scriptName, String scriptContent) {
+        scriptStore.updateScript(scriptName, scriptContent);
+        return scriptTracker.startScript(scriptName, scriptContent);
+    }
+
+    /**
+     * Adds a new script into the database
+     *
+     * @param scriptName The name of the script that will be added
+     * @param scriptContent The content of the script that will be added
+     */
+    public void addScript(String scriptName, String scriptContent) {
+        scriptStore.addScript(scriptName, scriptContent);
+    }
+
+    /**
+     * Updates the content of a script
+     *
+     * @param scriptName The name of the script that will be updated
+     * @param scriptContent The newly entered content for the script that will be updated
+     */
+    public void updateScript(String scriptName, String scriptContent) {
+        scriptStore.updateScript(scriptName, scriptContent);
+    }
+
+    /**
+     * Removes a script from the database
+     *
+     * @param scriptName The name of the script that will be removed
+     */
+    public void removeScript(String scriptName) {
+        scriptStore.removeScript(scriptName);
+    }
+
+    /**
+     * Subscribe to any messages received by MessageProcessingService
+     *
+     * @param messageReceiver An instance of IMessageReceiver that will be triggered on received messages
+     */
+    public void subscribeReceivedMessages(IMessageReceiver messageReceiver) {
+        subscribeMessageReceiver.subscribe(messageReceiver);
     }
 }

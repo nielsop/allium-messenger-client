@@ -8,9 +8,12 @@ import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.IMessageBuilder;
 import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
+import nl.han.asd.project.client.commonclient.scripting.IRunningScriptTracker;
+import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.store.CurrentUser;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.store.IScriptStore;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +32,10 @@ public class CommonClientGatewayTest {
     private IMessageBuilder messageBuilder;
     private IMessageConfirmation messageConfirmation;
 
+    private IScriptStore scriptStore;
+    private IRunningScriptTracker scriptTracker;
+
+    private ISubscribeMessageReceiver subscribeMessageReceiver;
     private byte[] emptyPublicKey = "".getBytes();
     private byte[] privateKey = "".getBytes();
     private String secretHash = "";
@@ -58,9 +65,10 @@ public class CommonClientGatewayTest {
         sendMessage = injector.getInstance(ISendMessage.class);
         messageBuilder = injector.getInstance(IMessageBuilder.class);
         messageConfirmation = injector.getInstance(IMessageConfirmation.class);
-
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, sendMessage
-        );
+        scriptStore = injector.getInstance(IScriptStore.class);
+        scriptTracker = injector.getInstance(IRunningScriptTracker.class);
+        subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, scriptTracker, sendMessage,subscribeMessageReceiver);
     }
 
     @Test
