@@ -50,7 +50,7 @@ public class RunningScriptTracker implements IRunningScriptTracker {
     public void stopScript(String scriptName) {
         Script scriptToStop = scripts.get(scriptName);
         if (scriptToStop != null) {
-            scriptToStop.stopRunning();
+            scriptToStop.stop();
             scripts.remove(scriptName);
         }
     }
