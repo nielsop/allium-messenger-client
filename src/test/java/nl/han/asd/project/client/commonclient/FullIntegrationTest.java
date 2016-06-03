@@ -67,7 +67,7 @@ public class FullIntegrationTest {
     public void ok() {
         System.out.println("gelukt!");
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty("master-server-host", masterHost);
         properties.setProperty("master-server-port", Integer.toString(masterPort));
 
