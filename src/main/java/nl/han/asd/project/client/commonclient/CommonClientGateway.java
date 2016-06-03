@@ -15,6 +15,7 @@ import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse.Status;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
 import org.slf4j.Logger;
@@ -93,12 +94,10 @@ public class CommonClientGateway {
      * @return the login status, received from the loginResponseWrapper.
      */
     public ClientLoginResponse.Status loginRequest(String username, String password) throws InvalidCredentialsException, IOException, MessageNotSentException {
-        try {
-            return loginService.login(username, password);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw e;
-        }
+        Status status = loginService.login(username, password);
+        contactStore.init(username, password);
+        messageStore.init(username, password);
+        return status;
     }
 
     /**

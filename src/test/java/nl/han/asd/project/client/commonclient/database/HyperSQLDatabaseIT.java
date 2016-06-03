@@ -16,7 +16,8 @@ public class HyperSQLDatabaseIT {
 
     @Before
     public void setupTestSuite() throws SQLException, NoSuchAlgorithmException {
-        database = new HyperSQLDatabase("test", "test123");
+        database = new HyperSQLDatabase();
+        database.init("test", "test123");
         database.resetDatabase();
     }
 

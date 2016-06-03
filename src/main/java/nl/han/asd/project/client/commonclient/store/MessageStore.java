@@ -61,15 +61,19 @@ public class MessageStore implements IMessageStore {
         messagesPerContact.clear();
     }
 
-    /**
-     * Returns all messages for a certain user after a certain dateTime.
-     *
-     * @param dateTime unix time stamp.
-     * @return an arrayList of messages.
-     */
     @Override
     public Message[] getMessagesAfterDate(long dateTime) {
         //ToDo implement
         return new Message[0];
+    }
+
+    @Override
+    public void init(String username, String password) {
+        persistenceService.init(username, password);
+    }
+
+    @Override
+    public void close() throws Exception {
+        persistenceService.close();
     }
 }

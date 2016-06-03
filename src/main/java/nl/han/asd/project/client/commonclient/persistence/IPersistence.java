@@ -15,7 +15,7 @@ import java.util.Map;
  * @version 1.0
  * @since 24-05-2016
  */
-public interface IPersistence {
+public interface IPersistence extends AutoCloseable {
 
     SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -109,4 +109,14 @@ public interface IPersistence {
      * @return <tt>true</tt> if the insertion was successful, <tt>false</tt> otherwise.
      */
     boolean addScript(final String scriptName, final String scriptContent);
+    
+    /**
+     * Creates a new Database connection. Creates the database if none exists for this user.
+     *
+     * @param username The user's username.
+     * @param password The user's password.
+     * 
+     * @return true if the database was instantiated, false otherwise
+     */
+    boolean init(String username, String password);
 }

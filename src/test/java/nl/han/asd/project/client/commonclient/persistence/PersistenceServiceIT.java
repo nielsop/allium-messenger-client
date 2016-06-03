@@ -28,7 +28,6 @@ public class PersistenceServiceIT {
     private static final Message TEST_MESSAGE_2 = new Message(-1, CONTACT_1, CONTACT_2, new Date(), "Testmessage2");
     private static final Message TEST_MESSAGE_3 = new Message(-1, CONTACT_2, CONTACT_1, new Date(), "Testmessage3");
     private static final String SCRIPT_1_NAME = "TestScript";
-    private static final String NONEXISTANT_SCRIPT_NAME = "TestScript";
     private static final String SCRIPT_1_CONTENT = "segment data begin " + "     text testMessage value \"If you receive this message, I did not delay it and I am in trouble. Send help! \" "
             + "     text reactionMessage value \"delayMessage abq1\" " + "     datetime testMessageSendTime value 2020-05-18 " + "segment end "
             + "segment contact begin " + "     person mark value \"MarkVaessen\" " + "segment end " + "segment main begin " + "     schedule testMessageSendTime begin "
@@ -38,7 +37,8 @@ public class PersistenceServiceIT {
 
     @Before
     public void setupTest() throws SQLException {
-        final HyperSQLDatabase database = new HyperSQLDatabase("test", "test123");
+        final HyperSQLDatabase database = new HyperSQLDatabase();
+        database.init("test", "test123");
         database.resetDatabase();
         persistenceService = new PersistenceService(database);
     }

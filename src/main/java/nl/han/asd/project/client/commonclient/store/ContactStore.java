@@ -1,13 +1,14 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import nl.han.asd.project.commonservices.internal.utility.Check;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ContactStore implements IContactStore {
     private final IGetVertices graphManager;
@@ -24,9 +25,10 @@ public class ContactStore implements IContactStore {
     public ContactStore(IPersistence persistence, IGetVertices graphManager) {
         this.graphManager = Check.notNull(graphManager, "graphManager");
         this.persistence = Check.notNull(persistence, "persistence");
-        this.contactList = persistence.getContacts();
-        if (contactList == null)
+        contactList = persistence.getContacts();
+        if (contactList == null) {
             contactList = new ArrayList<>();
+        }
     }
 
     /**
@@ -73,7 +75,8 @@ public class ContactStore implements IContactStore {
      * {@inheritDoc}
      */
     @Override
-    public void updateUserInformation(String user, byte[] publicKey, boolean online, List<String> connectedNodeIds) {
+    public void updateUserInformation(String user, byte[] publicKey,
+            boolean online, List<String> connectedNodeIds) {
         Contact oldContact = findContact(user);
         if (oldContact == null) {
             return;
@@ -133,5 +136,15 @@ public class ContactStore implements IContactStore {
     @Override
     public void deleteAllContactsFromMemory() {
         contactList.clear();
+    }
+
+    @Override
+    public void init(String username, String password) {
+        persistence.init(username, password);
+    }
+
+    @Override
+    public void close() throws Exception {
+        persistence.close();
     }
 }

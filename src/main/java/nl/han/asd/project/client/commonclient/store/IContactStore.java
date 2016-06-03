@@ -1,11 +1,8 @@
 package nl.han.asd.project.client.commonclient.store;
 
-/**
- * Created by Jevgeni on 12-5-2016.
- */
 import java.util.List;
 
-public interface IContactStore {
+public interface IContactStore extends AutoCloseable {
 
     /**
      * Adds new contact into contactstore.
@@ -69,5 +66,14 @@ public interface IContactStore {
      * @param online Current online status
      * @param connectNodes List of node ID's the client is connected to
      */
-    void updateUserInformation(String user, byte[] publicKey, boolean online, List<String> connectNodes);
+    void updateUserInformation(String user, byte[] publicKey, boolean online,
+            List<String> connectNodes);
+
+    /**
+     * Initiate the store using the provided username and password.
+     *
+     * @param username The user's username.
+     * @param password The user's password.
+     */
+    void init(String username, String password);
 }

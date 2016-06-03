@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -207,5 +209,21 @@ public class PersistenceService implements IPersistence {
             LOGGER.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    @Override
+    public boolean init(String username, String password) {
+        try {
+            database.init(username, password);
+        } catch (SQLException e) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    @Override
+    public void close() throws Exception {
+        database.close();
     }
 }
