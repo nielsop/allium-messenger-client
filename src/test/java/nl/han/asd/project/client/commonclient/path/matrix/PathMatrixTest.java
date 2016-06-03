@@ -118,7 +118,6 @@ public class PathMatrixTest {
                     }
                 }
 
-                System.err.println(pathMatrix.toString());
                 assertTrue(contained);
             }
 
