@@ -1,11 +1,9 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import java.util.LinkedList;
+import java.util.List;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import nl.han.asd.project.commonservices.internal.utility.Check;
 
 /**
  * @author Niels Bokmans
@@ -13,7 +11,7 @@ import java.util.NoSuchElementException;
  * @since 20-4-2016
  */
 public class Node {
-    private Map<String, Edge> adjacent;
+    private List<Edge> edges;
     private String id;
     private String ipAddress;
     private int port;
@@ -24,16 +22,30 @@ public class Node {
         this.ipAddress = ipAddress;
         this.port = port;
         this.publicKey = publicKey;
-        this.adjacent = new HashMap<>();
+        edges = new LinkedList<>();
     }
 
-    /**
-     * add an edge
-     *
-     * @param edge
-     */
-    public void addEdge(HanRoutingProtocol.Edge edge) {
-        adjacent.put(edge.getTargetNodeId(), new Edge(edge.getTargetNodeId(), edge.getWeight()));
+    @Override
+    public boolean equals(Object anotherObj) {
+        if (anotherObj == null) {
+            return false;
+        }
+        if (!(anotherObj instanceof Node)) {
+            return false;
+        }
+        return ((Node) anotherObj).getId().equals(getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    public void addEdge(Node destination, float distance) {
+        Check.notNull(destination, "destination");
+        Check.notNull(distance, "distance");
+
+        edges.add(new Edge(destination.getId(), distance));
     }
 
     /**
@@ -41,14 +53,14 @@ public class Node {
      * @return The edge that has been found with the destination node id.
      */
     public Edge getEdge(String destinationNodeId) {
-        Edge edge = adjacent.get(destinationNodeId);
-        if (edge == null)
-            throw new NoSuchElementException();
-        return edge;
-    }
+        Check.notNull(destinationNodeId, "destinationNodeId");
 
-    public Map<String, Edge> getAdjacent() {
-        return adjacent;
+        for (Edge edge : edges) {
+            if (edge.getDestinationNodeId() == destinationNodeId) {
+                return edge;
+            }
+        }
+        return null;
     }
 
     public String getIpAddress() {
@@ -67,13 +79,7 @@ public class Node {
         return id;
     }
 
-    @Override
-    public boolean equals(Object anotherObject) {
-        return !(anotherObject == null || !(anotherObject instanceof Node));
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getId()).toHashCode();
+    public List<Edge> getEdges() {
+        return edges;
     }
 }

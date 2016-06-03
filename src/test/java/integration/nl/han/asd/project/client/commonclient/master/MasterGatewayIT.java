@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.master;
+package integration.nl.han.asd.project.client.commonclient.master;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -9,6 +9,9 @@ import com.xebialabs.overcast.host.CloudHostFactory;
 import com.xebialabs.overcast.host.DockerHost;
 import nl.han.asd.project.client.commonclient.connection.ConnectionModule;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.master.IAuthentication;
+import nl.han.asd.project.client.commonclient.master.MasterGateway;
+import nl.han.asd.project.client.commonclient.master.MasterModule;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.protocol.HanRoutingProtocol.*;
 import org.junit.After;

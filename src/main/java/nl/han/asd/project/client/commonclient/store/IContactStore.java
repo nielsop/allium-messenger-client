@@ -1,11 +1,15 @@
 package nl.han.asd.project.client.commonclient.store;
 
-/**
- * Created by Jevgeni on 12-5-2016.
- */
+import java.sql.SQLException;
 import java.util.List;
 
-public interface IContactStore {
+/**
+ * Define methods to add/remove and fetch
+ * contacts from storage.
+ *
+ * @version 1.0
+ */
+public interface IContactStore extends AutoCloseable {
 
     /**
      * Adds new contact into contactstore.
@@ -36,23 +40,11 @@ public interface IContactStore {
     Contact findContact(String username);
 
     /**
-     * Deletes all the contacts in the contactstore memory.
-     */
-    void deleteAllContactsFromMemory();
-
-    /**
      * Setter for currentUser.
      *
      * @param currentUser the current user that is logged in
      */
     void setCurrentUser(CurrentUser currentUser);
-
-    /**
-     * Getter for currentUser as contact.
-     *
-     * @return current user that is logged in as contact
-     */
-    Contact getCurrentUserAsContact();
 
     /**
      * Getter for currentUser.
@@ -70,4 +62,12 @@ public interface IContactStore {
      * @param connectNodes List of node ID's the client is connected to
      */
     void updateUserInformation(String user, byte[] publicKey, boolean online, List<String> connectNodes);
+
+    /**
+     * Initiate the store using the provided username and password.
+     *
+     * @param username The user's username.
+     * @param password The user's password.
+     */
+    void init(String username, String password) throws SQLException;
 }
