@@ -122,8 +122,7 @@ public class ContactStoreTest {
     public void testDeleteSingleContactFromList() throws SQLException {
         // Mock
         when(persistence.deleteContact(TEST_CONTACT2)).thenReturn(true);
-        when(persistence.getContacts()).thenReturn(mockDeletedContactList);
-
+        when(persistence.getContacts()).thenReturn(mockedMultipleContactList);
 
         // Test
         addTestContacts();
@@ -131,7 +130,10 @@ public class ContactStoreTest {
         // Assert
         assertNotNull(contactStore.findContact(TEST_CONTACT2));
         assertEquals(4, contactStore.getAllContacts().size());
+
         contactStore.removeContact(TEST_CONTACT2);
+        when(persistence.getContacts()).thenReturn(mockDeletedContactList);
+
         assertNull(contactStore.findContact(TEST_CONTACT2));
         assertEquals(3, contactStore.getAllContacts().size());
     }
