@@ -33,23 +33,11 @@ public interface IContactStore extends AutoCloseable {
     Contact findContact(String username);
 
     /**
-     * Deletes all the contacts in the contactstore memory.
-     */
-    void deleteAllContactsFromMemory();
-
-    /**
      * Setter for currentUser.
      *
      * @param currentUser the current user that is logged in
      */
     void setCurrentUser(CurrentUser currentUser);
-
-    /**
-     * Getter for currentUser as contact.
-     *
-     * @return current user that is logged in as contact
-     */
-    Contact getCurrentUserAsContact();
 
     /**
      * Getter for currentUser.

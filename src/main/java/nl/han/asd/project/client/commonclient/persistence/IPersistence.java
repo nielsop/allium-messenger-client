@@ -77,7 +77,7 @@ public interface IPersistence extends AutoCloseable {
      *
      * @return A list of all contacts.
      */
-    List<Contact> getContacts();
+    Map<String, Contact> getContacts();
 
     /**
      * Retuns the currently open database connection.

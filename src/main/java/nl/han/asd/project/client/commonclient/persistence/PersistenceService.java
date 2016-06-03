@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -139,16 +137,17 @@ public class PersistenceService implements IPersistence {
      * {@inheritDoc}
      */
     @Override
-    public List<Contact> getContacts() {
-        final List<Contact> contactList = new ArrayList<>();
+    public Map<String, Contact> getContacts() {
+        final Map<String, Contact> contactList = new HashMap<>();
         try {
             ResultSet selectContactsResult = getDatabase().select("SELECT * FROM Contact");
 
             if (selectContactsResult == null)
-                return new ArrayList<>();
+                return new HashMap<>();
 
             while (selectContactsResult.next()) {
-                contactList.add(Contact.fromDatabase((String) selectContactsResult.getObject(2)));
+                contactList.put((String) selectContactsResult.getObject(2),
+                        Contact.fromDatabase((String) selectContactsResult.getObject(2)));
             }
             selectContactsResult.close();
         } catch (SQLException e) {

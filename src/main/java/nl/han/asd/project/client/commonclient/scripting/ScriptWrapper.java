@@ -29,7 +29,7 @@ public class ScriptWrapper implements IScriptWrapper {
     public boolean sendMessage(String username, String messageText) {
         try {
             Contact contact = contactStore.findContact(username);
-            Message message = new Message(contactStore.getCurrentUserAsContact(), contact, new Date(), messageText);
+            Message message = new Message(contactStore.getCurrentUser().asContact(), contact, new Date(), messageText);
             sendMessage.sendMessage(message, contact);
             return true;
         } catch (Exception e) {

@@ -1,19 +1,16 @@
 package nl.han.asd.project.client.commonclient.store;
 
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-
 import nl.han.asd.project.client.commonclient.message.Message;
 
+import java.util.List;
+
 public interface IMessageStore extends AutoCloseable {
+    /**
+     * Add message to MessageStore.
+     *
+     * @param message Message to be added.
+     */
     void addMessage(Message message);
-
-    void saveToDatabase() throws SQLException;
-
-    void updateFromDatabase();
-
-    void clear();
 
     /**
      * Returns all messages for a certain user after a certain dateTime.
@@ -23,9 +20,14 @@ public interface IMessageStore extends AutoCloseable {
      */
     Message[] getMessagesAfterDate(long dateTime);
 
-    Map<Contact, List<Message>> getAllMessagesFromAllUsers();
-
-    List<Message> getMessagesFromUser(final String contactName);
+    /**
+     * Get all messages sent to and received from a user.
+     *
+     * @param username User to get messages from.
+     *
+     * @return List of messages.
+     */
+    List<Message> getMessagesFromUser(final String username);
 
     /**
      * Initiate the store using the provided username and password.

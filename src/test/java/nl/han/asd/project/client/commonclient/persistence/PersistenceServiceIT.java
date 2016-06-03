@@ -100,7 +100,7 @@ public class PersistenceServiceIT {
     @Test
     public void testAddContactSuccessful() throws SQLException {
         Assert.assertTrue(persistenceService.addContact(CONTACT_1.getUsername()));
-        Assert.assertTrue(persistenceService.getContacts().contains(CONTACT_1));
+        Assert.assertTrue(persistenceService.getContacts().containsKey(CONTACT_1));
     }
 
     @Test
