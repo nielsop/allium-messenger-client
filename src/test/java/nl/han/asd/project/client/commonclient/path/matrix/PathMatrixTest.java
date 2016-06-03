@@ -29,10 +29,8 @@ public class PathMatrixTest {
 
         @Parameters
         public static Collection<Case> data() {
-            return Arrays.asList(new Case(1, "B",
-                    new Node[][] { { get("E"), get("C"), get("B") },
-                            { get("A"), get("F"), get("B") },
-                            { get("G"), get("C"), get("B") } }));
+            return Arrays.asList(new Case(1, "B", new Node[][] { { get("E"), get("C"), get("B") },
+                    { get("A"), get("F"), get("B") }, { get("G"), get("C"), get("B") } }));
         }
 
         public WithParameters(Case testCase) {
@@ -100,8 +98,7 @@ public class PathMatrixTest {
         Map<String, Node> vertices;
         PathMatrix pathMatrix;
 
-        public TestCase(Case testCase, Map<String, Node> vertices,
-                PathMatrix pathMatrix) {
+        public TestCase(Case testCase, Map<String, Node> vertices, PathMatrix pathMatrix) {
             this.testCase = testCase;
             this.vertices = vertices;
             this.pathMatrix = pathMatrix;
@@ -109,15 +106,13 @@ public class PathMatrixTest {
 
         @Test
         public void testPath() throws Exception {
-            List<PathOption> pathOptions = pathMatrix
-                    .getOptions(testCase.destination, testCase.hops);
+            List<PathOption> pathOptions = pathMatrix.getOptions(testCase.destination, testCase.hops);
 
             for (Node[] path : testCase.expectedPaths) {
                 boolean contained = false;
 
                 for (PathOption option : pathOptions) {
-                    if (Arrays.equals(option.getPath(vertices).toArray(),
-                            path)) {
+                    if (Arrays.equals(option.getPath(vertices).toArray(), path)) {
                         contained = true;
                         break;
                     }
@@ -130,14 +125,13 @@ public class PathMatrixTest {
                 boolean contained = false;
 
                 for (Node[] path : testCase.expectedPaths) {
-                    if (Arrays.equals(option.getPath(vertices).toArray(),
-                            path)) {
+                    if (Arrays.equals(option.getPath(vertices).toArray(), path)) {
                         contained = true;
                         break;
                     }
                 }
 
-                assertTrue(contained);
+                assertTrue(option.getPath(vertices).toString(), contained);
             }
         }
     }

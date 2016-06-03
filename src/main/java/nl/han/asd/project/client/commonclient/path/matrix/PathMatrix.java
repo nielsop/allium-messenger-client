@@ -117,8 +117,7 @@ public class PathMatrix {
 
         for (Entry<String, Node> pair : vertices.entrySet()) {
             for (Edge edge : pair.getValue().getEdges()) {
-                set(pair.getValue().getId(), edge.getDestinationNodeId(),
-                        edge.getWeight());
+                set(pair.getValue().getId(), edge.getDestinationNodeId(), edge.getWeight());
             }
         }
 
@@ -173,21 +172,15 @@ public class PathMatrix {
                         continue;
                     }
 
-                    float cost = data[row][colRow][0].cost
-                            + data[colRow][col][current - 1].cost;
+                    float cost = data[row][colRow][0].cost + data[colRow][col][current - 1].cost;
 
-                    Element element = new Element(
-                            data[colRow][col][current - 1], nodes[colRow],
-                            cost);
+                    Element element = new Element(data[colRow][col][current - 1], nodes[colRow], cost);
 
-                    if (element.previous.previous != null
-                            && element.previous.previous.node
-                                    .equals(element.node)) {
+                    if (element.previous.previous != null && element.previous.previous.node.equals(element.node)) {
                         continue;
                     }
 
-                    if (data[row][col][current] == null
-                            || data[row][col][current].cost > cost) {
+                    if (data[row][col][current] == null || data[row][col][current].cost > cost) {
                         data[row][col][current] = element;
                     }
                 }

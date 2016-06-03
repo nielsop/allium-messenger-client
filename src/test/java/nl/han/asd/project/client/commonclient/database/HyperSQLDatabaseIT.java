@@ -16,7 +16,8 @@ public class HyperSQLDatabaseIT {
 
     @Before
     public void setupTestSuite() throws SQLException, NoSuchAlgorithmException {
-        database = new HyperSQLDatabase("test", "test123");
+        database = new HyperSQLDatabase();
+        database.init("test", "test123");
         database.resetDatabase();
     }
 
@@ -65,8 +66,8 @@ public class HyperSQLDatabaseIT {
     }
 
     @Test
-    public void testCanDatabaseConnectionBeClosed() throws SQLException {
-        database.stop();
+    public void testCanDatabaseConnectionBeClosed() throws Exception {
+        database.close();
         Assert.assertFalse(database.isOpen());
     }
 
