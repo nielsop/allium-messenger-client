@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient.message;
+package integration.nl.han.asd.project.client.commonclient.message;
 
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
@@ -6,9 +6,6 @@ import nl.han.asd.project.client.commonclient.connection.ConnectionService;
 import org.junit.After;
 import org.junit.Before;
 
-/**
- * Created by Jevgeni Geurtsen on 17-5-2016.
- */
 public class MessageProcessingServiceIT {
     private ConnectionService connectionService;
     private CloudHost master;
