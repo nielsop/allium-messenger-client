@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
+import junit.framework.Assert;
 import nl.han.asd.project.client.commonclient.database.HyperSQLDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
