@@ -1,19 +1,18 @@
 package nl.han.asd.project.client.commonclient.path;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import javax.inject.Inject;
-
 import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.matrix.PathMatrix;
 import nl.han.asd.project.client.commonclient.path.matrix.PathMatrix.PathOption;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.NoConnectedNodesException;
-import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.internal.utility.Check;
+
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * IGetMessagePath implementation using the PathMatrix class
