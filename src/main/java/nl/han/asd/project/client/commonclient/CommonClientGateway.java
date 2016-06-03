@@ -1,5 +1,13 @@
 package nl.han.asd.project.client.commonclient;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
@@ -9,21 +17,22 @@ import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
+
 import nl.han.asd.project.client.commonclient.store.*;
+
+import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.CurrentUser;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.store.IScriptStore;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.internal.utility.Check;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
+import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLogoutResponse;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
-import nl.han.asd.project.scripting.internal.IScriptInteraction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 
-import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
-import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLogoutResponse;
+import java.util.Date;
 
 /**
  * Android/Desktop application
@@ -32,8 +41,7 @@ import static nl.han.asd.project.protocol.HanRoutingProtocol.ClientLogoutRespons
  */
 public class CommonClientGateway {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(CommonClientGateway.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
@@ -43,8 +51,6 @@ public class CommonClientGateway {
 
     private ISendMessage sendMessage;
     private ISubscribeMessageReceiver subscribeMessageReceiver;
-
-    private static CommonClientGateway commonClientGateway;
 
     /**
      * Constructor of the CommonClientGateway
@@ -60,13 +66,10 @@ public class CommonClientGateway {
      * @param subscribeMessageReceiver used to handle message listeners.
      */
     @Inject
-    public CommonClientGateway(IContactStore contactStore,
-            IMessageStore messageStore, IRegistration registration,
-            ILoginService loginService, IScriptStore scriptStore,
-            ISendMessage sendMessage,
+    public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
+            ILoginService loginService, IScriptStore scriptStore, ISendMessage sendMessage,
             ISubscribeMessageReceiver subscribeMessageReceiver) {
-        this.subscribeMessageReceiver = Check
-                .notNull(subscribeMessageReceiver, "subscribeMessageReceiver");
+        this.subscribeMessageReceiver = Check.notNull(subscribeMessageReceiver, "subscribeMessageReceiver");
         this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
         this.messageStore = Check.notNull(messageStore, "messageStore");
@@ -87,15 +90,13 @@ public class CommonClientGateway {
      * @throws MessageNotSentException
      * @throws IOException
      */
-    public ClientRegisterResponse.Status registerRequest(String username,
-            String password, String passwordRepeat)
+    public ClientRegisterResponse.Status registerRequest(String username, String password, String passwordRepeat)
             throws IOException, MessageNotSentException {
         try {
             Validation.passwordsEqual(password, passwordRepeat);
             Validation.validateCredentials(username, password);
 
-            ClientRegisterRequest.Builder requestBuilder = ClientRegisterRequest
-                    .newBuilder();
+            ClientRegisterRequest.Builder requestBuilder = ClientRegisterRequest.newBuilder();
             requestBuilder.setUsername(username);
             requestBuilder.setPassword(password);
 
@@ -113,9 +114,8 @@ public class CommonClientGateway {
      * @param password the password belonging to the username.
      * @return the login status, received from the loginResponseWrapper.
      */
-    public ClientLoginResponse.Status loginRequest(String username,
-            String password) throws InvalidCredentialsException, IOException,
-            MessageNotSentException {
+    public ClientLoginResponse.Status loginRequest(String username, String password)
+            throws InvalidCredentialsException, IOException, MessageNotSentException {
         try {
             return loginService.login(username, password);
         } catch (Exception e) {
@@ -201,13 +201,10 @@ public class CommonClientGateway {
     /**
      * Logs out the user and deletes all user data in memory
      */
-    public ClientLogoutResponse.Status logout()
-            throws MessageNotSentException, IOException, MisMatchingException {
+    public ClientLogoutResponse.Status logout() throws MessageNotSentException, IOException, MisMatchingException {
         try {
             CurrentUser user = contactStore.getCurrentUser();
-            return loginService
-                    .logout(user.getCurrentUserAsContact().getUsername(),
-                            user.getSecretHash());
+            return loginService.logout(user.asContact().getUsername(), user.getSecretHash());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
@@ -275,10 +272,11 @@ public class CommonClientGateway {
     {
         try {
             Contact contact = contactStore.findContact(username);
-            Message message = new Message(contactStore.getCurrentUserAsContact(), contact, new Date(), messageText);
+            Message message = new Message(contactStore.getCurrentUser().asContact(), contact, new Date(), messageText);
             sendMessage.sendMessage(message, contact);
             return true;
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             LOGGER.error(e.getMessage(), e);
             return false;
         }

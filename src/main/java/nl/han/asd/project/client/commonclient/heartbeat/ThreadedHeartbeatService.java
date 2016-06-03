@@ -89,14 +89,14 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
     public void startHeartbeatFor(CurrentUser contact) {
         Check.notNull(contact, "contact");
 
-        if (activeHeartbeats.containsKey(contact.getCurrentUserAsContact().getUsername())) {
+        if (activeHeartbeats.containsKey(contact.asContact().getUsername())) {
             return;
         }
 
         Thread heartbeatThread = new HeartbeatSender(contact);
         heartbeatThread.start();
 
-        activeHeartbeats.put(contact.getCurrentUserAsContact().getUsername(), (HeartbeatSender) heartbeatThread);
+        activeHeartbeats.put(contact.asContact().getUsername(), (HeartbeatSender) heartbeatThread);
     }
 
     /**
@@ -110,7 +110,7 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
     public void stopHeartbeatFor(CurrentUser contact) throws InterruptedException {
         Check.notNull(contact, "contact");
 
-        HeartbeatSender heartbeatSender = activeHeartbeats.get(contact.getCurrentUserAsContact().getUsername());
+        HeartbeatSender heartbeatSender = activeHeartbeats.get(contact.asContact().getUsername());
 
         if (heartbeatSender == null) {
             return;
@@ -170,7 +170,7 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
         private ClientHeartbeat buildheartbeat() {
             Builder clientHeartbeatBuilder = ClientHeartbeat.newBuilder();
 
-            clientHeartbeatBuilder.setUsername(contact.getCurrentUserAsContact().getUsername());
+            clientHeartbeatBuilder.setUsername(contact.asContact().getUsername());
             clientHeartbeatBuilder.setSecretHash(contact.getSecretHash());
 
             return clientHeartbeatBuilder.build();

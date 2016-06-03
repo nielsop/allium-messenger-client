@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient;
 
 import com.google.inject.AbstractModule;
+
 import nl.han.asd.project.client.commonclient.connection.ConnectionModule;
 import nl.han.asd.project.client.commonclient.database.DatabaseModule;
 import nl.han.asd.project.client.commonclient.graph.GraphModule;

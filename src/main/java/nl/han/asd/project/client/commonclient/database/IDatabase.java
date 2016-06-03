@@ -6,7 +6,16 @@ import java.sql.SQLException;
 /**
  * Defines an interface for common database functions.
  */
-public interface IDatabase {
+public interface IDatabase extends AutoCloseable {
+
+    /**
+     * Creates a new HyperSQL Database connection. Creates the database if none exists for this user.
+     *
+     * @param username The user's username.
+     * @param password The user's password.
+     * @throws SQLException if a database access error occurs.
+     */
+    void init(String username, String password) throws SQLException;
 
     /**
      * Resets the database by dropping the Message and Contact table if they exist, and then re-making them.
@@ -43,17 +52,11 @@ public interface IDatabase {
     ResultSet select(String sqlQuery) throws SQLException;
 
     /**
-     * Closes the database connection.
-     *
-     * @throws SQLException if a database access error occurs.
-     */
-    void stop() throws SQLException;
-
-    /**
      * Checks whether the database connection is open or not.
      *
      * @return <tt>true</tt> if a database connection is or can be opened, <tt>false</tt> otherwise.
      * @throws SQLException if a database access error occurs.
      */
     boolean isOpen() throws SQLException;
+
 }

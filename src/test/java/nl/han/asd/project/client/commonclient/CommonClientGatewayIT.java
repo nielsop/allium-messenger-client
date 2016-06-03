@@ -49,10 +49,8 @@ public class CommonClientGatewayIT {
         registration = injector.getInstance(IRegistration.class);
         login = injector.getInstance(ILoginService.class);
         scriptStore = injector.getInstance(IScriptStore.class);
-
         sendMessage = injector.getInstance(ISendMessage.class);
         subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
-
         commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, sendMessage, subscribeMessageReceiver);
 
     }

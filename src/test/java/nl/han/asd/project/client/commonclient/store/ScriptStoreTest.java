@@ -1,14 +1,15 @@
 package nl.han.asd.project.client.commonclient.store;
 
-import nl.han.asd.project.client.commonclient.persistence.IPersistence;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import static org.mockito.Matchers.any;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 
 public class ScriptStoreTest {
 
@@ -30,8 +31,7 @@ public class ScriptStoreTest {
 
         scriptStore.addScript(scriptName, scriptContent);
 
-        Mockito.verify(persistence, Mockito.times(1)).addScript(
-                any(String.class), any(String.class));
+        Mockito.verify(persistence, Mockito.times(1)).addScript(any(String.class), any(String.class));
     }
 
     @Test
@@ -42,8 +42,7 @@ public class ScriptStoreTest {
 
         scriptStore.removeScript(scriptName);
 
-        Mockito.verify(persistence, Mockito.times(1)).deleteScript(
-                any(String.class));
+        Mockito.verify(persistence, Mockito.times(1)).deleteScript(any(String.class));
     }
 
     @Test

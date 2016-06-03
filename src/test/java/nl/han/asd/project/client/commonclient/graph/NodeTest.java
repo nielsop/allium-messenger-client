@@ -1,13 +1,8 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import nl.han.asd.project.protocol.HanRoutingProtocol;
-import org.mockito.Mock;
 
 /**
  * @author Julius

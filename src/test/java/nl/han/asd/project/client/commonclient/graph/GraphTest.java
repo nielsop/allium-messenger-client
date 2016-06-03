@@ -1,21 +1,17 @@
 package nl.han.asd.project.client.commonclient.graph;
 
-import com.google.protobuf.ByteString;
-import nl.han.asd.project.protocol.HanRoutingProtocol;
+import java.util.NoSuchElementException;
+
 import org.apache.commons.codec.binary.Base64;
-import org.hsqldb.lib.Collection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.NoSuchElementException;
+import com.google.protobuf.ByteString;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import nl.han.asd.project.protocol.HanRoutingProtocol;
 
 /**
  * @author Julius
@@ -30,7 +26,7 @@ public class GraphTest {
     private final String NODE1_IP = "192.168.2.1";
     private final String NODE1_ID = "NODE_1";
 
-    private final byte[] NODE1_PUBLICKEY = Base64.encodeBase64(("12345".getBytes()));
+    private final byte[] NODE1_PUBLICKEY = Base64.encodeBase64("12345".getBytes());
 
     private Graph graph;
     private HanRoutingProtocol.Node node;
@@ -40,9 +36,11 @@ public class GraphTest {
     @Before
     public void setUp() throws Exception {
         graph = new Graph();
-        edge = HanRoutingProtocol.Edge.newBuilder().setTargetNodeId(EDGEDESTINATIONNODE).setWeight(EDGEDESTINATIONNODEWEIGHT).build();
+        edge = HanRoutingProtocol.Edge.newBuilder().setTargetNodeId(EDGEDESTINATIONNODE)
+                .setWeight(EDGEDESTINATIONNODEWEIGHT).build();
         edgeNode1 = new Edge(EDGEDESTINATIONNODE, EDGEDESTINATIONNODEWEIGHT);
-        node = HanRoutingProtocol.Node.newBuilder().setPort(NODE1_PORT).setIPaddress(NODE1_IP).setId(NODE1_ID).setPublicKey(ByteString.copyFrom(NODE1_PUBLICKEY)).addEdge(edge).build();
+        node = HanRoutingProtocol.Node.newBuilder().setPort(NODE1_PORT).setIPaddress(NODE1_IP).setId(NODE1_ID)
+                .setPublicKey(ByteString.copyFrom(NODE1_PUBLICKEY)).addEdge(edge).build();
     }
 
     @Test
@@ -61,7 +59,8 @@ public class GraphTest {
         HanRoutingProtocol.Node node1 = HanRoutingProtocol.Node.newBuilder().setPort(1024).setIPaddress("192.168.2.1")
                 .setId("NODE_1").setPublicKey(ByteString.copyFrom("12345".getBytes())).build();
 
-        HanRoutingProtocol.Edge edge = HanRoutingProtocol.Edge.newBuilder().setTargetNodeId("NODE_1").setWeight(10).build();
+        HanRoutingProtocol.Edge edge = HanRoutingProtocol.Edge.newBuilder().setTargetNodeId("NODE_1").setWeight(10)
+                .build();
 
         HanRoutingProtocol.Node node2 = HanRoutingProtocol.Node.newBuilder().setPort(1025).setIPaddress("192.168.2.2")
                 .setId("NODE_2").setPublicKey(ByteString.copyFrom("12345".getBytes())).addEdge(edge).build();
