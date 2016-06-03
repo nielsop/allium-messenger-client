@@ -178,14 +178,22 @@ public class CommonClientGateway {
      * Logs out the user and deletes all user data in memory
      */
     public ClientLogoutResponse.Status logout() throws MessageNotSentException, IOException, MisMatchingException {
-        try {
-            CurrentUser user = contactStore.getCurrentUser();
-            return loginService.logout(user.asContact().getUsername(),
-                    user.getSecretHash());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw e;
+        CurrentUser user = contactStore.getCurrentUser();
+        ClientLogoutResponse.Status status = loginService.logout(user.asContact().getUsername(),
+                user.getSecretHash());
+
+        if (status != ClientLogoutResponse.Status.SUCCES) {
+            return status;
         }
+
+        try {
+            contactStore.close();
+            messageStore.close();
+        } catch (Exception e) {
+            LOGGER.info(e.getMessage(), e);
+        }
+
+        return status;
     }
 
     /**
