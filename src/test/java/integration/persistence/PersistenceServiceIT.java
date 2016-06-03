@@ -1,19 +1,20 @@
-package nl.han.asd.project.client.commonclient.persistence;
+package integration.persistence;
 
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import nl.han.asd.project.client.commonclient.database.HyperSQLDatabase;
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.persistence.IPersistence;
+import nl.han.asd.project.client.commonclient.persistence.PersistenceService;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import nl.han.asd.project.client.commonclient.database.HyperSQLDatabase;
-import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.Contact;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Niels Bokmans
