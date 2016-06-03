@@ -15,8 +15,10 @@ import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.scripting.IRunningScriptTracker;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.store.IScriptStore;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -88,8 +90,11 @@ public class FullIntegrationTest {
         ILoginService loginService = injector.getInstance(ILoginService.class);
         ISendMessage sendMessage = injector.getInstance(ISendMessage.class);
         ISubscribeMessageReceiver subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
+        IScriptStore scriptStore = injector.getInstance(IScriptStore.class);
+        IRunningScriptTracker runningScriptTracker = injector.getInstance(IRunningScriptTracker.class);
 
-        CommonClientGateway commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, loginService, sendMessage, subscribeMessageReceiver);
+        CommonClientGateway commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, loginService,
+                scriptStore, runningScriptTracker, sendMessage, subscribeMessageReceiver);
         try {
             commonClientGateway.registerRequest("raoul", "test1234", "test1234");
             commonClientGateway.loginRequest("raoul", "test1234");
