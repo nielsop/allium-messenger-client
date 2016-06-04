@@ -85,37 +85,18 @@ public class PersistenceService implements IPersistence {
             final ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message ORDER BY timestamp ASC");
             while (selectMessagesResult != null && selectMessagesResult.next()) {
                 final Message message = Message.fromDatabase(selectMessagesResult);
-                // TODO: filter message list when sender == current user
-                if (!contactMessagesHashMap.containsKey(message.getSender())) {
-                    contactMessagesHashMap.put(message.getSender(), new ArrayList<Message>());
+                if (message != null) {
+                    if (!contactMessagesHashMap.containsKey(message.getSender())) {
+                        contactMessagesHashMap.put(message.getSender(), new ArrayList<Message>());
+                    }
+                    if (!contactMessagesHashMap.containsKey(message.getReceiver())) {
+                        contactMessagesHashMap.put(message.getReceiver(), new ArrayList<Message>());
+                    }
+                    contactMessagesHashMap.get(message.getSender()).add(message);
+                    contactMessagesHashMap.get(message.getReceiver()).add(message);
                 }
-                if (!contactMessagesHashMap.containsKey(message.getReceiver())) {
-                    contactMessagesHashMap.put(message.getReceiver(), new ArrayList<Message>());
-                }
-                contactMessagesHashMap.get(message.getSender()).add(message);
-                contactMessagesHashMap.get(message.getReceiver()).add(message);
             }
         } catch (final SQLException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return contactMessagesHashMap;
-    }
-
-    public Map<Contact, List<Message>> getAllMessagesPerContact2() {
-        final Map<Contact, List<Message>> contactMessagesHashMap = new HashMap<>();
-        try {
-            ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message");
-            if (selectMessagesResult == null) {
-                return Collections.emptyMap();
-            }
-            while (selectMessagesResult.next()) {
-                final Message message = Message.fromDatabase(selectMessagesResult);
-                if (!contactMessagesHashMap.containsKey(message.getSender())) {
-                    contactMessagesHashMap.put(message.getSender(), new ArrayList<Message>());
-                }
-                contactMessagesHashMap.get(message.getSender()).add(message);
-            }
-        } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return contactMessagesHashMap;
