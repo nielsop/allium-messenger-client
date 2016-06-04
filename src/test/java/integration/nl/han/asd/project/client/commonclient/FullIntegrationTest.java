@@ -28,8 +28,6 @@ import java.util.*;
 
 public class FullIntegrationTest {
 
-    //    private String masterHost = "195.169.194.234";
-//    private int masterPort = 33255;
     private String masterHost;
     private int masterPort;
     private int nextPort;
@@ -229,10 +227,10 @@ public class FullIntegrationTest {
             e.printStackTrace();
         }
         try {
-            Thread.sleep(5000);
+            Thread.sleep(15000);
             startClient("default");
             Assert.assertNull(confirmedMessage);
-            Thread.sleep(90000);
+            Thread.sleep(80000);
         } catch (InterruptedException e1) {
             Assert.fail();
         }
