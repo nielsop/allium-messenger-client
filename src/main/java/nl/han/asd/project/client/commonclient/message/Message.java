@@ -100,7 +100,7 @@ public class Message {
         final Contact sender = Contact.fromDatabase(protocolMessage.getSender());
         final String text = protocolMessage.getText();
         final Date timestamp = new Date(protocolMessage.getTimeSent());
-        return new Message(receiver, sender, timestamp, text, id);
+        return new Message(sender, receiver, timestamp, text, id);
     }
 
 

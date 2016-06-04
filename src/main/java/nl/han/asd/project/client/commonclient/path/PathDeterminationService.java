@@ -56,6 +56,7 @@ public class PathDeterminationService implements IGetMessagePath {
             vertices = newVertices;
             pathMatrix = new PathMatrix(vertices, MAX_HOPS);
         }
+
         Random random = new Random();
         Node endNode;
         List<PathOption> pathOptions;
