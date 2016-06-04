@@ -2,23 +2,28 @@ package nl.han.asd.project.client.commonclient;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.sun.deploy.panel.ExceptionListDialog;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.heartbeat.IHeartbeatService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 
 import java.io.IOException;
+import java.util.Date;
 
 public class Main {
 
     private static CommonClientGateway commonClientGateway;
+    private static IContactStore contactStore;
     private static Injector injector;
 
     public static void main(String[] args) {
         injector = Guice.createInjector(new CommonClientModule());
         commonClientGateway = injector.getInstance(CommonClientGateway.class);
+        contactStore = injector.getInstance(IContactStore.class);
 
         if (System.getenv("integration-enabled") == null) {
             System.out.println( "This application should not be instantiated this way." +
@@ -39,6 +44,10 @@ public class Main {
 
         if (integrationType.equals("echo")) {
             echoType();
+        }
+
+        if (integrationType.equals("send")) {
+            sendType();
         }
     }
 
@@ -70,9 +79,23 @@ public class Main {
         try {
             commonClientGateway.registerRequest("user", "password", "password");
             commonClientGateway.loginRequest("user", "password");
-            IHeartbeatService instance = injector.getInstance(IHeartbeatService.class);
-            IContactStore constactStore = injector.getInstance(IContactStore.class);
-            instance.startHeartbeatFor(constactStore.getCurrentUser());
+
+            Thread.sleep(60000);
+        } catch (IOException | MessageNotSentException | InvalidCredentialsException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void sendType() {
+        try {
+            commonClientGateway.registerRequest("user", "password", "password");
+            commonClientGateway.loginRequest("user", "password");
+
+            contactStore.addContact("OnionTest");
+            Contact otherUser = new Contact("OnionTest");
+            Message message = new Message(contactStore.getCurrentUser().asContact(),
+                    otherUser, new Date(), "TEST Message");
+            commonClientGateway.sendMessage(message);
 
             Thread.sleep(60000);
         } catch (IOException | MessageNotSentException | InvalidCredentialsException | InterruptedException e) {
