@@ -17,7 +17,7 @@ import java.util.List;
  * @since 15/04/1996
  */
 public class MessageBuilderService implements IMessageBuilder {
-    private static final int MINIMAL_HOPS = 3;
+    private static final int MINIMAL_HOPS = 1;
 
     private IGetMessagePath getPath;
     private IEncryptionService encryptionService;
