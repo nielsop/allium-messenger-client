@@ -22,6 +22,18 @@ public class HyperSQLDatabase implements IDatabase {
     private static final Logger LOGGER = LoggerFactory.getLogger(HyperSQLDatabase.class);
     private Connection connection;
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(String username, String password) throws SQLException {
+        System.out.println("!! DATABASE SERVICE STARTED");
+        final String key = generateKey(username, password);
+        connection = DriverManager.getConnection("jdbc:hsqldb:" + username + "_db;crypt_key=" + key + ";crypt_type=AES",
+                DATABASE_USERNAME, DATABASE_PASSWORD);
+        initializeDatabase();
+    }
+
     private static String generateKey(String username, String password) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance(ENCRYPTION_ALGORITHM);
@@ -30,13 +42,6 @@ public class HyperSQLDatabase implements IDatabase {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
-    }
-
-    @Override
-    public void init(String username, String password) throws SQLException {
-        final String key = generateKey(username, password);
-        connection = DriverManager.getConnection("jdbc:hsqldb:" + username + "_db;crypt_key=" + key + ";crypt_type=AES", DATABASE_USERNAME, DATABASE_PASSWORD);
-        initializeDatabase();
     }
 
     /**
@@ -114,6 +119,7 @@ public class HyperSQLDatabase implements IDatabase {
         if (!isOpen()) {
             return;
         }
+        System.out.println("!! DATABASE CLOSED");
         final Statement statement = connection.createStatement();
         statement.execute("SHUTDOWN");
         statement.close();

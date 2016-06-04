@@ -3,26 +3,25 @@ package nl.han.asd.project.client.commonclient;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import nl.han.asd.project.client.commonclient.graph.IUpdateGraph;
+import nl.han.asd.project.client.commonclient.heartbeat.IHeartbeatService;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
-
-import nl.han.asd.project.client.commonclient.message.*;
-import nl.han.asd.project.client.commonclient.store.*;
-
+import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
-import nl.han.asd.project.client.commonclient.store.CurrentUser;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.client.commonclient.store.IScriptStore;
-
+import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.*;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import static org.junit.Assert.assertFalse;
@@ -39,8 +38,8 @@ public class CommonClientGatewayTest {
     private IRegistration registration;
     private ILoginService login;
     private ISendMessage sendMessage;
-
     private IScriptStore scriptStore;
+    private IHeartbeatService heartbeatService;
 
     private ISubscribeMessageReceiver subscribeMessageReceiver;
     private byte[] privateKey = "".getBytes();
@@ -48,6 +47,8 @@ public class CommonClientGatewayTest {
     private String testContact = "testUserName";
     private CurrentUser user1 = new CurrentUser("FirstUser", privateKey, secretHash);
     private CurrentUser user2 = new CurrentUser("SecondUser", privateKey, secretHash);
+    private IMessageConfirmation messageConfirmation;
+    private IUpdateGraph updateGraph;
 
     @Before
     public void setup() {
@@ -65,13 +66,27 @@ public class CommonClientGatewayTest {
         });
 
         contactStore = injector.getInstance(IContactStore.class);
+        try {
+            contactStore.init("test", "test123");
+            List<Contact> contacts = contactStore.getAllContacts();
+            for (Contact contact : contacts) {
+                contactStore.removeContact(contact.getUsername());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         messageStore = injector.getInstance(IMessageStore.class);
         registration = injector.getInstance(IRegistration.class);
         login = injector.getInstance(ILoginService.class);
         sendMessage = injector.getInstance(ISendMessage.class);
         scriptStore = injector.getInstance(IScriptStore.class);
         subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, sendMessage,subscribeMessageReceiver);
+        heartbeatService = injector.getInstance(IHeartbeatService.class);
+        messageConfirmation = injector.getInstance(IMessageConfirmation.class);
+        updateGraph = injector.getInstance(IUpdateGraph.class);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore,
+                sendMessage,subscribeMessageReceiver, heartbeatService, messageConfirmation, updateGraph);
     }
 
     @Test
@@ -115,7 +130,8 @@ public class CommonClientGatewayTest {
         when(contactStore.findContact(any(String.class))).thenReturn(new Contact("iemand"));
         when(contactStore.getCurrentUser()).thenReturn(currentUser);
         sendMessage = Mockito.mock(ISendMessage.class);
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, sendMessage,subscribeMessageReceiver);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, sendMessage,
+                subscribeMessageReceiver, heartbeatService, messageConfirmation, updateGraph);
         assertTrue(commonClientGateway.sendMessage("username", "message"));
         Mockito.verify(contactStore, Mockito.times(1)).findContact(any(String.class));
         Mockito.verify(contactStore, Mockito.times(1)).getCurrentUser();
@@ -134,8 +150,18 @@ public class CommonClientGatewayTest {
         Message message = new Message(new Contact("username"), new Contact("username2"), new Timestamp(1), "text");
         messageStore = Mockito.mock(IMessageStore.class);
         Mockito.when(messageStore.getMessagesAfterDate(any(long.class))).thenReturn(new Message[]{message});
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, sendMessage,subscribeMessageReceiver);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore,
+                sendMessage, subscribeMessageReceiver, heartbeatService, messageConfirmation, updateGraph);
         commonClientGateway.getReceivedMessageAfterDate(new Date());
         Mockito.verify(messageStore, Mockito.times(1)).getMessagesAfterDate(any(long.class));
+    }
+
+    @After
+    public void after() {
+        try {
+            contactStore.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -39,6 +39,7 @@ public class MessageConfirmationService implements IMessageConfirmation {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                System.out.println("!! MESSAGE CONFIRMATION SERVICE STARTED");
                 while (isRunning) {
                     try {
                         checkAllMessages();
@@ -47,6 +48,7 @@ public class MessageConfirmationService implements IMessageConfirmation {
                         LOGGER.error(e.getMessage(), e);
                     }
                 }
+                waitingMessages.clear();
             }
         }).start();
     }
@@ -96,7 +98,8 @@ public class MessageConfirmationService implements IMessageConfirmation {
      * {@inheritDoc}
      */
     @Override
-    public void stop() {
+    public void close() throws Exception {
         isRunning = false;
+        System.out.println("!! MESSAGE CONFIRMATION SERVICE STOPPED");
     }
 }

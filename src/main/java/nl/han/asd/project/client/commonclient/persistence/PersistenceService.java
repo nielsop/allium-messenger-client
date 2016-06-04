@@ -22,15 +22,23 @@ import java.util.Map;
 public class PersistenceService implements IPersistence {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersistenceService.class);
     private IDatabase database;
+    private boolean initialized = false;
 
     @Inject
     public PersistenceService(IDatabase database) {
         this.database = Check.notNull(database, "database");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(String username, String password) throws SQLException {
-        database.init(username, password);
+        if (!initialized) {
+            System.out.println("!! PERSISTENCE SERVICE STARTED");
+            database.init(username, password);
+        }
+        initialized = true;
     }
 
     /**
@@ -310,9 +318,16 @@ public class PersistenceService implements IPersistence {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws Exception {
-        database.close();
+        System.out.println("!! PERSISTENCE SERVICE STOPPED");
+        if (initialized) {
+            database.close();
+        }
+        initialized = false;
     }
 
 }
