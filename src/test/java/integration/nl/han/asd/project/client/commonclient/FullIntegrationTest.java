@@ -1,4 +1,4 @@
-package nl.han.asd.project.client.commonclient;
+package integration.nl.han.asd.project.client.commonclient;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -6,6 +6,8 @@ import com.google.inject.Injector;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import com.xebialabs.overcast.host.DockerHost;
+import nl.han.asd.project.client.commonclient.CommonClientGateway;
+import nl.han.asd.project.client.commonclient.CommonClientModule;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.graph.IUpdateGraph;
 import nl.han.asd.project.client.commonclient.heartbeat.IHeartbeatService;
@@ -24,7 +26,6 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.util.*;
 
-@Ignore
 public class FullIntegrationTest {
 
     //    private String masterHost = "195.169.194.234";
