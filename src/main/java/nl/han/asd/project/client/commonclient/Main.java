@@ -38,17 +38,14 @@ public class Main {
             System.out.println("Set an integration type to let the application perform actions.");
             return;
         }
-
-        if (integrationType.equals("default")) {
-            defaultType();
-        }
-
-        if (integrationType.equals("echo")) {
-            echoType();
-        }
-
-        if (integrationType.equals("send")) {
-            sendType();
+        System.out.println("Integration type = " + integrationType);
+        switch (integrationType) {
+            case "default" : defaultType();
+                break;
+            case "echo" : echoType();
+                break;
+            case "send" : sendType();
+                break;
         }
     }
 
@@ -89,17 +86,22 @@ public class Main {
 
     private static void sendType() {
         try {
+            System.out.println("User is logging in");
             commonClientGateway.registerRequest("user", "password", "password");
             commonClientGateway.loginRequest("user", "password");
 
+            System.out.println("Contact being added");
             contactStore.addContact("OnionTest");
-            Contact otherUser = new Contact("OnionTest");
+
+            System.out.println("Message being created");
             Message message = new Message(contactStore.getCurrentUser().asContact(),
-                    otherUser, new Date(), "TEST Message");
+                    contactStore.findContact("OnionTest"), new Date(), "TEST Message");
+            System.out.println("Message being sent");
             commonClientGateway.sendMessage(message);
 
             Thread.sleep(60000);
         } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException | InterruptedException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
