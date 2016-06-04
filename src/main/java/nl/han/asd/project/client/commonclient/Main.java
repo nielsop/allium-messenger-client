@@ -2,13 +2,10 @@ package nl.han.asd.project.client.commonclient;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.sun.deploy.panel.ExceptionListDialog;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
-import nl.han.asd.project.client.commonclient.heartbeat.IHeartbeatService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
-import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 
 import java.io.IOException;
