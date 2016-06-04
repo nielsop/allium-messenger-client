@@ -3,18 +3,21 @@ package nl.han.asd.project.client.commonclient;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.heartbeat.IHeartbeatService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.store.IContactStore;
 
 import java.io.IOException;
 
 public class Main {
 
     private static CommonClientGateway commonClientGateway;
+    private static Injector injector;
 
     public static void main(String[] args) {
-        Injector injector = Guice.createInjector(new CommonClientModule());
+        injector = Guice.createInjector(new CommonClientModule());
         commonClientGateway = injector.getInstance(CommonClientGateway.class);
 
         if (System.getenv("integration-enabled") == null) {
@@ -67,6 +70,9 @@ public class Main {
         try {
             commonClientGateway.registerRequest("user", "password", "password");
             commonClientGateway.loginRequest("user", "password");
+            IHeartbeatService instance = injector.getInstance(IHeartbeatService.class);
+            IContactStore constactStore = injector.getInstance(IContactStore.class);
+            instance.startHeartbeatFor(constactStore.getCurrentUser());
 
             Thread.sleep(60000);
         } catch (IOException | MessageNotSentException | InvalidCredentialsException | InterruptedException e) {
