@@ -39,6 +39,7 @@ public class MessageConfirmationService implements IMessageConfirmation {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                System.out.println("!! MESSAGE CONFIRMATION SERVICE STARTED");
                 while (isRunning) {
                     try {
                         checkAllMessages();

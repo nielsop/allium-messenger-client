@@ -152,6 +152,8 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
         public void run() {
             long delay = TimeUnit.SECONDS.toNanos(PropertyValues.HEARTBEAT_DELAY.getInteger(properties));
 
+            System.out.println("!! HEARTBEAT STARTED");
+
             while (isRunning) {
                 LockSupport.parkNanos(delay);
 
@@ -161,6 +163,7 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
 
                 try {
                     heartbeat.sendHeartbeat(buildheartbeat());
+                    System.out.println("HEARTBEAT WAS SENT");
                 } catch (IOException | MessageNotSentException e) {
                     LOGGER.debug(e.getMessage(), e);
                 }

@@ -1,15 +1,11 @@
 package nl.han.asd.project.client.commonclient.database;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.*;
 
 /**
  * HyperSQL Database implementation.
@@ -28,6 +24,7 @@ public class HyperSQLDatabase implements IDatabase {
 
     @Override
     public void init(String username, String password) throws SQLException {
+        System.out.println("!! DATABASE SERVICE STARTED");
         final String key = generateKey(username, password);
         connection = DriverManager.getConnection("jdbc:hsqldb:" + username + "_db;crypt_key=" + key + ";crypt_type=AES",
                 DATABASE_USERNAME, DATABASE_PASSWORD);

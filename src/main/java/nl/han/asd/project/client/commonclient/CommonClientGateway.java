@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.heartbeat.IHeartbeatService;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.login.MisMatchingException;
@@ -42,6 +43,7 @@ import java.util.Date;
 public class CommonClientGateway {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+    private final IHeartbeatService heartbeatService;
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
@@ -68,7 +70,7 @@ public class CommonClientGateway {
     @Inject
     public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
             ILoginService loginService, IScriptStore scriptStore, ISendMessage sendMessage,
-            ISubscribeMessageReceiver subscribeMessageReceiver) {
+            ISubscribeMessageReceiver subscribeMessageReceiver, IHeartbeatService heartbeatService) {
         this.subscribeMessageReceiver = Check.notNull(subscribeMessageReceiver, "subscribeMessageReceiver");
         this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
@@ -76,6 +78,7 @@ public class CommonClientGateway {
         this.registration = Check.notNull(registration, "registration");
         this.loginService = Check.notNull(loginService, "loginService");
         this.scriptStore = Check.notNull(scriptStore, "scriptStore");
+        this.heartbeatService = Check.notNull(heartbeatService, "heartbeatService");
     }
 
     /**
@@ -117,11 +120,16 @@ public class CommonClientGateway {
     public ClientLoginResponse.Status loginRequest(String username, String password)
             throws InvalidCredentialsException, IOException, MessageNotSentException {
         try {
-            return loginService.login(username, password);
+            contactStore.init(username, password);
+            messageStore.init(username, password);
+            ClientLoginResponse.Status login = loginService.login(username, password);
+            heartbeatService.startHeartbeatFor(contactStore.getCurrentUser());
+            return login;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw e;
         }
+
+        return ClientLoginResponse.Status.FAILED;
     }
 
     /**

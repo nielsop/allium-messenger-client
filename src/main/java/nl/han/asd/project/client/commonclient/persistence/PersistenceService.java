@@ -1,22 +1,16 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.commonservices.internal.utility.Check;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Provides a way to communicate with the database.
@@ -24,6 +18,7 @@ import nl.han.asd.project.commonservices.internal.utility.Check;
 public class PersistenceService implements IPersistence {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersistenceService.class);
     private IDatabase database;
+    private boolean initialized = false;
 
     @Inject
     public PersistenceService(IDatabase database) {
@@ -32,7 +27,11 @@ public class PersistenceService implements IPersistence {
 
     @Override
     public void init(String username, String password) throws SQLException {
-        database.init(username, password);
+        if (!initialized) {
+            System.out.println("!! PERSISTENCE SERVICE STARTED");
+            database.init(username, password);
+        }
+        initialized = true;
     }
 
     /**
