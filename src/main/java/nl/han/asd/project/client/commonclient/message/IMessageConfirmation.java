@@ -2,10 +2,7 @@ package nl.han.asd.project.client.commonclient.message;
 
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-/**
- * Created by Raoul on 31/5/2016.
- */
-public interface IMessageConfirmation {
+public interface IMessageConfirmation extends AutoCloseable {
     /**
      * Add a sent message to a list of messages awaiting confirmation.
      * Messages added here will be retried periodically, with a larger interval on every retry.
@@ -23,9 +20,4 @@ public interface IMessageConfirmation {
      * @param id Message id
      */
     public void messageConfirmationReceived(String id);
-
-    /**
-     * Stop the message confirmation service.
-     */
-    public void stop();
 }

@@ -31,7 +31,7 @@ public class Message {
      * @param text The actual message.
      */
     public Message(Contact sender, Contact receiver, Date timestamp, String text) {
-        this(-1, sender, receiver, timestamp, text, null);
+        this(-1, sender, receiver, timestamp, text, "");
     }
 
     /**

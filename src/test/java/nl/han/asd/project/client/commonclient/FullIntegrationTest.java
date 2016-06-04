@@ -7,6 +7,7 @@ import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import com.xebialabs.overcast.host.DockerHost;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.graph.IUpdateGraph;
 import nl.han.asd.project.client.commonclient.heartbeat.IHeartbeatService;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
@@ -18,6 +19,7 @@ import org.junit.*;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 
 @Ignore
@@ -40,6 +42,9 @@ public class FullIntegrationTest {
     private ISubscribeMessageReceiver subscribeMessageReceiver;
     private IScriptStore scriptStore;
     private IHeartbeatService heartbeatService;
+    private IUpdateGraph updateGraph;
+    private IMessageConfirmation messageConfirmation;
+
     private CommonClientGateway commonClientGateway;
 
     private Message receivedMessage;
@@ -133,7 +138,7 @@ public class FullIntegrationTest {
             Message message = new Message(contactStore.getCurrentUser().asContact(),
                     otherUser, new Date(), "TEST Message", "MessageId1");
             commonClientGateway.sendMessage(message);
-        } catch (IOException | MessageNotSentException | InvalidCredentialsException e) {
+        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException e) {
             Assert.fail();
         }
     }
@@ -152,7 +157,7 @@ public class FullIntegrationTest {
             Message message = new Message(contactStore.getCurrentUser().asContact(),
                     otherUser, new Date(), "TEST Message", "MessageId1");
             commonClientGateway.sendMessage(message);
-        } catch (IOException | MessageNotSentException | InvalidCredentialsException e) {
+        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException e) {
             Assert.fail();
         }
     }
@@ -172,7 +177,7 @@ public class FullIntegrationTest {
             Message message = new Message(contactStore.getCurrentUser().asContact(),
                     otherUser, new Date(), "TEST Message", "MessageId1");
             commonClientGateway.sendMessage(message);
-        } catch (IOException | MessageNotSentException | InvalidCredentialsException e) {
+        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException e) {
             Assert.fail();
         }
     }
@@ -198,7 +203,7 @@ public class FullIntegrationTest {
             Thread.sleep(6000);
 
             Assert.assertTrue(confirmedMessage != null && !confirmedMessage.isEmpty());
-        } catch (IOException | MessageNotSentException | InvalidCredentialsException | InterruptedException e) {
+        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException | InterruptedException e) {
             Assert.fail();
         }
     }
@@ -219,7 +224,7 @@ public class FullIntegrationTest {
                     otherUser, new Date(), "TEST Message", "MessageId1");
             commonClientGateway.sendMessage(message);
 
-        } catch (IOException | MessageNotSentException | InvalidCredentialsException e) {
+        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException e) {
             Assert.fail();
         } catch (IndexOutOfBoundsException e){
             e.printStackTrace();
@@ -254,7 +259,7 @@ public class FullIntegrationTest {
             Assert.assertEquals(receivedMessage.getReceiver(), contactStore.getCurrentUser().asContact());
             Assert.assertEquals(receivedMessage.getSender(), otherUser);
             Assert.assertEquals(receivedMessage.getText(), "Test message");
-        } catch (IOException | MessageNotSentException | InvalidCredentialsException | InterruptedException e) {
+        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException | InterruptedException e) {
             Assert.fail();
         }
     }
@@ -280,7 +285,7 @@ public class FullIntegrationTest {
             Assert.assertEquals(receivedMessage.getReceiver(), contactStore.getCurrentUser().asContact());
             Assert.assertEquals(receivedMessage.getSender(), otherUser);
             Assert.assertEquals(receivedMessage.getText(), "Test message");
-        } catch (IOException | MessageNotSentException | InvalidCredentialsException | InterruptedException e) {
+        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException | InterruptedException e) {
             Assert.fail();
         }
     }
@@ -362,9 +367,11 @@ public class FullIntegrationTest {
         subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
         scriptStore = injector.getInstance(IScriptStore.class);
         heartbeatService = injector.getInstance(IHeartbeatService.class);
+        messageConfirmation = injector.getInstance(IMessageConfirmation.class);
+        updateGraph = injector.getInstance(IUpdateGraph.class);
 
         commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, loginService,
-                scriptStore, sendMessage, subscribeMessageReceiver);
+                scriptStore, sendMessage, subscribeMessageReceiver, heartbeatService, messageConfirmation, updateGraph);
     }
 
     private void observeMessages(){
