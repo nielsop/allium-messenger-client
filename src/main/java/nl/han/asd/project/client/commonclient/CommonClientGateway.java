@@ -209,8 +209,6 @@ public class CommonClientGateway {
             stop();
             return logout;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
             LOGGER.error(e.getMessage(), e);
             throw e;
         }

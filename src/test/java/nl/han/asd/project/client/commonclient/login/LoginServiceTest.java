@@ -176,6 +176,5 @@ public class LoginServiceTest {
         Assert.assertEquals(ClientLogoutResponse.Status.SUCCES, login.logout(VALID_USERNAME, VALID_SECRET_HASH));
 
         verify(setConnectedNodes).unsetConnectedNodes();
-        verify(contactStore).setCurrentUser(null);
     }
 }
