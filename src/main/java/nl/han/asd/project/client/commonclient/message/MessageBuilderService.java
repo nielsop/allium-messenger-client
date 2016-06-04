@@ -20,7 +20,7 @@ import java.util.List;
  * @since 15/04/1996
  */
 public class MessageBuilderService implements IMessageBuilder {
-    private static final int MINIMAL_HOPS = 3;
+    private static final int MINIMAL_HOPS = 1;
 
     private IGetMessagePath getPath;
     private IEncryptionService encryptionService;
@@ -36,11 +36,6 @@ public class MessageBuilderService implements IMessageBuilder {
 
         HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
         wrapperBuilder.setData(generatedMessage.toByteString());
-        try {
-            System.out.println(Arrays.toString(contactReceiver.getConnectedNodes()));
-        } catch (NoConnectedNodesException e) {
-            e.printStackTrace();
-        }
         List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
         if(generatedMessage.getClass() == HanRoutingProtocol.Message.class){

@@ -7,6 +7,7 @@ import nl.han.asd.project.client.commonclient.node.ISendData;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactManager;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.client.commonclient.store.NoConnectedNodesException;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +80,8 @@ public class MessageConfirmationService implements IMessageConfirmation {
                 builder.setText(retryMessage.message.getText());
                 builder.setTimeSent(System.currentTimeMillis() / 1000L);
 
-                HanRoutingProtocol.MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), retryMessage.contact);
+                HanRoutingProtocol.MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(),
+                        contactStore.findContact(retryMessage.contact.getUsername()));
 
                 try {
                     sendData.sendData(messageWrapper);
