@@ -34,10 +34,7 @@ public class HyperSQLDatabase implements IDatabase {
     private static String generateKey(String username, String password) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance(ENCRYPTION_ALGORITHM);
-            return String
-                    .format("%064x",
-                            new java.math.BigInteger(1, messageDigest.digest((username + password).getBytes())))
-                    .substring(0, 32);
+            return String.format("%064x", new java.math.BigInteger(1, messageDigest.digest((username + password).getBytes()))).substring(0, 32);
         } catch (NoSuchAlgorithmException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -49,8 +46,7 @@ public class HyperSQLDatabase implements IDatabase {
      */
     @Override
     public boolean resetDatabase() throws SQLException {
-        final boolean databaseIsReset = query("DROP TABLE IF EXISTS Contact") && query("DROP TABLE IF EXISTS Message")
-                && query("DROP TABLE IF EXISTS Script");
+        final boolean databaseIsReset = query("DROP TABLE IF EXISTS Contact") && query("DROP TABLE IF EXISTS Message") && query("DROP TABLE IF EXISTS Script");
         if (databaseIsReset) {
             initializeDatabase();
             return true;
@@ -104,6 +100,17 @@ public class HyperSQLDatabase implements IDatabase {
         return connection != null && !connection.isClosed();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PreparedStatement prepareStatement(String query) throws SQLException {
+        return connection.prepareStatement(query);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws Exception {
         if (!isOpen()) {
