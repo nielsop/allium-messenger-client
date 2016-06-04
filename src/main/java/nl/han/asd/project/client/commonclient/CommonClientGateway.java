@@ -288,6 +288,9 @@ public class CommonClientGateway {
         return receivedMessages;
     }
 
+    /**
+     * Stops all running services
+     */
     public void stop() {
         try {
             heartbeatService.stopHeartbeatFor(contactStore.getCurrentUser());
@@ -296,7 +299,7 @@ public class CommonClientGateway {
             contactStore.close();
             updateGraph.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
     }
 }
