@@ -30,6 +30,19 @@ public class Message {
      * @param timestamp Timestamp of when the message was sent.
      * @param text The actual message.
      */
+    public Message(Contact sender, Contact receiver, Date timestamp, String text) {
+        this(-1, sender, receiver, timestamp, text, "");
+    }
+
+    /**
+     * Constructs a new Message object without a database ID.
+     *
+     * @param sender The message's sender.
+     * @param receiver The message recipient.
+     * @param timestamp Timestamp of when the message was sent.
+     * @param text The actual message.
+     * @param messageId The id of the message
+     */
     public Message(Contact sender, Contact receiver, Date timestamp, String text, String messageId) {
         this(-1, sender, receiver, timestamp, text, messageId);
     }

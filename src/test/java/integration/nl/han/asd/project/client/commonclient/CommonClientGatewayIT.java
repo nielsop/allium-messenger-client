@@ -6,6 +6,7 @@ import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.CommonClientGateway;
 import nl.han.asd.project.client.commonclient.CommonClientModule;
+import nl.han.asd.project.client.commonclient.heartbeat.IHeartbeatService;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
@@ -37,6 +38,7 @@ public class CommonClientGatewayIT {
     private IScriptStore scriptStore;
     private ISendMessage sendMessage;
     private ISubscribeMessageReceiver subscribeMessageReceiver;
+    private IHeartbeatService heartbeat;
 
     private String validUsername = "validUsername";
     private String validPassword = "validPassword";
@@ -52,7 +54,9 @@ public class CommonClientGatewayIT {
         scriptStore = injector.getInstance(IScriptStore.class);
         sendMessage = injector.getInstance(ISendMessage.class);
         subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
-        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, sendMessage, subscribeMessageReceiver);
+        heartbeat = injector.getInstance(IHeartbeatService.class);
+        commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login,
+                scriptStore, sendMessage, subscribeMessageReceiver, heartbeat);
 
     }
 

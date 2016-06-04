@@ -79,7 +79,8 @@ public class MessageConfirmationService implements IMessageConfirmation {
                 builder.setText(retryMessage.message.getText());
                 builder.setTimeSent(System.currentTimeMillis() / 1000L);
 
-                HanRoutingProtocol.MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), retryMessage.contact);
+                HanRoutingProtocol.MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(),
+                        contactStore.findContact(retryMessage.contact.getUsername()));
 
                 try {
                     sendData.sendData(messageWrapper);

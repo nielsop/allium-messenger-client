@@ -122,11 +122,12 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage, 
         builder.setText(message.getText());
         builder.setTimeSent(System.currentTimeMillis() / 1000L);
 
+        messageConfirmationService.messageSent(builder.getId(), message, contact);
+
         MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), contact);
 
         try {
             nodeConnectionService.sendData(messageWrapper);
-            messageConfirmationService.messageSent(builder.getId(), message, contact);
             messageStore.addMessage(message);
         } catch (MessageNotSentException e) {
             LOGGER.error(e.getMessage(), e);
