@@ -11,6 +11,7 @@ import nl.han.asd.project.client.commonclient.graph.IUpdateGraph;
 import nl.han.asd.project.client.commonclient.heartbeat.IHeartbeatService;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
+import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.*;
 import nl.han.asd.project.client.commonclient.store.*;
@@ -19,6 +20,7 @@ import org.junit.*;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -44,6 +46,7 @@ public class FullIntegrationTest {
     private IHeartbeatService heartbeatService;
     private IUpdateGraph updateGraph;
     private IMessageConfirmation messageConfirmation;
+    private IGetClientGroup getClientGroup;
 
     private CommonClientGateway commonClientGateway;
 
@@ -66,7 +69,6 @@ public class FullIntegrationTest {
         }
         if (!nodes.isEmpty()) {
             for (DockerHost node : nodes) {
-                System.out.println("Going down");
                 node.teardown();
             }
             nodes.clear();
@@ -78,6 +80,8 @@ public class FullIntegrationTest {
 
     @Test
     public void testRegisterClientWithoutMasterReturnsError() {
+        masterHost = "tumma.nl";
+        masterPort = 9934;
         injectInterfaces();
         exception.expect(NullPointerException.class);
 
@@ -132,11 +136,9 @@ public class FullIntegrationTest {
 
         try {
             commonClientGateway.registerRequest("OnionTest", "test1234", "test1234");
-            Assert.assertEquals(HanRoutingProtocol.ClientLoginResponse.Status.SUCCES,
-                    commonClientGateway.loginRequest("OnionTest", "test1234"));
-            Contact otherUser = new Contact("OtherUser");
+            commonClientGateway.loginRequest("OnionTest", "test1234");
             Message message = new Message(contactStore.getCurrentUser().asContact(),
-                    otherUser, new Date(), "TEST Message", "MessageId1");
+                    contactStore.findContact("OtherUser"), new Date(), "TEST Message", "MessageId1");
             commonClientGateway.sendMessage(message);
         } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException e) {
             Assert.fail();
@@ -153,9 +155,8 @@ public class FullIntegrationTest {
             commonClientGateway.registerRequest("OnionTest", "test1234", "test1234");
             commonClientGateway.loginRequest("OnionTest", "test1234");
             contactStore.addContact("user");
-            Contact otherUser = new Contact("user");
             Message message = new Message(contactStore.getCurrentUser().asContact(),
-                    otherUser, new Date(), "TEST Message", "MessageId1");
+                    contactStore.findContact("user"), new Date(), "TEST Message", "MessageId1");
             commonClientGateway.sendMessage(message);
         } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException e) {
             Assert.fail();
@@ -173,9 +174,8 @@ public class FullIntegrationTest {
             commonClientGateway.registerRequest("OnionTest", "test1234", "test1234");
             commonClientGateway.loginRequest("OnionTest", "test1234");
             contactStore.addContact("user");
-            Contact otherUser = new Contact("user");
             Message message = new Message(contactStore.getCurrentUser().asContact(),
-                    otherUser, new Date(), "TEST Message", "MessageId1");
+                    contactStore.findContact("user"), new Date(), "TEST Message", "MessageId1");
             commonClientGateway.sendMessage(message);
         } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException e) {
             Assert.fail();
@@ -186,8 +186,8 @@ public class FullIntegrationTest {
     public void testSendMessageToOnlineContactMessageDeliveredConfirmationReceived() {
         startMaster();
         startNodes(4);
-        startClient("default");
         injectInterfaces();
+        startClient("default");
         observeMessages();
 
         try {
@@ -195,12 +195,11 @@ public class FullIntegrationTest {
             commonClientGateway.loginRequest("OnionTest", "test1234");
             heartbeatService.startHeartbeatFor(contactStore.getCurrentUser());
             contactStore.addContact("user");
-            Contact otherUser = new Contact("user");
             Message message = new Message(contactStore.getCurrentUser().asContact(),
-                    otherUser, new Date(), "TEST Message");
+                    contactStore.findContact("user"), new Date(), "TEST Message");
             commonClientGateway.sendMessage(message);
 
-            Thread.sleep(6000);
+            Thread.sleep(5000);
 
             Assert.assertTrue(confirmedMessage != null && !confirmedMessage.isEmpty());
         } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException | InterruptedException e) {
@@ -219,9 +218,8 @@ public class FullIntegrationTest {
             commonClientGateway.registerRequest("OnionTest", "test1234", "test1234");
             commonClientGateway.loginRequest("OnionTest", "test1234");
             contactStore.addContact("user");
-            Contact otherUser = new Contact("user");
             Message message = new Message(contactStore.getCurrentUser().asContact(),
-                    otherUser, new Date(), "TEST Message", "MessageId1");
+                    contactStore.findContact("user"), new Date(), "TEST Message", "MessageId1");
             commonClientGateway.sendMessage(message);
 
         } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException e) {
@@ -230,10 +228,10 @@ public class FullIntegrationTest {
             e.printStackTrace();
         }
         try {
+            Thread.sleep(5000);
             startClient("default");
-            Thread.sleep(3000);
             Assert.assertNull(confirmedMessage);
-            Thread.sleep(60000);
+            Thread.sleep(90000);
         } catch (InterruptedException e1) {
             Assert.fail();
         }
@@ -243,7 +241,7 @@ public class FullIntegrationTest {
     @Test
     public void testOtherUserSendsMessageWhichIsReceived() {
         startMaster();
-        startNodes(3);
+        startNodes(4);
         injectInterfaces();
         observeMessages();
 
@@ -251,15 +249,13 @@ public class FullIntegrationTest {
             commonClientGateway.registerRequest("OnionTest", "test1234", "test1234");
             commonClientGateway.loginRequest("OnionTest", "test1234");
             contactStore.addContact("user");
-            Contact otherUser = new Contact("user");
 
             startClient("send");
-            Thread.sleep(10000);
 
             Assert.assertEquals(receivedMessage.getReceiver(), contactStore.getCurrentUser().asContact());
-            Assert.assertEquals(receivedMessage.getSender(), otherUser);
-            Assert.assertEquals(receivedMessage.getText(), "Test message");
-        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException | InterruptedException e) {
+            Assert.assertEquals(receivedMessage.getSender(), contactStore.findContact("user"));
+            Assert.assertEquals(receivedMessage.getText(), "TEST Message");
+        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException  e) {
             Assert.fail();
         }
     }
@@ -267,25 +263,23 @@ public class FullIntegrationTest {
     @Test
     public void testOtherUserSendsMessageWhileUserIsOfflineIsReceivedWhenUserComesOnline() {
         startMaster();
-        startNodes(3);
-        startClient("default");
+        startNodes(4);
         injectInterfaces();
+        observeMessages();
 
         try {
-            commonClientGateway.registerRequest("OnionTest", "test1234", "test1234");
-            contactStore.addContact("user");
-            Contact otherUser = new Contact("user");
-
-            Thread.sleep(3000);
+            startClient("send");
             Assert.assertNull(receivedMessage);
-            Thread.sleep(3000);
+
+            commonClientGateway.registerRequest("OnionTest", "test1234", "test1234");
             commonClientGateway.loginRequest("OnionTest", "test1234");
-            Thread.sleep(10000);
+            contactStore.addContact("user");
+            Thread.sleep(20000);
 
             Assert.assertEquals(receivedMessage.getReceiver(), contactStore.getCurrentUser().asContact());
-            Assert.assertEquals(receivedMessage.getSender(), otherUser);
-            Assert.assertEquals(receivedMessage.getText(), "Test message");
-        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException | InterruptedException e) {
+            Assert.assertEquals(receivedMessage.getSender(), contactStore.findContact("user"));
+            Assert.assertEquals(receivedMessage.getText(), "TEST Message");
+        } catch (IOException | MessageNotSentException | InterruptedException | SQLException | InvalidCredentialsException  e) {
             Assert.fail();
         }
     }
@@ -295,14 +289,9 @@ public class FullIntegrationTest {
         master.setup();
         masterHost = master.getHostName();
         masterPort = master.getPort(1337);
-
         nextPort = masterPort + 1;
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        checkMasterStarted(master);
     }
 
     private void startNodes(int numberNodes) {
@@ -318,14 +307,11 @@ public class FullIntegrationTest {
             nextPort++;
         }
 
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        checkNodesStarted(nodes);
     }
 
     private void startClient(String integrationType) {
+        int currentNrUsers = getNrClients();
         List<String> clientCommand = new ArrayList<>();
         clientCommand.add("master-server-host=" + masterHost);
         clientCommand.add("master-server-port=" + masterPort);
@@ -335,13 +321,16 @@ public class FullIntegrationTest {
         client = (DockerHost) CloudHostFactory.getCloudHost("client");
         client.setEnv(clientCommand);
         client.setup();
-
         nextPort++;
 
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        int attempts = 0;
+        while (currentNrUsers == getNrClients() && attempts < 5){
+            try {
+                Thread.sleep(5000);
+                attempts++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -369,7 +358,7 @@ public class FullIntegrationTest {
         heartbeatService = injector.getInstance(IHeartbeatService.class);
         messageConfirmation = injector.getInstance(IMessageConfirmation.class);
         updateGraph = injector.getInstance(IUpdateGraph.class);
-
+        getClientGroup = injector.getInstance(IGetClientGroup.class);
         commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, loginService,
                 scriptStore, sendMessage, subscribeMessageReceiver, heartbeatService, messageConfirmation, updateGraph);
     }
@@ -388,5 +377,45 @@ public class FullIntegrationTest {
                 confirmedMessage = messageId;
             }
         });
+    }
+
+    private void checkMasterStarted(CloudHost cloudHost){
+        int attempts = 0;
+        while(attempts <= 5) {
+            try {
+                Thread.sleep(5000);
+                new Socket(cloudHost.getHostName(), cloudHost.getPort(1337)).close();
+                break;
+            } catch (IOException | InterruptedException e) {
+                attempts++;
+            }
+        }
+    }
+
+    private void checkNodesStarted(List<DockerHost> dockerHosts){
+        int attempts = 0;
+        for (int i = 0; i < dockerHosts.size(); i++) {
+            while(attempts <= dockerHosts.size()) {
+                try {
+                    Thread.sleep(8000);
+                    new Socket(dockerHosts.get(i).getHostName(), dockerHosts.get(i).getPort(1337)).close();
+                    break;
+                } catch (IOException | InterruptedException e) {
+                    attempts++;
+                }
+            }
+        }
+    }
+
+    private int getNrClients(){
+        HanRoutingProtocol.ClientRequest.Builder builder = HanRoutingProtocol.ClientRequest.newBuilder();
+        builder.setClientGroup(1);
+        try {
+            HanRoutingProtocol.ClientResponse clientWrapper = getClientGroup.getClientGroup(builder.build());
+            return clientWrapper.getClientsCount();
+        } catch (IOException | MessageNotSentException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

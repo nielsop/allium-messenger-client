@@ -9,13 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContactManager implements IContactManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContactManager.class);
 
-    private static final long MIN_TIMEOUT = 600000;
+    private static final long MIN_TIMEOUT = 60000;
     private final IGetClientGroup clientGroup;
     private final IContactStore contactStore;
     private long lastGraphUpdate = 0;
@@ -40,11 +41,8 @@ public class ContactManager implements IContactManager {
         builder.setClientGroup(1);
         try {
             HanRoutingProtocol.ClientResponse clientWrapper = clientGroup.getClientGroup(builder.build());
-            System.out.println("Clients found:" + clientWrapper.getClientsCount());
             for (HanRoutingProtocol.Client client : clientWrapper.getClientsList()) {
-                System.out.println("Updated client: " + client.getUsername());
                 List<String> connectNodes = client.getConnectedNodesList();
-                System.out.println(connectNodes);
                 contactStore.updateUserInformation(client.getUsername(), client.getPublicKey().toByteArray(), true, connectNodes);
             }
         } catch (IOException | MessageNotSentException e) {

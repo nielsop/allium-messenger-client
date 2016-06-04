@@ -12,7 +12,9 @@ import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MessageConfirmationService implements IMessageConfirmation {
@@ -82,15 +84,13 @@ public class MessageConfirmationService implements IMessageConfirmation {
                 builder.setText(retryMessage.message.getText());
                 builder.setTimeSent(System.currentTimeMillis() / 1000L);
 
-                HanRoutingProtocol.MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(),
-                        contactStore.findContact(retryMessage.contact.getUsername()));
-
                 try {
+                    HanRoutingProtocol.MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(),
+                            contactStore.findContact(retryMessage.contact.getUsername()));
                     sendData.sendData(messageWrapper);
-                } catch (MessageNotSentException e) {
+                } catch (MessageNotSentException | IndexOutOfBoundsException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
-
                 retryMessage.attemptCount++;
             }
         }
