@@ -55,10 +55,7 @@ public class Contact {
      * @return Contact of current user by username from database.
      */
     public static Contact fromDatabase(String username) {
-        Injector injector = Guice.createInjector(new CommonClientModule());
-        EncryptionService service = injector.getInstance(EncryptionService.class);
-        return new Contact(username, service.getPublicKey());
-
+        return new Contact(username);
     }
 
     /**
