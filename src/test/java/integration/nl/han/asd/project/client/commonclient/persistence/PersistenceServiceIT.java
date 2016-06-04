@@ -1,7 +1,9 @@
-package nl.han.asd.project.client.commonclient.persistence;
+package integration.nl.han.asd.project.client.commonclient.persistence;
 
 import nl.han.asd.project.client.commonclient.database.HyperSQLDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.persistence.IPersistence;
+import nl.han.asd.project.client.commonclient.persistence.PersistenceService;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,17 +30,20 @@ public class PersistenceServiceIT {
     private static final Message TEST_MESSAGE_2 = new Message(-1, CONTACT_1, CONTACT_2, new Date(), "Testmessage2", "messageid2");
     private static final Message TEST_MESSAGE_3 = new Message(-1, CONTACT_2, CONTACT_1, new Date(), "Testmessage3", "messageid3");
     private static final String SCRIPT_1_NAME = "TestScript";
-    private static final String NONEXISTANT_SCRIPT_NAME = "TestScript";
-    private static final String SCRIPT_1_CONTENT = "segment data begin " + "     text testMessage value \"If you receive this message, I did not delay it and I am in trouble. Send help! \" "
-            + "     text reactionMessage value \"delayMessage abq1\" " + "     datetime testMessageSendTime value 2020-05-18 " + "segment end "
-            + "segment contact begin " + "     person mark value \"MarkVaessen\" " + "segment end " + "segment main begin " + "     schedule testMessageSendTime begin "
-            + "         send using testMessage as message mark as contact " + "     end " + "     react reactionMessage begin "
-            + "         set testMessageSendTime value 2040-05-18 " + "     end " + "segment end ";
+    private static final String SCRIPT_1_CONTENT = "segment data begin "
+            + "     text testMessage value \"If you receive this message, I did not delay it and I am in trouble. Send help! \" "
+            + "     text reactionMessage value \"delayMessage abq1\" "
+            + "     datetime testMessageSendTime value 2020-05-18 " + "segment end " + "segment contact begin "
+            + "     person mark value \"MarkVaessen\" " + "segment end " + "segment main begin "
+            + "     schedule testMessageSendTime begin " + "         send using testMessage as message mark as contact "
+            + "     end " + "     react reactionMessage begin " + "         set testMessageSendTime value 2040-05-18 "
+            + "     end " + "segment end ";
     private IPersistence persistenceService;
 
     @Before
     public void setupTest() throws SQLException {
-        final HyperSQLDatabase database = new HyperSQLDatabase("test", "test123");
+        final HyperSQLDatabase database = new HyperSQLDatabase();
+        database.init("test", "test123");
         database.resetDatabase();
         persistenceService = new PersistenceService(database);
     }
@@ -52,9 +57,9 @@ public class PersistenceServiceIT {
     public void testSaveMessageThenDeleteMessageSuccessful() throws SQLException {
         persistenceService.saveMessage(TEST_MESSAGE_1);
         persistenceService.saveMessage(TEST_MESSAGE_2);
-        Assert.assertEquals(3, persistenceService.getAllMessages().get(0).getDatabaseId());
+        Assert.assertEquals(2, persistenceService.getAllMessages().size());
         persistenceService.deleteMessage(1);
-        Assert.assertEquals(2, persistenceService.getAllMessages().get(0).getDatabaseId());
+        Assert.assertEquals(1, persistenceService.getAllMessages().size());
     }
 
     @Test
@@ -100,7 +105,7 @@ public class PersistenceServiceIT {
     @Test
     public void testAddContactSuccessful() throws SQLException {
         Assert.assertTrue(persistenceService.addContact(CONTACT_1.getUsername()));
-        Assert.assertTrue(persistenceService.getContacts().contains(CONTACT_1));
+        Assert.assertTrue(persistenceService.getContacts().containsKey(CONTACT_1.getUsername()));
     }
 
     @Test

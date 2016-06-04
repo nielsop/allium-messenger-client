@@ -13,9 +13,11 @@ import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
+import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 import nl.han.asd.project.client.commonclient.store.IMessageStore;
+import nl.han.asd.project.client.commonclient.store.IScriptStore;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -66,7 +68,7 @@ public class FullIntegrationTest {
     public void ok() {
         System.out.println("gelukt!");
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty("master-server-host", masterHost);
         properties.setProperty("master-server-port", Integer.toString(masterPort));
 
@@ -86,13 +88,16 @@ public class FullIntegrationTest {
         IRegistration registration = injector.getInstance(IRegistration.class);
         ILoginService loginService = injector.getInstance(ILoginService.class);
         ISendMessage sendMessage = injector.getInstance(ISendMessage.class);
+        ISubscribeMessageReceiver subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
+        IScriptStore scriptStore = injector.getInstance(IScriptStore.class);
 
-        CommonClientGateway commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, loginService, sendMessage);
+        CommonClientGateway commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, loginService,
+                scriptStore, sendMessage, subscribeMessageReceiver);
         try {
             commonClientGateway.registerRequest("raoul", "test1234", "test1234");
             commonClientGateway.loginRequest("raoul", "test1234");
 
-            Message message = new Message(contactStore.getCurrentUserAsContact(), contactStore.getCurrentUserAsContact(), new Date(), "TEST BOODSCHAP");
+            Message message = new Message(contactStore.getCurrentUser().asContact(), contactStore.getCurrentUser().asContact(), new Date(), "TEST BOODSCHAP", "MessageId1");
             commonClientGateway.sendMessage(message);
         } catch (IOException | InvalidCredentialsException | MessageNotSentException e) {
             e.printStackTrace();

@@ -40,7 +40,7 @@ public class CurrentUser {
      *
      * @return current user that is logged in as contact
      */
-    public Contact getCurrentUserAsContact() {
+    public Contact asContact() {
         return contact;
     }
 }

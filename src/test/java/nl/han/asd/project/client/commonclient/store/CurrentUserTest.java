@@ -32,7 +32,7 @@ public class CurrentUserTest {
         contactStore.setCurrentUser(new CurrentUser(TEST_CURRENTUSER_USERNAME, TEST_CURRENTUSER_PUBLICKEY, TEST_CURRENTUSER_SECRETHASH));
 
         // Assert
-        assertEquals(TEST_CURRENTUSER_USERNAME, contactStore.getCurrentUserAsContact().getUsername());
+        assertEquals(TEST_CURRENTUSER_USERNAME, contactStore.getCurrentUser().asContact().getUsername());
     }
 
     @Test
@@ -41,7 +41,7 @@ public class CurrentUserTest {
         contactStore.setCurrentUser(new CurrentUser(TEST_CURRENTUSER_USERNAME, TEST_CURRENTUSER_PUBLICKEY, TEST_CURRENTUSER_SECRETHASH));
 
         // Assert
-        assertEquals(TEST_CURRENTUSER_PUBLICKEY, contactStore.getCurrentUserAsContact().getPublicKey());
+        assertEquals(TEST_CURRENTUSER_PUBLICKEY, contactStore.getCurrentUser().asContact().getPublicKey());
     }
 
     @Test

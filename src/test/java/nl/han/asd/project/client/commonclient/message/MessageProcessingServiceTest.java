@@ -5,10 +5,7 @@ import com.google.inject.Injector;
 import com.google.protobuf.ByteString;
 import nl.han.asd.project.client.commonclient.graph.GraphManagerService;
 import nl.han.asd.project.client.commonclient.node.NodeConnectionService;
-import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.ContactManager;
-import nl.han.asd.project.client.commonclient.store.ContactStore;
-import nl.han.asd.project.client.commonclient.store.MessageStore;
+import nl.han.asd.project.client.commonclient.store.*;
 import nl.han.asd.project.commonservices.encryption.EncryptionModule;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
@@ -19,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -52,29 +48,26 @@ public class MessageProcessingServiceTest {
     @Test public void testWithMessageWrapper() {
         HanRoutingProtocol.Message message = getMessage();
 
-        ByteString wrapperByteString = HanRoutingProtocol.Wrapper.newBuilder().setData(message.toByteString())
-                .setType(HanRoutingProtocol.Wrapper.Type.MESSAGE).build().toByteString();
-
+        CurrentUser currentUser = mock(CurrentUser.class);
         Contact contact = new Contact("receiver");
-        when(contactStore.getCurrentUserAsContact()).thenReturn(contact);
-        HanRoutingProtocol.MessageWrapper messageWrapper = getMessageWrapper(
-                wrapperByteString);
-        messageProcessingService.processIncomingMessage(messageWrapper);
+
+        when(contactStore.getCurrentUser()).thenReturn(currentUser);
+        when(currentUser.asContact()).thenReturn(contact);
+
+        messageProcessingService.processIncomingMessage(message);
 
         // verify that the addMessage is called (thus no exceptions where thrown)
-        verify(messageStore, times(1)).addMessage(eq(Message.fromProtocolMessage(message, contact)));
+        verify(messageStore, times(1)).addMessage(any(Message.class));
     }
 
 
     @Test public void testWithMessageConfirmationWrapper() {
-        HanRoutingProtocol.MessageConfirmation messageConfirmation = HanRoutingProtocol.MessageConfirmation.newBuilder().setConfirmationId("1111111").build();
+        String confirmedId = "1111111";
+        HanRoutingProtocol.MessageConfirmation messageConfirmation = HanRoutingProtocol.MessageConfirmation.newBuilder().setConfirmationId(confirmedId).build();
 
-        ByteString wrapperByteString = HanRoutingProtocol.Wrapper.newBuilder().setData(messageConfirmation.toByteString())
-                .setType(HanRoutingProtocol.Wrapper.Type.MESSAGECONFIRMATION).build().toByteString();
+        messageProcessingService.processIncomingMessage(messageConfirmation);
 
-        HanRoutingProtocol.MessageWrapper messageWrapper = getMessageWrapper(
-                wrapperByteString);
-        messageProcessingService.processIncomingMessage(messageWrapper);
+        verify(messageConfirmationService).messageConfirmationReceived(eq(confirmedId));
     }
 
     @Test public void testInvalidType() {

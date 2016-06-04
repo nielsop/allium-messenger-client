@@ -1,62 +1,81 @@
 package nl.han.asd.project.client.commonclient.path;
 
+import nl.han.asd.project.client.commonclient.graph.IGetVertices;
 import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.client.commonclient.master.IGetClientGroup;
-import nl.han.asd.project.client.commonclient.master.IGetUpdatedGraph;
+import nl.han.asd.project.client.commonclient.path.matrix.PathMatrix;
+import nl.han.asd.project.client.commonclient.path.matrix.PathMatrix.PathOption;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.NoConnectedNodesException;
 import nl.han.asd.project.commonservices.internal.utility.Check;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+/**
+ * IGetMessagePath implementation using the PathMatrix class
+ * to generate and cache paths;
+ *
+ * @version 1.0
+ */
 public class PathDeterminationService implements IGetMessagePath {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PathDeterminationService.class);
-    private IGetUpdatedGraph graphUpdates;
-    private IGetClientGroup clientGroup;
+
+    private static final int MAX_HOPS = 10;
+
+    private IGetVertices getVertices;
+
+    private Map<String, Node> vertices;
+    private PathMatrix pathMatrix;
 
     @Inject
-    public PathDeterminationService(IGetUpdatedGraph graphUpdates, IGetClientGroup clientGroup) {
-        this.graphUpdates = Check.notNull(graphUpdates, "graphUpdates");
-        this.clientGroup = Check.notNull(clientGroup, "clientGroup");
+    public PathDeterminationService(IGetVertices getVertices) {
+        this.getVertices = Check.notNull(getVertices, "getVertices");
     }
 
     @Override
-    public List<Node> getPath(int minHops, Contact contactOntvanger) {
-
-        if (minHops < 1) {
-            throw new IllegalArgumentException("The minimum amount of Hops should be more than 0");
+    public List<Node> getPath(int minHops, Contact contactReceiver) {
+        if (minHops > MAX_HOPS) {
+            throw new IllegalArgumentException(minHops + " > " + MAX_HOPS);
         }
 
-        return buildPath(calculateUsableConnectedNode(contactOntvanger), minHops);
-    }
+        if (minHops < 0) {
+            return Collections.emptyList();
+        }
+        Check.notNull(contactReceiver, "contactReceiver");
 
-    private Node calculateUsableConnectedNode(Contact contact) {
-        Node[] connectedNodes = new Node[0];
+        Node[] contactReceiverNodes = null;
         try {
-            connectedNodes = contact.getConnectedNodes();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            contactReceiverNodes = contactReceiver.getConnectedNodes();
+        } catch (NoConnectedNodesException e) {
+            return Collections.emptyList();
         }
-        Random ran = new Random();
-        int indexConnectedNode = ran.nextInt(connectedNodes.length);
 
-        return connectedNodes[indexConnectedNode];
+        Map<String, Node> newVertices = getVertices.getVertices();
+        if (!newVertices.equals(vertices)) {
+            vertices = newVertices;
+            pathMatrix = new PathMatrix(vertices, MAX_HOPS);
+        }
+
+        Random random = new Random();
+
+        Node endNode;
+        List<PathOption> pathOptions;
+        int i = 0;
+        do {
+            endNode = contactReceiverNodes[random
+                    .nextInt(contactReceiverNodes.length)];
+            pathOptions = pathMatrix.getOptions(endNode.getId(),
+                    minHops);
+            i++;
+            if (i > 100) {
+                return Collections.emptyList();
+            }
+        } while (pathOptions.isEmpty());
+
+        return pathOptions.get(random.nextInt(pathOptions.size()))
+                .getPath(vertices);
     }
 
-    private ArrayList<Node> buildPath(Node hostConnectedNode, int minHops) {
-        ArrayList<Node> path = new ArrayList<Node>();
-//        path.add(hostConnectedNode);
-
-//        for (int i = 1; i < minHops; i++) {
-        path.add(new Node("195.169.194.234:32832", "195.169.194.234", 32832, "123456789".getBytes()));
-        path.add(new Node("195.169.194.234:32833", "195.169.194.234", 32833, "123456789".getBytes()));
-        path.add(new Node("195.169.194.234:32834", "195.169.194.234", 32834, "123456789".getBytes()));
-//        }
-
-        return path;
-    }
 }
