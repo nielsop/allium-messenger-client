@@ -101,7 +101,7 @@ public class PersistenceServiceIT {
         persistenceService.saveMessage(TEST_MESSAGE_2);
         persistenceService.saveMessage(TEST_MESSAGE_3);
         final Map<Contact, List<Message>> contactMessagesMap = persistenceService.getAllMessagesPerContact();
-        Assert.assertEquals(3, contactMessagesMap.size());
+        Assert.assertEquals(2, contactMessagesMap.size());
         Assert.assertEquals(3, contactMessagesMap.get(CONTACT_1).size());
     }
 
