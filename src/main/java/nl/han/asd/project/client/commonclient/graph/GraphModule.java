@@ -6,7 +6,8 @@ import com.google.inject.Singleton;
 public class GraphModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(IGetVertices.class).to(GraphManagerService.class).in(Singleton.class);
-        bind(IUpdateGraph.class).to(GraphManagerService.class).in(Singleton.class);
+        bind(GraphManagerService.class).in(Singleton.class);
+        bind(IGetVertices.class).to(GraphManagerService.class);
+        bind(IUpdateGraph.class).to(GraphManagerService.class);
     }
 }

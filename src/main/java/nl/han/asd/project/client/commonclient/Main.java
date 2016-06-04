@@ -12,6 +12,7 @@ import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Date;
 
 public class Main {
@@ -70,7 +71,7 @@ public class Main {
             });
 
             Thread.sleep(60000);
-        } catch (IOException | MessageNotSentException | InvalidCredentialsException | InterruptedException e) {
+        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -81,7 +82,7 @@ public class Main {
             commonClientGateway.loginRequest("user", "password");
 
             Thread.sleep(60000);
-        } catch (IOException | MessageNotSentException | InvalidCredentialsException | InterruptedException e) {
+        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -98,7 +99,7 @@ public class Main {
             commonClientGateway.sendMessage(message);
 
             Thread.sleep(60000);
-        } catch (IOException | MessageNotSentException | InvalidCredentialsException | InterruptedException e) {
+        } catch (IOException | MessageNotSentException | SQLException | InvalidCredentialsException | InterruptedException e) {
             e.printStackTrace();
         }
     }

@@ -95,7 +95,6 @@ public class LoginService implements ILoginService {
         }
 
         connectedNodes.unsetConnectedNodes();
-        contactStore.setCurrentUser(null);
 
         return logoutResponse.getStatus();
     }

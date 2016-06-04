@@ -36,11 +36,6 @@ public class MessageBuilderService implements IMessageBuilder {
 
         HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
         wrapperBuilder.setData(generatedMessage.toByteString());
-        try {
-            System.out.println(Arrays.toString(contactReceiver.getConnectedNodes()));
-        } catch (NoConnectedNodesException e) {
-            e.printStackTrace();
-        }
         List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
         if(generatedMessage.getClass() == HanRoutingProtocol.Message.class){

@@ -14,6 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static nl.han.asd.project.protocol.HanRoutingProtocol.*;
+
 /**
  * Utility class enabling the parsing from
  * {@link Wrapper} objects to {@link GeneratedMessage}.
@@ -70,7 +72,8 @@ public class Parser {
         GRAPH_UPDATE_RESPONSE(Type.GRAPHUPDATERESPONSE, GraphUpdateResponse.class),
         CLIENT_RESPONSE(Type.CLIENTRESPONSE, HanRoutingProtocol.ClientResponse.class),
         MESSAGE(Type.MESSAGE, HanRoutingProtocol.Message.class),
-        MESSAGECONFIRMATION(Type.MESSAGECONFIRMATION, HanRoutingProtocol.MessageConfirmation.class);
+        MESSAGECONFIRMATION(Type.MESSAGECONFIRMATION, HanRoutingProtocol.MessageConfirmation.class),
+        CLIENTLOGOUTRESPONSE(Type.CLIENTLOGOUTRESPONSE, ClientLogoutResponse.class);
 
         private static Map<Type, ResponseTypes> map;
 

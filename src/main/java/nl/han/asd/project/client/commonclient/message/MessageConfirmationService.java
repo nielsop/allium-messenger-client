@@ -7,6 +7,7 @@ import nl.han.asd.project.client.commonclient.node.ISendData;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.client.commonclient.store.IContactManager;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
+import nl.han.asd.project.client.commonclient.store.NoConnectedNodesException;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class MessageConfirmationService implements IMessageConfirmation {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                System.out.println("!! MESSAGE CONFIRMATION SERVICE STARTED");
                 while (isRunning) {
                     try {
                         checkAllMessages();
@@ -47,6 +49,7 @@ public class MessageConfirmationService implements IMessageConfirmation {
                         LOGGER.error(e.getMessage(), e);
                     }
                 }
+                waitingMessages.clear();
             }
         }).start();
     }
@@ -97,7 +100,8 @@ public class MessageConfirmationService implements IMessageConfirmation {
      * {@inheritDoc}
      */
     @Override
-    public void stop() {
+    public void close() throws Exception {
         isRunning = false;
+        System.out.println("!! MESSAGE CONFIRMATION SERVICE STOPPED");
     }
 }

@@ -1,17 +1,16 @@
 package nl.han.asd.project.client.commonclient.store;
 
+import nl.han.asd.project.client.commonclient.graph.IGetVertices;
+import nl.han.asd.project.client.commonclient.graph.Node;
+import nl.han.asd.project.client.commonclient.persistence.IPersistence;
+import nl.han.asd.project.commonservices.internal.utility.Check;
+
+import javax.inject.Inject;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
-
-import nl.han.asd.project.client.commonclient.graph.IGetVertices;
-import nl.han.asd.project.client.commonclient.graph.Node;
-import nl.han.asd.project.client.commonclient.persistence.IPersistence;
-import nl.han.asd.project.commonservices.internal.utility.Check;
 
 /**
  * Manage the current and stored contacts
@@ -60,7 +59,7 @@ public class ContactStore implements IContactStore {
      */
     @Override
     public void removeContact(String username) {
-        if (!contacts.containsKey(username)) {
+        if (findContact(username) == null) {
             return;
         }
 
@@ -140,8 +139,12 @@ public class ContactStore implements IContactStore {
         return persistence.getContacts().get(username);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws Exception {
         persistence.close();
+        this.currentUser = null;
     }
 }

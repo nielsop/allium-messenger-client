@@ -44,7 +44,6 @@ public class PathDeterminationService implements IGetMessagePath {
             return Collections.emptyList();
         }
         Check.notNull(contactReceiver, "contactReceiver");
-
         Node[] contactReceiverNodes = null;
         try {
             contactReceiverNodes = contactReceiver.getConnectedNodes();
@@ -57,11 +56,10 @@ public class PathDeterminationService implements IGetMessagePath {
             vertices = newVertices;
             pathMatrix = new PathMatrix(vertices, MAX_HOPS);
         }
-
         Random random = new Random();
-
         Node endNode;
         List<PathOption> pathOptions;
+        
         int i = 0;
         do {
             endNode = contactReceiverNodes[random
@@ -73,7 +71,6 @@ public class PathDeterminationService implements IGetMessagePath {
                 return Collections.emptyList();
             }
         } while (pathOptions.isEmpty());
-
         return pathOptions.get(random.nextInt(pathOptions.size()))
                 .getPath(vertices);
     }

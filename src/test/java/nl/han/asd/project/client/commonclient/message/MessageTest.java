@@ -8,12 +8,14 @@ import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class MessageTest {
 
     private Date date = new Date();
     private String testData = "testData";
     private Message message;
+    private Message message2;
     private String messageId = "messageId12345";
 
     private String username;
@@ -30,6 +32,7 @@ public class MessageTest {
         sender = new Contact(username, array, online);
         contactReceiver = new Contact("username2", array, online);
         message = new Message(sender, contactReceiver, date, testData, messageId);
+        message2 = new Message(sender, contactReceiver, date, testData, messageId);
     }
 
     @Test
@@ -52,6 +55,11 @@ public class MessageTest {
     @Test
     public void equalsThrowsFalseWhenComparedWithNull() throws Exception {
         assertFalse(message.equals(null));
+    }
+
+    @Test
+    public void equalsWithDifferentObjectButSameMessageContentReturnsTrue(){
+        assertTrue(message.equals(message2));
     }
 
     @Test

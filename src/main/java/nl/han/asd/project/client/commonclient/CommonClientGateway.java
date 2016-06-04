@@ -1,15 +1,13 @@
 package nl.han.asd.project.client.commonclient;
 
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
+import nl.han.asd.project.client.commonclient.graph.IUpdateGraph;
 import nl.han.asd.project.client.commonclient.heartbeat.IHeartbeatService;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
 import nl.han.asd.project.client.commonclient.login.MisMatchingException;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
-import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
-import nl.han.asd.project.client.commonclient.message.ISendMessage;
-import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
-import nl.han.asd.project.client.commonclient.message.Message;
+import nl.han.asd.project.client.commonclient.message.*;
 import nl.han.asd.project.client.commonclient.store.*;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.internal.utility.Check;
@@ -22,24 +20,22 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Android/Desktop application
- * <p/>
- * Leave empty until we know what to do with it
- */
 public class CommonClientGateway {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
+    private final IHeartbeatService heartbeatService;
+    private final IMessageConfirmation messageConfirmation;
+    private final IUpdateGraph updateGraph;
 
     private IContactStore contactStore;
     private IMessageStore messageStore;
     private IRegistration registration;
     private ILoginService loginService;
     private IScriptStore scriptStore;
-    private final IHeartbeatService heartbeatService;
 
     private ISendMessage sendMessage;
     private ISubscribeMessageReceiver subscribeMessageReceiver;
@@ -60,7 +56,8 @@ public class CommonClientGateway {
     @Inject
     public CommonClientGateway(IContactStore contactStore, IMessageStore messageStore, IRegistration registration,
             ILoginService loginService, IScriptStore scriptStore, ISendMessage sendMessage,
-            ISubscribeMessageReceiver subscribeMessageReceiver, IHeartbeatService heartbeatService) {
+            ISubscribeMessageReceiver subscribeMessageReceiver, IHeartbeatService heartbeatService,
+            IMessageConfirmation messageConfirmation, IUpdateGraph updateGraph) {
         this.subscribeMessageReceiver = Check.notNull(subscribeMessageReceiver, "subscribeMessageReceiver");
         this.sendMessage = Check.notNull(sendMessage, "sendMessage");
         this.contactStore = Check.notNull(contactStore, "contactStore");
@@ -69,6 +66,8 @@ public class CommonClientGateway {
         this.loginService = Check.notNull(loginService, "loginService");
         this.scriptStore = Check.notNull(scriptStore, "scriptStore");
         this.heartbeatService = Check.notNull(heartbeatService, "heartbeatService");
+        this.messageConfirmation = Check.notNull(messageConfirmation, "messageConfirmation");
+        this.updateGraph = Check.notNull(updateGraph, "updateGraph");
     }
 
     /**
@@ -108,14 +107,16 @@ public class CommonClientGateway {
      * @return the login status, received from the loginResponseWrapper.
      */
     public ClientLoginResponse.Status loginRequest(String username, String password)
-            throws InvalidCredentialsException, IOException, MessageNotSentException {
+            throws InvalidCredentialsException, IOException, MessageNotSentException, SQLException {
         try {
+            contactStore.init(username, password);
+            messageStore.init(username, password);
             ClientLoginResponse.Status login = loginService.login(username, password);
             heartbeatService.startHeartbeatFor(contactStore.getCurrentUser());
             return login;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return ClientLoginResponse.Status.FAILED;
+            throw e;
         }
     }
 
@@ -199,7 +200,9 @@ public class CommonClientGateway {
     public ClientLogoutResponse.Status logout() throws MessageNotSentException, IOException, MisMatchingException {
         try {
             CurrentUser user = contactStore.getCurrentUser();
-            return loginService.logout(user.asContact().getUsername(), user.getSecretHash());
+            ClientLogoutResponse.Status logout = loginService.logout(user.asContact().getUsername(), user.getSecretHash());
+            stop();
+            return logout;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
@@ -285,5 +288,18 @@ public class CommonClientGateway {
         return receivedMessages;
     }
 
-
+    /**
+     * Stops all running services
+     */
+    public void stop() {
+        try {
+            heartbeatService.stopHeartbeatFor(contactStore.getCurrentUser());
+            messageConfirmation.close();
+            messageStore.close();
+            contactStore.close();
+            updateGraph.close();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
 }

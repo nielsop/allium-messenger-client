@@ -119,6 +119,8 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
         heartbeatSender.isRunning = false;
         heartbeatSender.interrupt();
         heartbeatSender.join();
+
+        System.out.println("!! HEARTBEAT STOPPED");
     }
 
     private enum PropertyValues {
@@ -151,9 +153,14 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
             this.contact = contact;
         }
 
+        /**
+         * Send heartbeat on specified interval
+         */
         @Override
         public void run() {
             long delay = TimeUnit.SECONDS.toNanos(PropertyValues.HEARTBEAT_DELAY.getInteger(properties));
+
+            System.out.println("!! HEARTBEAT STARTED");
 
             while (isRunning) {
                 LockSupport.parkNanos(delay);

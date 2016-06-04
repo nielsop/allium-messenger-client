@@ -116,6 +116,7 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                System.out.println("!! GRAPH MANAGER SERVICE STARTED");
                 while (isRunning) {
                     try {
                         Thread.sleep(PERIODIC_UPDATE);
@@ -131,9 +132,10 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
     }
 
     /**
-     * Stop updating the graph periodically
+     * {@inheritDoc}
      */
-    public void stop() {
+    @Override
+    public void close() throws Exception {
         isRunning = false;
     }
 }
