@@ -282,7 +282,11 @@ public class PersistenceService implements IPersistence {
 
     @Override
     public void close() throws Exception {
-        database.close();
+        System.out.println("!! PERSISTENCE SERVICE STOPPED");
+        if (initialized) {
+            database.close();
+        }
+        initialized = false;
     }
 
 }

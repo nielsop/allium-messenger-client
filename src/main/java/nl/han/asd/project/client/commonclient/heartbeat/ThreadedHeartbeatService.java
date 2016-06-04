@@ -119,6 +119,8 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
         heartbeatSender.isRunning = false;
         heartbeatSender.interrupt();
         heartbeatSender.join();
+
+        System.out.println("!! HEARTBEAT STOPPED");
     }
 
     private enum PropertyValues {
@@ -163,7 +165,6 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
 
                 try {
                     heartbeat.sendHeartbeat(buildheartbeat());
-                    System.out.println("HEARTBEAT WAS SENT");
                 } catch (IOException | MessageNotSentException e) {
                     LOGGER.debug(e.getMessage(), e);
                 }

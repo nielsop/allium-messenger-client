@@ -48,6 +48,7 @@ public class MessageConfirmationService implements IMessageConfirmation {
                         LOGGER.error(e.getMessage(), e);
                     }
                 }
+                waitingMessages.clear();
             }
         }).start();
     }
@@ -97,7 +98,8 @@ public class MessageConfirmationService implements IMessageConfirmation {
      * {@inheritDoc}
      */
     @Override
-    public void stop() {
+    public void close() throws Exception {
         isRunning = false;
+        System.out.println("!! MESSAGE CONFIRMATION SERVICE STOPPED");
     }
 }

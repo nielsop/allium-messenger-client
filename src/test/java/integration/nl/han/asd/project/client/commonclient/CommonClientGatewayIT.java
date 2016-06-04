@@ -6,9 +6,11 @@ import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
 import nl.han.asd.project.client.commonclient.CommonClientGateway;
 import nl.han.asd.project.client.commonclient.CommonClientModule;
+import nl.han.asd.project.client.commonclient.graph.IUpdateGraph;
 import nl.han.asd.project.client.commonclient.heartbeat.IHeartbeatService;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.master.IRegistration;
+import nl.han.asd.project.client.commonclient.message.IMessageConfirmation;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.store.IContactStore;
@@ -42,6 +44,8 @@ public class CommonClientGatewayIT {
 
     private String validUsername = "validUsername";
     private String validPassword = "validPassword";
+    private IMessageConfirmation messageConfirmation;
+    private IUpdateGraph updateGraph;
 
     @Before
     public void setup() {
@@ -55,8 +59,10 @@ public class CommonClientGatewayIT {
         sendMessage = injector.getInstance(ISendMessage.class);
         subscribeMessageReceiver = injector.getInstance(ISubscribeMessageReceiver.class);
         heartbeat = injector.getInstance(IHeartbeatService.class);
+        messageConfirmation = injector.getInstance(IMessageConfirmation.class);
+        updateGraph = injector.getInstance(IUpdateGraph.class);
         commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore,
-                sendMessage, subscribeMessageReceiver, heartbeat);
+                sendMessage, subscribeMessageReceiver, heartbeat, messageConfirmation, updateGraph);
 
     }
 

@@ -131,10 +131,8 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
         thread.start();
     }
 
-    /**
-     * Stop updating the graph periodically
-     */
-    public void stop() {
+    @Override
+    public void close() throws Exception {
         isRunning = false;
     }
 }

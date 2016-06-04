@@ -109,6 +109,7 @@ public class HyperSQLDatabase implements IDatabase {
         if (!isOpen()) {
             return;
         }
+        System.out.println("!! DATABASE CLOSED");
         final Statement statement = connection.createStatement();
         statement.execute("SHUTDOWN");
         statement.close();

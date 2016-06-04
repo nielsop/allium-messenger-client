@@ -67,7 +67,8 @@ public class Parser {
     private enum ResponseTypes {
         REGISTER_RESPONSE(Type.CLIENTREGISTERRESPONSE, ClientRegisterResponse.class),
         CLIENT_LOGIN_RESPONSE(Type.CLIENTLOGINRESPONSE, ClientLoginResponse.class),
-        GRAPH_UPDATE_RESPONSE(Type.GRAPHUPDATERESPONSE, GraphUpdateResponse.class);
+        GRAPH_UPDATE_RESPONSE(Type.GRAPHUPDATERESPONSE, GraphUpdateResponse.class),
+        CLIENTLOGOUTRESPONSE(Type.CLIENTLOGOUTRESPONSE, HanRoutingProtocol.ClientLogoutResponse.class);
 
         private static Map<Type, ResponseTypes> map;
 
