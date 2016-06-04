@@ -57,9 +57,9 @@ public class PersistenceServiceIT {
     public void testSaveMessageThenDeleteMessageSuccessful() throws SQLException {
         persistenceService.saveMessage(TEST_MESSAGE_1);
         persistenceService.saveMessage(TEST_MESSAGE_2);
-        Assert.assertEquals(3, persistenceService.getAllMessages().get(0).getDatabaseId());
+        Assert.assertEquals(2, persistenceService.getAllMessages().size());
         persistenceService.deleteMessage(1);
-        Assert.assertEquals(2, persistenceService.getAllMessages().get(0).getDatabaseId());
+        Assert.assertEquals(1, persistenceService.getAllMessages().size());
     }
 
     @Test

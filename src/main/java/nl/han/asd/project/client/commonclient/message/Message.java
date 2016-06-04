@@ -155,7 +155,7 @@ public class Message {
             return false;
         }
         final Message otherMessage = (Message) anotherObject;
-        return getText().equalsIgnoreCase(otherMessage.getText()) && getSender().equals(otherMessage.getSender()) && getReceiver().equals(otherMessage.getReceiver());
+        return getMessageId().equals(otherMessage.getMessageId());
     }
 
     @Override
