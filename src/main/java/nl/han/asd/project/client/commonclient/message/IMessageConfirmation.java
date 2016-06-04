@@ -2,9 +2,6 @@ package nl.han.asd.project.client.commonclient.message;
 
 import nl.han.asd.project.client.commonclient.store.Contact;
 
-/**
- * Created by Raoul on 31/5/2016.
- */
 public interface IMessageConfirmation extends AutoCloseable {
     /**
      * Add a sent message to a list of messages awaiting confirmation.

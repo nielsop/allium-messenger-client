@@ -29,6 +29,9 @@ public class PersistenceService implements IPersistence {
         this.database = Check.notNull(database, "database");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(String username, String password) throws SQLException {
         if (!initialized) {
@@ -315,6 +318,9 @@ public class PersistenceService implements IPersistence {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws Exception {
         System.out.println("!! PERSISTENCE SERVICE STOPPED");

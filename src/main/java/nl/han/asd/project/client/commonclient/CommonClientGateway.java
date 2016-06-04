@@ -20,14 +20,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Android/Desktop application
- * <p/>
- * Leave empty until we know what to do with it
- */
 public class CommonClientGateway {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonClientGateway.class);
@@ -111,7 +107,7 @@ public class CommonClientGateway {
      * @return the login status, received from the loginResponseWrapper.
      */
     public ClientLoginResponse.Status loginRequest(String username, String password)
-            throws InvalidCredentialsException, IOException, MessageNotSentException {
+            throws InvalidCredentialsException, IOException, MessageNotSentException, SQLException {
         try {
             contactStore.init(username, password);
             messageStore.init(username, password);
@@ -120,9 +116,8 @@ public class CommonClientGateway {
             return login;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+            throw e;
         }
-
-        return ClientLoginResponse.Status.FAILED;
     }
 
     /**

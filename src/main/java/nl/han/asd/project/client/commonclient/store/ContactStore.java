@@ -136,6 +136,9 @@ public class ContactStore implements IContactStore {
         return persistence.getContacts().get(username);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws Exception {
         persistence.close();

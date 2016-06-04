@@ -150,6 +150,9 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
             this.contact = contact;
         }
 
+        /**
+         * Send heartbeat on specified interval
+         */
         @Override
         public void run() {
             long delay = TimeUnit.SECONDS.toNanos(PropertyValues.HEARTBEAT_DELAY.getInteger(properties));

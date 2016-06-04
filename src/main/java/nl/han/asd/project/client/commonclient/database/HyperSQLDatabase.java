@@ -22,6 +22,9 @@ public class HyperSQLDatabase implements IDatabase {
     private static final Logger LOGGER = LoggerFactory.getLogger(HyperSQLDatabase.class);
     private Connection connection;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(String username, String password) throws SQLException {
         System.out.println("!! DATABASE SERVICE STARTED");

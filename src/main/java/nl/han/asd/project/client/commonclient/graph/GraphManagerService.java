@@ -131,6 +131,9 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
         thread.start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws Exception {
         isRunning = false;
