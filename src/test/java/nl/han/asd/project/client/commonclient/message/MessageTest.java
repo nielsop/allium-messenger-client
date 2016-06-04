@@ -3,7 +3,6 @@ package nl.han.asd.project.client.commonclient.message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import java.util.Date;
 
@@ -46,7 +45,7 @@ public class MessageTest {
     @Test
     public void toStringCreatesRightString() throws Exception {
         final StringBuilder sb = new StringBuilder();
-        sb.append("Message[sender=").append(message.getSender().getUsername()).append(", receiver=").append(message.getReceiver().getUsername()).append(", timestamp=").append(message.getMessageTimestamp()).append(", text=").append(message.getText()).append("]");
+        sb.append("Message[messageId = " + messageId + ", sender=").append(message.getSender().getUsername()).append(", receiver=").append(message.getReceiver().getUsername()).append(", timestamp=").append(message.getMessageTimestamp()).append(", text=").append(message.getText()).append("]");
         assertEquals(sb.toString(), message.toString());
     }
 
