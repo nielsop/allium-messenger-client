@@ -22,7 +22,7 @@ public class GraphManagerService implements IGetVertices, IUpdateGraph {
     public static final int PERIODIC_UPDATE = 600000;
 
     private int currentGraphVersion = 0;
-    private Graph graph;
+    private static Graph graph;
     private IGetUpdatedGraph getUpdatedGraph;
 
     private long lastGraphUpdate = 0;

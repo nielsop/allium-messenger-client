@@ -1,16 +1,12 @@
 package nl.han.asd.project.client.commonclient.store;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.persistence.IPersistence;
 import nl.han.asd.project.commonservices.internal.utility.Check;
+
+import javax.inject.Inject;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Manage stored messages.

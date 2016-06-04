@@ -6,8 +6,11 @@ import com.google.protobuf.GeneratedMessage;
 import nl.han.asd.project.client.commonclient.graph.Node;
 import nl.han.asd.project.client.commonclient.path.IGetMessagePath;
 import nl.han.asd.project.client.commonclient.store.Contact;
+import nl.han.asd.project.client.commonclient.store.NoConnectedNodesException;
 import nl.han.asd.project.commonservices.encryption.IEncryptionService;
 import nl.han.asd.project.protocol.HanRoutingProtocol;
+
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -33,6 +36,11 @@ public class MessageBuilderService implements IMessageBuilder {
 
         HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
         wrapperBuilder.setData(generatedMessage.toByteString());
+        try {
+            System.out.println(Arrays.toString(contactReceiver.getConnectedNodes()));
+        } catch (NoConnectedNodesException e) {
+            e.printStackTrace();
+        }
         List<Node> path = getPath.getPath(MINIMAL_HOPS, contactReceiver);
 
         if(generatedMessage.getClass() == HanRoutingProtocol.Message.class){
@@ -66,7 +74,13 @@ public class MessageBuilderService implements IMessageBuilder {
         messageWrapperBuilder.setIPaddress(node.getIpAddress());
         messageWrapperBuilder.setPort(node.getPort());
         messageWrapperBuilder.setData(wrapper.toByteString());
-        return encryptionService.encryptData(messageWrapperBuilder.build().toByteArray(), node.getPublicKey());
+
+        HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
+        wrapperBuilder.setType(HanRoutingProtocol.Wrapper.Type.MESSAGEWRAPPER);
+        wrapperBuilder.setData(messageWrapperBuilder.build().toByteString());
+
+        return wrapperBuilder.build().toByteArray();
+//        return encryptionService.encryptData(messageWrapperBuilder.build().toByteArray(), node.getPublicKey());
     }
 
 
@@ -91,11 +105,16 @@ public class MessageBuilderService implements IMessageBuilder {
         builder.setPort(node.getPort());
         builder.setData(ByteString.copyFrom(message));
 
+//        byte[] encryptedMessage = encryptionService
+//                .encryptData(node.getPublicKey(),builder.build().toByteArray());
+        ByteString encryptedMessage = builder.build().toByteString();
+
+        HanRoutingProtocol.Wrapper.Builder wrapperBuilder = HanRoutingProtocol.Wrapper.newBuilder();
+        wrapperBuilder.setType(HanRoutingProtocol.Wrapper.Type.MESSAGEWRAPPER);
+        wrapperBuilder.setData(encryptedMessage);
+
         remainingPath.remove(0);
 
-        byte[] encryptedMessage = encryptionService
-                .encryptData(node.getPublicKey(),builder.build().toByteArray());
-
-        return buildMessagePackageLayer(encryptedMessage, remainingPath);
+        return buildMessagePackageLayer(wrapperBuilder.build().toByteArray(), remainingPath);
     }
 }

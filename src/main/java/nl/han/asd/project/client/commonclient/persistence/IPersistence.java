@@ -2,6 +2,7 @@ package nl.han.asd.project.client.commonclient.persistence;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public interface IPersistence extends AutoCloseable {
      *
      * @return A map of all messages, separated per contact.
      */
-    Map<Contact, List<Message>> getAllMessagesPerContact();
+    HashMap<Contact, List<Message>> getAllMessagesPerContact();
 
     /**
      * Adds a contact to the database.

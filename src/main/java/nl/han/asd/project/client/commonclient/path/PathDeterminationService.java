@@ -32,9 +32,6 @@ public class PathDeterminationService implements IGetMessagePath {
     @Inject
     public PathDeterminationService(IGetVertices getVertices) {
         this.getVertices = Check.notNull(getVertices, "getVertices");
-
-        vertices = getVertices.getVertices();
-        pathMatrix = new PathMatrix(vertices, MAX_HOPS);
     }
 
     @Override
@@ -63,14 +60,19 @@ public class PathDeterminationService implements IGetMessagePath {
 
         Random random = new Random();
 
-        Node endNode = contactReceiverNodes[random
-                .nextInt(contactReceiverNodes.length)];
-        List<PathOption> pathOptions = pathMatrix.getOptions(endNode.getId(),
-                minHops);
-
-        if (pathOptions.isEmpty()) {
-            return Collections.emptyList();
-        }
+        Node endNode;
+        List<PathOption> pathOptions;
+        int i = 0;
+        do {
+            endNode = contactReceiverNodes[random
+                    .nextInt(contactReceiverNodes.length)];
+            pathOptions = pathMatrix.getOptions(endNode.getId(),
+                    minHops);
+            i++;
+            if (i > 100) {
+                return Collections.emptyList();
+            }
+        } while (pathOptions.isEmpty());
 
         return pathOptions.get(random.nextInt(pathOptions.size()))
                 .getPath(vertices);

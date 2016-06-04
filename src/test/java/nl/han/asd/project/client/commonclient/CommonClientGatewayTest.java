@@ -131,7 +131,7 @@ public class CommonClientGatewayTest {
     @Test
     public void getReceivedMessagesTest()
     {
-        Message message = new Message(new Contact("username"), new Contact("username2"), new Timestamp(1), "text");
+        Message message = new Message(new Contact("username"), new Contact("username2"), new Timestamp(1), "text", "");
         messageStore = Mockito.mock(IMessageStore.class);
         Mockito.when(messageStore.getMessagesAfterDate(any(long.class))).thenReturn(new Message[]{message});
         commonClientGateway = new CommonClientGateway(contactStore, messageStore, registration, login, scriptStore, sendMessage,subscribeMessageReceiver);

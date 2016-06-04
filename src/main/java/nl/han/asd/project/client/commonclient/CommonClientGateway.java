@@ -1,13 +1,5 @@
 package nl.han.asd.project.client.commonclient;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.login.ILoginService;
 import nl.han.asd.project.client.commonclient.login.InvalidCredentialsException;
@@ -17,22 +9,20 @@ import nl.han.asd.project.client.commonclient.message.IMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.ISendMessage;
 import nl.han.asd.project.client.commonclient.message.ISubscribeMessageReceiver;
 import nl.han.asd.project.client.commonclient.message.Message;
-
 import nl.han.asd.project.client.commonclient.store.*;
-
-import nl.han.asd.project.client.commonclient.store.Contact;
-import nl.han.asd.project.client.commonclient.store.CurrentUser;
-import nl.han.asd.project.client.commonclient.store.IContactStore;
-import nl.han.asd.project.client.commonclient.store.IMessageStore;
-import nl.han.asd.project.client.commonclient.store.IScriptStore;
 import nl.han.asd.project.client.commonclient.utility.Validation;
 import nl.han.asd.project.commonservices.internal.utility.Check;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLoginResponse;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientLogoutResponse;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterRequest;
 import nl.han.asd.project.protocol.HanRoutingProtocol.ClientRegisterResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Android/Desktop application
@@ -272,7 +262,7 @@ public class CommonClientGateway {
     {
         try {
             Contact contact = contactStore.findContact(username);
-            Message message = new Message(contactStore.getCurrentUser().asContact(), contact, new Date(), messageText);
+            Message message = new Message(contactStore.getCurrentUser().asContact(), contact, new Date(), messageText, "");
             sendMessage.sendMessage(message, contact);
             return true;
         } catch (Exception e) {

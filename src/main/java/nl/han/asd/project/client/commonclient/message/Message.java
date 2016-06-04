@@ -30,8 +30,8 @@ public class Message {
      * @param timestamp Timestamp of when the message was sent.
      * @param text The actual message.
      */
-    public Message(Contact sender, Contact receiver, Date timestamp, String text) {
-        this(-1, sender, receiver, timestamp, text);
+    public Message(Contact sender, Contact receiver, Date timestamp, String text, String messageId) {
+        this(-1, sender, receiver, timestamp, text, messageId);
     }
 
     /**
@@ -43,12 +43,13 @@ public class Message {
      * @param timestamp Timestamp of when the message was sent.
      * @param text The actual message.
      */
-    public Message(int id, Contact sender, Contact receiver, Date timestamp, String text) {
+    public Message(int id, Contact sender, Contact receiver, Date timestamp, String text, String messageId) {
         databaseId = id;
         this.sender = sender;
         this.receiver = receiver;
         this.timestamp = timestamp;
         this.text = text;
+        this.messageId = messageId;
     }
 
     /**
@@ -60,11 +61,12 @@ public class Message {
     public static Message fromDatabase(ResultSet result) {
         try {
             final int id = (Integer) result.getObject(1);
-            final Contact sender = Contact.fromDatabase((String) result.getObject(2));
-            final Contact receiver = Contact.fromDatabase((String) result.getObject(3));
-            final Date timestamp = IPersistence.TIMESTAMP_FORMAT.parse(IPersistence.TIMESTAMP_FORMAT.format(result.getTimestamp(4)));
-            final String message = (String) result.getObject(5);
-            return new Message(id, sender, receiver, timestamp, message);
+            final String messageId = (String) result.getObject(2);
+            final Contact sender = Contact.fromDatabase((String) result.getObject(3));
+            final Contact receiver = Contact.fromDatabase((String) result.getObject(4));
+            final Date timestamp = IPersistence.TIMESTAMP_FORMAT.parse(IPersistence.TIMESTAMP_FORMAT.format(result.getTimestamp(5)));
+            final String message = (String) result.getObject(6);
+            return new Message(id, sender, receiver, timestamp, message, messageId);
         } catch (SQLException | ParseException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -81,11 +83,11 @@ public class Message {
      */
     public static Message fromProtocolMessage(HanRoutingProtocol.Message protocolMessage, Contact receiver)
     {
-        final int id = Integer.parseInt(protocolMessage.getId());
+        final String id = protocolMessage.getId();
         final Contact sender = Contact.fromDatabase(protocolMessage.getSender());
         final String text = protocolMessage.getText();
         final Date timestamp = new Date(protocolMessage.getTimeSent());
-        return new Message(id, receiver, sender, timestamp, text);
+        return new Message(receiver, sender, timestamp, text, id);
     }
 
 
@@ -131,7 +133,7 @@ public class Message {
 
     @Override
     public String toString() {
-        return "Message[sender=" + sender.getUsername() + ", receiver=" + receiver.getUsername() + ", timestamp=" + timestamp + ", text=" + text + "]";
+        return "Message[messageId = " + messageId + ", sender=" + sender.getUsername() + ", receiver=" + receiver.getUsername() + ", timestamp=" + timestamp + ", text=" + text + "]";
     }
 
     @Override

@@ -84,18 +84,21 @@ public class ContactStore implements IContactStore {
             List<String> connectedNodeIds) {
         Contact oldContact = findContact(username);
         if (oldContact == null) {
+            System.out.println("Contact could not be found!!");
             return;
         }
 
         Contact newContact = new Contact(username, publicKey, online);
 
-        List<Node> connectedNodes = new ArrayList<>(connectedNodeIds.size());
+        Node[] connectedNodes = new Node[connectedNodeIds.size()];
+        int i = 0;
         for (String connectedNodeId : connectedNodeIds) {
             Node node = graphManager.getVertices().get(connectedNodeId);
-            connectedNodes.add(node);
+            connectedNodes[i] = node;
+            i++;
         }
 
-        newContact.setConnectedNodes((Node[]) connectedNodes.toArray());
+        newContact.setConnectedNodes(connectedNodes);
         contacts.put(username, newContact);
     }
 

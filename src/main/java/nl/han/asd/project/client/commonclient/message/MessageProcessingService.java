@@ -1,6 +1,7 @@
 package nl.han.asd.project.client.commonclient.message;
 
 import com.google.inject.Inject;
+import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nl.han.asd.project.client.commonclient.connection.MessageNotSentException;
 import nl.han.asd.project.client.commonclient.graph.IUpdateGraph;
@@ -66,17 +67,10 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage, 
      * {@inheritDoc}
      */
     @Override
-    public void processIncomingMessage(MessageWrapper messageWrapper) {
+    public void processIncomingMessage(GeneratedMessage messageWrapper) {
         try {
-            Wrapper wrapper = decryptEncryptedWrapper(
-                    messageWrapper);
-
-            if (wrapper.getType()
-                    == Wrapper.Type.MESSAGECONFIRMATION) {
-
-                MessageConfirmation messageConfirmation = MessageConfirmation
-                        .parseFrom(wrapper.getData());
-
+            if (messageWrapper instanceof HanRoutingProtocol.MessageConfirmation) {
+                MessageConfirmation messageConfirmation = (MessageConfirmation) messageWrapper;
                 messageConfirmationService.messageConfirmationReceived(messageConfirmation.getConfirmationId());
 
                 for (IMessageReceiver receiver : receivers) {
@@ -84,11 +78,8 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage, 
                         receiver.confirmedMessage(messageConfirmation.getConfirmationId());
                     }
                 }
-
-            } else if (wrapper.getType()
-                    == Wrapper.Type.MESSAGE) {
-
-                HanRoutingProtocol.Message message = HanRoutingProtocol.Message.parseFrom(wrapper.getData());
+            } else if (messageWrapper instanceof HanRoutingProtocol.Message) {
+                HanRoutingProtocol.Message message = (HanRoutingProtocol.Message) messageWrapper;
                 Message internalMessage = Message.fromProtocolMessage(message, contactStore.getCurrentUser().asContact());
                 messageStore.addMessage(internalMessage);
 
@@ -102,7 +93,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage, 
             } else {
                 throw new InvalidProtocolBufferException(String.format(
                         "Packet didn't contain a MessageConfirmation nor a Message but %s.",
-                        wrapper.getType().name()));
+                        messageWrapper));
             }
         } catch (InvalidProtocolBufferException e) {
             LOGGER.error("Error unpacking received message.", e);
@@ -110,9 +101,9 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage, 
     }
 
     private Wrapper decryptEncryptedWrapper(MessageWrapper encryptedMessageWrapper) throws InvalidProtocolBufferException {
-        byte[] wrapperBuffer = encryptionService
-                .decryptData(encryptedMessageWrapper.getData().toByteArray());
-        return Wrapper.parseFrom(wrapperBuffer);
+//        byte[] wrapperBuffer = encryptionService
+//                .decryptData(encryptedMessageWrapper.getData().toByteArray());
+        return Wrapper.parseFrom(encryptedMessageWrapper.getData());
     }
 
     /**
@@ -122,6 +113,8 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage, 
     public void sendMessage(Message message, Contact contact) {
         updateGraph.updateGraph();
         contactManager.updateAllContactInformation();
+
+        contact = contactStore.findContact(contact.getUsername());
 
         HanRoutingProtocol.Message.Builder builder = HanRoutingProtocol.Message.newBuilder();
         builder.setId(generateUniqueMessageId(contact.getUsername()));
@@ -156,10 +149,19 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage, 
     }
 
     private void confirmMessage(HanRoutingProtocol.Message message) {
+        Contact sender = contactStore.findContact(message.getSender());
+
+        if (sender == null) {
+            contactStore.addContact(message.getSender());
+        }
+
+        updateGraph.updateGraph();
+        contactManager.updateAllContactInformation();
+
+        sender = contactStore.findContact(message.getSender());
+
         MessageConfirmation.Builder builder = MessageConfirmation.newBuilder();
         builder.setConfirmationId(message.getId());
-
-        Contact sender = contactStore.findContact(message.getSender());
 
         MessageWrapper messageWrapper = messageBuilder.buildMessage(builder.build(), sender);
         try {

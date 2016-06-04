@@ -87,12 +87,12 @@ public class PersistenceService implements IPersistence {
      * {@inheritDoc}
      */
     @Override
-    public Map<Contact, List<Message>> getAllMessagesPerContact() {
-        final Map<Contact, List<Message>> contactMessagesHashMap = new HashMap<>();
+    public HashMap<Contact, List<Message>> getAllMessagesPerContact() {
+        final HashMap<Contact, List<Message>> contactMessagesHashMap = new HashMap<>();
         try {
             ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message");
             if (selectMessagesResult == null) {
-                return Collections.emptyMap();
+                return new HashMap<>();
             }
             while (selectMessagesResult.next()) {
                 final Message message = Message.fromDatabase(selectMessagesResult);

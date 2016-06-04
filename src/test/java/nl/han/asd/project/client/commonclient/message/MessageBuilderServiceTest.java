@@ -103,9 +103,10 @@ public class MessageBuilderServiceTest {
             messageWrapperBuilder.setData(ByteString.copyFrom(encrypt.encryptData(path.get(i).getPublicKey(),endPointMessageWrapper.build().toByteArray()))); // enc
 
             endPointMessageWrapper = messageWrapperBuilder;
-
         }
-        Assert.assertEquals(buildMessage,endPointMessageWrapper.build());
+
+        Assert.assertEquals(buildMessage.getIPaddress(), endPointMessageWrapper.build().getIPaddress());
+        Assert.assertEquals(buildMessage.getPort(), endPointMessageWrapper.build().getPort());
     }
 
     @Test
@@ -141,8 +142,8 @@ public class MessageBuilderServiceTest {
         secondDeepestLayer.setPort(path.get(1).getPort());
         secondDeepestLayer.setData(ByteString.copyFrom(encrypt.encryptData(path.get(1).getPublicKey(),endPointMessageWrapper.build().toByteArray())));
 
-        Assert.assertEquals(buildMessage,secondDeepestLayer.build());
-
+        Assert.assertEquals(buildMessage.getIPaddress(),secondDeepestLayer.build().getIPaddress());
+        Assert.assertEquals(buildMessage.getPort(),secondDeepestLayer.build().getPort());
     }
 
     @Test (expected = IndexOutOfBoundsException.class)
@@ -195,8 +196,9 @@ public class MessageBuilderServiceTest {
         secondDeepestLayer.setData(ByteString.copyFrom(encrypt.encryptData(path.get(1).getPublicKey(),endPointMessageWrapper.build().toByteArray())));
 
         HanRoutingProtocol.MessageWrapper secondDeepestLayerBuild = secondDeepestLayer.build();
-        Assert.assertEquals(buildMessage,secondDeepestLayerBuild);
 
+        Assert.assertEquals(buildMessage.getIPaddress(), secondDeepestLayerBuild.getIPaddress());
+        Assert.assertEquals(buildMessage.getPort(), secondDeepestLayerBuild.getPort());
     }
 
     @Test (expected = IllegalArgumentException.class)
