@@ -367,13 +367,11 @@ public class FullIntegrationTest {
         commonClientGateway.subscribeReceivedMessages(new IMessageReceiver() {
             @Override
             public void receivedMessage(Message message) {
-                System.out.println("Received a message");
                 receivedMessage = message;
             }
 
             @Override
             public void confirmedMessage(String messageId) {
-                System.out.println("Confirmation received");
                 confirmedMessage = messageId;
             }
         });
@@ -381,7 +379,7 @@ public class FullIntegrationTest {
 
     private void checkMasterStarted(CloudHost cloudHost){
         int attempts = 0;
-        while(attempts <= 5) {
+        while(true) {
             try {
                 Thread.sleep(5000);
                 new Socket(cloudHost.getHostName(), cloudHost.getPort(1337)).close();
@@ -389,19 +387,29 @@ public class FullIntegrationTest {
             } catch (IOException | InterruptedException e) {
                 attempts++;
             }
+            if (attempts > 4){
+                return;
+            }
         }
     }
 
     private void checkNodesStarted(List<DockerHost> dockerHosts){
         int attempts = 0;
         for (int i = 0; i < dockerHosts.size(); i++) {
-            while(attempts <= dockerHosts.size()) {
+            while(true) {
                 try {
-                    Thread.sleep(8000);
                     new Socket(dockerHosts.get(i).getHostName(), dockerHosts.get(i).getPort(1337)).close();
                     break;
-                } catch (IOException | InterruptedException e) {
+                } catch (IOException e) {
                     attempts++;
+                }
+                try {
+                    Thread.sleep(8000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (attempts > dockerHosts.size()) {
+                    return;
                 }
             }
         }
