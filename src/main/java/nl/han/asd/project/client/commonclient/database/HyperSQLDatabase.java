@@ -2,11 +2,7 @@ package nl.han.asd.project.client.commonclient.database;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +101,11 @@ public class HyperSQLDatabase implements IDatabase {
     @Override
     public boolean isOpen() throws SQLException {
         return connection != null && !connection.isClosed();
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String query) throws SQLException {
+        return connection.prepareStatement(query);
     }
 
     @Override
