@@ -120,7 +120,7 @@ public class MessageProcessingService implements IReceiveMessage, ISendMessage, 
         builder.setId(generateUniqueMessageId(contact.getUsername()));
         builder.setSender(contactStore.getCurrentUser().asContact().getUsername());
         builder.setText(message.getText());
-        builder.setTimeSent(System.currentTimeMillis() / 1000L);
+        builder.setTimeSent(System.currentTimeMillis());
 
         messageConfirmationService.messageSent(builder.getId(), message, contact);
 
