@@ -26,18 +26,21 @@ public class PersistenceServiceIT {
 
     private static final Contact CONTACT_1 = new Contact("Testcontact");
     private static final Contact CONTACT_2 = new Contact("Testcontact2");
-    private static final Message TEST_MESSAGE_1 = new Message(-1, CONTACT_1, CONTACT_2, new Date(), "Testmessage");
-    private static final Message TEST_MESSAGE_2 = new Message(-1, CONTACT_1, CONTACT_2, new Date(), "Testmessage2");
-    private static final Message TEST_MESSAGE_3 = new Message(-1, CONTACT_2, CONTACT_1, new Date(), "Testmessage3");
+    private static final Contact CONTACT_3 = new Contact("Testcontact3");
+    private static final Message TEST_MESSAGE_1 = new Message(-1, CONTACT_1, CONTACT_2, new Date(System.currentTimeMillis() - 3600 * 1000),
+            "Dit is bericht 1 en wordt verstuurd door contact 1 naar contact 2");
+    private static final Message TEST_MESSAGE_2 = new Message(-1, CONTACT_1, CONTACT_2, new Date(System.currentTimeMillis() - 1800 * 1000),
+            "Dit is bericht 2 en wordt verstuurd door contact 1 naar contact 2");
+    private static final Message TEST_MESSAGE_3 = new Message(-1, CONTACT_2, CONTACT_1, new Date(System.currentTimeMillis() - 2700 * 1000),
+            "Dit is bericht 3 en wordt verstuurd door contact 2 naar contact 1");
+    private static final Message TEST_MESSAGE_4 = new Message(-1, CONTACT_3, CONTACT_1, new Date(), "Dit is bericht 4 en wordt verstuurd door contact 3 naar contact 1");
     private static final String SCRIPT_1_NAME = "TestScript";
-    private static final String SCRIPT_1_CONTENT = "segment data begin "
-            + "     text testMessage value \"If you receive this message, I did not delay it and I am in trouble. Send help! \" "
-            + "     text reactionMessage value \"delayMessage abq1\" "
-            + "     datetime testMessageSendTime value 2020-05-18 " + "segment end " + "segment contact begin "
-            + "     person mark value \"MarkVaessen\" " + "segment end " + "segment main begin "
-            + "     schedule testMessageSendTime begin " + "         send using testMessage as message mark as contact "
-            + "     end " + "     react reactionMessage begin " + "         set testMessageSendTime value 2040-05-18 "
-            + "     end " + "segment end ";
+    private static final String SCRIPT_1_CONTENT =
+            "segment data begin " + "     text testMessage value \"If you receive this message, I did not delay it and I am in trouble. Send help! \" "
+                    + "     text reactionMessage value \"delayMessage abq1\" " + "     datetime testMessageSendTime value 2020-05-18 " + "segment end " + "segment contact begin "
+                    + "     person mark value \"MarkVaessen\" " + "segment end " + "segment main begin " + "     schedule testMessageSendTime begin "
+                    + "         send using testMessage as message mark as contact " + "     end " + "     react reactionMessage begin "
+                    + "         set testMessageSendTime value 2040-05-18 " + "     end " + "segment end ";
     private IPersistence persistenceService;
 
     @Before
@@ -99,7 +102,7 @@ public class PersistenceServiceIT {
         persistenceService.saveMessage(TEST_MESSAGE_3);
         final Map<Contact, List<Message>> contactMessagesMap = persistenceService.getAllMessagesPerContact();
         Assert.assertEquals(2, contactMessagesMap.size());
-        Assert.assertEquals(2, contactMessagesMap.get(CONTACT_1).size());
+        Assert.assertEquals(3, contactMessagesMap.get(CONTACT_1).size());
     }
 
     @Test
@@ -156,7 +159,26 @@ public class PersistenceServiceIT {
         Assert.assertEquals(1, persistenceService.getScripts().size());
         Assert.assertTrue(persistenceService.deleteScript(SCRIPT_1_NAME));
         Assert.assertFalse(persistenceService.getScripts().containsKey(SCRIPT_1_NAME));
+    }
 
+    @Test
+    public void testGetAllMessagesReturnsAllMessagesThatWeSentOrReceived() {
+        persistenceService.saveMessage(TEST_MESSAGE_1);
+        persistenceService.saveMessage(TEST_MESSAGE_2);
+        persistenceService.saveMessage(TEST_MESSAGE_3);
+        Assert.assertEquals(3, persistenceService.getAllMessages().size());
+    }
+
+    @Test
+    public void testGetAllMessagesPerContactReturnsAllMessagesThatWeSentOrReceived() {
+        persistenceService.saveMessage(TEST_MESSAGE_1);
+        persistenceService.saveMessage(TEST_MESSAGE_2);
+        persistenceService.saveMessage(TEST_MESSAGE_3);
+        persistenceService.saveMessage(TEST_MESSAGE_4);
+        Map<Contact, List<Message>> allMessages = persistenceService.getAllMessagesPerContact();
+        Assert.assertEquals(4, allMessages.get(CONTACT_1).size());
+        Assert.assertEquals(3, allMessages.get(CONTACT_2).size());
+        Assert.assertEquals(1, allMessages.get(CONTACT_3).size());
     }
 
 }

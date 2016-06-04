@@ -1,5 +1,6 @@
 package nl.han.asd.project.client.commonclient.database;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -58,5 +59,13 @@ public interface IDatabase extends AutoCloseable {
      * @throws SQLException if a database access error occurs.
      */
     boolean isOpen() throws SQLException;
+
+    /**
+     * Prepares a statement so that user input is sanitized.
+     *
+     * @param query The query to prepare a statement for.
+     * @return A prepared statement.
+     */
+    PreparedStatement prepareStatement(String query) throws SQLException;
 
 }
