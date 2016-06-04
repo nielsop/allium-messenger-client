@@ -1,22 +1,16 @@
 package nl.han.asd.project.client.commonclient.persistence;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import nl.han.asd.project.client.commonclient.database.IDatabase;
 import nl.han.asd.project.client.commonclient.message.Message;
 import nl.han.asd.project.client.commonclient.store.Contact;
 import nl.han.asd.project.commonservices.internal.utility.Check;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Provides a way to communicate with the database.
@@ -53,13 +47,11 @@ public class PersistenceService implements IPersistence {
      */
     @Override
     public boolean saveMessage(Message message) {
-        final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT
-                .format(message.getMessageTimestamp());
+        final String messageTimestampInDatabaseFormat = IPersistence.TIMESTAMP_FORMAT.format(message.getMessageTimestamp());
         try {
-            return getDatabase().query(String.format(
-                    "INSERT INTO Message (sender, receiver, timestamp, message) VALUES ('%s', '%s', '%s', '%s')",
-                    message.getSender().getUsername(), message.getReceiver().getUsername(),
-                    messageTimestampInDatabaseFormat, message.getText()));
+            return getDatabase().query(String
+                    .format("INSERT INTO Message (sender, receiver, timestamp, message) VALUES ('%s', '%s', '%s', '%s')", message.getSender().getUsername(),
+                            message.getReceiver().getUsername(), messageTimestampInDatabaseFormat, message.getText()));
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -88,6 +80,28 @@ public class PersistenceService implements IPersistence {
      */
     @Override
     public Map<Contact, List<Message>> getAllMessagesPerContact() {
+        final Map<Contact, List<Message>> contactMessagesHashMap = new HashMap<>();
+        try {
+            final ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message ORDER BY timestamp ASC");
+            while (selectMessagesResult != null && selectMessagesResult.next()) {
+                final Message message = Message.fromDatabase(selectMessagesResult);
+                // TODO: filter message list when sender == current user
+                if (!contactMessagesHashMap.containsKey(message.getSender())) {
+                    contactMessagesHashMap.put(message.getSender(), new ArrayList<Message>());
+                }
+                if (!contactMessagesHashMap.containsKey(message.getReceiver())) {
+                    contactMessagesHashMap.put(message.getReceiver(), new ArrayList<Message>());
+                }
+                contactMessagesHashMap.get(message.getSender()).add(message);
+                contactMessagesHashMap.get(message.getReceiver()).add(message);
+            }
+        } catch (final SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return contactMessagesHashMap;
+    }
+
+    public Map<Contact, List<Message>> getAllMessagesPerContact2() {
         final Map<Contact, List<Message>> contactMessagesHashMap = new HashMap<>();
         try {
             ResultSet selectMessagesResult = getDatabase().select("SELECT * FROM Message");
@@ -160,8 +174,7 @@ public class PersistenceService implements IPersistence {
             }
 
             while (selectContactsResult.next()) {
-                contactMap.put(selectContactsResult.getString(2),
-                        Contact.fromDatabase(selectContactsResult.getString(2)));
+                contactMap.put(selectContactsResult.getString(2), Contact.fromDatabase(selectContactsResult.getString(2)));
             }
 
             selectContactsResult.close();
@@ -219,8 +232,7 @@ public class PersistenceService implements IPersistence {
     @Override
     public boolean addScript(String scriptName, String scriptContent) {
         try {
-            return getDatabase().query(String.format(
-                    "INSERT INTO Script (scriptName, scriptContent) VALUES ('%s', '%s')", scriptName, scriptContent));
+            return getDatabase().query(String.format("INSERT INTO Script (scriptName, scriptContent) VALUES ('%s', '%s')", scriptName, scriptContent));
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -254,8 +266,7 @@ public class PersistenceService implements IPersistence {
         String result = "";
 
         try {
-            ResultSet selectScriptsResult = getDatabase()
-                    .select(String.format("SELECT scriptcontent FROM Script WHERE scriptname = '%s'", scriptName));
+            ResultSet selectScriptsResult = getDatabase().select(String.format("SELECT scriptcontent FROM Script WHERE scriptname = '%s'", scriptName));
 
             result = (String) selectScriptsResult.getObject(1);
 
@@ -274,8 +285,7 @@ public class PersistenceService implements IPersistence {
     @Override
     public void updateScript(String scriptName, String scriptContent) {
         try {
-            getDatabase().query(String.format("UPDATE Script SET scriptcontent = '%s' WHERE scriptname = '%s'",
-                    scriptContent, scriptName));
+            getDatabase().query(String.format("UPDATE Script SET scriptcontent = '%s' WHERE scriptname = '%s'", scriptContent, scriptName));
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
         }
