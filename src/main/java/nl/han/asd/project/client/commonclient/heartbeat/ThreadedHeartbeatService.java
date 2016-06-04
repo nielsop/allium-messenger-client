@@ -131,6 +131,9 @@ public class ThreadedHeartbeatService implements IHeartbeatService {
         }
 
         String get(Properties properties) {
+            if (System.getenv(value) != null) {
+                return System.getenv(value);
+            }
             return properties.getProperty(value);
         }
 
